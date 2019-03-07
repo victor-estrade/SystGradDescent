@@ -14,7 +14,7 @@ class BaseClassifierModel(BaseEstimator, ClassifierMixin):
         super().__init__()
 
     def compute_summaries(self, X, W, n_bins=10):
-        proba = self.clf.predict_proba(X)
+        proba = self.predict_proba(X)
         count, _ = np.histogram(proba[:, 1], weights=W, bins=n_bins)
         return count
 
