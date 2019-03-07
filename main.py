@@ -37,7 +37,7 @@ def parse_args():
                         # type=str, choices=PROBLEMS.keys(), default='mnist' )
 
     # MODEL CHOICE
-    parser.add_argument('model', help='model to train',
+    parser.add_argument('--model', help='model to train',
                         type=str, choices=ARG_MODELS )
 
     # MODEL HYPER PARAMETERS
