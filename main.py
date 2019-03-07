@@ -60,7 +60,7 @@ def parse_args():
                         default=5, type=float)
 
     parser.add_argument('--batch-size', help='mini-batch size',
-                        default=128, type=int)
+                        default=1024, type=int)
 
     parser.add_argument('--n-steps', help='number of update steps',
                         default=10000, type=int)
@@ -186,7 +186,6 @@ def main():
     # FIXME : name depend on model name and cv_iter
     plt.savefig('savings/test_distrib.png')
 
-
     X_infer = X_xp.copy()
     W_infer = W_xp.copy()
     TRUE_TAU_ES = 1.03
@@ -211,7 +210,7 @@ def main():
     with np.warnings.catch_warnings():
         np.warnings.filterwarnings('ignore', message='.*arcsinh')
         param = minimizer.hesse()
-    logger.info("fitarg = {} ".format(param) )
+    logger.info("param = {} ".format(param) )
 
     # Stuff to save
     fitarg = minimizer.fitarg
