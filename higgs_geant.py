@@ -84,6 +84,19 @@ def normalize_weight(W, y, background_luminosity=410999.84732187376, signal_lumi
     W_new[y==1] = W[y==1] * ( signal_luminosity / signal_weight_sum )
     return W_new
 
+def balance_training_weight(w, y):
+    """Balance the weights between positive and negative class."""
+    sample_weight = w.copy()
+    neg_mask = (y == 0)
+    pos_mask = (y == 1)
+    
+    bkg_sum_weight = np.sum(sample_weight[neg_mask])
+    sig_sum_weight = np.sum(sample_weight[pos_mask])
+
+    sample_weight[pos_mask] = sample_weight[pos_mask] / sig_sum_weight
+    sample_weight[neg_mask] = sample_weight[neg_mask] / bkg_sum_weight
+    return sample_weight
+
 
 def split_data_label_weights(data):
     X = data.drop(["Weight", "Label"], axis=1)
@@ -101,6 +114,8 @@ def split_train_test(data, idx_train, idx_test):
     train_data = data.iloc[idx_train]
     test_data = data.iloc[idx_test]
     return train_data, test_data
+
+
 
 
 # def skew(data, z=1.0, missing_value=0., remove_mass_MMC=True):
