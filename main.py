@@ -184,7 +184,7 @@ def main():
     sns.distplot(proba[y_test==1, 1], label='s')
     plt.legend()
     # FIXME : name depend on model name and cv_iter
-    plt.savefig('test_distrib.png')
+    plt.savefig('savings/test_distrib.png')
 
 
     X_infer = X_xp.copy()
