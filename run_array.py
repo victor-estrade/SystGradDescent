@@ -65,7 +65,7 @@ def parse_args():
     grid_args.add_argument('--batch-size',
                         nargs='+',
                         help='mini-batch size',
-                        default=128, type=int)
+                        default=1024, type=int)
 
     grid_args.add_argument('--n-steps',
                         nargs='+',
