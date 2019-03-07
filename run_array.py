@@ -15,7 +15,7 @@ def parse_args():
     parser.add_argument('--logdir', help='path to the log directory',
                         default='logs')
     parser.add_argument('--xp-name', help='name of the experiment',
-                        default='Trololo')
+                        default='debug')
     parser.add_argument('--docker-image', help='the docker image',
                         default='estradevictorantoine/systml:1.1', type=str)
 
