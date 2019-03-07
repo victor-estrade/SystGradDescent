@@ -5,6 +5,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import os
 import argparse
 import inspect
 import logging
@@ -177,6 +178,17 @@ def main():
     logger.info('Start training submission : {}'.format(model.get_name()))
     model.fit(X_train, y_train, sample_weight=W_train)
     logger.info('End of training {}'.format(model.get_name()))
+
+    # SAVE MODEL
+    i = 0
+    n_cv = 1
+    logger.info('saving model {}/{}...'.format(i+1, n_cv))
+    model_name = '{}-{}'.format(model.get_name(), i)
+    
+    path = os.path.join(config.SAVING_DIR, model_name)
+    os.makedirs(path, exist_ok=True)
+    
+    model.save(path)
 
     # CHECK TRAINING RESULT
     #----------------------

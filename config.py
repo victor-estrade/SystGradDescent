@@ -5,4 +5,4 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 RANDOM_STATE = 42
-
+SAVING_DIR = 'savings'
