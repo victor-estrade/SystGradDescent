@@ -32,69 +32,71 @@ def parse_args():
                         default=0, type=int)
 
     # main arguments
-    main_args = parser.add_argument_group('main_args', 'arguments passed to the subjobs for grid search')
+    main_args = parser.add_argument_group('main_args', 'arguments passed to the all subjobs')
     main_args.add_argument('--model', help='model to train',
                         type=str, )
 
-    main_args.add_argument('--n-estimators',
+    grid_args = parser.add_argument_group('grid_args', 'arguments passed to the subjobs for grid search')
+    grid_args.add_argument('--n-estimators',
                         nargs='+',
                         help='number of estimators',
                         default=1000, type=int)
 
-    main_args.add_argument('--max-depth',
+    grid_args.add_argument('--max-depth',
                         nargs='+',
                         help='maximum depth of trees',
                         default=3, type=int)
 
-    main_args.add_argument('--learning-rate', '--lr',
+    grid_args.add_argument('--learning-rate', '--lr',
                         nargs='+',
                         help='learning rate',
                         default=1e-3, type=float)
 
-    main_args.add_argument('--trade-off',
+    grid_args.add_argument('--trade-off',
                         nargs='+',
                         help='trade-off for multi-objective models',
                         default=1.0, type=float)
 
-    main_args.add_argument('-w', '--width',
+    grid_args.add_argument('-w', '--width',
                         nargs='+',
                         help='width for the data augmentation sampling',
                         default=5, type=float)
 
-    main_args.add_argument('--batch-size',
+    grid_args.add_argument('--batch-size',
                         nargs='+',
                         help='mini-batch size',
                         default=128, type=int)
 
-    main_args.add_argument('--n-steps',
+    grid_args.add_argument('--n-steps',
                         nargs='+',
                         help='number of update steps',
                         default=10000, type=int)
 
-    main_args.add_argument('--n-augment',
+    grid_args.add_argument('--n-augment',
                         nargs='+',
                         help='number of times the dataset is augmented',
                         default=2, type=int)
 
-    main_args.add_argument('--n-adv-pre-training-steps',
+    grid_args.add_argument('--n-adv-pre-training-steps',
                         nargs='+',
                         help='number of update steps for the pre-training',
                         default=3000, type=int)
 
-    main_args.add_argument('--n-clf-pre-training-steps',
+    grid_args.add_argument('--n-clf-pre-training-steps',
                         nargs='+',
                         help='number of update steps for the pre-training',
                         default=3000, type=int)
 
-    main_args.add_argument('--n-recovery-steps',
+    grid_args.add_argument('--n-recovery-steps',
                         nargs='+',
                         help='number of update steps for the catch training of auxiliary models',
                         default=5, type=int)
 
     args = parser.parse_args()
+    grid_args_dict = extract_group_args(parser, args, 'grid_args')
     main_args_dict = extract_group_args(parser, args, 'main_args')
 
-    return args, main_args_dict
+    return args, grid_args_dict, main_args_dict
 
 
 def extract_group_args(parser, args, group_title):
@@ -125,7 +127,7 @@ sdocker -i  -v /data/titanic_3/users/vestrade/datawarehouse:/datawarehouse \
             -v /data/titanic_3/users/vestrade/savings:/data/titanic_3/users/vestrade/savings \
             -v $WORKDIR:$WORKDIR \
             {docker_image} \
-            /bin/sh -c "cd ${{WORKDIR}}; python main.py ${{GRID_PARAMS}}" 
+            /bin/sh -c "cd ${{WORKDIR}}; python main.py {main_args} ${{GRID_PARAMS}}" 
 """
 
 
@@ -150,7 +152,7 @@ def to_list(l):
 
 def main():
     # Extract arguments :
-    args, main_args = parse_args()
+    args, grid_args, main_args = parse_args()
     now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")    
     xp_name = args.xp_name
     logdir = os.path.join(args.logdir, xp_name, now)
@@ -162,9 +164,10 @@ def main():
     docker_image = args.docker_image
 
     # Main parameters for grid search
-    parameter_dict = {k:to_list(v) for k, v in main_args.items()}
+    parameter_dict = {k:to_list(v) for k, v in grid_args.items()}
     grid = param_to_grid(parameter_dict)
     array = "1-{}".format(len(grid))
+    main_args = " ".join(["{} {}".format(k, v) for k, v in main_args.items()])
 
     # Extra arguments
     log_stdout = os.path.join(logdir, '%A_%a.stdout')
