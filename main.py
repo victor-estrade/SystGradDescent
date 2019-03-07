@@ -180,6 +180,7 @@ def main():
 
     # CHECK TRAINING RESULT
     #----------------------
+    logger.info( 'Accuracy = {} %'.format(100 * model.score(X_test, y_test)) )
     proba = model.predict_proba(X_test)
     sns.distplot(proba[y_test==0, 1], label='b')
     sns.distplot(proba[y_test==1, 1], label='s')
