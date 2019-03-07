@@ -8,7 +8,9 @@ from __future__ import unicode_literals
 import argparse
 import inspect
 import logging
+import config
 import iminuit
+ERRORDEF_NLL = 0.5
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -22,6 +24,7 @@ from higgs_geant import split_train_test
 from higgs_geant import split_data_label_weights
 from higgs_4v_pandas import tau_energy_scale
 from nll import HiggsNLL
+from models import higgsml_models
 from models import MODELS
 ARG_MODELS = MODELS.keys()
 
@@ -89,14 +92,14 @@ def parse_args():
     return args
 
 
-def get_model_class(data_name, model_name):
-    model_class = None
-    if data_name in MODELS:
-        model_class = MODELS[data_name](model_name)
-    else:
-        raise ValueError('Unrecognized dataset name : {}'
-                         'Expected one from {}'. format(data_name, MODELS.keys()))
-    return model_class
+# def get_model_class(data_name, model_name):
+#     model_class = None
+#     if data_name in MODELS:
+#         model_class = MODELS[data_name](model_name)
+#     else:
+#         raise ValueError('Unrecognized dataset name : {}'
+#                          'Expected one from {}'. format(data_name, MODELS.keys()))
+#     return model_class
 
 
 def extract_model_args(args, get_model):
@@ -136,7 +139,7 @@ def main():
     #-----------------
     logger.info('Building model ...')
     logger.info( 'Model :', args.model)
-    model_class = get_model_class(args.data, args.model)
+    model_class = higgsml_models(args.model)
     # args.skewing_function = problem.skew
     # args.tangent = problem.tangent
     model_args = extract_model_args(args, model_class)
@@ -146,7 +149,7 @@ def main():
 
     logger.info('Loading data ...')
     data = problem.load_data()
-    
+
     # SPLIT DATA
     #-----------
     cv = ShuffleSplit(n_splits=1, test_size=0.2, random_state=config.RANDOM_STATE)

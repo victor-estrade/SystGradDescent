@@ -34,7 +34,7 @@ MODELS = {
 }
 
 
-def higsml_models(model_name):
+def higgsml_models(model_name):
     if model_name in MODELS:
         return MODELS[model_name]
     else:
