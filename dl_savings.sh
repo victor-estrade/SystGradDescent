@@ -1,0 +1,1 @@
+scp titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/savings/test_distrib.png ./savings
