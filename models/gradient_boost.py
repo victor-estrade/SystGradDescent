@@ -10,8 +10,8 @@ import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.externals import joblib
 
-from base_model import BaseClassifierModel
-from utils import to_numpy
+from .base_model import BaseClassifierModel
+from .utils import to_numpy
 
 class GradientBoostingModel(BaseClassifierModel):
     def __init__(self, learning_rate=0.1, n_estimators=1000, max_depth=3,):

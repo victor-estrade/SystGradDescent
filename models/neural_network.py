@@ -20,8 +20,8 @@ from .net.monitor import LossMonitorHook
 from .architecture import Net
 from .data_augment import NormalDataAugmenter
 
-from base_model import BaseClassifierModel
-from utils import to_numpy
+from .base_model import BaseClassifierModel
+from .utils import to_numpy
 
 
 class NeuralNetModel(BaseClassifierModel):
