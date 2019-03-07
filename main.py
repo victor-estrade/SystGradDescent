@@ -149,6 +149,7 @@ def main():
 
     logger.info('Loading data ...')
     data = problem.load_data()
+    data = data.drop( ["DER_mass_MMC"], axis=1 )
 
     # SPLIT DATA
     #-----------
