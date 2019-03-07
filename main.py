@@ -21,7 +21,7 @@ from higgs_geant import normalize_weight
 from higgs_geant import split_train_test
 from higgs_geant import split_data_label_weights
 from higgs_4v_pandas import tau_energy_scale
-from nll import HiggsModel
+from nll import HiggsNLL
 from models import MODELS
 ARG_MODELS = MODELS.keys()
 
@@ -130,6 +130,8 @@ def main():
     args = parse_args()
     logger.info(args)
 
+    logger.handlers[0].flush()
+
     # GET CHOSEN MODEL
     #-----------------
     logger.info('Building model ...')
@@ -140,10 +142,11 @@ def main():
     model_args = extract_model_args(args, model_class)
     logger.info( 'model_args :', model_args )
     model = model_class(**model_args)
+    logger.handlers[0].flush()
 
     logger.info('Loading data ...')
     data = problem.load_data()
-
+    
     # SPLIT DATA
     #-----------
     cv = ShuffleSplit(n_splits=1, test_size=0.2, random_state=config.RANDOM_STATE)
@@ -186,7 +189,7 @@ def main():
     TRUE_TAU_ES = 1.03
     tau_energy_scale(X_infer, scale=TRUE_TAU_ES)
     N_BIN = 20
-    negative_log_likelihood = HiggsModel(model, X_test, y_test, W_test, X_infer, W_infer, N_BIN=N_BIN)
+    negative_log_likelihood = HiggsNLL(model, X_test, y_test, W_test, X_infer, W_infer, N_BIN=N_BIN)
     minimizer = iminuit.Minuit(negative_log_likelihood,
                     errordef=ERRORDEF_NLL,
                     )
