@@ -195,6 +195,8 @@ def main():
     negative_log_likelihood = HiggsNLL(model, X_test, y_test, W_test, X_infer, W_infer, N_BIN=N_BIN)
     minimizer = iminuit.Minuit(negative_log_likelihood,
                     errordef=ERRORDEF_NLL,
+                    mu=1, error_mu=0.1, limit_mu=(0, None),
+                    tau_es=1, error_tau_es=0.1, limit_tau_es=(0, None),
                     )
 
     with np.warnings.catch_warnings():
