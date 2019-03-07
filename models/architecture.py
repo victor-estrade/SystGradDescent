@@ -7,8 +7,8 @@ from __future__ import unicode_literals
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..net.tangent_prop import Bias
-from ..net.tangent_prop import DSoftPlus
+from .net.tangent_prop import Bias
+from .net.tangent_prop import DSoftPlus
 
 
 class Net(nn.Module):
