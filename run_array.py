@@ -117,7 +117,7 @@ SBATCH_TEMPLATE = \
 #SBATCH --gres=gpu:{gpu}
 
 GRID_PARAMS=$(cat {parameters_file} | head -n $SLURM_ARRAY_TASK_ID | tail -n 1)
-WORKDIR="/home/tao/vestrade/workspace/SystML/"
+WORKDIR="/home/tao/vestrade/workspace/SystML/SystGradDescent"
 
 sdocker -i  -v /data/titanic_3/users/vestrade/datawarehouse:/datawarehouse \
             -v /data/titanic_3/users/vestrade/savings:/data/titanic_3/users/vestrade/savings \
