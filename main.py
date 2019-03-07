@@ -138,12 +138,12 @@ def main():
     # GET CHOSEN MODEL
     #-----------------
     logger.info('Building model ...')
-    logger.info( 'Model :', args.model)
+    logger.info( 'Model :{}'.format(args.model))
     model_class = higgsml_models(args.model)
     # args.skewing_function = problem.skew
     # args.tangent = problem.tangent
     model_args = extract_model_args(args, model_class)
-    logger.info( 'model_args :', model_args )
+    logger.info( 'model_args :{}'.format(model_args) )
     model = model_class(**model_args)
     logger.handlers[0].flush()
 
