@@ -217,7 +217,7 @@ def main():
     fitarg = minimizer.fitarg
     logger.info("fitarg = {} ".format(fitarg) )
 
-
+    logger.info("END.")
 
 if __name__ == '__main__':
     main()
