@@ -6,7 +6,6 @@ from __future__ import absolute_import
 import numpy as np
 
 from datawarehouse import load_higgs
-from higgs_4v_pandas import tau_energy_scale
 
 def load_data():
     data = load_higgs()  # Load the full dataset and return it as a pandas.DataFrame
