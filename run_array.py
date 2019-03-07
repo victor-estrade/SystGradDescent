@@ -8,6 +8,8 @@ import pandas as pd
 
 from subprocess import call
 
+from models import MODELS
+ARG_MODELS = MODELS.keys()
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Job launcher")
@@ -34,6 +36,9 @@ def parse_args():
 
     # main arguments
     main_args = parser.add_argument_group('main_args', 'arguments passed to the subjobs for grid search')
+    parser.add_argument('--model', help='model to train',
+                        type=str, choices=ARG_MODELS )
+
     main_args.add_argument('--n-estimators',
                         nargs='+',
                         help='number of estimators',
