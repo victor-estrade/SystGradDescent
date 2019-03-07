@@ -33,7 +33,7 @@ def parse_args():
 
     # main arguments
     main_args = parser.add_argument_group('main_args', 'arguments passed to the subjobs for grid search')
-    parser.add_argument('--model', help='model to train',
+    main_args.add_argument('--model', help='model to train',
                         type=str, )
 
     main_args.add_argument('--n-estimators',
