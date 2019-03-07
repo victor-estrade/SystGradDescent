@@ -185,10 +185,9 @@ def main():
     logger.info('saving model {}/{}...'.format(i+1, n_cv))
     model_name = '{}-{}'.format(model.get_name(), i)
     
-    path = os.path.join(config.SAVING_DIR, model_name)
-    os.makedirs(path, exist_ok=True)
-    
-    model.save(path)
+    model_path = os.path.join(config.SAVING_DIR, model_name)
+    os.makedirs(model_path, exist_ok=True)
+    model.save(model_path)
 
     # CHECK TRAINING RESULT
     #----------------------
@@ -196,9 +195,10 @@ def main():
     proba = model.predict_proba(X_test)
     sns.distplot(proba[y_test==0, 1], label='b')
     sns.distplot(proba[y_test==1, 1], label='s')
+    plt.title(model_name)
     plt.legend()
     # FIXME : name depend on model name and cv_iter
-    plt.savefig('savings/test_distrib.png')
+    plt.savefig(os.path.join(model_path, 'test_distrib.png'))
 
     X_infer = X_xp.copy()
     W_infer = W_xp.copy()
