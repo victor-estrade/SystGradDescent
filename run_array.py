@@ -170,6 +170,7 @@ def main():
     parameter_dict = {k:to_list(v) for k, v in grid_args.items()}
     grid = param_to_grid(parameter_dict)
     array = "1-{}".format(len(grid))
+    if not main_args['--retrain'] : main_args.pop('--retrain')
     main_args = " ".join(["{} {}".format(k, v) for k, v in main_args.items()])
 
     # Extra arguments
