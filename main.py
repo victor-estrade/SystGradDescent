@@ -124,6 +124,10 @@ def get_cv_iter(X, y):
     cv = ShuffleSplit(n_splits=12, test_size=0.2, random_state=config.RANDOM_STATE)
     cv_iter = list(cv.split(X, y))
     return cv_iter
+# TODO Data augmentation
+#   -> 1 augment + (n-1) perturbator
+#   -> changer les modèles pour recevoir l'augmenteur plutôt qu'une skewing_function
+#   -> l'augmenteur prend les errors de la calibration * width ?
 
 # =====================================================================
 # MAIN
@@ -287,6 +291,14 @@ def main():
     print('lep_es MLE offset = {}'.format(lep_es_mle - config.TRUE_LEP_ENERGY_SCALE))
     print('lep_es MLE errors = {}'.format(fitarg['error_lep_es']))
     print()
+    nll_true_params = negative_log_likelihood(config.TRUE_MU, 
+                                config.TRUE_TAU_ENERGY_SCALE,
+                                config.TRUE_JET_ENERGY_SCALE,
+                                config.TRUE_LEP_ENERGY_SCALE,
+                                )
+    print('NLL of true params = {}'.format(nll_true_params))
+    nll_MLE = negative_log_likelihood(mu_mle, tau_es_mle, jet_es_mle, lep_es_mle)
+    print('NLL of MLE  params = {}'.format(nll_MLE))
 
     logger.info("END.")
 
