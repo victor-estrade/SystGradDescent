@@ -95,6 +95,8 @@ def parse_args():
     # OTHER
     parser.add_argument('--no-cuda', '--no-gpu', help='flag to use or not the gpu',
                         action='store_false', dest='cuda')
+    parser.add_argument('--retrain', help='flag to force retraining',
+                        action='store_true')
 
     args = parser.parse_args()
     return args
@@ -182,20 +184,24 @@ def main():
 
     # TRAIN MODEL
     #------------
-    logger.info('Start training submission : {}'.format(model.get_name()))
-    model.fit(X_train, y_train, sample_weight=W_train)
-    logger.info('End of training {}'.format(model.get_name()))
-
-    # SAVE MODEL
-    #-----------
-    i = 0
-    n_cv = 1
-    logger.info('saving model {}/{}...'.format(i+1, n_cv))
     model_name = '{}-{}'.format(model.get_name(), i)
-    
     model_path = os.path.join(config.SAVING_DIR, model_name)
-    os.makedirs(model_path, exist_ok=True)
-    model.save(model_path)
+
+    if args.retrain or not os.path.exists(model_path):
+        logger.info('Start training submission : {}'.format(model.get_name()))
+        model.fit(X_train, y_train, sample_weight=W_train)
+        logger.info('End of training {}'.format(model.get_name()))
+
+        # SAVE MODEL
+        #-----------
+        i = 0
+        n_cv = 1
+        logger.info('saving model {}/{}...'.format(i+1, n_cv))
+        model_name = '{}-{}'.format(model.get_name(), i)
+        model_path = os.path.join(config.SAVING_DIR, model_name)
+    
+        os.makedirs(model_path, exist_ok=True)
+        model.save(model_path)
 
     # CHECK TRAINING RESULT
     #----------------------
