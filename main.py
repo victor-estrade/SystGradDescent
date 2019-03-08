@@ -184,6 +184,9 @@ def main():
 
     # TRAIN MODEL
     #------------
+    # TODO : define i and n_cv elsewhere when I'll do proper cross validation
+    i = 0
+    n_cv = 1
     model_name = '{}-{}'.format(model.get_name(), i)
     model_path = os.path.join(config.SAVING_DIR, model_name)
 
@@ -194,8 +197,6 @@ def main():
 
         # SAVE MODEL
         #-----------
-        i = 0
-        n_cv = 1
         logger.info('saving model {}/{}...'.format(i+1, n_cv))
         model_name = '{}-{}'.format(model.get_name(), i)
         model_path = os.path.join(config.SAVING_DIR, model_name)
