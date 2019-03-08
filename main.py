@@ -9,6 +9,7 @@ import os
 import argparse
 import inspect
 import logging
+import json
 import config
 import iminuit
 ERRORDEF_NLL = 0.5
@@ -247,6 +248,31 @@ def main():
     # Stuff to save
     fitarg = minimizer.fitarg
     logger.info("fitarg = {} ".format(fitarg) )
+    with open(os.path.join(model_path, 'fitarg.json'), 'w') as f:
+        json.dump(fitarg, f)
+
+
+    # PRINT ADDITIONNAL RESULTS
+    mu_mle = fitarg['mu']
+    print('mu MLE = {:2.3f} vs True mu {:2.3f}'.format(mu_mle, config.TRUE_MU) )
+    print('mu MLE offset = {}'.format(mu_mle - config.TRUE_MU))
+    print('mu MLE errors = {}'.format(fitarg['error_mu']))
+    print()
+    tau_es_mle = fitarg['tau_es']
+    print('tau_es MLE = {:2.3f} vs True tau_es {:2.3f}'.format(tau_es_mle, config.TRUE_TAU_ENERGY_SCALE) )
+    print('tau_es MLE offset = {}'.format(tau_es_mle - config.TRUE_TAU_ENERGY_SCALE))
+    print('tau_es MLE errors = {}'.format(fitarg['error_tau_es']))
+    print()
+    jet_es_mle = fitarg['jet_es']
+    print('jet_es MLE = {:2.3f} vs True jet_es {:2.3f}'.format(jet_es_mle, config.TRUE_JET_ENERGY_SCALE) )
+    print('jet_es MLE offset = {}'.format(jet_es_mle - config.TRUE_JET_ENERGY_SCALE))
+    print('jet_es MLE errors = {}'.format(fitarg['error_jet_es']))
+    print()
+    lep_es_mle = fitarg['lep_es']
+    print('lep_es MLE = {:2.3f} vs True lep_es {:2.3f}'.format(lep_es_mle, config.TRUE_LEP_ENERGY_SCALE) )
+    print('lep_es MLE offset = {}'.format(lep_es_mle - config.TRUE_LEP_ENERGY_SCALE))
+    print('lep_es MLE errors = {}'.format(fitarg['error_lep_es']))
+    print()
 
     logger.info("END.")
 
