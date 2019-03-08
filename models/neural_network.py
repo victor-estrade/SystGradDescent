@@ -22,6 +22,7 @@ from .data_augment import NormalDataAugmenter
 
 from .base_model import BaseClassifierModel
 from .utils import to_numpy
+from .utils import balance_training_weight
 
 
 class NeuralNetModel(BaseClassifierModel):
@@ -51,7 +52,8 @@ class NeuralNetModel(BaseClassifierModel):
         sample_weight = to_numpy(sample_weight)
         X = self.scaler.fit_transform(X)
         self.loss_hook.reset()
-        self.clf.fit(X, y, sample_weight=sample_weight)
+        W = balance_training_weight(sample_weight, y) * y.shape[0] / 2
+        self.clf.fit(X, y, sample_weight=W)
         return self
 
     def predict(self, X):
@@ -133,7 +135,8 @@ class AugmentedNeuralNetModel(BaseClassifierModel):
         sample_weight = to_numpy(sample_weight)
         X = self.scaler.fit_transform(X)
         self.loss_hook.reset()
-        self.clf.fit(X, y, sample_weight=sample_weight)
+        W = balance_training_weight(sample_weight, y) * y.shape[0] / 2
+        self.clf.fit(X, y, sample_weight=W)
         return self
 
     def predict(self, X):
@@ -216,7 +219,8 @@ class BlindNeuralNetModel(BaseClassifierModel):
         X = np.delete(X, self.skewed_idx, axis=1)        
         X = self.scaler.fit_transform(X)
         self.loss_hook.reset()
-        self.clf.fit(X, y, sample_weight=sample_weight)
+        W = balance_training_weight(sample_weight, y) * y.shape[0] / 2
+        self.clf.fit(X, y, sample_weight=W)
         return self
 
     def predict(self, X):

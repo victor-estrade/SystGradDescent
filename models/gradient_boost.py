@@ -12,6 +12,7 @@ from sklearn.externals import joblib
 
 from .base_model import BaseClassifierModel
 from .utils import to_numpy
+from .utils import balance_training_weight
 
 class GradientBoostingModel(BaseClassifierModel):
     def __init__(self, learning_rate=0.1, n_estimators=1000, max_depth=3,):
@@ -28,7 +29,8 @@ class GradientBoostingModel(BaseClassifierModel):
         X = to_numpy(X)
         y = to_numpy(y)
         sample_weight = to_numpy(sample_weight)
-        self.clf.fit(X, y, sample_weight=sample_weight)
+        W = balance_training_weight(sample_weight, y) * y.shape[0] / 2
+        self.clf.fit(X, y, sample_weight=W)
 
     def predict(self, X):
         X = to_numpy(X)
@@ -78,8 +80,9 @@ class BlindGradientBoostingModel(BaseClassifierModel):
         X = to_numpy(X)
         y = to_numpy(y)
         sample_weight = to_numpy(sample_weight)
-        X = np.delete(X, self.skewed_idx, axis=1)        
-        self.clf.fit(X, y, sample_weight=sample_weight)
+        X = np.delete(X, self.skewed_idx, axis=1)
+        W = balance_training_weight(sample_weight, y) * y.shape[0] / 2
+        self.clf.fit(X, y, sample_weight=W)
 
     def predict(self, X):
         X = to_numpy(X)

@@ -176,8 +176,6 @@ def main():
 
     # TRAIN MODEL
     #------------
-    # FIXME Do it inside models not here. INFERNO requires true weights !
-    W_train = balance_training_weight(W_train, y_train) * y_train.shape[0] / 2
     logger.info('Start training submission : {}'.format(model.get_name()))
     model.fit(X_train, y_train, sample_weight=W_train)
     logger.info('End of training {}'.format(model.get_name()))
