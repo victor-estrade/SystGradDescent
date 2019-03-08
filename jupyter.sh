@@ -1,0 +1,1 @@
+sjupyter --gres=gpu:1 --docker_image=estradevictorantoine/systml:1.1 --docker_args "-v /data/titanic_3/users/vestrade/savings:/data/titanic_3/users/vestrade/savings -v /data/titanic_3/users/vestrade/datawarehouse:/datawarehouse"
