@@ -21,10 +21,15 @@ import higgs_geant as problem
 
 from sklearn.model_selection import ShuffleSplit
 from higgs_geant import normalize_weight
-from higgs_geant import balance_training_weight
 from higgs_geant import split_train_test
 from higgs_geant import split_data_label_weights
+
 from higgs_4v_pandas import tau_energy_scale
+from higgs_4v_pandas import jet_energy_scale
+from higgs_4v_pandas import lep_energy_scale
+from higgs_4v_pandas import soft_term
+from higgs_4v_pandas import bkg_weight_norm
+
 from nll import HiggsNLL
 from models import higgsml_models
 from models import MODELS
@@ -181,6 +186,7 @@ def main():
     logger.info('End of training {}'.format(model.get_name()))
 
     # SAVE MODEL
+    #-----------
     i = 0
     n_cv = 1
     logger.info('saving model {}/{}...'.format(i+1, n_cv))
@@ -201,16 +207,27 @@ def main():
     # FIXME : name depend on model name and cv_iter
     plt.savefig(os.path.join(model_path, 'test_distrib.png'))
 
+    # PREPARE EXPERIMENTAL DATA
+    #--------------------------
     X_infer = X_xp.copy()
     W_infer = W_xp.copy()
-    TRUE_TAU_ES = 1.03
-    tau_energy_scale(X_infer, scale=TRUE_TAU_ES)
+    tau_energy_scale(X_infer, scale=config.TRUE_TAU_ENERGY_SCALE)
+    jet_energy_scale(X_infer, scale=config.TRUE_JET_ENERGY_SCALE)
+    lep_energy_scale(X_infer, scale=config.TRUE_LEP_ENERGY_SCALE)
     N_BIN = 20
     negative_log_likelihood = HiggsNLL(model, X_test, y_test, W_test, X_infer, W_infer, N_BIN=N_BIN)
     minimizer = iminuit.Minuit(negative_log_likelihood,
                     errordef=ERRORDEF_NLL,
                     mu=1, error_mu=0.1, limit_mu=(0, None),
-                    tau_es=1, error_tau_es=0.1, limit_tau_es=(0, None),
+                    tau_es=config.CALIBRATED_TAU_ENERGY_SCALE, 
+                    error_tau_es=config.CALIBRATED_TAU_ENERGY_SCALE_ERROR, 
+                    limit_tau_es=(0, None),
+                    jet_es=config.CALIBRATED_JET_ENERGY_SCALE,
+                    error_jet_es=config.CALIBRATED_JET_ENERGY_SCALE_ERROR,
+                    limit_jet_es=(0, None),
+                    lep_es=config.CALIBRATED_LEP_ENERGY_SCALE,
+                    error_lep_es=config.CALIBRATED_LEP_ENERGY_SCALE_ERROR,
+                    limit_lep_es=(0, None),
                     )
 
     with np.warnings.catch_warnings():
