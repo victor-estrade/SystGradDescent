@@ -202,6 +202,9 @@ def main():
     
         os.makedirs(model_path, exist_ok=True)
         model.save(model_path)
+    else:
+        logger.info('loading model {}/{}...'.format(i+1, n_cv))
+        model.load(model_path)
 
     # CHECK TRAINING RESULT
     #----------------------
