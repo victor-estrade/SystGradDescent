@@ -220,6 +220,7 @@ def main():
 
     # PREPARE EXPERIMENTAL DATA
     #--------------------------
+    logger.info("Preparing experimental data and NLL minimizer")
     X_infer = X_xp.copy()
     W_infer = W_xp.copy()
     tau_energy_scale(X_infer, scale=config.TRUE_TAU_ENERGY_SCALE)
@@ -241,18 +242,22 @@ def main():
                     limit_lep_es=(0, None),
                     )
 
+    logger.info("minimizing NLL ...")
     with np.warnings.catch_warnings():
         np.warnings.filterwarnings('ignore', message='.*arcsinh')
         fmin, param = minimizer.migrad()
+    logger.info("minimizing NLL END")
 
     # What if mingrad failed ?
     valid = minimizer.migrad_ok()
     logger.info("Minigrad OK ? {}".format(valid) )
 
     # Compute hessian error
+    logger.info("Computing NLL Hessian ...")
     with np.warnings.catch_warnings():
         np.warnings.filterwarnings('ignore', message='.*arcsinh')
         param = minimizer.hesse()
+    logger.info("Computing NLL Hessian END")
     logger.info("param = {} ".format(param) )
 
     # Stuff to save
@@ -260,7 +265,6 @@ def main():
     logger.info("fitarg = {} ".format(fitarg) )
     with open(os.path.join(model_path, 'fitarg.json'), 'w') as f:
         json.dump(fitarg, f)
-
 
     # PRINT ADDITIONNAL RESULTS
     mu_mle = fitarg['mu']
