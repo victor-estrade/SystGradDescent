@@ -9,8 +9,8 @@ from .neural_network import NeuralNetModel
 from .neural_network import AugmentedNeuralNetModel
 from .neural_network import BlindNeuralNetModel
 
-# from .tangent_prop_model import TangentPropModel
-# from .tangent_prop_model import AugmentedTangentPropModel
+from .tangent_prop_model import TangentPropModel
+from .tangent_prop_model import AugmentedTangentPropModel
 
 from .pivot_model import PivotModel
 from .pivot_model import AugmentedPivotModel
@@ -24,8 +24,8 @@ MODELS = {
     'NN': NeuralNetModel,
     'ANN': AugmentedNeuralNetModel,
     'BNN': BlindNeuralNetModel,
-    # 'TP': TangentPropModel,
-    # 'ATP': AugmentedTangentPropModel,
+    'TP': TangentPropModel,
+    'ATP': AugmentedTangentPropModel,
     'PAN': PivotModel,
     'APAN': AugmentedPivotModel,
     # 'NNC': CascadeNeuralNetModel,

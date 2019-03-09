@@ -178,9 +178,22 @@ def main():
         X, y, sample_weight, z = perturb(X, y, sample_weight)
         return X, y, sample_weight, z
 
+    def tangent_extractor(X, alpha=1e-2):
+        X_plus = X.copy()
+        tau_energy_scale(X_plus, scale=1.0 + alpha)
+        jet_energy_scale(X_plus, scale=1.0 + alpha)
+        lep_energy_scale(X_plus, scale=1.0 + alpha)
+        X_minus = X.copy()
+        tau_energy_scale(X_minus, scale=1.0 - alpha)
+        jet_energy_scale(X_minus, scale=1.0 - alpha)
+        lep_energy_scale(X_minus, scale=1.0 - alpha)
+        T = ( X_plus - X_minus ) / ( 2 * alpha )
+        return T
+
 
     args.augmenter = augment
     args.perturbator = perturb
+    args.tangent_extractor = tangent_extractor
     # GET CHOSEN MODEL
     #-----------------
     logger.info('Building model ...')
