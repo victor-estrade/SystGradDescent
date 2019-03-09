@@ -112,7 +112,7 @@ class NeuralNetRegressor(BaseEstimator, RegressorMixin):
 
     def fit(self, X, y, sample_weight=None):
         if sample_weight is None:
-            sample_weight = np.ones_like(y)
+            sample_weight = np.ones(y.shape[0])
 
         X = X.astype(np.float32)
         sample_weight = sample_weight.astype(np.float32)

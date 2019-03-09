@@ -12,8 +12,8 @@ from .neural_network import BlindNeuralNetModel
 # from .tangent_prop_model import TangentPropModel
 # from .tangent_prop_model import AugmentedTangentPropModel
 
-# from .pivot_model import PivotModel
-# from .pivot_model import AugmentedPivotModel
+from .pivot_model import PivotModel
+from .pivot_model import AugmentedPivotModel
 
 # from .cascade_model import CascadeNeuralNetModel
 
@@ -26,8 +26,8 @@ MODELS = {
     'BNN': BlindNeuralNetModel,
     # 'TP': TangentPropModel,
     # 'ATP': AugmentedTangentPropModel,
-    # 'PAN': PivotModel,
-    # 'APAN': AugmentedPivotModel,
+    'PAN': PivotModel,
+    'APAN': AugmentedPivotModel,
     # 'NNC': CascadeNeuralNetModel,
     'GB': GradientBoostingModel,
     'BGB': BlindGradientBoostingModel,

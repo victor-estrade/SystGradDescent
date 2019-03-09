@@ -152,10 +152,7 @@ def main():
 
     # PREPARE DATA AUGMENTATION
     #--------------------------
-    def augment(X, y, sample_weight=None):
-        X = pd.concat([X for _ in range(args.n_augment)])
-        y = pd.concat([y for _ in range(args.n_augment)])
-        W = pd.concat([sample_weight for _ in range(args.n_augment)])
+    def perturb(X, y, sample_weight=None):
         size = X.shape[0]
         z_tau_es = np.random.normal(loc=config.CALIBRATED_TAU_ENERGY_SCALE,
                                     scale=args.width * config.CALIBRATED_TAU_ENERGY_SCALE_ERROR,
@@ -172,9 +169,18 @@ def main():
         z =  np.concatenate([z_tau_es.reshape(-1, 1),
                          z_jet_es.reshape(-1, 1), 
                          z_lep_es.reshape(-1, 1)], axis=1)
-        return X, y, W, z
+        return X, y, sample_weight, z
+
+    def augment(X, y, sample_weight=None):
+        X = pd.concat([X for _ in range(args.n_augment)])
+        y = pd.concat([y for _ in range(args.n_augment)])
+        sample_weight = pd.concat([sample_weight for _ in range(args.n_augment)])
+        X, y, sample_weight, z = perturb(X, y, sample_weight)
+        return X, y, sample_weight, z
+
 
     args.augmenter = augment
+    args.perturbator = perturb
     # GET CHOSEN MODEL
     #-----------------
     logger.info('Building model ...')
