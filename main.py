@@ -300,14 +300,15 @@ def main():
         valid = minimizer.migrad_ok()
         logger.info("Minigrad OK ? {}".format(valid) )
 
-        # COMPUTE HESSAIN ERROR
-        #----------------------
-        logger.info("Computing NLL Hessian ...")
-        with np.warnings.catch_warnings():
-            np.warnings.filterwarnings('ignore', message='.*arcsinh')
-            param = minimizer.hesse()
-        logger.info("Computing NLL Hessian END")
-        logger.info("param = {} ".format(param) )
+        if valid:
+            # COMPUTE HESSAIN ERROR
+            #----------------------
+            logger.info("Computing NLL Hessian ...")
+            with np.warnings.catch_warnings():
+                np.warnings.filterwarnings('ignore', message='.*arcsinh')
+                param = minimizer.hesse()
+            logger.info("Computing NLL Hessian END")
+            logger.info("param = {} ".format(param) )
 
         # Stuff to save
         fitarg = minimizer.fitarg
