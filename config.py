@@ -8,7 +8,7 @@ RANDOM_STATE = 42
 SAVING_DIR = 'savings'
 
 PRECISION = 1e-3
-N_CV = 2
+N_CV = 6
 
 # FIT PARAMETERS
 #---------------
