@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 
 from .neural_network import NeuralNetModel
-# from .neural_network import AugmentedNeuralNetModel
+from .neural_network import AugmentedNeuralNetModel
 from .neural_network import BlindNeuralNetModel
 
 # from .tangent_prop_model import TangentPropModel
@@ -22,7 +22,7 @@ from .gradient_boost import BlindGradientBoostingModel
 
 MODELS = {
     'NN': NeuralNetModel,
-    # 'ANN': AugmentedNeuralNetModel,
+    'ANN': AugmentedNeuralNetModel,
     'BNN': BlindNeuralNetModel,
     # 'TP': TangentPropModel,
     # 'ATP': AugmentedTangentPropModel,

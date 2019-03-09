@@ -15,6 +15,7 @@ import iminuit
 ERRORDEF_NLL = 0.5
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 # FIXME : change a module name is evil
@@ -65,7 +66,7 @@ def parse_args():
                         default=1.0, type=float)
 
     parser.add_argument('-w', '--width', help='width for the data augmentation sampling',
-                        default=5, type=float)
+                        default=1, type=float)
 
     parser.add_argument('--batch-size', help='mini-batch size',
                         default=1024, type=int)
@@ -149,6 +150,31 @@ def main():
 
     logger.handlers[0].flush()
 
+    # PREPARE DATA AUGMENTATION
+    #--------------------------
+    def augment(X, y, sample_weight=None):
+        X = pd.concat([X for _ in range(args.n_augment)])
+        y = pd.concat([y for _ in range(args.n_augment)])
+        W = pd.concat([sample_weight for _ in range(args.n_augment)])
+        size = X.shape[0]
+        z_tau_es = np.random.normal(loc=config.CALIBRATED_TAU_ENERGY_SCALE,
+                                    scale=args.width * config.CALIBRATED_TAU_ENERGY_SCALE_ERROR,
+                                    size=size, )
+        z_jet_es = np.random.normal(loc=config.CALIBRATED_JET_ENERGY_SCALE,
+                                    scale=args.width * config.CALIBRATED_JET_ENERGY_SCALE_ERROR,
+                                    size=size, )
+        z_lep_es = np.random.normal(loc=config.CALIBRATED_LEP_ENERGY_SCALE,
+                                    scale=args.width * config.CALIBRATED_LEP_ENERGY_SCALE_ERROR,
+                                    size=size, )
+        tau_energy_scale(X, scale=z_tau_es)
+        jet_energy_scale(X, scale=z_jet_es)
+        lep_energy_scale(X, scale=z_lep_es)
+        z =  np.concatenate([z_tau_es.reshape(-1, 1),
+                         z_jet_es.reshape(-1, 1), 
+                         z_lep_es.reshape(-1, 1)], axis=1)
+        return X, y, W, z
+
+    args.augmenter = augment
     # GET CHOSEN MODEL
     #-----------------
     logger.info('Building model ...')
@@ -164,9 +190,8 @@ def main():
     logger.info('Loading data ...')
     data = problem.load_data()
     data = data.drop( ["DER_mass_MMC"], axis=1 )
-    N_CV =  6
-
-    cv_sim_xp = ShuffleSplit(n_splits=N_CV, test_size=0.2, random_state=config.RANDOM_STATE)
+    
+    cv_sim_xp = ShuffleSplit(n_splits=config.N_CV, test_size=0.2, random_state=config.RANDOM_STATE)
     for i, (idx_sim, idx_xp) in enumerate(cv_sim_xp.split(data, data['Label'])):
         # SPLIT DATA
         #-----------
@@ -198,14 +223,14 @@ def main():
 
             # SAVE MODEL
             #-----------
-            logger.info('saving model {}/{}...'.format(i+1, N_CV))
+            logger.info('saving model {}/{}...'.format(i+1, config.N_CV))
             model_name = '{}-{}'.format(model.get_name(), i)
             model_path = os.path.join(config.SAVING_DIR, model_name)
 
             os.makedirs(model_path, exist_ok=True)
             model.save(model_path)
         else:
-            logger.info('loading model {}/{}...'.format(i+1, N_CV))
+            logger.info('loading model {}/{}...'.format(i+1, config.N_CV))
             model.load(model_path)
 
         # CHECK TRAINING RESULT

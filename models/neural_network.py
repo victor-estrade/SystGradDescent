@@ -16,9 +16,9 @@ from sklearn.externals import joblib
 from .net.neural_net import NeuralNetClassifier
 from .net.weighted_criterion import WeightedCrossEntropyLoss
 from .net.monitor import LossMonitorHook
+from .net.monitor import LightLossMonitorHook
 
 from .architecture import Net
-from .data_augment import NormalDataAugmenter
 
 from .base_model import BaseClassifierModel
 from .utils import to_numpy
@@ -39,7 +39,7 @@ class NeuralNetModel(BaseClassifierModel):
         self.optimizer = optim.Adam(self.net.parameters(), lr=learning_rate)
         self.criterion = WeightedCrossEntropyLoss()
 
-        self.loss_hook = LossMonitorHook()
+        self.loss_hook = LightLossMonitorHook()
         self.criterion.register_forward_hook(self.loss_hook)
 
         self.scaler = StandardScaler()
@@ -103,7 +103,7 @@ class NeuralNetModel(BaseClassifierModel):
 
 
 class AugmentedNeuralNetModel(BaseClassifierModel):
-    def __init__(self, skewing_function, n_steps=5000, batch_size=20, learning_rate=1e-3, width=1, n_augment=2,
+    def __init__(self, augmenter, n_steps=5000, batch_size=20, learning_rate=1e-3, width=1, n_augment=2,
                  cuda=False, verbose=0):
         super().__init__()
         self.n_steps = n_steps
@@ -122,7 +122,7 @@ class AugmentedNeuralNetModel(BaseClassifierModel):
         self.loss_hook = LossMonitorHook()
         self.criterion.register_forward_hook(self.loss_hook)
 
-        self.augmenter = NormalDataAugmenter(skewing_function, center=1, width=width, n_augment=n_augment)
+        self.augmenter = augmenter
 
         self.scaler = StandardScaler()
         self.clf = NeuralNetClassifier(self.net, self.criterion, self.optimizer,

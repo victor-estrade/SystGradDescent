@@ -62,7 +62,7 @@ def parse_args():
     grid_args.add_argument('-w', '--width',
                         nargs='+',
                         help='width for the data augmentation sampling',
-                        default=5, type=float)
+                        default=1, type=float)
 
     grid_args.add_argument('--batch-size',
                         nargs='+',
