@@ -87,6 +87,7 @@ def normalize_weight(W, y, background_luminosity=410999.84732187376, signal_lumi
 
 def split_data_label_weights(data):
     X = data.drop(["Weight", "Label"], axis=1)
+    X = X.drop(["origWeight", "detailLabel"], axis=1, errors="ignore")
     y = data["Label"]
     W = data["Weight"]
     return X, y, W

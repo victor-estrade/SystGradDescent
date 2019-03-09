@@ -364,12 +364,13 @@ def nasty_background(data, systBkgNorm):
     TODO maybe explain why it scales only the background.
     """
     # only a weight manipulation
-    data["origWeight"] = data["Weight"]
+    if not "origWeight" in data.columns:
+        data["origWeight"] = data["Weight"]
     if not "detailLabel" in data.columns:
         add_detail_label(data)
     # scale the weight, arbitrary but reasonable value
     data["Weight"] = ( data["Weight"]*systBkgNorm ).where(data["detailLabel"] == "W", other=data["origWeight"])
-    data.drop(["origWeight", "detailLabel"], axis=1, inplace=True)
+    # data.drop(["origWeight", "detailLabel"], axis=1, inplace=True)
 
 
 # ==================================================================================

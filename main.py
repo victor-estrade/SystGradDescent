@@ -30,7 +30,7 @@ from higgs_4v_pandas import tau_energy_scale
 from higgs_4v_pandas import jet_energy_scale
 from higgs_4v_pandas import lep_energy_scale
 from higgs_4v_pandas import soft_term
-from higgs_4v_pandas import bkg_weight_norm
+from higgs_4v_pandas import nasty_background
 
 from nll import HiggsNLL
 from models import higgsml_models
@@ -143,9 +143,13 @@ def main():
         z_lep_es = np.random.normal(loc=config.CALIBRATED_LEP_ENERGY_SCALE,
                                     scale=args.width * config.CALIBRATED_LEP_ENERGY_SCALE_ERROR,
                                     size=size, )
+        z_sigma_soft = np.random.normal(loc=config.CALIBRATED_SIGMA_SOFT,
+                                    scale=args.width * config.CALIBRATED_SIGMA_SOFT_ERROR,
+                                    size=size, )
         tau_energy_scale(X, scale=z_tau_es)
         jet_energy_scale(X, scale=z_jet_es)
         lep_energy_scale(X, scale=z_lep_es)
+        soft_term(X, z_sigma_soft)
         z =  np.concatenate([z_tau_es.reshape(-1, 1),
                          z_jet_es.reshape(-1, 1), 
                          z_lep_es.reshape(-1, 1)], axis=1)
@@ -201,14 +205,12 @@ def main():
 
         data_train = data_train.copy()
         data_test = data_test.copy()
-        data_xp = data_xp.copy()
         data_train['Weight'] = normalize_weight(data_train['Weight'], data_train['Label'])
+        data_test["origWeight"] = data_test["Weight"]
         data_test['Weight'] = normalize_weight(data_test['Weight'], data_test['Label'])
-        data_xp['Weight'] = normalize_weight(data_xp['Weight'], data_xp['Label'])
 
         X_train, y_train, W_train = split_data_label_weights(data_train)
         X_test, y_test, W_test = split_data_label_weights(data_test)
-        X_xp, y_xp, W_xp = split_data_label_weights(data_test)
 
         # TRAIN MODEL
         #------------
@@ -246,11 +248,15 @@ def main():
         # PREPARE EXPERIMENTAL DATA
         #--------------------------
         logger.info("Preparing experimental data and NLL minimizer")
-        X_infer = X_xp.copy()
-        W_infer = W_xp.copy()
-        tau_energy_scale(X_infer, scale=config.TRUE_TAU_ENERGY_SCALE)
-        jet_energy_scale(X_infer, scale=config.TRUE_JET_ENERGY_SCALE)
-        lep_energy_scale(X_infer, scale=config.TRUE_LEP_ENERGY_SCALE)
+        data_infer = data_xp.copy()
+        data_infer["origWeight"] = data_infer["Weight"]
+        data_infer['Weight'] = normalize_weight(data_infer['Weight'], data_infer['Label'])
+        tau_energy_scale(data_infer, scale=config.TRUE_TAU_ENERGY_SCALE)
+        jet_energy_scale(data_infer, scale=config.TRUE_JET_ENERGY_SCALE)
+        lep_energy_scale(data_infer, scale=config.TRUE_LEP_ENERGY_SCALE)
+        soft_term(data, config.TRUE_SIGMA_SOFT)
+        nasty_background(data, config.TRUE_NASTY_BKG)
+        X_infer, y_infer, W_infer = split_data_label_weights(data_infer)
         
         # PREPARE NLL MINIZATION
         #-----------------------
@@ -268,6 +274,12 @@ def main():
                         lep_es=config.CALIBRATED_LEP_ENERGY_SCALE,
                         error_lep_es=config.CALIBRATED_LEP_ENERGY_SCALE_ERROR,
                         limit_lep_es=(0, None),
+                        sigma_soft=config.CALIBRATED_SIGMA_SOFT,
+                        error_sigma_soft=config.CALIBRATED_SIGMA_SOFT_ERROR,
+                        limit_sigma_soft=(0, None),
+                        nasty_bkg=config.CALIBRATED_NASTY_BKG,
+                        error_nasty_bkg=config.CALIBRATED_NASTY_BKG_ERROR,
+                        limit_nasty_bkg=(0, None),
                         )
 
         # MINIZE NLL
@@ -323,6 +335,8 @@ def main():
                                     config.TRUE_TAU_ENERGY_SCALE,
                                     config.TRUE_JET_ENERGY_SCALE,
                                     config.TRUE_LEP_ENERGY_SCALE,
+                                    config.TRUE_SIGMA_SOFT,
+                                    config.TRUE_NASTY_BKG,
                                     )
         print('NLL of true params = {}'.format(nll_true_params))
         nll_MLE = negative_log_likelihood(mu_mle, tau_es_mle, jet_es_mle, lep_es_mle)
