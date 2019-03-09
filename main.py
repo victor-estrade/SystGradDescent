@@ -106,7 +106,7 @@ def parse_args():
 def extract_model_args(args, get_model):
     sig = inspect.signature(get_model)
     args_dict = vars(args)
-    model_args = { k: args_dict[k] for k in sig.parameters.keys() if k in args_dict.keys() }
+    model_args = { k: args_dict[k] for k in sig.parameters.keys() if k in args_dict }
     return model_args
 
 
@@ -130,8 +130,8 @@ def main():
 
     logger.handlers[0].flush()
 
-    # PREPARE DATA AUGMENTATION
-    #--------------------------
+    # PREPARE DATA AUGMENTATION/PERTURBATION/TANGENT
+    #-----------------------------------------------
     def perturb(X, y, sample_weight=None):
         size = X.shape[0]
         z_tau_es = np.random.normal(loc=config.CALIBRATED_TAU_ENERGY_SCALE,
@@ -170,17 +170,15 @@ def main():
         T = ( X_plus - X_minus ) / ( 2 * alpha )
         return T
 
-
     args.augmenter = augment
     args.perturbator = perturb
     args.tangent_extractor = tangent_extractor
+
     # GET CHOSEN MODEL
     #-----------------
     logger.info('Building model ...')
     logger.info( 'Model :{}'.format(args.model))
     model_class = higgsml_models(args.model)
-    # args.skewing_function = problem.skew
-    # args.tangent = problem.tangent
     model_args = extract_model_args(args, model_class)
     logger.info( 'model_args :{}'.format(model_args) )
     model = model_class(**model_args)
@@ -242,7 +240,6 @@ def main():
         sns.distplot(proba[y_test==1, 1], label='s')
         plt.title(model_name)
         plt.legend()
-        # FIXME : name depend on model name and cv_iter
         plt.savefig(os.path.join(model_path, 'test_distrib.png'))
         plt.clf()
 
