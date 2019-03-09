@@ -146,10 +146,14 @@ def main():
         z_sigma_soft = np.random.normal(loc=config.CALIBRATED_SIGMA_SOFT,
                                     scale=args.width * config.CALIBRATED_SIGMA_SOFT_ERROR,
                                     size=size, )
+        z_nasty_bkg = np.random.normal(loc=config.CALIBRATED_NASTY_BKG,
+                                    scale=args.width * config.CALIBRATED_NASTY_BKG_ERROR,
+                                    size=size, )
         tau_energy_scale(X, scale=z_tau_es)
         jet_energy_scale(X, scale=z_jet_es)
         lep_energy_scale(X, scale=z_lep_es)
         soft_term(X, z_sigma_soft)
+        nasty_background(X, z_nasty_bkg)
         z =  np.concatenate([z_tau_es.reshape(-1, 1),
                          z_jet_es.reshape(-1, 1), 
                          z_lep_es.reshape(-1, 1)], axis=1)
@@ -164,13 +168,15 @@ def main():
 
     def tangent_extractor(X, alpha=1e-2):
         X_plus = X.copy()
-        tau_energy_scale(X_plus, scale=1.0 + alpha)
-        jet_energy_scale(X_plus, scale=1.0 + alpha)
-        lep_energy_scale(X_plus, scale=1.0 + alpha)
+        tau_energy_scale(X_plus, scale=config.CALIBRATED_TAU_ENERGY_SCALE + alpha)
+        jet_energy_scale(X_plus, scale=config.CALIBRATED_JET_ENERGY_SCALE + alpha)
+        lep_energy_scale(X_plus, scale=config.CALIBRATED_LEP_ENERGY_SCALE + alpha)
+        soft_term(       X_plus, sigma_met=config.CALIBRATED_SIGMA_SOFT + alpha)
         X_minus = X.copy()
-        tau_energy_scale(X_minus, scale=1.0 - alpha)
-        jet_energy_scale(X_minus, scale=1.0 - alpha)
-        lep_energy_scale(X_minus, scale=1.0 - alpha)
+        tau_energy_scale(X_minus, scale=config.CALIBRATED_TAU_ENERGY_SCALE - alpha)
+        jet_energy_scale(X_minus, scale=config.CALIBRATED_JET_ENERGY_SCALE - alpha)
+        lep_energy_scale(X_minus, scale=config.CALIBRATED_LEP_ENERGY_SCALE - alpha)
+        soft_term(       X_minus, sigma_met=config.CALIBRATED_SIGMA_SOFT - alpha)
         T = ( X_plus - X_minus ) / ( 2 * alpha )
         return T
 
