@@ -251,6 +251,9 @@ def main():
         tau_energy_scale(X_infer, scale=config.TRUE_TAU_ENERGY_SCALE)
         jet_energy_scale(X_infer, scale=config.TRUE_JET_ENERGY_SCALE)
         lep_energy_scale(X_infer, scale=config.TRUE_LEP_ENERGY_SCALE)
+        
+        # PREPARE NLL MINIZATION
+        #-----------------------
         N_BIN = 20
         negative_log_likelihood = HiggsNLL(model, X_test, y_test, W_test, X_infer, W_infer, N_BIN=N_BIN)
         minimizer = iminuit.Minuit(negative_log_likelihood,
@@ -267,17 +270,20 @@ def main():
                         limit_lep_es=(0, None),
                         )
 
+        # MINIZE NLL
+        #-----------
         logger.info("minimizing NLL ...")
         with np.warnings.catch_warnings():
             np.warnings.filterwarnings('ignore', message='.*arcsinh')
             fmin, param = minimizer.migrad(precision=config.PRECISION)
         logger.info("minimizing NLL END")
 
-        # What if mingrad failed ?
+        # TODO : What if mingrad failed ?
         valid = minimizer.migrad_ok()
         logger.info("Minigrad OK ? {}".format(valid) )
 
-        # Compute hessian error
+        # COMPUTE HESSAIN ERROR
+        #----------------------
         logger.info("Computing NLL Hessian ...")
         with np.warnings.catch_warnings():
             np.warnings.filterwarnings('ignore', message='.*arcsinh')
@@ -292,6 +298,7 @@ def main():
             json.dump(fitarg, f)
 
         # PRINT ADDITIONNAL RESULTS
+        #--------------------------
         mu_mle = fitarg['mu']
         print('mu MLE = {:2.3f} vs {:2.3f} = True mu'.format(mu_mle, config.TRUE_MU) )
         print('mu MLE offset = {}'.format(mu_mle - config.TRUE_MU))
