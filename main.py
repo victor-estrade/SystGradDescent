@@ -103,32 +103,12 @@ def parse_args():
     return args
 
 
-# def get_model_class(data_name, model_name):
-#     model_class = None
-#     if data_name in MODELS:
-#         model_class = MODELS[data_name](model_name)
-#     else:
-#         raise ValueError('Unrecognized dataset name : {}'
-#                          'Expected one from {}'. format(data_name, MODELS.keys()))
-#     return model_class
-
-
 def extract_model_args(args, get_model):
     sig = inspect.signature(get_model)
     args_dict = vars(args)
     model_args = { k: args_dict[k] for k in sig.parameters.keys() if k in args_dict.keys() }
     return model_args
 
-
-
-def get_cv_iter(X, y):
-    cv = ShuffleSplit(n_splits=12, test_size=0.2, random_state=config.RANDOM_STATE)
-    cv_iter = list(cv.split(X, y))
-    return cv_iter
-# TODO Data augmentation
-#   -> 1 augment + (n-1) perturbator
-#   -> changer les modèles pour recevoir l'augmenteur plutôt qu'une skewing_function
-#   -> l'augmenteur prend les errors de la calibration * width ?
 
 # =====================================================================
 # MAIN
@@ -210,6 +190,8 @@ def main():
     data = problem.load_data()
     data = data.drop( ["DER_mass_MMC"], axis=1 )
     
+    # CROSS VALIDATION
+    #-----------------
     cv_sim_xp = ShuffleSplit(n_splits=config.N_CV, test_size=0.2, random_state=config.RANDOM_STATE)
     for i, (idx_sim, idx_xp) in enumerate(cv_sim_xp.split(data, data['Label'])):
         # SPLIT DATA
