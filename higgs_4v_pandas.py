@@ -351,7 +351,7 @@ def rounding(data, DECIMALS=3):
 # Nasty backgrounds
 # ==================================================================================
 
-def bkg_weight_norm(data, systBkgNorm):
+def nasty_background(data, systBkgNorm):
     """
     Apply a scaling to the weight.
     Keeps the previous weights in the 'origWeight' columns
@@ -369,6 +369,7 @@ def bkg_weight_norm(data, systBkgNorm):
         add_detail_label(data)
     # scale the weight, arbitrary but reasonable value
     data["Weight"] = ( data["Weight"]*systBkgNorm ).where(data["detailLabel"] == "W", other=data["origWeight"])
+    data.drop(["origWeight", "detailLabel"], axis=1, inplace=True)
 
 
 # ==================================================================================

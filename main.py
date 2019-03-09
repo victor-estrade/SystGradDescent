@@ -255,7 +255,7 @@ def main():
         # PREPARE NLL MINIZATION
         #-----------------------
         N_BIN = 20
-        negative_log_likelihood = HiggsNLL(model, X_test, y_test, W_test, X_infer, W_infer, N_BIN=N_BIN)
+        negative_log_likelihood = HiggsNLL(model, data_test, X_infer, W_infer, N_BIN=N_BIN)
         minimizer = iminuit.Minuit(negative_log_likelihood,
                         errordef=ERRORDEF_NLL,
                         mu=1, error_mu=0.1, limit_mu=(0, None),

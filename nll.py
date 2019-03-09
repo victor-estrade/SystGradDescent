@@ -8,11 +8,13 @@ import config
 
 import numpy as np
 
+from higgs_geant import split_data_label_weights
+
 from higgs_4v_pandas import tau_energy_scale
 from higgs_4v_pandas import jet_energy_scale
 from higgs_4v_pandas import lep_energy_scale
 from higgs_4v_pandas import soft_term
-from higgs_4v_pandas import bkg_weight_norm
+from higgs_4v_pandas import nasty_background
 
 def poisson_nll(n, rate):
     return rate - n * np.log(rate)
@@ -22,24 +24,25 @@ def gauss_nll(x, mean, std):
 
 
 class HiggsNLL():
-    def __init__(self, model, X_test, y_test, W_test, X_xp, W_xp, N_BIN=2):
+    def __init__(self, model, test_data, X_xp, W_xp, N_BIN=2):
         self.model = model
-        self.X_test = X_test
-        self.y_test = y_test
-        self.W_test = W_test
+        self.test_data = test_data
         self.X_xp = X_xp
         self.W_xp = W_xp
         self.N_BIN = N_BIN
 
-    def get_s_b(self, tau_es, jet_es, lep_es):
+    def get_s_b(self, tau_es, jet_es, lep_es, sigma_soft, nasty_bkg):
         # Systematic effects
-        d = self.X_test.copy()
-        tau_energy_scale(d, scale=tau_es)
-        jet_energy_scale(d, scale=jet_es)
-        lep_energy_scale(d, scale=lep_es)
-        s = d.loc[self.y_test==1]
+        data = self.test_data.copy()
+        tau_energy_scale(data, scale=tau_es)
+        jet_energy_scale(data, scale=jet_es)
+        lep_energy_scale(data, scale=lep_es)
+        soft_term(data, sigma_soft)
+        nasty_background(data, nasty_bkg)
+        X_test, y_test, W_test = split_data_label_weights(data)
+        s = X_test.loc[self.y_test==1]
         w_s = self.W_test.loc[self.y_test==1]
-        b = d.loc[self.y_test==0]
+        b = X_test.loc[self.y_test==0]
         w_b = self.W_test.loc[self.y_test==0]
         return s, w_s, b, w_b
         
