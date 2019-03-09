@@ -146,6 +146,7 @@ def main():
         z_sigma_soft = np.random.normal(loc=config.CALIBRATED_SIGMA_SOFT,
                                     scale=args.width * config.CALIBRATED_SIGMA_SOFT_ERROR,
                                     size=size, )
+        z_sigma_soft = np.abs(z_sigma_soft)
         z_nasty_bkg = np.random.normal(loc=config.CALIBRATED_NASTY_BKG,
                                     scale=args.width * config.CALIBRATED_NASTY_BKG_ERROR,
                                     size=size, )
@@ -153,7 +154,10 @@ def main():
         jet_energy_scale(X, scale=z_jet_es)
         lep_energy_scale(X, scale=z_lep_es)
         soft_term(X, z_sigma_soft)
+        X['Label'] = y
+        X['Weight'] = sample_weight
         nasty_background(X, z_nasty_bkg)
+        X, _, _ = split_data_label_weights(X)
         z =  np.concatenate([z_tau_es.reshape(-1, 1),
                          z_jet_es.reshape(-1, 1), 
                          z_lep_es.reshape(-1, 1)], axis=1)
@@ -211,7 +215,8 @@ def main():
 
         data_train = data_train.copy()
         data_test = data_test.copy()
-        data_train['Weight'] = normalize_weight(data_train['Weight'], data_train['Label'])
+        # data_train["origWeight"] = data_train["Weight"]
+        # data_train['Weight'] = normalize_weight(data_train['Weight'], data_train['Label'])
         data_test["origWeight"] = data_test["Weight"]
         data_test['Weight'] = normalize_weight(data_test['Weight'], data_test['Label'])
 
