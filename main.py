@@ -337,6 +337,16 @@ def main():
         print('lep_es MLE offset = {}'.format(lep_es_mle - config.TRUE_LEP_ENERGY_SCALE))
         print('lep_es MLE errors = {}'.format(fitarg['error_lep_es']))
         print()
+        sigma_soft_mle = fitarg['sigma_soft']
+        print('sigma_soft MLE = {:2.3f} vs {:2.3f} = True sigma_soft'.format(sigma_soft_mle, config.TRUE_SIGMA_SOFT) )
+        print('sigma_soft MLE offset = {}'.format(sigma_soft_mle - config.TRUE_SIGMA_SOFT))
+        print('sigma_soft MLE errors = {}'.format(fitarg['error_sigma_soft']))
+        print()
+        nasty_bkg_mle = fitarg['nasty_bkg']
+        print('nasty_bkg MLE = {:2.3f} vs {:2.3f} = True nasty_bkg'.format(nasty_bkg_mle, config.TRUE_NASTY_BKG) )
+        print('nasty_bkg MLE offset = {}'.format(nasty_bkg_mle - config.TRUE_NASTY_BKG))
+        print('nasty_bkg MLE errors = {}'.format(fitarg['error_nasty_bkg']))
+        print()
         nll_true_params = negative_log_likelihood(config.TRUE_MU, 
                                     config.TRUE_TAU_ENERGY_SCALE,
                                     config.TRUE_JET_ENERGY_SCALE,
@@ -345,7 +355,7 @@ def main():
                                     config.TRUE_NASTY_BKG,
                                     )
         print('NLL of true params = {}'.format(nll_true_params))
-        nll_MLE = negative_log_likelihood(mu_mle, tau_es_mle, jet_es_mle, lep_es_mle)
+        nll_MLE = negative_log_likelihood(mu_mle, tau_es_mle, jet_es_mle, lep_es_mle, sigma_soft_mle, nasty_bkg_mle)
         print('NLL of MLE  params = {}'.format(nll_MLE))
 
     logger.info("END.")
