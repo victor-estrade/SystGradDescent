@@ -175,9 +175,9 @@ def main():
     if main_args['--retrain'] :
         main_args['--retrain'] = ' '
     else:
-        main_args.pop('--skip-minuit')
-    if main_args['--skip-minuit'] :
         main_args.pop('--retrain')
+    if main_args['--skip-minuit'] :
+        main_args.pop('--skip-minuit')
     else:
         main_args['--skip-minuit'] = ' '
 
