@@ -251,12 +251,15 @@ def main():
         #----------------------
         logger.info( 'Accuracy = {} %'.format(100 * model.score(X_test, y_test)) )
         proba = model.predict_proba(X_test)
-        sns.distplot(proba[y_test==0, 1], label='b')
-        sns.distplot(proba[y_test==1, 1], label='s')
-        plt.title(model_name)
-        plt.legend()
-        plt.savefig(os.path.join(model_path, 'test_distrib.png'))
-        plt.clf()
+        try:
+            sns.distplot(proba[y_test==0, 1], label='b')
+            sns.distplot(proba[y_test==1, 1], label='s')
+            plt.title(model_name)
+            plt.legend()
+            plt.savefig(os.path.join(model_path, 'test_distrib.png'))
+            plt.clf()
+        except:
+            pass
 
         if not args.skip_minuit:
             # PREPARE EXPERIMENTAL DATA
