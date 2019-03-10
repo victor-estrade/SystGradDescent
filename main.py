@@ -51,7 +51,6 @@ def parse_args():
     # MODEL CHOICE
     parser.add_argument('--model', help='model to train',
                         type=str, choices=ARG_MODELS )
-
     # MODEL HYPER PARAMETERS
     parser.add_argument('--n-estimators', help='number of estimators',
                         default=1000, type=int)
@@ -98,6 +97,9 @@ def parse_args():
                         action='store_false', dest='cuda')
     parser.add_argument('--retrain', help='flag to force retraining',
                         action='store_true')
+    parser.add_argument('--skip-minuit', help='flag to skip minuit NLL minization',
+                        action='store_true')
+
 
     args = parser.parse_args()
     return args
@@ -256,131 +258,132 @@ def main():
         plt.savefig(os.path.join(model_path, 'test_distrib.png'))
         plt.clf()
 
-        # PREPARE EXPERIMENTAL DATA
-        #--------------------------
-        logger.info("Preparing experimental data and NLL minimizer")
-        data_infer = data_xp.copy()
-        data_infer["origWeight"] = data_infer["Weight"]
-        data_infer['Weight'] = normalize_weight(data_infer['Weight'], data_infer['Label'])
-        tau_energy_scale(data_infer, scale=config.TRUE_TAU_ENERGY_SCALE)
-        jet_energy_scale(data_infer, scale=config.TRUE_JET_ENERGY_SCALE)
-        lep_energy_scale(data_infer, scale=config.TRUE_LEP_ENERGY_SCALE)
-        soft_term(data, config.TRUE_SIGMA_SOFT)
-        nasty_background(data, config.TRUE_NASTY_BKG)
-        X_infer, y_infer, W_infer = split_data_label_weights(data_infer)
-        
-        # PREPARE NLL MINIZATION
-        #-----------------------
-        N_BIN = 20
-        negative_log_likelihood = HiggsNLL(model, data_test, X_infer, W_infer, N_BIN=N_BIN)
-        minimizer = iminuit.Minuit(negative_log_likelihood,
-                        errordef=ERRORDEF_NLL,
-                        mu=1, error_mu=0.1, limit_mu=(0, None),
-                        tau_es=config.CALIBRATED_TAU_ENERGY_SCALE, 
-                        error_tau_es=config.CALIBRATED_TAU_ENERGY_SCALE_ERROR, 
-                        limit_tau_es=(0, None),
-                        jet_es=config.CALIBRATED_JET_ENERGY_SCALE,
-                        error_jet_es=config.CALIBRATED_JET_ENERGY_SCALE_ERROR,
-                        limit_jet_es=(0, None),
-                        lep_es=config.CALIBRATED_LEP_ENERGY_SCALE,
-                        error_lep_es=config.CALIBRATED_LEP_ENERGY_SCALE_ERROR,
-                        limit_lep_es=(0, None),
-                        sigma_soft=config.CALIBRATED_SIGMA_SOFT,
-                        error_sigma_soft=config.CALIBRATED_SIGMA_SOFT_ERROR,
-                        limit_sigma_soft=(0, None),
-                        nasty_bkg=config.CALIBRATED_NASTY_BKG,
-                        error_nasty_bkg=config.CALIBRATED_NASTY_BKG_ERROR,
-                        limit_nasty_bkg=(0, None),
-                        )
+        if not args.skip_minuit:
+            # PREPARE EXPERIMENTAL DATA
+            #--------------------------
+            logger.info("Preparing experimental data and NLL minimizer")
+            data_infer = data_xp.copy()
+            data_infer["origWeight"] = data_infer["Weight"]
+            data_infer['Weight'] = normalize_weight(data_infer['Weight'], data_infer['Label'])
+            tau_energy_scale(data_infer, scale=config.TRUE_TAU_ENERGY_SCALE)
+            jet_energy_scale(data_infer, scale=config.TRUE_JET_ENERGY_SCALE)
+            lep_energy_scale(data_infer, scale=config.TRUE_LEP_ENERGY_SCALE)
+            soft_term(data, config.TRUE_SIGMA_SOFT)
+            nasty_background(data, config.TRUE_NASTY_BKG)
+            X_infer, y_infer, W_infer = split_data_label_weights(data_infer)
+            
+            # PREPARE NLL MINIZATION
+            #-----------------------
+            N_BIN = 20
+            negative_log_likelihood = HiggsNLL(model, data_test, X_infer, W_infer, N_BIN=N_BIN)
+            minimizer = iminuit.Minuit(negative_log_likelihood,
+                            errordef=ERRORDEF_NLL,
+                            mu=1, error_mu=0.1, limit_mu=(0, None),
+                            tau_es=config.CALIBRATED_TAU_ENERGY_SCALE, 
+                            error_tau_es=config.CALIBRATED_TAU_ENERGY_SCALE_ERROR, 
+                            limit_tau_es=(0, None),
+                            jet_es=config.CALIBRATED_JET_ENERGY_SCALE,
+                            error_jet_es=config.CALIBRATED_JET_ENERGY_SCALE_ERROR,
+                            limit_jet_es=(0, None),
+                            lep_es=config.CALIBRATED_LEP_ENERGY_SCALE,
+                            error_lep_es=config.CALIBRATED_LEP_ENERGY_SCALE_ERROR,
+                            limit_lep_es=(0, None),
+                            sigma_soft=config.CALIBRATED_SIGMA_SOFT,
+                            error_sigma_soft=config.CALIBRATED_SIGMA_SOFT_ERROR,
+                            limit_sigma_soft=(0, None),
+                            nasty_bkg=config.CALIBRATED_NASTY_BKG,
+                            error_nasty_bkg=config.CALIBRATED_NASTY_BKG_ERROR,
+                            limit_nasty_bkg=(0, None),
+                            )
 
-        # MINIZE NLL
-        #-----------
-        logger.info("minimizing NLL ...")
-        with np.warnings.catch_warnings():
-            np.warnings.filterwarnings('ignore', message='.*arcsinh')
-            logger.info("Without systematics")
-            minimizer.fixed['tau_es'] = True
-            minimizer.fixed['jet_es'] = True
-            minimizer.fixed['lep_es'] = True
-            minimizer.fixed['sigma_soft'] = True
-            minimizer.fixed['nasty_bkg'] = True
-            fmin, param = minimizer.migrad(precision=config.PRECISION)
-            logger.info("minimizing NLL END")
-
-            # TODO : What if mingrad failed ?
-            valid = minimizer.migrad_ok()
-            logger.info("Minigrad OK ? {}".format(valid) )
-            if valid:
-                logger.info("With systematics")
-                minimizer.fixed['tau_es'] = False
-                minimizer.fixed['jet_es'] = False
-                minimizer.fixed['lep_es'] = False
-                minimizer.fixed['sigma_soft'] = False
-                minimizer.fixed['nasty_bkg'] = False
-                fmin, param = minimizer.migrad(precision=config.PRECISION)
-                            # TODO : What if mingrad failed ?
-                valid = minimizer.migrad_ok()
-                logger.info("Minigrad 2 OK ? {}".format(valid) )
-
-
-        if valid:
-            # COMPUTE HESSAIN ERROR
-            #----------------------
-            logger.info("Computing NLL Hessian ...")
+            # MINIZE NLL
+            #-----------
+            logger.info("minimizing NLL ...")
             with np.warnings.catch_warnings():
                 np.warnings.filterwarnings('ignore', message='.*arcsinh')
-                param = minimizer.hesse()
-            logger.info("Computing NLL Hessian END")
-            logger.info("param = {} ".format(param) )
+                logger.info("Without systematics")
+                minimizer.fixed['tau_es'] = True
+                minimizer.fixed['jet_es'] = True
+                minimizer.fixed['lep_es'] = True
+                minimizer.fixed['sigma_soft'] = True
+                minimizer.fixed['nasty_bkg'] = True
+                fmin, param = minimizer.migrad(precision=config.PRECISION)
+                logger.info("minimizing NLL END")
 
-        # Stuff to save
-        fitarg = minimizer.fitarg
-        logger.info("fitarg = {} ".format(fitarg) )
-        with open(os.path.join(model_path, 'fitarg.json'), 'w') as f:
-            json.dump(fitarg, f)
+                # TODO : What if mingrad failed ?
+                valid = minimizer.migrad_ok()
+                logger.info("Minigrad OK ? {}".format(valid) )
+                if valid:
+                    logger.info("With systematics")
+                    minimizer.fixed['tau_es'] = False
+                    minimizer.fixed['jet_es'] = False
+                    minimizer.fixed['lep_es'] = False
+                    minimizer.fixed['sigma_soft'] = False
+                    minimizer.fixed['nasty_bkg'] = False
+                    fmin, param = minimizer.migrad(precision=config.PRECISION)
+                                # TODO : What if mingrad failed ?
+                    valid = minimizer.migrad_ok()
+                    logger.info("Minigrad 2 OK ? {}".format(valid) )
 
-        # PRINT ADDITIONNAL RESULTS
-        #--------------------------
-        mu_mle = fitarg['mu']
-        print('mu MLE = {:2.3f} vs {:2.3f} = True mu'.format(mu_mle, config.TRUE_MU) )
-        print('mu MLE offset = {}'.format(mu_mle - config.TRUE_MU))
-        print('mu MLE errors = {}'.format(fitarg['error_mu']))
-        print()
-        tau_es_mle = fitarg['tau_es']
-        print('tau_es MLE = {:2.3f} vs {:2.3f} = True tau_es'.format(tau_es_mle, config.TRUE_TAU_ENERGY_SCALE) )
-        print('tau_es MLE offset = {}'.format(tau_es_mle - config.TRUE_TAU_ENERGY_SCALE))
-        print('tau_es MLE errors = {}'.format(fitarg['error_tau_es']))
-        print()
-        jet_es_mle = fitarg['jet_es']
-        print('jet_es MLE = {:2.3f} vs {:2.3f} = True jet_es'.format(jet_es_mle, config.TRUE_JET_ENERGY_SCALE) )
-        print('jet_es MLE offset = {}'.format(jet_es_mle - config.TRUE_JET_ENERGY_SCALE))
-        print('jet_es MLE errors = {}'.format(fitarg['error_jet_es']))
-        print()
-        lep_es_mle = fitarg['lep_es']
-        print('lep_es MLE = {:2.3f} vs {:2.3f} = True lep_es'.format(lep_es_mle, config.TRUE_LEP_ENERGY_SCALE) )
-        print('lep_es MLE offset = {}'.format(lep_es_mle - config.TRUE_LEP_ENERGY_SCALE))
-        print('lep_es MLE errors = {}'.format(fitarg['error_lep_es']))
-        print()
-        sigma_soft_mle = fitarg['sigma_soft']
-        print('sigma_soft MLE = {:2.3f} vs {:2.3f} = True sigma_soft'.format(sigma_soft_mle, config.TRUE_SIGMA_SOFT) )
-        print('sigma_soft MLE offset = {}'.format(sigma_soft_mle - config.TRUE_SIGMA_SOFT))
-        print('sigma_soft MLE errors = {}'.format(fitarg['error_sigma_soft']))
-        print()
-        nasty_bkg_mle = fitarg['nasty_bkg']
-        print('nasty_bkg MLE = {:2.3f} vs {:2.3f} = True nasty_bkg'.format(nasty_bkg_mle, config.TRUE_NASTY_BKG) )
-        print('nasty_bkg MLE offset = {}'.format(nasty_bkg_mle - config.TRUE_NASTY_BKG))
-        print('nasty_bkg MLE errors = {}'.format(fitarg['error_nasty_bkg']))
-        print()
-        nll_true_params = negative_log_likelihood(config.TRUE_MU, 
-                                    config.TRUE_TAU_ENERGY_SCALE,
-                                    config.TRUE_JET_ENERGY_SCALE,
-                                    config.TRUE_LEP_ENERGY_SCALE,
-                                    config.TRUE_SIGMA_SOFT,
-                                    config.TRUE_NASTY_BKG,
-                                    )
-        print('NLL of true params = {}'.format(nll_true_params))
-        nll_MLE = negative_log_likelihood(mu_mle, tau_es_mle, jet_es_mle, lep_es_mle, sigma_soft_mle, nasty_bkg_mle)
-        print('NLL of MLE  params = {}'.format(nll_MLE))
+
+            if valid:
+                # COMPUTE HESSAIN ERROR
+                #----------------------
+                logger.info("Computing NLL Hessian ...")
+                with np.warnings.catch_warnings():
+                    np.warnings.filterwarnings('ignore', message='.*arcsinh')
+                    param = minimizer.hesse()
+                logger.info("Computing NLL Hessian END")
+                logger.info("param = {} ".format(param) )
+
+            # Stuff to save
+            fitarg = minimizer.fitarg
+            logger.info("fitarg = {} ".format(fitarg) )
+            with open(os.path.join(model_path, 'fitarg.json'), 'w') as f:
+                json.dump(fitarg, f)
+
+            # PRINT ADDITIONNAL RESULTS
+            #--------------------------
+            mu_mle = fitarg['mu']
+            print('mu MLE = {:2.3f} vs {:2.3f} = True mu'.format(mu_mle, config.TRUE_MU) )
+            print('mu MLE offset = {}'.format(mu_mle - config.TRUE_MU))
+            print('mu MLE errors = {}'.format(fitarg['error_mu']))
+            print()
+            tau_es_mle = fitarg['tau_es']
+            print('tau_es MLE = {:2.3f} vs {:2.3f} = True tau_es'.format(tau_es_mle, config.TRUE_TAU_ENERGY_SCALE) )
+            print('tau_es MLE offset = {}'.format(tau_es_mle - config.TRUE_TAU_ENERGY_SCALE))
+            print('tau_es MLE errors = {}'.format(fitarg['error_tau_es']))
+            print()
+            jet_es_mle = fitarg['jet_es']
+            print('jet_es MLE = {:2.3f} vs {:2.3f} = True jet_es'.format(jet_es_mle, config.TRUE_JET_ENERGY_SCALE) )
+            print('jet_es MLE offset = {}'.format(jet_es_mle - config.TRUE_JET_ENERGY_SCALE))
+            print('jet_es MLE errors = {}'.format(fitarg['error_jet_es']))
+            print()
+            lep_es_mle = fitarg['lep_es']
+            print('lep_es MLE = {:2.3f} vs {:2.3f} = True lep_es'.format(lep_es_mle, config.TRUE_LEP_ENERGY_SCALE) )
+            print('lep_es MLE offset = {}'.format(lep_es_mle - config.TRUE_LEP_ENERGY_SCALE))
+            print('lep_es MLE errors = {}'.format(fitarg['error_lep_es']))
+            print()
+            sigma_soft_mle = fitarg['sigma_soft']
+            print('sigma_soft MLE = {:2.3f} vs {:2.3f} = True sigma_soft'.format(sigma_soft_mle, config.TRUE_SIGMA_SOFT) )
+            print('sigma_soft MLE offset = {}'.format(sigma_soft_mle - config.TRUE_SIGMA_SOFT))
+            print('sigma_soft MLE errors = {}'.format(fitarg['error_sigma_soft']))
+            print()
+            nasty_bkg_mle = fitarg['nasty_bkg']
+            print('nasty_bkg MLE = {:2.3f} vs {:2.3f} = True nasty_bkg'.format(nasty_bkg_mle, config.TRUE_NASTY_BKG) )
+            print('nasty_bkg MLE offset = {}'.format(nasty_bkg_mle - config.TRUE_NASTY_BKG))
+            print('nasty_bkg MLE errors = {}'.format(fitarg['error_nasty_bkg']))
+            print()
+            nll_true_params = negative_log_likelihood(config.TRUE_MU, 
+                                        config.TRUE_TAU_ENERGY_SCALE,
+                                        config.TRUE_JET_ENERGY_SCALE,
+                                        config.TRUE_LEP_ENERGY_SCALE,
+                                        config.TRUE_SIGMA_SOFT,
+                                        config.TRUE_NASTY_BKG,
+                                        )
+            print('NLL of true params = {}'.format(nll_true_params))
+            nll_MLE = negative_log_likelihood(mu_mle, tau_es_mle, jet_es_mle, lep_es_mle, sigma_soft_mle, nasty_bkg_mle)
+            print('NLL of MLE  params = {}'.format(nll_MLE))
 
     logger.info("END.")
 

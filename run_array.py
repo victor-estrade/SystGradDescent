@@ -37,6 +37,8 @@ def parse_args():
                         type=str, )
     main_args.add_argument('--retrain', help='flag to force retraining',
                         action='store_true')
+    main_args.add_argument('--skip-minuit', help='flag to skip minuit NLL minization',
+                        action='store_true')
 
     grid_args = parser.add_argument_group('grid_args', 'arguments passed to the subjobs for grid search')
     grid_args.add_argument('--n-estimators',
@@ -170,7 +172,15 @@ def main():
     parameter_dict = {k:to_list(v) for k, v in grid_args.items()}
     grid = param_to_grid(parameter_dict)
     array = "1-{}".format(len(grid))
-    if not main_args['--retrain'] : main_args.pop('--retrain')
+    if main_args['--retrain'] :
+        main_args.pop('--retrain')
+    else:
+        main_args['--retrain'] = ' '
+    if main_args['--skip-minuit'] :
+        main_args.pop('--skip-minuit')
+    else:
+        main_args['--skip-minuit'] = ' '
+
     main_args = " ".join(["{} {}".format(k, v) for k, v in main_args.items()])
 
     # Extra arguments
