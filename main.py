@@ -298,12 +298,30 @@ def main():
         logger.info("minimizing NLL ...")
         with np.warnings.catch_warnings():
             np.warnings.filterwarnings('ignore', message='.*arcsinh')
+            logger.info("Without systematics")
+            minimizer.fixed['tau_es'] = True
+            minimizer.fixed['jet_es'] = True
+            minimizer.fixed['lep_es'] = True
+            minimizer.fixed['sigma_soft'] = True
+            minimizer.fixed['nasty_bkg'] = True
             fmin, param = minimizer.migrad(precision=config.PRECISION)
-        logger.info("minimizing NLL END")
+            logger.info("minimizing NLL END")
 
-        # TODO : What if mingrad failed ?
-        valid = minimizer.migrad_ok()
-        logger.info("Minigrad OK ? {}".format(valid) )
+            # TODO : What if mingrad failed ?
+            valid = minimizer.migrad_ok()
+            logger.info("Minigrad OK ? {}".format(valid) )
+            if valid:
+                logger.info("With systematics")
+                minimizer.fixed['tau_es'] = False
+                minimizer.fixed['jet_es'] = False
+                minimizer.fixed['lep_es'] = False
+                minimizer.fixed['sigma_soft'] = False
+                minimizer.fixed['nasty_bkg'] = False
+                fmin, param = minimizer.migrad(precision=config.PRECISION)
+                            # TODO : What if mingrad failed ?
+                valid = minimizer.migrad_ok()
+                logger.info("Minigrad 2 OK ? {}".format(valid) )
+
 
         if valid:
             # COMPUTE HESSAIN ERROR
