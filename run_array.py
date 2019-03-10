@@ -173,11 +173,11 @@ def main():
     grid = param_to_grid(parameter_dict)
     array = "1-{}".format(len(grid))
     if main_args['--retrain'] :
-        main_args.pop('--retrain')
-    else:
         main_args['--retrain'] = ' '
-    if main_args['--skip-minuit'] :
+    else:
         main_args.pop('--skip-minuit')
+    if main_args['--skip-minuit'] :
+        main_args.pop('--retrain')
     else:
         main_args['--skip-minuit'] = ' '
 
