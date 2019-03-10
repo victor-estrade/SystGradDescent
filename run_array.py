@@ -177,9 +177,9 @@ def main():
     else:
         main_args.pop('--retrain')
     if main_args['--skip-minuit'] :
-        main_args.pop('--skip-minuit')
-    else:
         main_args['--skip-minuit'] = ' '
+    else:
+        main_args.pop('--skip-minuit')
 
     main_args = " ".join(["{} {}".format(k, v) for k, v in main_args.items()])
 
