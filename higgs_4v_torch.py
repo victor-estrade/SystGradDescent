@@ -469,11 +469,10 @@ def soft_term(batch, sigma_met=3.0, missing_value=0.0):
     vj2 = V4_subleading_jet(batch) # second jet if it exists
 
     # Compute the missing v4 vector
-    v4_soft_term = V4()
     normal = torch.distributions.Normal(loc=torch.tensor([0.0]), scale=torch.tensor([sigma_met]))
-
-    v4_soft_term.px = normal.sample(zeros_batch.size())
-    v4_soft_term.py = normal.sample(zeros_batch.size())
+    v4_soft_term = V4()
+    v4_soft_term.px = normal.sample(zeros_batch.size()).type(zeros_batch.type()).view(-1)
+    v4_soft_term.py = normal.sample(zeros_batch.size()).type(zeros_batch.type()).view(-1)
     v4_soft_term.pz = zeros_batch
     v4_soft_term.e = v4_soft_term.eWithM(0.)
 
@@ -492,6 +491,7 @@ def nasty_background(batch, scale=1.5):
 
     TODO maybe explain why it scales only some backgrounds.
     """
+    # element of detail_label_num are not nasty backgrounds
     detail_label_num={
         57207:0, # Signal
         4613:1,
@@ -515,18 +515,17 @@ def nasty_background(batch, scale=1.5):
     batch = collections.OrderedDict(batch)  # Copy to avoid modification of original Dict
 
     W = batch["Weight"]
-    iWeight = torch.floor(1e7 * W + 0.5)
-    iWeight = torch.to_int32(iWeight)
-    is_not_nasty = torch.zeros_like(W, dtype=torch.bool)
-    for is_recognized in [torch.equal(k, iWeight) for k in detail_label_num]:
-        is_not_nasty = torch.logical_or(is_not_nasty, is_recognized)
-    is_nasty_bkg = torch.logical_not(is_not_nasty)
+    iWeight = torch.floor(1e7 * W + 0.5).type(torch.ByteTensor)
+    is_not_nasty = torch.zeros(iWeight.size(), dtype=torch.uint8)
+    for is_recognized in [torch.tensor(k, dtype=torch.uint8) == iWeight for k in detail_label_num]:
+        is_not_nasty = is_not_nasty | is_recognized
+    is_nasty_bkg = ~is_not_nasty
 
     # FIXME : For some reason if_then_else function does not work here
     # batch["Weight"] = if_then_else(is_nasty_bkg, scale * W, lambda x : x + 0 )
     # I used another trick to apply conditional assignment
-    W_nasty = (torch.to_float(is_nasty_bkg) * scale) * W
-    W_original = torch.to_float(is_not_nasty) * W
+    W_nasty = (is_nasty_bkg.type(W.type()) * scale) * W
+    W_original = is_not_nasty.type(W.type()) * W
     batch["Weight"] = W_nasty + W_original
     return batch
 
