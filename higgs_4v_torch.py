@@ -139,7 +139,7 @@ class V4:
             copy.px = self.px - other.px
             copy.py = self.py - other.py
             copy.pz = self.pz - other.pz
-            copy.e = self.e + other.e
+            copy.e = self.e - other.e
         except AttributeError:
             # If 'other' is not V4 like object then return special NotImplemented error
             return NotImplemented
@@ -212,8 +212,8 @@ def V4_lep(batch):
 def V4_met(batch):
     vmet = V4() # met 4-vector
     vmet.setPtEtaPhiM(batch["PRI_met"], 
-                      torch.tensor(0., requires_grad=True), 
-                      batch["PRI_met_phi"], 
+                      torch.tensor(0., requires_grad=True),
+                      batch["PRI_met_phi"],
                       torch.tensor(0., requires_grad=True)) # met mass zero
     return vmet
 
@@ -339,7 +339,7 @@ def tau_energy_scale(batch, scale=1.0, missing_value=0.0):
 
     # scale tau energy scale, arbitrary but reasonable value
     vtau_original = V4_tau(batch) # tau 4-vector
-    batch["PRI_tau_pt"] *= scale 
+    batch["PRI_tau_pt"] = batch["PRI_tau_pt"] * scale
 
     # first built 4-vectors
     vtau = V4_tau(batch) # tau 4-vector
@@ -380,9 +380,9 @@ def jet_energy_scale(batch, scale=1.0, missing_value=0.0):
     vj1_original = V4_leading_jet(batch) # first jet if it exists
     vj2_original = V4_subleading_jet(batch) # second jet if it exists
     # scale jet energy, arbitrary but reasonable value
-    batch["PRI_jet_leading_pt"] *= scale
-    batch["PRI_jet_subleading_pt"] *= scale
-    batch["PRI_jet_all_pt"] *= scale
+    batch["PRI_jet_leading_pt"] = scale * batch["PRI_jet_leading_pt"]
+    batch["PRI_jet_subleading_pt"] = scale * batch["PRI_jet_subleading_pt"]
+    batch["PRI_jet_all_pt"] = scale * batch["PRI_jet_all_pt"]
 
     # first built 4-vectors
     vtau = V4_tau(batch) # tau 4-vector
@@ -423,7 +423,7 @@ def lep_energy_scale(batch, scale=1.0, missing_value=0.0):
 
     vlep_original = V4_lep(batch) # lepton 4-vector
     # scale jet energy, arbitrary but reasonable value
-    batch["PRI_lep_pt"] *= scale 
+    batch["PRI_lep_pt"] = scale * batch["PRI_lep_pt"]
 
     # first built 4-vectors
     vtau = V4_tau(batch) # tau 4-vector
@@ -470,8 +470,10 @@ def soft_term(batch, sigma_met=3.0, missing_value=0.0):
 
     # Compute the missing v4 vector
     v4_soft_term = V4()
-    v4_soft_term.px = torch.random.normal(torch.shape(zeros_batch), mean=0, stddev=sigma_met)
-    v4_soft_term.py = torch.random.normal(torch.shape(zeros_batch), mean=0, stddev=sigma_met)
+    normal = torch.distributions.Normal(loc=torch.tensor([0.0]), scale=torch.tensor([sigma_met]))
+
+    v4_soft_term.px = normal.sample(zeros_batch.size())
+    v4_soft_term.py = normal.sample(zeros_batch.size())
     v4_soft_term.pz = zeros_batch
     v4_soft_term.e = v4_soft_term.eWithM(0.)
 
