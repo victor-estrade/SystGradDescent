@@ -157,10 +157,11 @@ class V4:
             return NotImplemented
         return self
 
+
 def safe_division(x, y):
     """ x/y """
     y_ok = (y != 0.0)
-    y_ok = y_ok.float()
+    y_ok = y_ok.type(y.type())
     safe_y = y_ok * y + (1-y_ok)
     unsafe_op = x / safe_y
     return unsafe_op
@@ -186,14 +187,8 @@ def eta_centrality(eta, etaJ1, etaJ2):
     Returns value smaller than 1/e if object is not between
     """
     center = (etaJ1 + etaJ2) / 2.
-    
     x = etaJ1 - center
-    x_ok = torch.not_equal(x, 0.0)
-    safe_f = torch.zeros_like
-    safe_x = torch.where(x_ok, x, torch.ones_like(x))
-    f = lambda x : 1. / (x*x)
-    width  = torch.where(x_ok, f(safe_x), safe_f(x))
-    
+    width = safe_division(torch.ones_like(x), (x*x))
     return torch.exp(-width * (eta - center)**2)
 
 # ==================================================================================
@@ -260,7 +255,8 @@ def update_eta_centrality(batch, missing_value_batch):
 
 def update_transverse_met_lep(batch, vlep, vmet):
     vtransverse = V4()
-    vtransverse.setPtEtaPhiM(vlep.pt(), 0., vlep.phi(), 0.) # just the transverse component of the lepton
+    vtransverse.setPtEtaPhiM(vlep.pt(), torch.tensor(0., requires_grad=True), 
+                            vlep.phi(), torch.tensor(0., requires_grad=True)) # just the transverse component of the lepton
     vtransverse += vmet
     batch["DER_mass_transverse_met_lep"] = vtransverse.m()
 
