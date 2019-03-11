@@ -132,7 +132,7 @@ class V4:
             copy.px = self.px - other.px
             copy.py = self.py - other.py
             copy.pz = self.pz - other.pz
-            copy.e = self.e + other.e
+            copy.e = self.e - other.e
         except AttributeError:
             # If 'other' is not V4 like object then return special NotImplemented error
             return NotImplemented
