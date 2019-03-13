@@ -471,8 +471,8 @@ def soft_term(batch, sigma_met=3.0, missing_value=0.0):
     # Compute the missing v4 vector
     normal = torch.distributions.Normal(loc=torch.tensor([0.0]), scale=torch.tensor([sigma_met]))
     v4_soft_term = V4()
-    v4_soft_term.px = normal.sample(zeros_batch.size()).type(zeros_batch.type()).view(-1)
-    v4_soft_term.py = normal.sample(zeros_batch.size()).type(zeros_batch.type()).view(-1)
+    v4_soft_term.px = normal.rsample(zeros_batch.size()).type(zeros_batch.type()).view(-1)
+    v4_soft_term.py = normal.rsample(zeros_batch.size()).type(zeros_batch.type()).view(-1)
     v4_soft_term.pz = zeros_batch
     v4_soft_term.e = v4_soft_term.eWithM(0.)
 
