@@ -38,7 +38,7 @@ CALIBRATED_SIGMA_SOFT = 2.7
 CALIBRATED_SIGMA_SOFT_ERROR = 0.5
 TRUE_SIGMA_SOFT = 3.3
 
-# FIXME What are the usual values for soft term ?
+# FIXME What are the usual values for nasty bkg ?
 CALIBRATED_NASTY_BKG = 1.0
 CALIBRATED_NASTY_BKG_ERROR = 0.5
 TRUE_NASTY_BKG = 1.5
