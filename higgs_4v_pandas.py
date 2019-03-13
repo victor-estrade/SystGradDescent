@@ -2,7 +2,7 @@ import sys
 import collections
 import numpy as np
 import copy
-
+import config
 # ==================================================================================
 #  V4 Class and physic computations
 # ==================================================================================
@@ -620,10 +620,11 @@ def soft_term(data, sigma_met=3.0, missing_value=0.0):
     """
 
     # Compute the missing v4 vector
+    random_state = np.random.RandomState(seed=config.RANDOM_STATE)
     SIZE = data.shape[0]
     v4_soft_term = V4()
-    v4_soft_term.px = np.random.normal(0, sigma_met, size=SIZE)
-    v4_soft_term.py = np.random.normal(0, sigma_met, size=SIZE)
+    v4_soft_term.px = random_state.normal(0, sigma_met, size=SIZE)
+    v4_soft_term.py = random_state.normal(0, sigma_met, size=SIZE)
     v4_soft_term.pz = np.zeros(SIZE)
     v4_soft_term.e = v4_soft_term.eWithM(0.)
 
