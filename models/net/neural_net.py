@@ -82,7 +82,7 @@ class NeuralNetClassifier(BaseEstimator, ClassifierMixin):
         for X_batch in batch_gen:
             X_batch = X_batch.astype(np.float32)
             with torch.no_grad():
-                X_batch = make_variable(X_batch, cuda=self.cuda_flag, volatile=True)
+                X_batch = make_variable(X_batch, cuda=self.cuda_flag)
                 proba_batch = F.softmax(self.net.forward(X_batch), dim=1).cpu().data.numpy()
             y_proba.extend(proba_batch)
         y_proba = np.array(y_proba)
