@@ -183,7 +183,7 @@ class TangentPropClassifier(BaseEstimator, ClassifierMixin):
         self.jnet.eval()
         for X_batch in batch_gen:
             X_batch = X_batch.astype(np.float32)
-            X_batch = make_variable(X_batch, cuda=self.cuda_flag, volatile=True)
+            X_batch = make_variable(X_batch, cuda=self.cuda_flag)
             out, _ = self.jnet(X_batch, X_batch)
             proba_batch = F.softmax(out, dim=1).cpu().data.numpy()
             y_proba.extend(proba_batch)
