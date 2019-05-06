@@ -18,8 +18,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-# FIXME : change a module name is evil
-import higgs_geant as problem
+
+from problem.higgs import higgs_geant
 
 from sklearn.model_selection import ShuffleSplit
 from higgs_geant import normalize_weight
@@ -201,7 +201,7 @@ def main():
     logger.handlers[0].flush()
 
     logger.info('Loading data ...')
-    data = problem.load_data()
+    data = higgs_geant.load_data()
     data = data.drop( ["DER_mass_MMC"], axis=1 )
     
     # CROSS VALIDATION
