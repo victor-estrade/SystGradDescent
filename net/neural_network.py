@@ -1,0 +1,211 @@
+# coding: utf-8
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
+import os
+import numpy as np
+
+import torch
+import torch.optim as optim
+import torch.nn.functional as F
+
+from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.preprocessing import StandardScaler
+from sklearn.externals import joblib
+
+from .weighted_criterion import WeightedCrossEntropyLoss
+from .monitor import LightLossMonitorHook
+
+from itertools import islice
+from .minibatch import EpochShuffle
+from .minibatch import OneEpoch
+
+from .utils import to_torch
+from .utils import to_numpy
+from .utils import classwise_balance_weight
+
+
+class NeuralNetClassifier(BaseEstimator, ClassifierMixin):
+    def __init__(self, net, n_steps=5000, batch_size=20, learning_rate=1e-3, cuda=False, verbose=0):
+        super().__init__()
+        self.n_steps    = n_steps
+        self.batch_size = batch_size
+        self.cuda       = cuda
+        self.verbose    = verbose
+
+        self.scaler        = StandardScaler()
+        self.net           = net
+        self.learning_rate = learning_rate
+        self.optimizer     = optim.Adam(self.net.parameters(), lr=learning_rate)
+        self.criterion     = WeightedCrossEntropyLoss()
+
+        self.loss_hook = LightLossMonitorHook()
+        self.criterion.register_forward_hook(self.loss_hook)
+        if cuda:
+            self.cuda()
+
+    def cuda(self, device=None):
+        self.net = self.net.cuda(device=device)
+        self.criterion = self.criterion.cuda(device=device)
+
+    def cpu(self):
+        self.net = self.net.cpu()
+        self.criterion = self.criterion.cpu()
+
+    def fit(self, X, y, sample_weight=None):
+        # To numpy arrays
+        X = to_numpy(X)
+        y = to_numpy(y)
+        if sample_weight is None:
+            sample_weight = np.ones_like(y)
+        else:
+            sample_weight = to_numpy(sample_weight)
+        # Preprocessing
+        X = self.scaler.fit_transform(X)
+        W = classwise_balance_weight(sample_weight, y) * y.shape[0] / 2
+        # to cuda friendly types
+        X = X.astype(np.float32)
+        sample_weight = sample_weight.astype(np.float32)
+        y = y.astype(np.int64)
+        # Reset model
+        self.loss_hook.reset()
+        self.net.reset_parameters()
+        # Train
+        self._fit(X, y, sample_weight=W)
+        return self
+
+    def _fit(self, X, y, sample_weight):
+        """Training loop. Asumes that preprocessing is done."""
+        batch_size = self.batch_size
+        n_steps = self.n_steps
+        batch_gen = EpochShuffle(X, y, sample_weight, batch_size=batch_size)
+        self.net.train()  # train mode
+        for i, (X_batch, y_batch, w_batch) in enumerate(islice(batch_gen, n_steps)):
+            X_batch = to_torch(X_batch, cuda=self.cuda_flag)
+            w_batch = to_torch(w_batch, cuda=self.cuda_flag)
+            y_batch = to_torch(y_batch, cuda=self.cuda_flag)
+            self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
+            y_pred = self.net.forward(X_batch)
+            loss = self.criterion(y_pred, y_batch, w_batch)
+            loss.backward()  # compute gradients
+            self.optimizer.step()  # update params
+        return self
+
+    def predict(self, X):
+        proba = self.predict_proba(X)
+        y_pred = np.argmax(proba, axis=1)
+        return y_pred
+
+    def predict_proba(self, X):
+        X = to_numpy(X)
+        X = self.scaler.transform(X)
+        proba = self._predict_proba(X)
+        return proba
+
+    def _predict_proba(self, X):
+        batch_gen = OneEpoch(X, batch_size=self.batch_size)
+        y_proba = []
+        self.net.eval()  # evaluation mode
+        for X_batch in batch_gen:
+            X_batch = X_batch.astype(np.float32)
+            with torch.no_grad():
+                X_batch = to_torch(X_batch, cuda=self.cuda_flag)
+                proba_batch = F.softmax(self.net.forward(X_batch), dim=1).cpu().data.numpy()
+            y_proba.extend(proba_batch)
+        y_proba = np.array(y_proba)
+        return y_proba
+
+    def save(self, dir_path):
+        path = os.path.join(dir_path, 'weights.pth')
+        torch.save(self.net.state_dict(), path)
+
+        path = os.path.join(dir_path, 'Scaler.pkl')
+        joblib.dump(self.scaler, path)
+
+        path = os.path.join(dir_path, 'losses.json')
+        self.loss_hook.save_state(path)
+        return self
+
+    def load(self, dir_path):
+        path = os.path.join(dir_path, 'weights.pth')
+        if self.cuda:
+            self.net.load_state_dict(torch.load(path))
+        else:
+            self.net.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage))
+
+        path = os.path.join(dir_path, 'Scaler.pkl')
+        self.scaler = joblib.load(path)
+
+        path = os.path.join(dir_path, 'losses.json')
+        self.loss_hook.load_state(path)
+        return self
+
+    def describe(self):
+        return dict(name='neural_net', learning_rate=self.learning_rate,
+                    n_steps=self.n_steps, batch_size=self.batch_size)
+
+    def get_name(self):
+        name = "NeuralNetClf-{}-{}-{}".format(self.n_steps, self.batch_size, self.learning_rate)
+        return name
+
+
+class AugmentedNeuralNetModel(NeuralNetClassifier):
+    def __init__(self, net, augmenter, n_steps=5000, batch_size=20, learning_rate=1e-3, width=1, n_augment=2,
+                 cuda=False, verbose=0):
+        super().__init__(net, n_steps=n_steps, batch_size=batch_size, 
+                        learning_rate=learning_rate, cuda=cuda, verbose=verbose)
+        self.width = width
+        self.n_augment = n_augment
+        self.augmenter = augmenter
+
+    def fit(self, X, y, sample_weight=None):
+        X, y, sample_weight, z = self.augmenter(X, y, sample_weight)
+        super().fit(X, y, sample_weight)
+        return self
+
+    def describe(self):
+        return dict(name='augmented_neural_net', learning_rate=self.learning_rate,
+                    n_steps=self.n_steps, batch_size=self.batch_size, width=self.width, n_augment=self.n_augment)
+
+    def get_name(self):
+        name = "AugmentedNeuralNetClf-{}-{}-{}-{}-{}".format(self.n_steps, self.batch_size, self.learning_rate,
+                        self.width, self.n_augment)
+        return name
+
+
+class BlindNeuralNetModel(NeuralNetClassifier):
+    def __init__(self, net, n_steps=5000, batch_size=20, learning_rate=1e-3, cuda=False, verbose=0):
+        super().__init__(net, n_steps=n_steps, batch_size=batch_size, 
+                        learning_rate=learning_rate, cuda=cuda, verbose=verbose)
+        self.skewed_idx = [0, 1, 8, 9, 10, 12, 18, 19]
+        # ['DER_mass_transverse_met_lep', 'DER_mass_vis', 'DER_sum_pt',
+        #  'DER_pt_ratio_lep_tau', 'DER_met_phi_centrality', 'PRI_tau_pt',
+        #  'PRI_met', 'PRI_met_phi']
+
+    def fit(self, X, y, sample_weight=None):
+        X = to_numpy(X)
+        X = np.delete(X, self.skewed_idx, axis=1)        
+        super().fit(X, y, sample_weight)
+        return self
+
+    def predict(self, X):
+        proba = self.predict_proba(X)
+        y_pred = np.argmax(proba, axis=1)
+        return y_pred
+
+    def predict_proba(self, X):
+        X = to_numpy(X)
+        X = np.delete(X, self.skewed_idx, axis=1)        
+        X = self.scaler.transform(X)
+        proba = self._predict_proba(X)
+        return proba
+
+    def describe(self):
+        return dict(name='blind_neural_net', learning_rate=self.learning_rate,
+                    n_steps=self.n_steps, batch_size=self.batch_size)
+
+    def get_name(self):
+        name = "BlindNeuralNetClf-{}-{}-{}".format(self.n_steps, self.batch_size, self.learning_rate)
+        return name
