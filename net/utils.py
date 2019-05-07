@@ -28,12 +28,12 @@ def to_numpy(X):
 def classwise_balance_weight(sample_weight, y):
     """Balance the weights between positive (1) and negative (0) class."""
     w = sample_weight.copy()
-    neg_mask = (y == 0)
-    pos_mask = (y == 1)
-    
-    neg_sum_weight = np.sum(w[neg_mask])
-    pos_sum_weight = np.sum(w[pos_mask])
-
-    w[neg_mask] = w[neg_mask] / neg_sum_weight
-    w[pos_mask] = w[pos_mask] / pos_sum_weight
+    categories   = np.unique(y)
+    n_samples    = y.shape[0]
+    n_categories = len(categories)
+    for c in categories:
+        mask = (y == c)
+        w_sum = np.sum(w[mask])
+        w[mask] = w[mask] / w_sum
+    w = w * n_samples / n_categories
     return w

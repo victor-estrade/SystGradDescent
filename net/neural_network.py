@@ -59,33 +59,33 @@ class NeuralNetClassifier(BaseEstimator, ClassifierMixin):
         X = to_numpy(X)
         y = to_numpy(y)
         if sample_weight is None:
-            sample_weight = np.ones_like(y)
+            sample_weight = np.ones_like(y, dtype=np.float64)
         else:
             sample_weight = to_numpy(sample_weight)
         # Preprocessing
         X = self.scaler.fit_transform(X)
-        W = classwise_balance_weight(sample_weight, y) * y.shape[0] / 2
+        w = classwise_balance_weight(sample_weight, y)
         # to cuda friendly types
         X = X.astype(np.float32)
-        sample_weight = sample_weight.astype(np.float32)
+        w = w.astype(np.float32)
         y = y.astype(np.int64)
         # Reset model
         self.loss_hook.reset()
         self.net.reset_parameters()
         # Train
-        self._fit(X, y, sample_weight=W)
+        self._fit(X, y, w)
         return self
 
-    def _fit(self, X, y, sample_weight):
+    def _fit(self, X, y, w):
         """Training loop. Asumes that preprocessing is done."""
         batch_size = self.batch_size
         n_steps = self.n_steps
-        batch_gen = EpochShuffle(X, y, sample_weight, batch_size=batch_size)
+        batch_gen = EpochShuffle(X, y, w, batch_size=batch_size)
         self.net.train()  # train mode
         for i, (X_batch, y_batch, w_batch) in enumerate(islice(batch_gen, n_steps)):
-            X_batch = to_torch(X_batch, cuda=self.cuda_flag)
-            w_batch = to_torch(w_batch, cuda=self.cuda_flag)
-            y_batch = to_torch(y_batch, cuda=self.cuda_flag)
+            X_batch = to_torch(X_batch, cuda=self.cuda)
+            w_batch = to_torch(w_batch, cuda=self.cuda)
+            y_batch = to_torch(y_batch, cuda=self.cuda)
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
             y_pred = self.net.forward(X_batch)
             loss = self.criterion(y_pred, y_batch, w_batch)
@@ -111,7 +111,7 @@ class NeuralNetClassifier(BaseEstimator, ClassifierMixin):
         for X_batch in batch_gen:
             X_batch = X_batch.astype(np.float32)
             with torch.no_grad():
-                X_batch = to_torch(X_batch, cuda=self.cuda_flag)
+                X_batch = to_torch(X_batch, cuda=self.cuda)
                 proba_batch = F.softmax(self.net.forward(X_batch), dim=1).cpu().data.numpy()
             y_proba.extend(proba_batch)
         y_proba = np.array(y_proba)
