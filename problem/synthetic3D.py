@@ -30,7 +30,8 @@ class Synthetic3D():
     N_SIG = 50
     def __init__(self, seed=SEED, n_expected_events=1050):
         self.train = Synthetic3DGenerator(seed)
-        self.test = Synthetic3DGenerator(seed+1)
+        self.test  = Synthetic3DGenerator(seed+1)
+        self.final = Synthetic3DGenerator(seed+2)
         self.n_expected_events = n_expected_events
     
     def train_sample(self, r, lam, mu, n_samples=1000):
@@ -40,8 +41,17 @@ class Synthetic3D():
                                 n_expected_events=self.n_expected_events)
         return data
 
-    def test_sample(self, r, lam, mu):
+    def test_sample(self, r, lam, mu, reset=True):
+        if reset:
+            self.test.reset()
         data = self.test.generate(r, lam, mu, n_bkg=self.N_BKG, n_sig=self.N_SIG,
+                                n_expected_events=self.n_expected_events)
+        return data
+
+    def  final_sample(self, r, lam, mu, reset=True):
+        if reset:
+            self.final.reset()
+        data = self.final.generate(r, lam, mu, n_bkg=self.N_BKG, n_sig=self.N_SIG,
                                 n_expected_events=self.n_expected_events)
         return data
 
