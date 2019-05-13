@@ -8,5 +8,5 @@ import numpy as np
 
 def compute_summaries(clf, X, W, n_bins=10):
     proba = clf.predict_proba(X)
-    count, _ = np.histogram(proba[:, 1], weights=W, bins=n_bins)
+    count, _ = np.histogram(proba[:, 1], range=(0., 1.), weights=W, bins=n_bins)
     return count
