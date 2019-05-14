@@ -474,6 +474,18 @@ def update_all(data, vj1, vj2, vlep, vmet, vtau, missing_value):
     update_pt_ratio_lep_tau(data, vlep, vtau)
     update_met_phi_centrality(data)
 
+# ==================================================================================
+# Mu reweighting
+# ==================================================================================
+def mu_reweighting(data, mu=1.0):
+    """
+    Update signal weights inplace to correspond to the new value of mu
+    """
+    y = data['Label']
+    w = data['Weight']
+    w[y==1] = mu * w[y==1]
+    data['Weight'] = w
+
 
 # ==================================================================================
 # TES : Tau Energy Scale
