@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 RANDOM_STATE = 42
+SEED = 42
 SAVING_DIR = 'savings'
 
 PRECISION = 1e-3
