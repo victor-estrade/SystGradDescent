@@ -10,11 +10,12 @@ import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.externals import joblib
 
-from .base_model import BaseClassifierModel
+from sklearn.base import BaseEstimator, ClassifierMixin
 from .utils import to_numpy
-from .utils import balance_training_weight
+from .utils import classwise_balance_weight
 
-class GradientBoostingModel(BaseClassifierModel):
+
+class GradientBoostingModel(BaseEstimator, ClassifierMixin):
     def __init__(self, learning_rate=0.1, n_estimators=1000, max_depth=3,):
         super().__init__()
         self.learning_rate = learning_rate
@@ -29,8 +30,8 @@ class GradientBoostingModel(BaseClassifierModel):
         X = to_numpy(X)
         y = to_numpy(y)
         sample_weight = to_numpy(sample_weight)
-        W = balance_training_weight(sample_weight, y) * y.shape[0] / 2
-        self.clf.fit(X, y, sample_weight=W)
+        w = classwise_balance_weight(sample_weight, y)
+        self.clf.fit(X, y, sample_weight=w)
 
     def predict(self, X):
         X = to_numpy(X)
@@ -59,7 +60,7 @@ class GradientBoostingModel(BaseClassifierModel):
         return name
 
 
-class BlindGradientBoostingModel(BaseClassifierModel):
+class BlindGradientBoostingModel(BaseEstimator, ClassifierMixin):
     def __init__(self, learning_rate=0.1, n_estimators=1000, max_depth=3,):
         super().__init__()
         self.learning_rate = learning_rate
@@ -81,8 +82,8 @@ class BlindGradientBoostingModel(BaseClassifierModel):
         y = to_numpy(y)
         sample_weight = to_numpy(sample_weight)
         X = np.delete(X, self.skewed_idx, axis=1)
-        W = balance_training_weight(sample_weight, y) * y.shape[0] / 2
-        self.clf.fit(X, y, sample_weight=W)
+        w = classwise_balance_weight(sample_weight, y)
+        self.clf.fit(X, y, sample_weight=w)
 
     def predict(self, X):
         X = to_numpy(X)
