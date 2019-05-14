@@ -48,7 +48,7 @@ class Synthetic3D():
                                 n_expected_events=self.n_expected_events)
         return data
 
-    def  final_sample(self, r, lam, mu, reset=True):
+    def final_sample(self, r, lam, mu, reset=True):
         if reset:
             self.final.reset()
         data = self.final.generate(r, lam, mu, n_bkg=self.N_BKG, n_sig=self.N_SIG,
@@ -115,4 +115,69 @@ class Synthetic3DGenerator():
         w_s = np.ones(n_sig) * mu * n_expected_events/n_sig
         w = np.concatenate([w_b, w_s], axis=0)
         return w
+
+
+def split_data_label_weights(data):
+    X = data.drop(['label', 'weight'], axis=1)
+    y = data['label']
+    w = data['weight']
+    return X, y, w
+
+
+class Config():
+    CALIBRATED_MU = 50/1050
+    CALIBRATED_R = 0.0
+    CALIBRATED_LAMBDA = 3.0
+
+    CALIBRATED_MU_ERROR = 1.0  # minuit default
+    CALIBRATED_R_ERROR = 0.4
+    CALIBRATED_LAMBDA_ERROR = 1.0
+    
+    TRUE_MU = 50/1050
+    TRUE_R = 0.0
+    TRUE_LAMBDA = 3.0
+
+    N_SIG = 5000
+    N_BKG = 20000
+    N_TRAINING_SAMPLES = 30000
+
+
+def poisson_nll(n, rate):
+    return rate - n * np.log(rate)
+
+def gauss_nll(x, mean, std):
+    return np.log(std) + np.square(x - mean) / (2 * np.square(std))
+
+
+class Synthetic3DNLL():
+    def __init__(self, summary_computer, generator, X_final, w_final):
+        self.summary_computer = summary_computer
+        self.generator = generator
+        self.X_final = X_final
+        self.w_final = w_final
+
+    def simulation(self, r, lam, mu):
+        # Systematic effects
+        test_data = self.generator.test_sample(r, lam, mu)
+        X_test, y_test, w_test = split_data_label_weights(test_data)
+        X_sig = X_test.loc[y_test==1]
+        w_sig = w_test.loc[y_test==1]
+        X_bkg = X_test.loc[y_test==0]
+        w_bkg = w_test.loc[y_test==0]
+        return X_sig, w_sig, X_bkg, w_bkg
+        
+    def __call__(self, r, lam, mu):
+        """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""        
+        X_sig, w_sig, X_bkg, w_bkg = self.simulation(r, lam, mu)
+        s_histogram = self.summary_computer(X_sig, w_sig)
+        b_histogram = self.summary_computer(X_bkg, w_bkg)
+        n_histogram = self.summary_computer(self.X_final, self.w_final)
+
+        # Compute NLL
+        rate = s_histogram + b_histogram
+        data_nll = np.sum(poisson_nll(n_histogram, rate))
+        r_constraint = gauss_nll(r, 0, 0.4)
+        lam_constraint = gauss_nll(lam, 3, 1.0)
+        total_nll = data_nll + r_constraint + lam_constraint
+        return total_nll
 
