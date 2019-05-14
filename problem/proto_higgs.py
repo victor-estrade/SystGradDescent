@@ -6,35 +6,66 @@ from __future__ import absolute_import
 import numpy as np
 import pandas as pd
 
+from .higgs.higgs_geant import load_data
+from .higgs.higgs_geant import normalize_weight
+from .higgs.higgs_4v_pandas import tau_energy_scale
+from .higgs.higgs_4v_pandas import jet_energy_scale
+from .higgs.higgs_4v_pandas import lep_energy_scale
+from .higgs.higgs_4v_pandas import soft_term
+from .higgs.higgs_4v_pandas import nasty_background
+
 from sklearn.model_selection import ShuffleSplit
 
 SEED = 42
 
 
-def transform(data, param):
-    """Dummy transform function"""
-    transformed_data = data.copy()
-    transformed_data['label'] = transformed_data['label'] + 2
-    return transformed_data
-
-
-class ProtoHiggs():
-    def __init__(self, data, test_size=0.5, seed=SEED):
-        cv_train_test = ShuffleSplit(n_splits=1, test_size=test_size, random_state=seed)
-        idx_train, idx_test = next(cv_train_test.split(data, data['label']))
+class Higgs():
+    def __init__(self, seed=SEED):
+        data = load_data()
+        cv_train_other = ShuffleSplit(n_splits=1, test_size=0.5, random_state=seed)
+        idx_train, idx_other = next(cv_train_other.split(data, data['Label']))
         self.train_data = data.iloc[idx_train]
-        self.test_data = data.iloc[idx_test]
         self._train_sampler = CircularSampler(self.train_data, seed=seed)
-        
-    def train_sample(self, param, n_samples=None):
+        other_data = data.iloc[idx_other]
+
+        cv_test_final = ShuffleSplit(n_splits=1, test_size=0.5, random_state=seed)
+        idx_test, idx_final = next(cv_test_final.split(other_data, other_data['Label']))
+        self.test_data = other_data.iloc[idx_test]
+        self.final_data = other_data.iloc[idx_final]
+
+        normalize_weight(self.test_data)
+        normalize_weight(self.final_data)
+
+
+    def train_sample(self, mu, tau_es, jet_es, lep_es, sigma_soft, nasty_bkg, n_samples=None):
         if n_samples is None:
             return self.train_data
         data = self._train_sampler.sample(n_samples)
-        data = transform(data, param)
+        tau_energy_scale(data, scale=tau_es)
+        jet_energy_scale(data, scale=jet_es)
+        lep_energy_scale(data, scale=lep_es)
+        soft_term(data, sigma_soft)
+        nasty_background(data, nasty_bkg)
+        normalize_weight(data)
         return data
     
-    def test_sample(self):
-        return self.test_data
+    def test_sample(self, mu, tau_es, jet_es, lep_es, sigma_soft, nasty_bkg):
+        data = self.test_data.copy()
+        tau_energy_scale(data, scale=tau_es)
+        jet_energy_scale(data, scale=jet_es)
+        lep_energy_scale(data, scale=lep_es)
+        soft_term(data, sigma_soft)
+        nasty_background(data, nasty_bkg)
+        return data
+
+    def final_sample(self, mu, tau_es, jet_es, lep_es, sigma_soft, nasty_bkg):
+        data = self.final_data.copy()
+        tau_energy_scale(data, scale=tau_es)
+        jet_energy_scale(data, scale=jet_es)
+        lep_energy_scale(data, scale=lep_es)
+        soft_term(data, sigma_soft)
+        nasty_background(data, nasty_bkg)
+        return data
 
 
 class CircularSampler():
