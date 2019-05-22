@@ -45,7 +45,9 @@ class V4:
         return np.sqrt( np.abs( self.e**2 - self.p2() ) ) # abs is needed for protection
     
     def eta(self):
-        return np.arcsinh( self.pz/self.pt() )
+        with np.warnings.catch_warnings():
+            np.warnings.filterwarnings('ignore', message='.*arcsinh')
+            return np.arcsinh( self.pz/self.pt() )
     
     def phi(self):
         return np.arctan2(self.py, self.px)
@@ -481,10 +483,11 @@ def mu_reweighting(data, mu=1.0):
     """
     Update signal weights inplace to correspond to the new value of mu
     """
-    y = data['Label']
-    w = data['Weight']
-    w[y==1] = mu * w[y==1]
-    data['Weight'] = w
+    y = data['Label'].values
+    w = data['Weight'].values
+    w_new = w.copy()
+    w_new[y==1] = mu * w[y==1]
+    data['Weight'] = w_new
 
 
 # ==================================================================================

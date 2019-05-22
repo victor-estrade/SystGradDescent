@@ -77,21 +77,21 @@ def normalize_weight(data):
     """Normalizes weight inplace"""
     w = data['Weight'].values
     y = data['Label'].values
-    data['Weight'] = normalize_weight(w, y)
+    data['Weight'] = compute_normalized_weight(w, y)
 
 
-def compute_normalized_weight(W, y, 
+def compute_normalized_weight(w, y, 
                               background_luminosity=410999.84732187376, 
                               signal_luminosity=691.9886077135781):
     """Normalize the given weight to assert that the luminosity is the same as the nominal.
     Returns the normalized weight vector/Series
     """
-    background_weight_sum = W[y==0].sum()
-    signal_weight_sum = W[y==1].sum()
-    W_new = W.copy()
-    W_new[y==0] = W[y==0] * ( background_luminosity / background_weight_sum )
-    W_new[y==1] = W[y==1] * ( signal_luminosity / signal_weight_sum )
-    return W_new
+    background_weight_sum = w[y==0].sum()
+    signal_weight_sum = w[y==1].sum()
+    w_new = w.copy()
+    w_new[y==0] = w[y==0] * ( background_luminosity / background_weight_sum )
+    w_new[y==1] = w[y==1] * ( signal_luminosity / signal_weight_sum )
+    return w_new
 
 
 def split_data_label_weights(data):

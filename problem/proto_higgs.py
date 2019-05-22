@@ -8,6 +8,7 @@ import pandas as pd
 
 from .higgs.higgs_geant import load_data
 from .higgs.higgs_geant import normalize_weight
+from .higgs.higgs_4v_pandas import mu_reweighting
 from .higgs.higgs_4v_pandas import tau_energy_scale
 from .higgs.higgs_4v_pandas import jet_energy_scale
 from .higgs.higgs_4v_pandas import lep_energy_scale
@@ -22,31 +23,30 @@ SEED = 42
 class Higgs():
     def __init__(self, seed=SEED):
         data = load_data()
+        data['origWeight'] = data['Weight'].copy()
         cv_train_other = ShuffleSplit(n_splits=1, test_size=0.5, random_state=seed)
         idx_train, idx_other = next(cv_train_other.split(data, data['Label']))
         self.train_data = data.iloc[idx_train]
         self._train_sampler = CircularSampler(self.train_data, seed=seed)
         other_data = data.iloc[idx_other]
 
-        cv_test_final = ShuffleSplit(n_splits=1, test_size=0.5, random_state=seed)
+        cv_test_final = ShuffleSplit(n_splits=1, test_size=0.5, random_state=seed+1)
         idx_test, idx_final = next(cv_test_final.split(other_data, other_data['Label']))
         self.test_data = other_data.iloc[idx_test]
         self.final_data = other_data.iloc[idx_final]
 
-        normalize_weight(self.test_data)
-        normalize_weight(self.final_data)
-
-
     def train_sample(self, mu, tau_es, jet_es, lep_es, sigma_soft, nasty_bkg, n_samples=None):
         if n_samples is None:
-            return self.train_data
-        data = self._train_sampler.sample(n_samples)
+            data = self.train_data.copy()
+        else:
+            data = self._train_sampler.sample(n_samples).copy()
         tau_energy_scale(data, scale=tau_es)
         jet_energy_scale(data, scale=jet_es)
         lep_energy_scale(data, scale=lep_es)
         soft_term(data, sigma_soft)
-        nasty_background(data, nasty_bkg)
         normalize_weight(data)
+        nasty_background(data, nasty_bkg)
+        mu_reweighting(data, mu)
         return data
     
     def test_sample(self, mu, tau_es, jet_es, lep_es, sigma_soft, nasty_bkg):
@@ -55,7 +55,9 @@ class Higgs():
         jet_energy_scale(data, scale=jet_es)
         lep_energy_scale(data, scale=lep_es)
         soft_term(data, sigma_soft)
+        normalize_weight(data)
         nasty_background(data, nasty_bkg)
+        mu_reweighting(data, mu)
         return data
 
     def final_sample(self, mu, tau_es, jet_es, lep_es, sigma_soft, nasty_bkg):
@@ -64,7 +66,9 @@ class Higgs():
         jet_energy_scale(data, scale=jet_es)
         lep_energy_scale(data, scale=lep_es)
         soft_term(data, sigma_soft)
+        normalize_weight(data)
         nasty_background(data, nasty_bkg)
+        mu_reweighting(data, mu)
         return data
 
 
