@@ -3,8 +3,6 @@ import torch.nn as nn
 import torch.optim as optim
 
 import numpy as np
-import torch
-import torch.optim as optim
 
 from collections import OrderedDict
 # from sklearn.base import BaseEstimator, ClassifierMixin
