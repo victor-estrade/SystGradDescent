@@ -31,21 +31,14 @@ class Inferno():
         self.loss_hook = LightLossMonitorHook()
         self.criterion.register_forward_hook(self.loss_hook)
         
-        self.valid_crit = S3DLoss()
-        self.valid_loss_hook = LightLossMonitorHook()
-        self.valid_crit.register_forward_hook(self.valid_loss_hook)
-
     def fit(self, X, y, w):
         pass
     
-    def fit_generator(self, generator, valid_generator=None):
+    def fit_generator(self, generator):
         mu = torch.tensor(1.0, requires_grad=True)
         mu_prime = mu.detach()
         params = OrderedDict([('mu', mu)])
         params.update(generator.nuisance_params)
-        if valid_generator is not None:
-            valid_params = OrderedDict([('mu', mu)])
-            valid_params.update(valid_generator.nuisance_params)
 
         for i in range(self.n_steps):
             s, b = generator(self.batch_size)
@@ -59,7 +52,6 @@ class Inferno():
 
             total_count = mu * s_counts + b_counts # should be mu s + b + epsilon
             asimov = mu_prime * s_prime_counts + b_prime_counts # should be mu s + b + epsilon
-
             loss = self.criterion(total_count, asimov, params)
             
             if np.isnan(loss.item()):
@@ -69,20 +61,7 @@ class Inferno():
                 break
             else:
                 loss.backward()
-                self.optimizer.step()  # update params
-            if valid_generator is not None:
-                s, b = valid_generator(100_000)
-                s_prime, b_prime = s.detach(), b.detach()
-
-                s_counts = self.forward(s)
-                b_counts = self.forward(b)
-                s_prime_counts = self.forward(s_prime)
-                b_prime_counts = self.forward(b_prime)
-
-                total_count = mu * s_counts + b_counts # should be mu s + b + epsilon
-                asimov = mu_prime * s_prime_counts + b_prime_counts # should be mu s + b + epsilon
-                loss = self.valid_crit(total_count, asimov, valid_params)
-                
+                self.optimizer.step()  # update params                
 
     def predict(self, X, w):
         pass
