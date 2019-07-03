@@ -32,7 +32,7 @@ class NeuralNetClassifier(BaseEstimator, ClassifierMixin):
         super().__init__()
         self.n_steps    = n_steps
         self.batch_size = batch_size
-        self.cuda       = cuda
+        self.cuda_flag  = cuda
         self.verbose    = verbose
 
         self.scaler        = StandardScaler()
@@ -83,9 +83,9 @@ class NeuralNetClassifier(BaseEstimator, ClassifierMixin):
         batch_gen = EpochShuffle(X, y, w, batch_size=batch_size)
         self.net.train()  # train mode
         for i, (X_batch, y_batch, w_batch) in enumerate(islice(batch_gen, n_steps)):
-            X_batch = to_torch(X_batch, cuda=self.cuda)
-            w_batch = to_torch(w_batch, cuda=self.cuda)
-            y_batch = to_torch(y_batch, cuda=self.cuda)
+            X_batch = to_torch(X_batch, cuda=self.cuda_flag)
+            w_batch = to_torch(w_batch, cuda=self.cuda_flag)
+            y_batch = to_torch(y_batch, cuda=self.cuda_flag)
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
             y_pred = self.net.forward(X_batch)
             loss = self.criterion(y_pred, y_batch, w_batch)
@@ -111,7 +111,7 @@ class NeuralNetClassifier(BaseEstimator, ClassifierMixin):
         for X_batch in batch_gen:
             X_batch = X_batch.astype(np.float32)
             with torch.no_grad():
-                X_batch = to_torch(X_batch, cuda=self.cuda)
+                X_batch = to_torch(X_batch, cuda=self.cuda_flag)
                 proba_batch = F.softmax(self.net.forward(X_batch), dim=1).cpu().data.numpy()
             y_proba.extend(proba_batch)
         y_proba = np.array(y_proba)
@@ -130,7 +130,7 @@ class NeuralNetClassifier(BaseEstimator, ClassifierMixin):
 
     def load(self, dir_path):
         path = os.path.join(dir_path, 'weights.pth')
-        if self.cuda:
+        if self.cuda_flag:
             self.net.load_state_dict(torch.load(path))
         else:
             self.net.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage))
