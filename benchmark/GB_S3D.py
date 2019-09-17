@@ -49,9 +49,9 @@ from problem.synthetic3D import Config
 from problem.synthetic3D import split_data_label_weights
 from problem.synthetic3D import Synthetic3DNLL
 
-from net.gradient_boost import GradientBoostingModel
+from model.gradient_boost import GradientBoostingModel
 
-from models.classfier import ClassifierSummaryComputer
+from measure.classfier import ClassifierSummaryComputer
 
 
 def parse_args():
