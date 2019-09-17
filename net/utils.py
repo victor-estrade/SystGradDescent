@@ -13,7 +13,7 @@ def to_torch(arr, cuda=True):
     """
     Transform given numpy array to a torch.autograd.Variable
     """
-    tensor = torch.from_numpy(arr)
+    tensor = arr if torch.is_tensor(arr) else torch.from_numpy(arr)
     if cuda:
         tensor = tensor.cuda()
     return tensor
