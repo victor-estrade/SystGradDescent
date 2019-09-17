@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line : 
-# python -m scripts.GB_S3D 
+# python -m benchmark.GB_S3D 
 
 import os
 import argparse
