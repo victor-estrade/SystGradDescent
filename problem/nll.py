@@ -8,13 +8,13 @@ import config
 
 import numpy as np
 
-from higgs_geant import split_data_label_weights
+from higgs.higgs_geant import split_data_label_weights
 
-from higgs_4v_pandas import tau_energy_scale
-from higgs_4v_pandas import jet_energy_scale
-from higgs_4v_pandas import lep_energy_scale
-from higgs_4v_pandas import soft_term
-from higgs_4v_pandas import nasty_background
+from higgs.higgs_4v_pandas import tau_energy_scale
+from higgs.higgs_4v_pandas import jet_energy_scale
+from higgs.higgs_4v_pandas import lep_energy_scale
+from higgs.higgs_4v_pandas import soft_term
+from higgs.higgs_4v_pandas import nasty_background
 
 def poisson_nll(n, rate):
     return rate - n * np.log(rate)
