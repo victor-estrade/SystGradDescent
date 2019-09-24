@@ -5,6 +5,8 @@ from __future__ import absolute_import
 
 import numpy as np
 import pandas as pd
+from .nll import gauss_nll
+from .nll import poisson_nll
 
 SEED = 42
 
@@ -140,13 +142,6 @@ class Config():
     N_SIG = 5000
     N_BKG = 20000
     N_TRAINING_SAMPLES = 30000
-
-
-def poisson_nll(n, rate):
-    return rate - n * np.log(rate)
-
-def gauss_nll(x, mean, std):
-    return np.log(std) + np.square(x - mean) / (2 * np.square(std))
 
 
 class Synthetic3DNLL():
