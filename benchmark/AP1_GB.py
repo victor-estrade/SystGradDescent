@@ -24,7 +24,6 @@ from utils import print_params
 
 from myplot import plot_valid_distrib
 from myplot import plot_summaries
-from myplot import plot_param_around_min
 from myplot import plot_params
 
 from problem.apples_and_pears import AP1
@@ -97,7 +96,7 @@ def run(args, i_cv):
     X_test, y_test, w_test = test_generator.generate(apple_ratio=true_apple_ratio, n_samples=2_000)
     
     logger.info('Set up NLL computer')
-    compute_summaries = ClassifierSummaryComputer(model)
+    compute_summaries = ClassifierSummaryComputer(model, n_bins=10)
     compute_nll = AP1NLL(compute_summaries, valid_generator, X_test, w_test)
 
     logger.info('Plot summaries')
@@ -121,18 +120,18 @@ def run(args, i_cv):
     
     minimizer.print_param()
     logger.info('Mingrad()')
-    fmin, param = minimizer.migrad()
+    fmin, params = minimizer.migrad()
     logger.info('Mingrad DONE')
 
     if minimizer.migrad_ok():
         logger.info('Mingrad is VALID !')
-        print_params(param, param_truth)
+        print_params(params, params_truth)
         logger.info('Hesse()')
-        param = minimizer.hesse()
+        params = minimizer.hesse()
         logger.info('Hesse DONE')
 
     logger.info('Plot params')
-    plot_params(param, param_truth, model_name, model_path)
+    plot_params(params, params_truth, model_name, model_path)
     logger.info('DONE')
 
 
