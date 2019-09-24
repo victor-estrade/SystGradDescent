@@ -86,10 +86,7 @@ class Synthetic3DGenerator():
         X = self._generate_vars(r, lam, mu, n_bkg, n_sig)
         y = self._generate_labels(n_bkg, n_sig)
         w = self._generate_weights(mu, n_bkg, n_sig, n_expected_events)
-        data = pd.DataFrame(X, columns=("x1", "x2", "x3"))
-        data['label'] = y
-        data['weight'] = w
-        return data
+        return X, y, w
     
     def _generate_vars(self, r, lam, mu, n_bkg, n_sig):
         bkg_mean = np.array([2.+r, 0.])
