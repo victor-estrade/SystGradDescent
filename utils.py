@@ -6,6 +6,25 @@ from __future__ import unicode_literals
 
 import logging
 import inspect
+import matplotlib as mpl
+import seaborn as sns
+
+
+def set_plot_config():
+    sns.set()
+    sns.set_style("whitegrid")
+    sns.set_context("poster")
+
+    mpl.rcParams['figure.figsize'] = [8.0, 6.0]
+    mpl.rcParams['figure.dpi'] = 80
+    mpl.rcParams['savefig.dpi'] = 100
+
+    mpl.rcParams['font.size'] = 10
+    mpl.rcParams['axes.labelsize'] = 10
+    mpl.rcParams['ytick.labelsize'] = 10
+    mpl.rcParams['xtick.labelsize'] = 10
+    mpl.rcParams['legend.fontsize'] = 'large'
+    mpl.rcParams['figure.titlesize'] = 'medium'
 
 
 def set_logger():
