@@ -125,12 +125,14 @@ def run(args, i_cv):
 
     if minimizer.migrad_ok():
         logger.info('Mingrad is VALID !')
-        print_params(params, params_truth)
         logger.info('Hesse()')
         params = minimizer.hesse()
         logger.info('Hesse DONE')
+    else:
+        logger.info('Mingrad IS NOT VALID !')
 
     logger.info('Plot params')
+    print_params(params, params_truth)
     plot_params(params, params_truth, model_name, model_path)
     logger.info('DONE')
 
