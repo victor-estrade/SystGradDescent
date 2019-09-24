@@ -70,6 +70,16 @@ class AP1():
         return X, y, w
 
 
+class AP1Config():
+    CALIBRATED_APPLE_RATIO = 0.5
+    CALIBRATED_APPLE_RATIO_ERROR = 1  # minuit default
+    TRUE_APPLE_RATIO = 0.5
+
+    N_TRAINING_SAMPLES = 2000
+    N_VALIDATION_SAMPLES = 2000
+    N_TESTING_SAMPLES = 2000
+
+
 class AP1NLL():
     def __init__(self, compute_summaries, valid_generator, X_exp, w_exp):
         self.compute_summaries = compute_summaries
@@ -78,10 +88,12 @@ class AP1NLL():
         self.w_exp = w_exp
     
     def __call__(self, apple_ratio):
+        pb_config = AP1Config()
         self.valid_generator.reset()
-        X, y, w = self.valid_generator.generate(apple_ratio, n_samples=2_000)
+        X, y, w = self.valid_generator.generate(apple_ratio, n_samples=pb_config.N_VALIDATION_SAMPLES)
         valid_summaries = self.compute_summaries(X, w)
         test_summaries  = self.compute_summaries(self.X_exp, self.w_exp)
+
         # Compute NLL
         EPSILON = 1e-6  # avoid log(0)
         rate = valid_summaries# + EPSILON
