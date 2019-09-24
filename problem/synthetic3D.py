@@ -4,7 +4,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import numpy as np
-import pandas as pd
 from .nll import gauss_nll
 from .nll import poisson_nll
 
@@ -59,14 +58,15 @@ class Synthetic3D():
 
 
 class Synthetic3DGenerator():
-    def __init__(self, seed=SEED):
+    def __init__(self, n_expected_events=1050, seed=SEED):
+        self.n_expected_events = n_expected_events
         self.seed = seed
         self.random = np.random.RandomState(seed=seed)
 
     def reset(self):
         self.random = np.random.RandomState(seed=self.seed)
 
-    def generate(self, r, lam, mu, n_bkg=1000, n_sig=50, n_expected_events=1050):
+    def generate(self, r, lam, mu, n_bkg=1000, n_sig=50):
         """
         $$
         f_b (x|r, \lambda) = \mathcal N \left ( (x_0, x_1) | (2+r, 0) 
@@ -85,7 +85,7 @@ class Synthetic3DGenerator():
         """
         X = self._generate_vars(r, lam, mu, n_bkg, n_sig)
         y = self._generate_labels(n_bkg, n_sig)
-        w = self._generate_weights(mu, n_bkg, n_sig, n_expected_events)
+        w = self._generate_weights(mu, n_bkg, n_sig, self.n_expected_events)
         return X, y, w
     
     def _generate_vars(self, r, lam, mu, n_bkg, n_sig):
@@ -116,6 +116,21 @@ class Synthetic3DGenerator():
         return w
 
 
+class S3D2():
+    def __init__(self, seed):
+        n_expected_events = 1050
+        self.generator = Synthetic3DGenerator(n_expected_events=n_expected_events, seed=seed)
+
+    def reset(self):
+        self.generator.reset()
+
+    def generate(self, r, lam, mu, n_samples=1000):
+        n_bkg = n_samples // 2
+        n_sig = n_samples // 2
+        X, y, w = self.generator.generate(r, lam, mu, n_bkg=n_bkg, n_sig=n_sig)
+        return X, y, w
+
+
 def split_data_label_weights(data):
     X = data.drop(['label', 'weight'], axis=1)
     y = data['label']
@@ -123,7 +138,7 @@ def split_data_label_weights(data):
     return X, y, w
 
 
-class Config():
+class S3D2Config():
     CALIBRATED_MU = 50/1050
     CALIBRATED_R = 0.0
     CALIBRATED_LAMBDA = 3.0
@@ -139,37 +154,29 @@ class Config():
     N_SIG = 5000
     N_BKG = 20000
     N_TRAINING_SAMPLES = 30000
+    N_VALIDATION_SAMPLES = 30000
+    N_TESTING_SAMPLES = 30000
 
 
-class Synthetic3DNLL():
-    def __init__(self, summary_computer, generator, X_final, w_final):
-        self.summary_computer = summary_computer
-        self.generator = generator
-        self.X_final = X_final
-        self.w_final = w_final
-
-    def simulation(self, r, lam, mu):
-        # Systematic effects
-        test_data = self.generator.test_sample(r, lam, mu)
-        X_test, y_test, w_test = split_data_label_weights(test_data)
-        X_sig = X_test.loc[y_test==1]
-        w_sig = w_test.loc[y_test==1]
-        X_bkg = X_test.loc[y_test==0]
-        w_bkg = w_test.loc[y_test==0]
-        return X_sig, w_sig, X_bkg, w_bkg
+class S3D2NLL():
+    def __init__(self, compute_summaries, valid_generator, X_test, w_test):
+        self.compute_summaries = compute_summaries
+        self.valid_generator = valid_generator
+        self.X_test = X_test
+        self.w_test = w_test
         
     def __call__(self, r, lam, mu):
+        pb_config = S3D2Config()
         """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""        
-        X_sig, w_sig, X_bkg, w_bkg = self.simulation(r, lam, mu)
-        s_histogram = self.summary_computer(X_sig, w_sig)
-        b_histogram = self.summary_computer(X_bkg, w_bkg)
-        n_histogram = self.summary_computer(self.X_final, self.w_final)
+        X, y, w = self.valid_generator.generate(r, lam, mu, n_samples=pb_config.N_VALIDATION_SAMPLES)
+        valid_summaries = self.compute_summaries(X, w)
+        test_summaries = self.compute_summaries(self.X_test, self.w_test)
 
         # Compute NLL
-        rate = s_histogram + b_histogram
-        data_nll = np.sum(poisson_nll(n_histogram, rate))
-        r_constraint = gauss_nll(r, 0, 0.4)
-        lam_constraint = gauss_nll(lam, 3, 1.0)
+        rate = valid_summaries
+        data_nll = np.sum(poisson_nll(test_summaries, rate))
+        r_constraint = gauss_nll(r, pb_config.CALIBRATED_R, pb_config.CALIBRATED_R_ERROR)
+        lam_constraint = gauss_nll(lam, pb_config.CALIBRATED_LAMBDA, pb_config.CALIBRATED_LAMBDA_ERROR)
         total_nll = data_nll + r_constraint + lam_constraint
         return total_nll
 
