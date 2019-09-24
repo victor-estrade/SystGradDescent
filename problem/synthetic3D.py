@@ -164,8 +164,9 @@ class S3D2NLL():
         self.w_test = w_test
         
     def __call__(self, r, lam, mu):
-        pb_config = S3D2Config()
         """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""        
+        pb_config = S3D2Config()
+        self.valid_generator.reset()
         X, y, w = self.valid_generator.generate(r, lam, mu, n_samples=pb_config.N_VALIDATION_SAMPLES)
         valid_summaries = self.compute_summaries(X, w)
         test_summaries = self.compute_summaries(self.X_test, self.w_test)
