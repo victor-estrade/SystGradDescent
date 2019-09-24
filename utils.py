@@ -43,6 +43,10 @@ def flush(logger):
 	logger.handlers[0].flush()
 
 
+def print_line():
+    print('='*145)
+
+
 def extract_model_args(args, model_class):
     sig = inspect.signature(model_class)
     args_dict = vars(args)
