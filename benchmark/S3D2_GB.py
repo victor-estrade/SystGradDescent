@@ -41,7 +41,7 @@ from .my_argparser import GB_parse_args
 
 
 BENCHMARK_NAME = 'S3D2'
-N_ITER = 1
+N_ITER = 3
 
 
 # =====================================================================
