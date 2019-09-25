@@ -100,7 +100,7 @@ def plot_params(param, params_truth, model_name, model_path):
         plt.errorbar(x, params, yerr=params_error, fmt='o', capsize=20, capthick=2, label='infer')
         plt.scatter(x, params_truth, c='red', label='truth')
         plt.xticks(x, params_names)
-        plt.yscale('log')
+        # plt.yscale('log')
         plt.title(model_name)
         plt.legend()
         plt.savefig(os.path.join(model_path, 'params.png'))
