@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line : 
-# python -m benchmark.AP1.AP1_GB
+# python -m benchmark.AP1.GB
 
 import os
 import logging
