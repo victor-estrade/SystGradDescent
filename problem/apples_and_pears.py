@@ -38,8 +38,8 @@ class ApplePear():
         return x
 
     def _generate_labels(self, n_apple, n_pear):
-        y_apple = np.zeros(n_apple)
-        y_pear = np.ones(n_pear)
+        y_apple = np.ones(n_apple)
+        y_pear = np.zeros(n_pear)
         y = np.concatenate([y_apple, y_pear])
         return y
 
@@ -73,7 +73,7 @@ class AP1():
 class AP1Config():
     CALIBRATED_APPLE_RATIO = 0.5
     CALIBRATED_APPLE_RATIO_ERROR = 1  # minuit default
-    TRUE_APPLE_RATIO = 0.5
+    TRUE_APPLE_RATIO = 0.8
 
     N_TRAINING_SAMPLES = 2000
     N_VALIDATION_SAMPLES = 2000
