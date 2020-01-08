@@ -21,12 +21,14 @@ from archi.losses import RegressorLoss
 
 
 class Regressor(BaseEstimator):
-    def __init__(self, net, n_steps=5000, batch_size=2000, learning_rate=1e-3, cuda=False, verbose=0):
+    def __init__(self, net, n_steps=5000, batch_size=20, sample_size=1000, 
+                learning_rate=1e-3, cuda=False, verbose=0):
         super().__init__()
-        self.n_steps    = n_steps
-        self.batch_size = batch_size
-        self.cuda_flag  = cuda
-        self.verbose    = verbose
+        self.n_steps     = n_steps
+        self.batch_size  = batch_size
+        self.sample_size = sample_size
+        self.cuda_flag   = cuda
+        self.verbose     = verbose
 
         self.net           = net
         self.learning_rate = learning_rate
@@ -50,45 +52,57 @@ class Regressor(BaseEstimator):
 
     def fit(self, generator):
         for i in range(self.n_steps):
-            params = self.param_generator()
-            X, y, w = generator.generate(*params, n_samples=self.batch_size)
-            target = np.sum(w[y==0]) / np.sum(w)
+            loss, mse = self._forward(generator)
+            # params = self.param_generator()
+            # X, y, w = generator.generate(*params, n_samples=self.sample_size)
+            # target = np.sum(w[y==1]) / np.sum(w)
             
-            target = target.astype(np.float32)
-            target = to_torch(target.reshape(-1), cuda=self.cuda_flag)
-            X = X.astype(np.float32)
-            w = w.astype(np.float32).reshape(-1, 1)
-            X_torch = to_torch(X, cuda=self.cuda_flag)
-            w_torch = to_torch(w, cuda=self.cuda_flag)
-            X_out = self.net.forward(X_torch, w_torch)
-            mu, logsigma = torch.split(X_out, 1, dim=0)
-            loss, mse = self.criterion(mu, target, logsigma)
+            # X = X.astype(np.float32)
+            # w = w.astype(np.float32).reshape(-1, 1)
+            # target = target.astype(np.float32)
+            # p = np.array(params[:-1]).astype(np.float32).reshape(1, -1)
+
+            # X_torch = to_torch(X, cuda=self.cuda_flag)
+            # w_torch = to_torch(w, cuda=self.cuda_flag)
+            # target = to_torch(target.reshape(-1), cuda=self.cuda_flag)
+            # p_torch = to_torch(p, cuda=self.cuda_flag)
+
+            # X_out = self.net.forward(X_torch, w_torch, p_torch)
+            # mu, logsigma = torch.split(X_out, 1, dim=0)
+            # loss, mse = self.criterion(mu, target, logsigma)
+
             self.losses.append(loss.item())
             self.mse_losses.append(mse.item())
 
-            # Backward
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
+        return self
 
     def fit_batch(self, generator):
         for i in range(self.n_steps):
             losses = []
             mse_losses = []
-            for j in range(15):
-                params = self.param_generator()
-                X, y, w = generator.generate(*params, n_samples=self.batch_size)
-                target = np.sum(w[y==0]) / np.sum(w)
+            for j in range(self.batch_size):
+                loss, mse = self._forward(generator)
+                # params = self.param_generator()
+                # X, y, w = generator.generate(*params, n_samples=self.sample_size)
+                # target = np.sum(w[y==1]) / np.sum(w)
                 
-                target = target.astype(np.float32)
-                target = to_torch(target.reshape(-1), cuda=self.cuda_flag)
-                X = X.astype(np.float32)
-                w = w.astype(np.float32).reshape(-1, 1)
-                X_torch = to_torch(X, cuda=self.cuda_flag)
-                w_torch = to_torch(w, cuda=self.cuda_flag)
-                X_out = self.net.forward(X_torch, w_torch)
-                mu, logsigma = torch.split(X_out, 1, dim=0)
-                loss, mse = self.criterion(mu, target, logsigma)
+                # X = X.astype(np.float32)
+                # w = w.astype(np.float32).reshape(-1, 1)
+                # target = target.astype(np.float32)
+                # p = np.array(params[:-1]).astype(np.float32).reshape(1, -1)
+
+                # X_torch = to_torch(X, cuda=self.cuda_flag)
+                # w_torch = to_torch(w, cuda=self.cuda_flag)
+                # target = to_torch(target.reshape(-1), cuda=self.cuda_flag)
+                # p_torch = to_torch(p, cuda=self.cuda_flag)
+
+                # X_out = self.net.forward(X_torch, w_torch, p_torch)
+                # mu, logsigma = torch.split(X_out, 1, dim=0)
+                # loss, mse = self.criterion(mu, target, logsigma)
+
                 losses.append(loss.view(1, 1))
                 mse_losses.append(mse.view(1, 1))
             loss = torch.mean( torch.cat(losses), 0 )
@@ -101,12 +115,35 @@ class Regressor(BaseEstimator):
             loss.backward()
             self.optimizer.step()
 
-    def predict(self, X, w):
+    def _forward(self, generator):
+        params = self.param_generator()
+        X, y, w = generator.generate(*params, n_samples=self.sample_size)
+        target = np.sum(w[y==1]) / np.sum(w)
+        
         X = X.astype(np.float32)
         w = w.astype(np.float32).reshape(-1, 1)
+        target = target.astype(np.float32)
+        p = np.array(params[:-1]).astype(np.float32).reshape(1, -1)
+
         X_torch = to_torch(X, cuda=self.cuda_flag)
         w_torch = to_torch(w, cuda=self.cuda_flag)
-        X_out = self.net.forward(X_torch, w_torch)
+        target = to_torch(target.reshape(-1), cuda=self.cuda_flag)
+        p_torch = to_torch(p, cuda=self.cuda_flag)
+
+        X_out = self.net.forward(X_torch, w_torch, p_torch)
+        mu, logsigma = torch.split(X_out, 1, dim=0)
+        loss, mse = self.criterion(mu, target, logsigma)
+        return loss, mse
+
+
+    def predict(self, X, w, p=None):
+        X = X.astype(np.float32)
+        w = w.astype(np.float32).reshape(-1, 1)
+        p = p.astype(np.float32).reshape(1, -1) if p is not None else None
+        X_torch = to_torch(X, cuda=self.cuda_flag)
+        w_torch = to_torch(w, cuda=self.cuda_flag)
+        p_torch = to_torch(p, cuda=self.cuda_flag) if p is not None else None
+        X_out = self.net.forward(X_torch, w_torch, p_torch)
         mu, logsigma = torch.split(X_out, 1, dim=0)
         mu = mu.item()
         sigma = np.exp(logsigma.item())
@@ -137,6 +174,7 @@ class Regressor(BaseEstimator):
                     n_steps=self.n_steps, batch_size=self.batch_size)
 
     def get_name(self):
-        name = "Regressor-{}-{}-{}".format(self.n_steps, self.batch_size, self.learning_rate)
+        name = "Regressor-{}-{}-{}-{}".format(self.n_steps, self.batch_size,
+                self.sample_size, self.learning_rate)
         return name
 

@@ -34,18 +34,18 @@ mpl.rcParams['legend.fontsize'] = 'large'
 mpl.rcParams['figure.titlesize'] = 'medium'
 
 
-from utils import set_logger
-from utils import flush
-from utils import extract_model_args
+from utils.log import set_logger
+from utils.log import flush
+from utils.model import extract_model_args
 
 from problem.synthetic3D import Synthetic3D
 from problem.synthetic3D import Config
 from problem.synthetic3D import split_data_label_weights
 from problem.synthetic3D import Synthetic3DNLL
 
-from net.gradient_boost import GradientBoostingModel
+from model.gradient_boost import GradientBoostingModel
 
-from models.classfier import compute_summaries
+from model.summaries import compute_summaries
 
 
 def parse_args():

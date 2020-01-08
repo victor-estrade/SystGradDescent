@@ -17,16 +17,21 @@ def torch_weighted_sum(input, weight, dim, keepdim=False, dtype=None):
     out = torch.sum(input * weight, dim, keepdim=keepdim)
     return out
 
+# Pytorch example to add a module
+# https://pytorch.org/docs/stable/notes/extending.html#adding-a-module
 
 class MeanBloc(nn.Module):
-    def __init__(self, n_in, n_out):
+    def __init__(self, n_in, n_out, n_extra=0):
         super().__init__()
         self.fc1 = nn.Linear(n_in, n_out)
-        self.fc2 = nn.Linear(n_in, n_out)
+        self.fc2 = nn.Linear(n_in+n_extra, n_out)
 
-    def forward(self, x, w):
+    def forward(self, x, w, extra=None):
         x_out = self.fc1(x)
-        x_mean = self.fc2(torch_weighted_mean(x, w, 0, keepdim=True))
+        x_mean = torch_weighted_mean(x, w, 0, keepdim=True)
+        if extra is not None :
+            x_mean = torch.cat((x_mean, extra), 1)
+        x_mean = self.fc2(x_mean)
         out = x_mean + x_out
         return out
 

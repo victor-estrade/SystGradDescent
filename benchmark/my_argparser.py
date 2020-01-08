@@ -43,8 +43,11 @@ def REG_parse_args(main_description="Training launcher"):
     parser.add_argument('--learning-rate', '--lr', help='learning rate',
                         default=1e-3, type=float)
 
+    parser.add_argument('--sample-size', help='data sample size',
+                        default=1000, type=int)
+
     parser.add_argument('--batch-size', help='mini-batch size',
-                        default=1024, type=int)
+                        default=20, type=int)
 
     parser.add_argument('--n-steps', help='number of update steps',
                         default=1000, type=int)

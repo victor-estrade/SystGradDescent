@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line : 
-# python -m benchmark.GB_S3D 
+# python -m benchmark.S3D2.S3D2_GB
 
 import os
 import logging
@@ -15,17 +15,20 @@ import iminuit
 ERRORDEF_NLL = 0.5
 
 
-from utils import set_plot_config
+from utils.plot import set_plot_config
 set_plot_config()
-from utils import set_logger
-from utils import flush
-from utils import print_line
-from utils import get_model
-from utils import print_params
+from utils.log import set_logger
+from utils.log import flush
+from utils.log import print_line
+from utils.log import print_params
+from utils.model import get_model
+from utils.model import get_model_id
+from utils.model import get_model_path
+from utils.model import save_model
 
-from myplot import plot_valid_distrib
-from myplot import plot_summaries
-from myplot import plot_params
+from utils.plot import plot_valid_distrib
+from utils.plot import plot_summaries
+from utils.plot import plot_params
 
 from problem.synthetic3D import S3D2Config
 from problem.synthetic3D import S3D2
@@ -41,7 +44,7 @@ from .my_argparser import GB_parse_args
 
 
 BENCHMARK_NAME = 'S3D2'
-N_ITER = 3
+N_ITER = 5
 
 
 # =====================================================================
@@ -87,14 +90,12 @@ def run(args, i_cv):
     logger.info('Training DONE')
 
     # SAVE MODEL
-    model_name = '{}-{}'.format(model.get_name(), i_cv)
-    model_path = os.path.join(config.SAVING_DIR, BENCHMARK_NAME, model_name)
-    logger.info("Saving in {}".format(model_path))
-    os.makedirs(model_path, exist_ok=True)
-    model.save(model_path)
+    model_path = get_model_path(BENCHMARK_NAME, model, i_cv)
+    save_model(model, model_path)
 
 
     # CHECK TRAINING
+    model_id = get_model_id(model, i_cv)
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(
                                      pb_config.CALIBRATED_R,
@@ -103,7 +104,7 @@ def run(args, i_cv):
                                      n_samples=pb_config.N_VALIDATION_SAMPLES)
     
     logger.info('Plot distribution of the score')
-    plot_valid_distrib(model, model_name, model_path, X_valid, y_valid, classes=("b", "s"))
+    plot_valid_distrib(model, model_id, model_path, X_valid, y_valid, classes=("b", "s"))
     
 
     # MEASUREMENT
@@ -119,7 +120,7 @@ def run(args, i_cv):
     compute_nll = S3D2NLL(compute_summaries, valid_generator, X_test, w_test)
 
     logger.info('Plot summaries')
-    plot_summaries(compute_summaries, model_name, model_path, 
+    plot_summaries(compute_summaries, model_id, model_path, 
                     X_valid, y_valid, w_valid,
                     X_test, w_test, classes=('b', 's', 'n') )
 
@@ -160,7 +161,7 @@ def run(args, i_cv):
 
     logger.info('Plot params')
     print_params(params, params_truth)
-    plot_params(params, params_truth, model_name, model_path)
+    plot_params(params, params_truth, model_id, model_path)
 
     print(params[2]['value'] * 1050, 'signal events estimated')
     print(params[2]['error'] * 1050, 'error on # estimated sig event')

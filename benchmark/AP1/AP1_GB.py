@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line : 
-# python -m benchmark.AP1_GB
+# python -m benchmark.AP1.AP1_GB
 
 import os
 import logging
@@ -14,13 +14,16 @@ import config
 import iminuit
 ERRORDEF_NLL = 0.5
 
-from utils import set_plot_config
+from utils.plot import set_plot_config
 set_plot_config()
-from utils import set_logger
-from utils import flush
-from utils import print_line
-from utils import get_model
-from utils import print_params
+from utils.log import set_logger
+from utils.log import flush
+from utils.log import print_line
+from utils.log import print_params
+from utils.model import get_model
+from utils.model import get_model_id
+from utils.model import get_model_path
+from utils.model import save_model
 
 from myplot import plot_valid_distrib
 from myplot import plot_summaries
@@ -28,6 +31,7 @@ from myplot import plot_params
 
 from problem.apples_and_pears import AP1
 from problem.apples_and_pears import AP1NLL
+from problem.apples_and_pears import AP1Config
 
 from .AP1_utils import plot_apple_ratio_around_min
 
@@ -37,7 +41,7 @@ from .my_argparser import GB_parse_args
 
 
 BENCHMARK_NAME = 'AP1'
-N_ITER = 2
+N_ITER = 5
 
 
 def main():
@@ -57,6 +61,7 @@ def run(args, i_cv):
     print_line()
     # LOAD/GENERATE DATA
     logger.info('Set up data generator')
+    pb_config = AP1Config()
     seed = config.SEED + i_cv * 5
     train_generator = AP1(seed)
     valid_generator = AP1(seed+1)
@@ -68,44 +73,46 @@ def run(args, i_cv):
 
     # TRAINING
     logger.info('Generate training data')
-    X_train, y_train, w_train = train_generator.generate(apple_ratio=0.5, n_samples=2_000)
+    X_train, y_train, w_train = train_generator.generate(
+                                    apple_ratio=pb_config.CALIBRATED_APPLE_RATIO,
+                                    n_samples=pb_config.N_TRAINING_SAMPLES)
     logger.info('Training {}'.format(model.get_name()))
     model.fit(X_train, y_train, w_train)
     logger.info('Training DONE')
 
     # SAVE MODEL
-    model_name = '{}-{}'.format(model.get_name(), i_cv)
-    model_path = os.path.join(config.SAVING_DIR, BENCHMARK_NAME, model_name)
-    logger.info("Saving in {}".format(model_path))
-    os.makedirs(model_path, exist_ok=True)
-    model.save(model_path)
+    model_path = get_model_path(BENCHMARK_NAME, model, i_cv)
+    save_model(model, model_path)
 
 
     # CHECK TRAINING
+    model_id = get_model_id(model, i_cv)
     logger.info('Generate validation data')
-    X_valid, y_valid, w_valid = valid_generator.generate(apple_ratio=0.5, n_samples=20_000)
+    X_valid, y_valid, w_valid = valid_generator.generate(
+                                    apple_ratio=pb_config.CALIBRATED_APPLE_RATIO,
+                                    n_samples=pb_config.N_VALIDATION_SAMPLES)
 
     logger.info('Plot distribution of the score')
-    plot_valid_distrib(model, model_name, model_path, X_valid, y_valid, classes=("apples", "pears"))
+    plot_valid_distrib(model, model_id, model_path, X_valid, y_valid, classes=("apples", "pears"))
 
 
     # MEASUREMENT
     logger.info('Generate testing data')
-    true_apple_ratio = 0.8
-    param_truth = [true_apple_ratio]
-    X_test, y_test, w_test = test_generator.generate(apple_ratio=true_apple_ratio, n_samples=2_000)
+    X_test, y_test, w_test = test_generator.generate(
+                                    apple_ratio=pb_config.TRUE_APPLE_RATIO,
+                                    n_samples=pb_config.N_TESTING_SAMPLES)
     
     logger.info('Set up NLL computer')
     compute_summaries = ClassifierSummaryComputer(model, n_bins=10)
     compute_nll = AP1NLL(compute_summaries, valid_generator, X_test, w_test)
 
     logger.info('Plot summaries')
-    plot_summaries(compute_summaries, model_name, model_path, 
+    plot_summaries(compute_summaries, model_id, model_path, 
                     X_valid, y_valid, w_valid,
                     X_test, w_test, classes=('apples', 'pears', 'fruits') )
 
     logger.info('Plot NLL around minimum')
-    plot_apple_ratio_around_min(compute_nll, true_apple_ratio, model_path)
+    plot_apple_ratio_around_min(compute_nll, pb_config.TRUE_APPLE_RATIO, model_path)
 
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
@@ -122,6 +129,7 @@ def run(args, i_cv):
     logger.info('Mingrad()')
     fmin, params = minimizer.migrad()
     logger.info('Mingrad DONE')
+    params_truth = [pb_config.TRUE_APPLE_RATIO]
 
     if minimizer.migrad_ok():
         logger.info('Mingrad is VALID !')
@@ -133,7 +141,7 @@ def run(args, i_cv):
 
     logger.info('Plot params')
     print_params(params, params_truth)
-    plot_params(params, params_truth, model_name, model_path)
+    plot_params(params, params_truth, model_id, model_path)
     logger.info('DONE')
 
 

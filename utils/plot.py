@@ -9,8 +9,26 @@ import logging
 
 import numpy as np
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+
+def set_plot_config():
+    sns.set()
+    sns.set_style("whitegrid")
+    sns.set_context("poster")
+
+    mpl.rcParams['figure.figsize'] = [8.0, 6.0]
+    mpl.rcParams['figure.dpi'] = 80
+    mpl.rcParams['savefig.dpi'] = 100
+
+    mpl.rcParams['font.size'] = 10
+    mpl.rcParams['axes.labelsize'] = 10
+    mpl.rcParams['ytick.labelsize'] = 10
+    mpl.rcParams['xtick.labelsize'] = 10
+    mpl.rcParams['legend.fontsize'] = 'large'
+    mpl.rcParams['figure.titlesize'] = 'medium'
 
 
 def plot_test_distrib(model, model_name, model_path, X_test, y_test):
