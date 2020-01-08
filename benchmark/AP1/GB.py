@@ -33,11 +33,11 @@ from problem.apples_and_pears import AP1
 from problem.apples_and_pears import AP1NLL
 from problem.apples_and_pears import AP1Config
 
-from .AP1_utils import plot_apple_ratio_around_min
+from utils.AP1 import plot_apple_ratio_around_min
 
 from model.gradient_boost import GradientBoostingModel
 from model.summaries import ClassifierSummaryComputer
-from .my_argparser import GB_parse_args
+from ..my_argparser import GB_parse_args
 
 
 BENCHMARK_NAME = 'AP1'

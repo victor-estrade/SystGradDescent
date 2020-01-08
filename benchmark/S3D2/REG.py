@@ -29,7 +29,7 @@ from problem.synthetic3D import S3D2Config
 from model.regressor import Regressor
 from archi.net import RegNet
 
-from .my_argparser import REG_parse_args
+from ..my_argparser import REG_parse_args
 
 BENCHMARK_NAME = 'S3D2'
 N_ITER = 5

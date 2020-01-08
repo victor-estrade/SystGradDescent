@@ -34,13 +34,13 @@ from problem.synthetic3D import S3D2Config
 from problem.synthetic3D import S3D2
 from problem.synthetic3D import S3D2NLL
 
-from .S3D2_utils import plot_R_around_min
-from .S3D2_utils import plot_LAMBDA_around_min
-from .S3D2_utils import plot_MU_around_min
+from utils.S3D2 import plot_R_around_min
+from utils.S3D2 import plot_LAMBDA_around_min
+from utils.S3D2 import plot_MU_around_min
 
 from model.gradient_boost import GradientBoostingModel
 from model.summaries import ClassifierSummaryComputer
-from .my_argparser import GB_parse_args
+from ..my_argparser import GB_parse_args
 
 
 BENCHMARK_NAME = 'S3D2'
