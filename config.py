@@ -15,7 +15,6 @@ N_CV = 6
 #---------------
 # TODO : one day maybe put all these values as input arguments 
 #       and correctly sort experiments according to the paramters
-#       Maybe when nvidia-docker supports Python 3.7 and dataclass !
 
 # Parameter of interest
 CALIBRATED_MU = 1.0
