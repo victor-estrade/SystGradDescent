@@ -104,11 +104,12 @@ def run(args, i_cv):
                                     n_samples=pb_config.N_TESTING_SAMPLES)
     
     logger.info('Set up NLL computer')
-    compute_summaries = ClassifierSummaryComputer(model, n_bins=10)
+    n_bins = 10
+    compute_summaries = ClassifierSummaryComputer(model, n_bins=n_bins)
     compute_nll = AP1NLL(compute_summaries, valid_generator, X_test, w_test)
 
     logger.info('Plot summaries')
-    plot_summaries(compute_summaries, model,
+    plot_summaries( model, n_bins,
                     X_valid, y_valid, w_valid,
                     X_test, w_test, classes=('pears', 'apples', 'fruits') )
 
