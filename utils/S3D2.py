@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 import numpy as np
 
-from myplot import plot_param_around_min
+from .plot import plot_param_around_min
 
 def plot_R_around_min(compute_nll, pb_config, model_path):
     r_array = np.linspace(-1, 1, 50)
