@@ -43,17 +43,17 @@ class GradientBoostingModel(BaseClassifierModel):
         proba = self.clf.predict_proba(X)
         return proba
 
-    def save(self, dir_path):
+    def save(self, save_directory):
         """Save the model in the given directory"""
-        super().save(dir_path)
-        path = os.path.join(dir_path, 'GradientBoosting.pkl')
+        super().save(save_directory)
+        path = os.path.join(save_directory, 'GradientBoosting.pkl')
         joblib.dump(self.clf, path)
         return self
 
-    def load(self, dir_path):
+    def load(self, save_directory):
         """Load the model of the i-th CV from the given directory"""
-        super().load(dir_path)
-        path = os.path.join(dir_path, 'GradientBoosting.pkl')
+        super().load(save_directory)
+        path = os.path.join(save_directory, 'GradientBoosting.pkl')
         self.clf = joblib.load(path)
         return self
 
@@ -99,17 +99,17 @@ class BlindGradientBoostingModel(GradientBoostingModel):
         proba = self.clf.predict_proba(X)
         return proba
 
-    def save(self, dir_path):
+    def save(self, save_directory):
         """Save the model in the given directory"""
-        super(BaseModel, self).save(dir_path)
-        path = os.path.join(dir_path, 'GradientBoosting.pkl')
+        super(BaseModel, self).save(save_directory)
+        path = os.path.join(save_directory, 'GradientBoosting.pkl')
         joblib.dump(self.clf, path)
         return self
 
-    def load(self, dir_path):
+    def load(self, save_directory):
         """Load the model of the i-th CV from the given directory"""
-        super(BaseModel, self).load(dir_path)
-        path = os.path.join(dir_path, 'GradientBoosting.pkl')
+        super(BaseModel, self).load(save_directory)
+        path = os.path.join(save_directory, 'GradientBoosting.pkl')
         self.clf = joblib.load(path)
         return self
 

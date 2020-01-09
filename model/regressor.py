@@ -115,24 +115,24 @@ class Regressor(BaseModel):
         return mu, sigma
 
 
-    def save(self, dir_path):
-        super(BaseModel, self).save(dir_path)
-        path = os.path.join(dir_path, 'weights.pth')
+    def save(self, save_directory):
+        super(BaseModel, self).save(save_directory)
+        path = os.path.join(save_directory, 'weights.pth')
         torch.save(self.net.state_dict(), path)
 
-        # path = os.path.join(dir_path, 'losses.json')
+        # path = os.path.join(save_directory, 'losses.json')
         # self.loss_hook.save_state(path)
         return self
 
-    def load(self, dir_path):
-        super(BaseModel, self).load(dir_path)
-        path = os.path.join(dir_path, 'weights.pth')
+    def load(self, save_directory):
+        super(BaseModel, self).load(save_directory)
+        path = os.path.join(save_directory, 'weights.pth')
         if self.cuda_flag:
             self.net.load_state_dict(torch.load(path))
         else:
             self.net.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage))
 
-        # path = os.path.join(dir_path, 'losses.json')
+        # path = os.path.join(save_directory, 'losses.json')
         # self.loss_hook.load_state(path)
         return self
 
