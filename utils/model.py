@@ -17,12 +17,14 @@ def get_model_id(model, i_cv):
     model_id = '{}{}{}'.format(model.get_name(), os.sep, i_cv)
     return model_id
 
-def get_model_path(benchmark_name, model, i_cv):
+def get_model_path(benchmark_name, model, i_cv=None):
     import config
     model_name = model.get_name()
     model_class = get_class_name(model)
-    cv_id = "{:d}".format(i_cv)
-    model_path = os.path.join(config.SAVING_DIR, benchmark_name, model_class, model_name, cv_id)
+    model_path = os.path.join(config.SAVING_DIR, benchmark_name, model_class, model_name)
+    if i_cv is not None:
+        cv_id = "{:d}".format(i_cv)
+        model_path = os.path.join(model_path, cv_id)
     return model_path
 
 def save_model(model, model_path):
