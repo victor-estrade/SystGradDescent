@@ -53,23 +53,6 @@ class Regressor(BaseEstimator):
     def fit(self, generator):
         for i in range(self.n_steps):
             loss, mse = self._forward(generator)
-            # params = self.param_generator()
-            # X, y, w = generator.generate(*params, n_samples=self.sample_size)
-            # target = np.sum(w[y==1]) / np.sum(w)
-            
-            # X = X.astype(np.float32)
-            # w = w.astype(np.float32).reshape(-1, 1)
-            # target = target.astype(np.float32)
-            # p = np.array(params[:-1]).astype(np.float32).reshape(1, -1)
-
-            # X_torch = to_torch(X, cuda=self.cuda_flag)
-            # w_torch = to_torch(w, cuda=self.cuda_flag)
-            # target = to_torch(target.reshape(-1), cuda=self.cuda_flag)
-            # p_torch = to_torch(p, cuda=self.cuda_flag)
-
-            # X_out = self.net.forward(X_torch, w_torch, p_torch)
-            # mu, logsigma = torch.split(X_out, 1, dim=0)
-            # loss, mse = self.criterion(mu, target, logsigma)
 
             self.losses.append(loss.item())
             self.mse_losses.append(mse.item())
@@ -85,24 +68,6 @@ class Regressor(BaseEstimator):
             mse_losses = []
             for j in range(self.batch_size):
                 loss, mse = self._forward(generator)
-                # params = self.param_generator()
-                # X, y, w = generator.generate(*params, n_samples=self.sample_size)
-                # target = np.sum(w[y==1]) / np.sum(w)
-                
-                # X = X.astype(np.float32)
-                # w = w.astype(np.float32).reshape(-1, 1)
-                # target = target.astype(np.float32)
-                # p = np.array(params[:-1]).astype(np.float32).reshape(1, -1)
-
-                # X_torch = to_torch(X, cuda=self.cuda_flag)
-                # w_torch = to_torch(w, cuda=self.cuda_flag)
-                # target = to_torch(target.reshape(-1), cuda=self.cuda_flag)
-                # p_torch = to_torch(p, cuda=self.cuda_flag)
-
-                # X_out = self.net.forward(X_torch, w_torch, p_torch)
-                # mu, logsigma = torch.split(X_out, 1, dim=0)
-                # loss, mse = self.criterion(mu, target, logsigma)
-
                 losses.append(loss.view(1, 1))
                 mse_losses.append(mse.view(1, 1))
             loss = torch.mean( torch.cat(losses), 0 )
@@ -118,11 +83,11 @@ class Regressor(BaseEstimator):
     def _forward(self, generator):
         params = self.param_generator()
         X, y, w = generator.generate(*params, n_samples=self.sample_size)
-        target = np.sum(w[y==1]) / np.sum(w)
+        target = params[-1]
         
         X = X.astype(np.float32)
         w = w.astype(np.float32).reshape(-1, 1)
-        target = target.astype(np.float32)
+        target = np.array(target).astype(np.float32)
         p = np.array(params[:-1]).astype(np.float32).reshape(1, -1)
 
         X_torch = to_torch(X, cuda=self.cuda_flag)
