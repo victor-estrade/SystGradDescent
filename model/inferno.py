@@ -5,13 +5,13 @@ import torch.optim as optim
 import numpy as np
 
 from collections import OrderedDict
-# from sklearn.base import BaseEstimator, ClassifierMixin
+from .base import BaseModel
 from sklearn.preprocessing import StandardScaler
 from hessian import hessian
 from net.monitor import LightLossMonitorHook
 
 
-class Inferno():
+class Inferno(BaseModel):
     def __init__(self, net, criterion, n_steps=5000, batch_size=150, learning_rate=1e-3, 
                 temperature=1.0, cuda=False, verbose=0):
         super().__init__()

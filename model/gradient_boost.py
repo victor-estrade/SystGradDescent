@@ -10,12 +10,12 @@ import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.externals import joblib
 
-from sklearn.base import BaseEstimator, ClassifierMixin
+from .base import BaseClassifierModel
 from .utils import to_numpy
 from .utils import classwise_balance_weight
 
 
-class GradientBoostingModel(BaseEstimator, ClassifierMixin):
+class GradientBoostingModel(BaseClassifierModel):
     def __init__(self, learning_rate=0.1, n_estimators=1000, max_depth=3,):
         super().__init__()
         self.learning_rate = learning_rate
@@ -45,12 +45,14 @@ class GradientBoostingModel(BaseEstimator, ClassifierMixin):
 
     def save(self, dir_path):
         """Save the model in the given directory"""
+        super().save(dir_path)
         path = os.path.join(dir_path, 'GradientBoosting.pkl')
         joblib.dump(self.clf, path)
         return self
 
     def load(self, dir_path):
         """Load the model of the i-th CV from the given directory"""
+        super().load(dir_path)
         path = os.path.join(dir_path, 'GradientBoosting.pkl')
         self.clf = joblib.load(path)
         return self
@@ -60,7 +62,7 @@ class GradientBoostingModel(BaseEstimator, ClassifierMixin):
         return name
 
 
-class BlindGradientBoostingModel(BaseEstimator, ClassifierMixin):
+class BlindGradientBoostingModel(GradientBoostingModel):
     def __init__(self, learning_rate=0.1, n_estimators=1000, max_depth=3,):
         super().__init__()
         self.learning_rate = learning_rate
@@ -99,12 +101,14 @@ class BlindGradientBoostingModel(BaseEstimator, ClassifierMixin):
 
     def save(self, dir_path):
         """Save the model in the given directory"""
+        super(BaseModel, self).save(dir_path)
         path = os.path.join(dir_path, 'GradientBoosting.pkl')
         joblib.dump(self.clf, path)
         return self
 
     def load(self, dir_path):
         """Load the model of the i-th CV from the given directory"""
+        super(BaseModel, self).load(dir_path)
         path = os.path.join(dir_path, 'GradientBoosting.pkl')
         self.clf = joblib.load(path)
         return self

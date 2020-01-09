@@ -10,7 +10,7 @@ import numpy as np
 import torch
 import torch.optim as optim
 
-from sklearn.base import BaseEstimator
+from .base import BaseModel
 
 from .monitor import LightLossMonitorHook
 
@@ -20,7 +20,7 @@ from .utils import to_torch
 from archi.losses import RegressorLoss
 
 
-class Regressor(BaseEstimator):
+class Regressor(BaseModel):
     def __init__(self, net, n_steps=5000, batch_size=20, sample_size=1000, 
                 learning_rate=1e-3, cuda=False, verbose=0):
         super().__init__()
@@ -116,6 +116,7 @@ class Regressor(BaseEstimator):
 
 
     def save(self, dir_path):
+        super(BaseModel, self).save(dir_path)
         path = os.path.join(dir_path, 'weights.pth')
         torch.save(self.net.state_dict(), path)
 
@@ -124,6 +125,7 @@ class Regressor(BaseEstimator):
         return self
 
     def load(self, dir_path):
+        super(BaseModel, self).load(dir_path)
         path = os.path.join(dir_path, 'weights.pth')
         if self.cuda_flag:
             self.net.load_state_dict(torch.load(path))

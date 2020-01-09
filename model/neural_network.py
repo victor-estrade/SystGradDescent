@@ -11,7 +11,7 @@ import torch
 import torch.optim as optim
 import torch.nn.functional as F
 
-from sklearn.base import BaseEstimator, ClassifierMixin
+from .base import BaseClassifierModel
 from sklearn.preprocessing import StandardScaler
 from sklearn.externals import joblib
 
@@ -27,7 +27,7 @@ from .utils import to_numpy
 from .utils import classwise_balance_weight
 
 
-class NeuralNetClassifier(BaseEstimator, ClassifierMixin):
+class NeuralNetClassifier(BaseClassifierModel):
     def __init__(self, net, n_steps=5000, batch_size=20, learning_rate=1e-3, cuda=False, verbose=0):
         super().__init__()
         self.n_steps    = n_steps
