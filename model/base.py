@@ -8,8 +8,12 @@ import os
 import json
 import config
 
+import numpy as np
+
 from sklearn.base import BaseEstimator
 from sklearn.base import ClassifierMixin
+from .summaries import ClassifierSummaryComputer
+from .summaries import DEFAULT_N_BINS
 
 # TODO : Maybe the sklearn dependancy is useless.
 #       For now set_param(), get_param() or score() methods are never used
@@ -78,6 +82,11 @@ class BaseModel(ModelInfo, BaseEstimator):
 class BaseClassifierModel(BaseModel, ClassifierMixin):
     """ More specific than BaseModel for classifiers
     """
-    # TODO : put compute summary here ?
-    pass
+    def summary_computer(self, n_bins=DEFAULT_N_BINS):
+        return ClassifierSummaryComputer(self, n_bins=n_bins)
+
+    def compute_summaries(self, X, W, n_bins=DEFAULT_N_BINS):
+        proba = self.predict_proba(X)
+        count, _ = np.histogram(proba[:, 1], range=(0., 1.), weights=W, bins=n_bins)
+        return count
 

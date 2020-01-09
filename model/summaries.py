@@ -6,14 +6,16 @@ from __future__ import unicode_literals
 
 import numpy as np
 
-def compute_summaries(clf, X, W, n_bins=10):
+DEFAULT_N_BINS = 10
+
+def compute_summaries(clf, X, W, n_bins=DEFAULT_N_BINS):
     proba = clf.predict_proba(X)
     count, _ = np.histogram(proba[:, 1], range=(0., 1.), weights=W, bins=n_bins)
     return count
 
 
 class ClassifierSummaryComputer():
-    def __init__(self, clf, n_bins=10):
+    def __init__(self, clf, n_bins=DEFAULT_N_BINS):
         self.clf = clf
         self.n_bins = n_bins
 
