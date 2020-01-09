@@ -8,7 +8,6 @@ from __future__ import unicode_literals
 # Command line : 
 # python -m benchmark.AP1.REG
 
-import os
 import logging
 import config
 
@@ -21,6 +20,9 @@ from utils.model import get_model
 from utils.model import get_model_id
 from utils.model import get_model_path
 from utils.model import save_model
+from utils.plot import plot_REG_losses
+from utils.plot import plot_REG_log_mse
+from utils.misc import gather_images
 
 from problem.apples_and_pears import AP1
 
@@ -47,6 +49,9 @@ def main():
     flush(logger)
     for i_cv in range(N_ITER):
         run(args, i_cv)
+    model = get_model(args, Regressor)
+    model_path = get_model_path(BENCHMARK_NAME, model)
+    gather_images(model_path)
 
 
 def run(args, i_cv):
@@ -79,22 +84,11 @@ def run(args, i_cv):
     save_model(model, model_path)
 
     # CHECK TRAINING
-    # import numpy as np
-    import matplotlib.pyplot as plt
-    # import seaborn as sns
     model_id = get_model_id(model, i_cv)
 
-    losses = model.losses
-    mse_losses = model.mse_losses
-    
-    plt.plot(losses, label='loss')
-    plt.plot(mse_losses, label='mse')
-    plt.title(model_id)
-    plt.xlabel('# iter')
-    plt.ylabel('Loss/MSE')
-    plt.legend()
-    plt.savefig(os.path.join(model_path, 'losses.png'))
-    plt.clf()
+    logger.info('Plot losses')
+    plot_REG_losses(model, model_id, model_path)
+    plot_REG_log_mse(model, model_id, model_path)
 
     # MEASUREMENT
     logger.info('Generate testing data')

@@ -24,10 +24,10 @@ from utils.model import get_model
 from utils.model import get_model_id
 from utils.model import get_model_path
 from utils.model import save_model
-
-from myplot import plot_valid_distrib
-from myplot import plot_summaries
-from myplot import plot_params
+from utils.plot import plot_valid_distrib
+from utils.plot import plot_summaries
+from utils.plot import plot_params
+from utils.misc import gather_images
 
 from problem.apples_and_pears import AP1
 from problem.apples_and_pears import AP1NLL
@@ -52,6 +52,10 @@ def main():
     flush(logger)
     for i_cv in range(N_ITER):
         run(args, i_cv)
+    model = get_model(args, GradientBoostingModel)
+    model_path = get_model_path(BENCHMARK_NAME, model)
+    gather_images(model_path)
+
 
 
 def run(args, i_cv):
@@ -93,7 +97,7 @@ def run(args, i_cv):
                                     n_samples=pb_config.N_VALIDATION_SAMPLES)
 
     logger.info('Plot distribution of the score')
-    plot_valid_distrib(model, model_id, model_path, X_valid, y_valid, classes=("apples", "pears"))
+    plot_valid_distrib(model, model_id, model_path, X_valid, y_valid, classes=("pears", "apples"))
 
 
     # MEASUREMENT
@@ -109,7 +113,7 @@ def run(args, i_cv):
     logger.info('Plot summaries')
     plot_summaries(compute_summaries, model_id, model_path, 
                     X_valid, y_valid, w_valid,
-                    X_test, w_test, classes=('apples', 'pears', 'fruits') )
+                    X_test, w_test, classes=('pears', 'apples', 'fruits') )
 
     logger.info('Plot NLL around minimum')
     plot_apple_ratio_around_min(compute_nll, pb_config.TRUE_APPLE_RATIO, model_path)
@@ -141,7 +145,7 @@ def run(args, i_cv):
 
     logger.info('Plot params')
     print_params(params, params_truth)
-    plot_params(params, params_truth, model_id, model_path)
+    plot_params(params, params_truth, model_id, model_path, param_min=0, param_max=1)
     logger.info('DONE')
 
 

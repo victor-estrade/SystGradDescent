@@ -25,6 +25,7 @@ from utils.model import get_model
 from utils.model import get_model_id
 from utils.model import get_model_path
 from utils.model import save_model
+from utils.misc import gather_images
 
 from utils.plot import plot_valid_distrib
 from utils.plot import plot_summaries
@@ -58,6 +59,9 @@ def main():
     flush(logger)
     for i_cv in range(N_ITER):
         run(args, i_cv)
+    model = get_model(args, GradientBoostingModel)
+    model_path = get_model_path(BENCHMARK_NAME, model)
+    gather_images(model_path)
 
 
 def run(args, i_cv):
