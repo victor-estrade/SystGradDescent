@@ -21,8 +21,6 @@ from utils.log import flush
 from utils.log import print_line
 from utils.log import print_params
 from utils.model import get_model
-from utils.model import get_model_id
-from utils.model import get_model_path
 from utils.model import save_model
 from utils.plot import plot_valid_distrib
 from utils.plot import plot_summaries
