@@ -53,8 +53,8 @@ def main():
     for i_cv in range(N_ITER):
         run(args, i_cv)
     model = get_model(args, GradientBoostingModel)
-    model_path = get_model_path(BENCHMARK_NAME, model)
-    gather_images(model_path)
+    model.set_info(BENCHMARK_NAME, -1)
+    gather_images(model.directory)
 
 
 
@@ -74,6 +74,7 @@ def run(args, i_cv):
     # SET MODEL
     logger.info('Set up classifier')
     model = get_model(args, GradientBoostingModel)
+    model.set_info(BENCHMARK_NAME, i_cv)
 
     # TRAINING
     logger.info('Generate training data')
@@ -85,19 +86,17 @@ def run(args, i_cv):
     logger.info('Training DONE')
 
     # SAVE MODEL
-    model_path = get_model_path(BENCHMARK_NAME, model, i_cv)
-    save_model(model, model_path)
+    save_model(model)
 
 
     # CHECK TRAINING
-    model_id = get_model_id(model, i_cv)
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(
                                     apple_ratio=pb_config.CALIBRATED_APPLE_RATIO,
                                     n_samples=pb_config.N_VALIDATION_SAMPLES)
 
     logger.info('Plot distribution of the score')
-    plot_valid_distrib(model, model_id, model_path, X_valid, y_valid, classes=("pears", "apples"))
+    plot_valid_distrib(model, X_valid, y_valid, classes=("pears", "apples"))
 
 
     # MEASUREMENT
@@ -111,12 +110,12 @@ def run(args, i_cv):
     compute_nll = AP1NLL(compute_summaries, valid_generator, X_test, w_test)
 
     logger.info('Plot summaries')
-    plot_summaries(compute_summaries, model_id, model_path, 
+    plot_summaries(compute_summaries, model,
                     X_valid, y_valid, w_valid,
                     X_test, w_test, classes=('pears', 'apples', 'fruits') )
 
     logger.info('Plot NLL around minimum')
-    plot_apple_ratio_around_min(compute_nll, pb_config.TRUE_APPLE_RATIO, model_path)
+    plot_apple_ratio_around_min(compute_nll, pb_config.TRUE_APPLE_RATIO, model)
 
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
@@ -145,7 +144,7 @@ def run(args, i_cv):
 
     logger.info('Plot params')
     print_params(params, params_truth)
-    plot_params(params, params_truth, model_id, model_path, param_min=0, param_max=1)
+    plot_params(params, params_truth, model, param_min=0, param_max=1)
     logger.info('DONE')
 
 
