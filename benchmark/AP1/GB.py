@@ -73,6 +73,7 @@ def run(args, i_cv):
     logger.info('Set up classifier')
     model = get_model(args, GradientBoostingModel)
     model.set_info(BENCHMARK_NAME, i_cv)
+    flush(logger)
 
     # TRAINING
     logger.info('Generate training data')
