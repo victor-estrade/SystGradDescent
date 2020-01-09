@@ -48,6 +48,8 @@ class ModelInfo(object):
         self.old_path = info['path']
         self.directory = info['directory']
         self.full_name = info['full_name']
+        self.i_cv = info['i_cv']
+        self.benchmark_name = info['benchmark_name']
         return self
 
     def _set_full_name(self, i_cv):
@@ -59,7 +61,7 @@ class ModelInfo(object):
         cv_id = "{:d}".format(i_cv)
         self.directory = os.path.join(config.SAVING_DIR, benchmark_name, 
                                         model_class, name)
-        self.path = os.path.join(self.path, cv_id)
+        self.path = os.path.join(self.directory, cv_id)
 
     def set_info(self, benchmark_name, i_cv):
         self.benchmark_name = benchmark_name
