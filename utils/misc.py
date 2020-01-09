@@ -10,8 +10,8 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 
-def gather_images(model_path):
-    cv_dirs = [os.path.join(model_path, d) for d in sorted(os.listdir(model_path))]
+def gather_images(model_directory):
+    cv_dirs = [os.path.join(model_directory, d) for d in sorted(os.listdir(model_directory))]
     cv_dirs = [d for d in cv_dirs if os.path.isdir(d)]
     all_png_files = [os.path.join(d, file) 
                         for d in cv_dirs for file in os.listdir(d) 
@@ -22,7 +22,7 @@ def gather_images(model_path):
     for same_img, name in zip(same_images, unique_png_names):
         concat_img = concat_images(same_img)
         name = "".join(name[:-4]+"_concat.png")
-        fname = os.path.join(model_path, name)
+        fname = os.path.join(model_directory, name)
         concat_img.save(fname)
 
 
@@ -43,11 +43,13 @@ def concat_images(images):
         new_img.paste(img, (col * max_width, row * max_height))
     return new_img
 
+
 def draw_number(img, i):
     draw = ImageDraw.Draw(img)
     font = load_ImageFont()
     draw.text((10, 10),"{:d}".format(i),(150,20,20),font=font)
     return img
+
 
 def load_ImageFont():
     try :
