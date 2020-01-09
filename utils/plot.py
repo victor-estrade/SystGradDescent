@@ -31,14 +31,14 @@ def set_plot_config():
     mpl.rcParams['figure.titlesize'] = 'medium'
 
 
-def plot_test_distrib(model, model_name, model_path, X_test, y_test):
+def plot_test_distrib(model, model_id, model_path, X_test, y_test):
     logger = logging.getLogger()
     logger.info( 'Test accuracy = {} %'.format(100 * model.score(X_test, y_test)) )
     proba = model.predict_proba(X_test)
     try:
         sns.distplot(proba[y_test==0, 1], label='b')
         sns.distplot(proba[y_test==1, 1], label='s')
-        plt.title(model_name)
+        plt.title(model_id)
         plt.legend()
         plt.savefig(os.path.join(model_path, 'test_distrib.png'))
         plt.clf()
@@ -47,19 +47,54 @@ def plot_test_distrib(model, model_name, model_path, X_test, y_test):
         logger.warning(str(e))
 
 
-def plot_valid_distrib(model, model_name, model_path, X, y, classes=('b', 's')):
+def plot_valid_distrib(model, model_id, model_path, X, y, classes=('b', 's')):
     logger = logging.getLogger()
     logger.info( 'Valid accuracy = {} %'.format(100 * model.score(X, y)) )
     proba = model.predict_proba(X)
     try:
         sns.distplot(proba[y==0, 1], label=classes[0])
         sns.distplot(proba[y==1, 1], label=classes[1])
-        plt.title(model_name)
+        plt.title(model_id)
         plt.legend()
         plt.savefig(os.path.join(model_path, 'valid_distrib.png'))
         plt.clf()
     except Exception as e:
         logger.warning('Plot valid distrib failed')
+        logger.warning(str(e))
+
+
+def plot_REG_losses(model, model_id, model_path):
+    logger = logging.getLogger()
+    losses = model.losses
+    mse_losses = model.mse_losses
+    try:
+        plt.plot(mse_losses, label='mse')
+        plt.plot(losses, label='loss')
+        plt.title(model_id)
+        plt.xlabel('# iter')
+        plt.ylabel('Loss/MSE')
+        plt.legend()
+        plt.savefig(os.path.join(model_path, 'losses.png'))
+        plt.clf()
+    except Exception as e:
+        logger.warning('Plot REG losses failed')
+        logger.warning(str(e))
+
+
+def plot_REG_log_mse(model, model_id, model_path):
+    logger = logging.getLogger()
+    mse_losses = model.mse_losses
+    try:
+        plt.plot(mse_losses, label='mse')
+        plt.title(model_id)
+        plt.xlabel('# iter')
+        plt.ylabel('Loss/MSE')
+        plt.yscale('log')
+        plt.legend()
+        plt.savefig(os.path.join(model_path, 'log_mse_loss.png'))
+        plt.clf()
+    except Exception as e:
+        logger.warning('Plot REG losses failed')
         logger.warning(str(e))
 
 
@@ -75,11 +110,15 @@ def plot_summaries(summary_computer, model_name, model_path,
     s_histogram = summary_computer(X_sig, w_sig)
     b_histogram = summary_computer(X_bkg, w_bkg)
     n_histogram = summary_computer(X_test, w_test)
+    n_summaries = len(n_histogram)
 
     try:
-        plt.bar(np.arange(10)+0.1, b_histogram, width=0.3, label=classes[0])
-        plt.bar(np.arange(10)+0.4, s_histogram, width=0.3, label=classes[1])
-        plt.bar(np.arange(10)+0.7, n_histogram, width=0.3, label=classes[2])
+        plt.bar(np.arange(n_summaries)+0.1, b_histogram, width=0.3, label=classes[0])
+        plt.bar(np.arange(n_summaries)+0.4, s_histogram, width=0.3, label=classes[1])
+        plt.bar(np.arange(n_summaries)+0.7, n_histogram, width=0.3, label=classes[2])
+        plt.xlabel("bins")
+        plt.ylabel("summary_value")
+        plt.xticks(list(range(n_summaries)))
         plt.title(model_name)
         plt.legend()
         plt.savefig(os.path.join(model_path, 'summaries.png'))
@@ -87,7 +126,6 @@ def plot_summaries(summary_computer, model_name, model_path,
     except Exception as e:
         logger.warning('Plot summaries failed')
         logger.warning(str(e))
-
 
 
 def plot_param_around_min(param_array, nll_array, true_value, param_name, model_path):
@@ -108,7 +146,7 @@ def plot_param_around_min(param_array, nll_array, true_value, param_name, model_
         logger.warning(str(e))
 
 
-def plot_params(param, params_truth, model_name, model_path):
+def plot_params(param, params_truth, model_name, model_path, param_max=None, param_min=None):
     logger = logging.getLogger()
     params = [p['value'] for p in param]
     params_error = [p['error'] for p in param]
@@ -119,6 +157,7 @@ def plot_params(param, params_truth, model_name, model_path):
         plt.scatter(x, params_truth, c='red', label='truth')
         plt.xticks(x, params_names)
         # plt.yscale('log')
+        plt.ylim(param_min, max([param_max] + [p+p_err+0.1 for p, p_err in zip(params, params_error)]) )
         plt.title(model_name)
         plt.legend()
         plt.savefig(os.path.join(model_path, 'params.png'))
