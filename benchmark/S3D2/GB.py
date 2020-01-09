@@ -22,8 +22,6 @@ from utils.log import flush
 from utils.log import print_line
 from utils.log import print_params
 from utils.model import get_model
-from utils.model import get_model_id
-from utils.model import get_model_path
 from utils.model import save_model
 from utils.misc import gather_images
 
@@ -60,8 +58,8 @@ def main():
     for i_cv in range(N_ITER):
         run(args, i_cv)
     model = get_model(args, GradientBoostingModel)
-    model_path = get_model_path(BENCHMARK_NAME, model)
-    gather_images(model_path)
+    model.set_info(BENCHMARK_NAME, -1)
+    gather_images(model.directory)
 
 
 def run(args, i_cv):
@@ -81,6 +79,8 @@ def run(args, i_cv):
     # SET MODEL
     logger.info('Set up classifier')
     model = get_model(args, GradientBoostingModel)
+    model.set_info(BENCHMARK_NAME, i_cv)
+    flush(logger)
     
     # TRAINING
     logger.info('Generate training data')
@@ -94,12 +94,10 @@ def run(args, i_cv):
     logger.info('Training DONE')
 
     # SAVE MODEL
-    model_path = get_model_path(BENCHMARK_NAME, model, i_cv)
-    save_model(model, model_path)
+    save_model(model)
 
 
     # CHECK TRAINING
-    model_id = get_model_id(model, i_cv)
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(
                                      pb_config.CALIBRATED_R,
@@ -108,7 +106,7 @@ def run(args, i_cv):
                                      n_samples=pb_config.N_VALIDATION_SAMPLES)
     
     logger.info('Plot distribution of the score')
-    plot_valid_distrib(model, model_id, model_path, X_valid, y_valid, classes=("b", "s"))
+    plot_valid_distrib(model, X_valid, y_valid, classes=("b", "s"))
     
 
     # MEASUREMENT
@@ -120,20 +118,21 @@ def run(args, i_cv):
                                      n_samples=pb_config.N_TESTING_SAMPLES)
 
     logger.info('Set up NLL computer')
-    compute_summaries = ClassifierSummaryComputer(model, n_bins=10)
+    n_bins = 10
+    compute_summaries = ClassifierSummaryComputer(model, n_bins=n_bins)
     compute_nll = S3D2NLL(compute_summaries, valid_generator, X_test, w_test)
 
     logger.info('Plot summaries')
-    plot_summaries(compute_summaries, model_id, model_path, 
+    plot_summaries( model, n_bins,
                     X_valid, y_valid, w_valid,
                     X_test, w_test, classes=('b', 's', 'n') )
 
 
     # NLL PLOTS
     logger.info('Plot NLL around minimum')
-    plot_R_around_min(compute_nll, pb_config, model_path)
-    plot_LAMBDA_around_min(compute_nll, pb_config, model_path)
-    plot_MU_around_min(compute_nll, pb_config, model_path)
+    plot_R_around_min(compute_nll, pb_config, model)
+    plot_LAMBDA_around_min(compute_nll, pb_config, model)
+    plot_MU_around_min(compute_nll, pb_config, model)
 
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
@@ -165,7 +164,7 @@ def run(args, i_cv):
 
     logger.info('Plot params')
     print_params(params, params_truth)
-    plot_params(params, params_truth, model_id, model_path)
+    plot_params(params, params_truth, model)
 
     print(params[2]['value'] * 1050, 'signal events estimated')
     print(params[2]['error'] * 1050, 'error on # estimated sig event')

@@ -17,8 +17,6 @@ from utils.log import set_logger
 from utils.log import flush
 from utils.log import print_line
 from utils.model import get_model
-from utils.model import get_model_id
-from utils.model import get_model_path
 from utils.model import save_model
 from utils.plot import plot_REG_losses
 from utils.plot import plot_REG_log_mse
@@ -50,8 +48,8 @@ def main():
     for i_cv in range(N_ITER):
         run(args, i_cv)
     model = get_model(args, Regressor)
-    model_path = get_model_path(BENCHMARK_NAME, model)
-    gather_images(model_path)
+    model.set_info(BENCHMARK_NAME, -1)
+    gather_images(model.directory)
 
 
 def run(args, i_cv):
@@ -71,6 +69,7 @@ def run(args, i_cv):
     net = RegNet(n_in=1, n_out=2)
     args.net = net
     model = get_model(args, Regressor)
+    model.set_info(BENCHMARK_NAME, i_cv)
     model.param_generator = param_generator
     flush(logger)
 
@@ -80,15 +79,12 @@ def run(args, i_cv):
     logger.info('Training DONE')
 
     # SAVE MODEL
-    model_path = get_model_path(BENCHMARK_NAME, model, i_cv)
-    save_model(model, model_path)
+    save_model(model)
 
     # CHECK TRAINING
-    model_id = get_model_id(model, i_cv)
-
     logger.info('Plot losses')
-    plot_REG_losses(model, model_id, model_path)
-    plot_REG_log_mse(model, model_id, model_path)
+    plot_REG_losses(model)
+    plot_REG_log_mse(model)
 
     # MEASUREMENT
     logger.info('Generate testing data')
@@ -98,8 +94,6 @@ def run(args, i_cv):
 
     pred, sigma = model.predict(X_test, w_test)
     print(true_apple_ratio, '=vs=', pred, '+/-', sigma)
-
-
 
 
     logger.info('DONE')
