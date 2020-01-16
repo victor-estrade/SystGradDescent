@@ -30,6 +30,8 @@ from utils.plot import plot_summaries
 from utils.plot import plot_params
 from utils.misc import gather_images
 from utils.misc import register_params
+from utils.misc import _ERROR
+from utils.misc import _TRUTH
 
 from problem.apples_and_pears import AP1
 from problem.apples_and_pears import AP1NLL
@@ -56,6 +58,12 @@ def main():
     results = pd.concat(results, ignore_index=True)
     model = get_model(args, GradientBoostingModel)
     model.set_info(BENCHMARK_NAME, -1)
+    pb_config = AP1Config()
+    for name in pb_config.PARAM_NAMES:
+        values = results[name]
+        errors = results[name+_ERROR]
+        truths = results[name+_TRUTH]
+        values + errors + truths
 
     gather_images(model.directory)
     results.to_csv(os.path.join(model.directory, 'results.csv'))
@@ -149,7 +157,7 @@ def run(args, i_cv):
     result_table = pd.DataFrame(result_table)
 
     logger.info('Plot params')
-    param_names = [p['name'] for p in params]
+    param_names = pb_config.PARAM_NAMES
     for name in param_names:
         plot_params(name, result_table, model)
 

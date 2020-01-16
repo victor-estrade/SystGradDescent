@@ -9,6 +9,8 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
+_ERROR = '_error'
+_TRUTH = '_truth'
 
 def gather_images(model_directory):
     cv_dirs = [os.path.join(model_directory, d) for d in sorted(os.listdir(model_directory))]
@@ -68,6 +70,6 @@ def register_params(param, params_truth, measure_dict):
         value = p['value']
         error = p['error']
         measure_dict[name] = value
-        measure_dict[name+'_error'] = error
-        measure_dict[name+'_truth'] = truth
+        measure_dict[name+_ERROR] = error
+        measure_dict[name+_TRUTH] = truth
 

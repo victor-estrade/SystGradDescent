@@ -13,6 +13,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from .misc import _ERROR
+from .misc import _TRUTH
+
 
 def set_plot_config():
     sns.set()
@@ -151,8 +154,8 @@ def plot_param_around_min(param_array, nll_array, true_value, param_name, model)
 def plot_params(param_name, result_table, model):
     logger = logging.getLogger()
     values = result_table[param_name]
-    errors = result_table[param_name+'_error']
-    truths = result_table[param_name+'_truth']
+    errors = result_table[param_name+_ERROR]
+    truths = result_table[param_name+_TRUTH]
     x = list(range(len(values)))
     try:
         plt.errorbar(x, values, yerr=errors, fmt='o', capsize=20, capthick=2, label='infer')
