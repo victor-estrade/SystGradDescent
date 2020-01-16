@@ -78,6 +78,27 @@ def register_params(param, params_truth, measure_dict):
         measure_dict[name+_TRUTH] = truth
 
 
+def estimate(minimizer):
+    import logging
+    logger = logging.getLogger()
+
+    if logger.getEffectiveLevel() <= logging.DEBUG:
+        minimizer.print_param()
+    logger.info('Mingrad()')
+    fmin, params = minimizer.migrad()
+    logger.info('Mingrad DONE')
+
+    if minimizer.migrad_ok():
+        logger.info('Mingrad is VALID !')
+        logger.info('Hesse()')
+        params = minimizer.hesse()
+        logger.info('Hesse DONE')
+    else:
+        logger.warning('Mingrad IS NOT VALID !')
+    return fmin, params
+
+
+
 def evaluate_estimator(name, results):
     # TODO : evaluate mingrad's VALID only !
     truths = results[name+_TRUTH]

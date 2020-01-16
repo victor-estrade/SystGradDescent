@@ -28,6 +28,7 @@ from utils.plot import plot_valid_distrib
 from utils.plot import plot_summaries
 from utils.plot import plot_params
 from utils.misc import gather_images
+from utils.misc import estimate
 from utils.misc import register_params
 from utils.misc import evaluate_estimator
 
@@ -133,13 +134,13 @@ def run(args, i_cv):
         logger.info('Set up NLL computer')
         compute_nll = AP1NLL(compute_summaries, valid_generator, X_test, w_test)
 
-
         logger.info('Plot summaries')
         extension = '-mu={:1.1f}'.format(pb_config.TRUE_APPLE_RATIO)
         plot_summaries( model, n_bins, extension,
                         X_valid, y_valid, w_valid,
                         X_test, w_test, classes=('pears', 'apples', 'fruits') )
 
+        # NLL PLOTS
         logger.info('Plot NLL around minimum')
         plot_apple_ratio_around_min(compute_nll, 
                                     pb_config.TRUE_APPLE_RATIO,
@@ -178,25 +179,6 @@ def get_minimizer(compute_nll, pb_config=None):
                                limit_apple_ratio=(0, 1),
                               )
     return minimizer
-
-
-def estimate(minimizer):
-    logger = logging.getLogger()
-
-    if logger.getEffectiveLevel() <= logging.DEBUG:
-        minimizer.print_param()
-    logger.info('Mingrad()')
-    fmin, params = minimizer.migrad()
-    logger.info('Mingrad DONE')
-
-    if minimizer.migrad_ok():
-        logger.info('Mingrad is VALID !')
-        logger.info('Hesse()')
-        params = minimizer.hesse()
-        logger.info('Hesse DONE')
-    else:
-        logger.warning('Mingrad IS NOT VALID !')
-    return fmin, params
 
 
 
