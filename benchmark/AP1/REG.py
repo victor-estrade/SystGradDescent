@@ -8,8 +8,11 @@ from __future__ import unicode_literals
 # Command line : 
 # python -m benchmark.AP1.REG
 
+import os
 import logging
 import config
+
+import pandas as pd
 
 from utils.plot import set_plot_config
 set_plot_config()
@@ -20,9 +23,14 @@ from utils.model import get_model
 from utils.model import save_model
 from utils.plot import plot_REG_losses
 from utils.plot import plot_REG_log_mse
+from utils.plot import plot_params
 from utils.misc import gather_images
+from utils.misc import _ERROR
+from utils.misc import _TRUTH
+from utils.misc import evaluate_estimator
 
 from problem.apples_and_pears import AP1
+from problem.apples_and_pears import AP1Config
 
 from model.regressor import Regressor
 from archi.net import RegNet
@@ -30,7 +38,7 @@ from archi.net import RegNet
 from ..my_argparser import REG_parse_args
 
 BENCHMARK_NAME = 'AP1'
-N_ITER = 5
+N_ITER = 3
 
 
 def param_generator():
@@ -45,10 +53,23 @@ def main():
     args = REG_parse_args(main_description="Training launcher for Regressor on AP1 benchmark")
     logger.info(args)
     flush(logger)
-    for i_cv in range(N_ITER):
-        run(args, i_cv)
+    # INFO
+    args.net = RegNet(n_in=1, n_out=2)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, -1)
+    pb_config = AP1Config()
+    # RUN
+    results = [run(args, i_cv) for i_cv in range(N_ITER)]
+    results = pd.concat(results, ignore_index=True)
+    results.to_csv(os.path.join(model.directory, 'results.csv'))
+    # EVALUATION
+    eval_table = evaluate_estimator(pb_config.INTEREST_PARAM_NAME, results)
+    print_line()
+    print_line()
+    print(eval_table)
+    print_line()
+    print_line()
+    eval_table.to_csv(os.path.join(model.directory, 'evaluation.csv'))
     gather_images(model.directory)
 
 
@@ -57,8 +78,13 @@ def run(args, i_cv):
     print_line()
     logger.info('Running iter n°{}'.format(i_cv))
     print_line()
+
+    result_row = {'i_cv': i_cv}
+    result_table = []
+
     # LOAD/GENERATE DATA
     logger.info('Set up data generator')
+    pb_config = AP1Config()
     seed = config.SEED + i_cv * 5
     train_generator = AP1(seed)
     valid_generator = AP1(seed+1)
@@ -85,18 +111,33 @@ def run(args, i_cv):
     logger.info('Plot losses')
     plot_REG_losses(model)
     plot_REG_log_mse(model)
+    result_row['loss'] = model.losses[-1]
+    result_row['mse_loss'] = model.mse_losses[-1]
 
     # MEASUREMENT
-    logger.info('Generate testing data')
-    true_apple_ratio = 0.8
-    param_truth = [true_apple_ratio]
-    X_test, y_test, w_test = test_generator.generate(apple_ratio=true_apple_ratio, n_samples=2000)
+    for mu in pb_config.TRUE_APPLE_RATIO_RANGE:
+        pb_config.TRUE_APPLE_RATIO = mu
+        logger.info('Generate testing data')
+        X_test, y_test, w_test = test_generator.generate(apple_ratio=pb_config.TRUE_APPLE_RATIO,
+                                                        n_samples=pb_config.N_TESTING_SAMPLES)
 
-    pred, sigma = model.predict(X_test, w_test)
-    print(true_apple_ratio, '=vs=', pred, '+/-', sigma)
+        pred, sigma = model.predict(X_test, w_test)
+        name = pb_config.INTEREST_PARAM_NAME 
+        result_row[name] = pred
+        result_row[name+_ERROR] = sigma
+        result_row[name+_TRUTH] = pb_config.TRUE_APPLE_RATIO
 
+        logger.info('{} =vs= {} +/- {}'.format(pb_config.TRUE_APPLE_RATIO, pred, sigma))
+        result_table.append(result_row.copy())
+    result_table = pd.DataFrame(result_table)
+
+    logger.info('Plot params')
+    param_names = pb_config.PARAM_NAMES
+    for name in param_names:
+        plot_params(name, result_table, model)
 
     logger.info('DONE')
+    return result_table
 
 if __name__ == '__main__':
     main()
