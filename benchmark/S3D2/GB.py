@@ -14,6 +14,7 @@ import config
 import iminuit
 ERRORDEF_NLL = 0.5
 
+import pandas as pd
 
 from utils.plot import set_plot_config
 set_plot_config()
@@ -24,6 +25,9 @@ from utils.log import print_params
 from utils.model import get_model
 from utils.model import save_model
 from utils.misc import gather_images
+from utils.misc import estimate
+from utils.misc import register_params
+from utils.misc import evaluate_estimator
 
 from utils.plot import plot_valid_distrib
 from utils.plot import plot_summaries
@@ -43,7 +47,7 @@ from ..my_argparser import GB_parse_args
 
 
 BENCHMARK_NAME = 'S3D2'
-N_ITER = 5
+N_ITER = 3
 
 
 # =====================================================================
@@ -55,10 +59,22 @@ def main():
     args = GB_parse_args(main_description="Training launcher for Gradient boosting on S3D2 benchmark")
     logger.info(args)
     flush(logger)
-    for i_cv in range(N_ITER):
-        run(args, i_cv)
+    # INFO
     model = get_model(args, GradientBoostingModel)
     model.set_info(BENCHMARK_NAME, -1)
+    pb_config = S3D2Config()
+    # RUN
+    results = [run(args, i_cv) for i_cv in range(N_ITER)]
+    results = pd.concat(results, ignore_index=True)
+    results.to_csv(os.path.join(model.directory, 'results.csv'))
+    # EVALUATION
+    eval_table = evaluate_estimator(pb_config.INTEREST_PARAM_NAME, results)
+    print_line()
+    print_line()
+    print(eval_table)
+    print_line()
+    print_line()
+    eval_table.to_csv(os.path.join(model.directory, 'evaluation.csv'))
     gather_images(model.directory)
 
 
@@ -67,6 +83,10 @@ def run(args, i_cv):
     print_line()
     logger.info('Running iter n°{}'.format(i_cv))
     print_line()
+
+    result_row = {'i_cv': i_cv}
+    result_table = []
+
     # LOAD/GENERATE DATA
     logger.info('Set up data generator')
     pb_config = S3D2Config()
@@ -107,57 +127,58 @@ def run(args, i_cv):
     
     logger.info('Plot distribution of the score')
     plot_valid_distrib(model, X_valid, y_valid, classes=("b", "s"))
-    
+    result_row['valid_accuracy'] = model.score(X_valid, y_valid)
+
 
     # MEASUREMENT
-    logger.info('Generate testing data')
-    X_test, y_test, w_test = test_generator.generate(
-                                     pb_config.TRUE_R,
-                                     pb_config.TRUE_LAMBDA,
-                                     pb_config.TRUE_MU,
-                                     n_samples=pb_config.N_TESTING_SAMPLES)
-
-    logger.info('Set up NLL computer')
     n_bins = 10
     compute_summaries = ClassifierSummaryComputer(model, n_bins=n_bins)
-    compute_nll = S3D2NLL(compute_summaries, valid_generator, X_test, w_test)
+    for mu in pb_config.TRUE_MU_RANGE:
+        pb_config.TRUE_MU = mu
+        logger.info('Generate testing data')
+        X_test, y_test, w_test = test_generator.generate(
+                                         pb_config.TRUE_R,
+                                         pb_config.TRUE_LAMBDA,
+                                         pb_config.TRUE_MU,
+                                         n_samples=pb_config.N_TESTING_SAMPLES)
 
-    logger.info('Plot summaries')
-    plot_summaries( model, n_bins,
-                    X_valid, y_valid, w_valid,
-                    X_test, w_test, classes=('b', 's', 'n') )
+        logger.info('Set up NLL computer')
+        compute_nll = S3D2NLL(compute_summaries, valid_generator, X_test, w_test)
+
+        logger.info('Plot summaries')
+        extension = '-mu={:1.1f}_r={}_lambda={}'.format(pb_config.TRUE_MU, 
+                                    pb_config.TRUE_R, pb_config.TRUE_LAMBDA)
+        plot_summaries( model, n_bins, extension,
+                        X_valid, y_valid, w_valid,
+                        X_test, w_test, classes=('b', 's', 'n') )
 
 
-    # NLL PLOTS
-    logger.info('Plot NLL around minimum')
-    plot_R_around_min(compute_nll, pb_config, model)
-    plot_LAMBDA_around_min(compute_nll, pb_config, model)
-    plot_MU_around_min(compute_nll, pb_config, model)
+        # NLL PLOTS
+        logger.info('Plot NLL around minimum')
+        plot_R_around_min(compute_nll, pb_config, model, extension)
+        plot_LAMBDA_around_min(compute_nll, pb_config, model, extension)
+        plot_MU_around_min(compute_nll, pb_config, model, extension)
 
-    # MINIMIZE NLL
-    logger.info('Prepare minuit minimizer')
-    minimizer = get_minimizer(compute_nll, pb_config)
-    minimizer.print_param()
-    logger.info('Mingrad()')
-    fmin, params = minimizer.migrad()
-    logger.info('Mingrad DONE')
+        # MINIMIZE NLL
+        logger.info('Prepare minuit minimizer')
+        minimizer = get_minimizer(compute_nll, pb_config)
+        fmin, params = estimate(minimizer)
+        params_truth = [pb_config.TRUE_R, pb_config.TRUE_LAMBDA, pb_config.TRUE_MU]
 
-    if minimizer.migrad_ok():
-        logger.info('Mingrad is VALID !')
-        logger.info('Hesse()')
-        params = minimizer.hesse()
-        logger.info('Hesse DONE')
-    else:
-        logger.info('Mingrad IS NOT VALID !')
-
+        print_params(params, params_truth)
+        register_params(params, params_truth, result_row)
+        result_row['is_mingrad_valid'] = minimizer.migrad_ok()
+        result_row.update(fmin)
+        result_table.append(result_row.copy())
+    result_table = pd.DataFrame(result_table)
     logger.info('Plot params')
-    params_truth = [pb_config.TRUE_R, pb_config.TRUE_LAMBDA, pb_config.TRUE_MU]
-    print_params(params, params_truth)
-    plot_params(params, params_truth, model)
+    param_names = pb_config.PARAM_NAMES
+    for name in param_names:
+        plot_params(name, result_table, model)
 
-    print(params[2]['value'] * 1050, 'signal events estimated')
-    print(params[2]['error'] * 1050, 'error on # estimated sig event')
-    print('Done.')
+
+    logger.info('DONE')
+    return result_table
 
 def get_minimizer(compute_nll, pb_config):
     minimizer = iminuit.Minuit(compute_nll,
