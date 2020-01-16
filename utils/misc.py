@@ -60,3 +60,14 @@ def load_ImageFont():
         except OSError:
             font = ImageFont.load_default()
     return font
+
+
+def register_params(param, params_truth, measure_dict):
+    for p, truth in zip(param, params_truth):
+        name  = p['name']
+        value = p['value']
+        error = p['error']
+        measure_dict[name] = value
+        measure_dict[name+'_error'] = error
+        measure_dict[name+'_truth'] = truth
+

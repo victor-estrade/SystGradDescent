@@ -54,6 +54,8 @@ def plot_valid_distrib(model, X, y, classes=('b', 's')):
     try:
         sns.distplot(proba[y==0, 1], label=classes[0])
         sns.distplot(proba[y==1, 1], label=classes[1])
+        plt.xlabel('classifier score')
+        plt.ylabel('density')
         plt.title(model.full_name)
         plt.legend()
         plt.savefig(os.path.join(model.path, 'valid_distrib.png'))
@@ -94,11 +96,11 @@ def plot_REG_log_mse(model):
         plt.savefig(os.path.join(model.path, 'log_mse_loss.png'))
         plt.clf()
     except Exception as e:
-        logger.warning('Plot REG losses failed')
+        logger.warning('Plot REG log losses failed')
         logger.warning(str(e))
 
 
-def plot_summaries(model, n_bins, 
+def plot_summaries(model, n_bins, extension,
                     X_valid, y_valid, w_valid,
                     X_test, w_test, classes=('b', 's', 'n') ):
     logger = logging.getLogger()
@@ -121,7 +123,7 @@ def plot_summaries(model, n_bins,
         plt.xticks(x_ticks)
         plt.title(model.full_name)
         plt.legend()
-        plt.savefig(os.path.join(model.path, 'summaries.png'))
+        plt.savefig(os.path.join(model.path, 'summaries{}.png'.format(extension)))
         plt.clf()
     except Exception as e:
         logger.warning('Plot summaries failed')
@@ -146,22 +148,23 @@ def plot_param_around_min(param_array, nll_array, true_value, param_name, model)
         logger.warning(str(e))
 
 
-def plot_params(param, params_truth, model, param_max=None, param_min=None):
+def plot_params(param_name, result_table, model):
     logger = logging.getLogger()
-    params = [p['value'] for p in param]
-    params_error = [p['error'] for p in param]
-    params_names = [p['name'] for p in param]
-    x = list(range(len(params)))
+    values = result_table[param_name]
+    errors = result_table[param_name+'_error']
+    truths = result_table[param_name+'_truth']
+    x = list(range(len(values)))
     try:
-        plt.errorbar(x, params, yerr=params_error, fmt='o', capsize=20, capthick=2, label='infer')
-        plt.scatter(x, params_truth, c='red', label='truth')
-        plt.xticks(x, params_names)
+        plt.errorbar(x, values, yerr=errors, fmt='o', capsize=20, capthick=2, label='infer')
+        plt.scatter(x, truths, c='red', label='truth')
+        plt.xticks(x, truths)
+        plt.xlabel('truth value')
+        plt.ylabel(param_name)
         # plt.yscale('log')
-        plt.ylim(param_min, max([param_max] + [p+p_err+0.1 for p, p_err in zip(params, params_error)]) )
         plt.title(model.full_name)
         plt.legend()
-        plt.savefig(os.path.join(model.path, 'params.png'))
+        plt.savefig(os.path.join(model.path, '{}_estimate.png'.format(param_name)))
         plt.clf()
     except Exception as e:
-        logger.warning('Plot summaries failed')
+        logger.warning('Plot params failed')
         logger.warning(str(e))
