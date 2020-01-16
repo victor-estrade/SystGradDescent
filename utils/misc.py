@@ -114,8 +114,10 @@ def evaluate_estimator(name, results):
 
 def evaluate_one_estimation(values, errors, truth):
     row = dict(v_mean = np.mean(values)
+          ,v_std = np.std(values)
           ,v_variance = np.var(values)
           ,err_mean = np.mean(errors)
+          ,err_std = np.std(errors)
           ,err_variance = np.var(errors)
           )
     row['v_bias'] = row['v_mean'] - truth
