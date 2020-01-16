@@ -136,23 +136,11 @@ def run(args, i_cv):
 
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
-    minimizer = iminuit.Minuit(compute_nll,
-                               errordef=ERRORDEF_NLL,
-                               r=pb_config.CALIBRATED_R,
-                               error_r=pb_config.CALIBRATED_R_ERROR,
-                               #limit_r=(0, None),
-                               lam=pb_config.CALIBRATED_LAMBDA,
-                               error_lam=pb_config.CALIBRATED_LAMBDA_ERROR,
-                               limit_lam=(0, None),
-                               mu=pb_config.CALIBRATED_MU,
-                               error_mu=pb_config.CALIBRATED_MU_ERROR,
-                               limit_mu=(0, 1),
-                              )
+    minimizer = get_minimizer(compute_nll, pb_config)
     minimizer.print_param()
     logger.info('Mingrad()')
     fmin, params = minimizer.migrad()
     logger.info('Mingrad DONE')
-    params_truth = [pb_config.TRUE_R, pb_config.TRUE_LAMBDA, pb_config.TRUE_MU]
 
     if minimizer.migrad_ok():
         logger.info('Mingrad is VALID !')
@@ -163,6 +151,7 @@ def run(args, i_cv):
         logger.info('Mingrad IS NOT VALID !')
 
     logger.info('Plot params')
+    params_truth = [pb_config.TRUE_R, pb_config.TRUE_LAMBDA, pb_config.TRUE_MU]
     print_params(params, params_truth)
     plot_params(params, params_truth, model)
 
@@ -170,6 +159,20 @@ def run(args, i_cv):
     print(params[2]['error'] * 1050, 'error on # estimated sig event')
     print('Done.')
 
+def get_minimizer(compute_nll, pb_config):
+    minimizer = iminuit.Minuit(compute_nll,
+                           errordef=ERRORDEF_NLL,
+                           r=pb_config.CALIBRATED_R,
+                           error_r=pb_config.CALIBRATED_R_ERROR,
+                           #limit_r=(0, None),
+                           lam=pb_config.CALIBRATED_LAMBDA,
+                           error_lam=pb_config.CALIBRATED_LAMBDA_ERROR,
+                           limit_lam=(0, None),
+                           mu=pb_config.CALIBRATED_MU,
+                           error_mu=pb_config.CALIBRATED_MU_ERROR,
+                           limit_mu=(0, 1),
+                          )
+    return minimizer
 
 if __name__ == '__main__':
     main()
