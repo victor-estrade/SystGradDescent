@@ -50,27 +50,26 @@ class ApplePear():
         return w
 
 
-class AP1():
+class AP1(ApplePear):
     def __init__(self, seed):
         apple_center = 1.
         apple_std    = 1.
         pear_center  = 2.5
         pear_std     = 1.
         n_total      = 500
-        self.generator = ApplePear(seed=seed, apple_center=apple_center, apple_std=apple_std, 
+        super().__init__(seed=seed, apple_center=apple_center, apple_std=apple_std, 
                     pear_center=pear_center, pear_std=pear_std, n_total=n_total)
-
-    def reset(self):
-        self.generator.reset()
 
     def generate(self, apple_ratio, n_samples=1000):
         n_apple = n_samples // 2
         n_pear = n_samples // 2
-        X, y, w = self.generator.generate(apple_ratio=apple_ratio, n_apple=n_apple, n_pear=n_pear)
+        X, y, w = super().generate(apple_ratio=apple_ratio, n_apple=n_apple, n_pear=n_pear)
         return X, y, w
 
 
 class AP1Config():
+    PARAM_NAMES = ['apple_ratio']
+
     CALIBRATED_APPLE_RATIO = 0.5
     CALIBRATED_APPLE_RATIO_ERROR = 1  # minuit default
     TRUE_APPLE_RATIO = 0.8
