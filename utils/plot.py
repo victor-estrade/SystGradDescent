@@ -160,7 +160,7 @@ def plot_params(param_name, result_table, model):
     try:
         plt.errorbar(x, values, yerr=errors, fmt='o', capsize=20, capthick=2, label='infer')
         plt.scatter(x, truths, c='red', label='truth')
-        plt.xticks(x, truths)
+        plt.xticks(x, map(lambda x: round(x, 3), truths))
         plt.xlabel('truth value')
         plt.ylabel(param_name)
         # plt.yscale('log')
