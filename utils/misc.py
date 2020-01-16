@@ -5,6 +5,10 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import os
+
+import numpy as np
+import pandas as pd
+
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -72,4 +76,31 @@ def register_params(param, params_truth, measure_dict):
         measure_dict[name] = value
         measure_dict[name+_ERROR] = error
         measure_dict[name+_TRUTH] = truth
+
+
+def evaluate_estimator(name, results):
+    # TODO : evaluate mingrad's VALID only !
+    truths = results[name+_TRUTH]
+    eval_table = []
+    for t in np.unique(truths):
+        res = results[results[name+_TRUTH] == t]
+        values = res[name]
+        errors = res[name+_ERROR]
+        row = evaluate_one_estimation(values, errors, t)
+        eval_table.append(row)
+    eval_table = pd.DataFrame(eval_table)
+    return eval_table
+
+def evaluate_one_estimation(values, errors, truth):
+    row = dict(v_mean = np.mean(values)
+          ,v_variance = np.var(values)
+          ,err_mean = np.mean(errors)
+          ,err_variance = np.var(errors)
+          )
+    row['v_bias'] = row['v_mean'] - truth
+    row['err_bias'] = row['err_mean'] - row['v_variance']
+    row['v_mse'] = row['v_bias']**2 + row['v_variance']
+    row['err_mse'] = row['err_bias']**2 + row['err_variance']
+    row['truth'] = truth
+    return row
 

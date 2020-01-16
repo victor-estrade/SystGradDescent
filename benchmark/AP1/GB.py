@@ -15,7 +15,6 @@ import iminuit
 ERRORDEF_NLL = 0.5
 
 import pandas as pd
-import numpy as np
 
 from utils.plot import set_plot_config
 set_plot_config()
@@ -30,8 +29,8 @@ from utils.plot import plot_summaries
 from utils.plot import plot_params
 from utils.misc import gather_images
 from utils.misc import register_params
-from utils.misc import _ERROR
-from utils.misc import _TRUTH
+from utils.misc import evaluate_estimator
+
 
 from problem.apples_and_pears import AP1
 from problem.apples_and_pears import AP1NLL
@@ -45,7 +44,7 @@ from ..my_argparser import GB_parse_args
 
 
 BENCHMARK_NAME = 'AP1'
-N_ITER = 3
+N_ITER = 9
 
 
 def main():
@@ -54,19 +53,23 @@ def main():
     args = GB_parse_args(main_description="Training launcher for Gradient boosting on AP1 benchmark")
     logger.info(args)
     flush(logger)
-    results = [run(args, i_cv) for i_cv in range(N_ITER)]
-    results = pd.concat(results, ignore_index=True)
+    # INFO
     model = get_model(args, GradientBoostingModel)
     model.set_info(BENCHMARK_NAME, -1)
     pb_config = AP1Config()
-    for name in pb_config.PARAM_NAMES:
-        values = results[name]
-        errors = results[name+_ERROR]
-        truths = results[name+_TRUTH]
-        values + errors + truths
-
-    gather_images(model.directory)
+    # RUN
+    results = [run(args, i_cv) for i_cv in range(N_ITER)]
+    results = pd.concat(results, ignore_index=True)
     results.to_csv(os.path.join(model.directory, 'results.csv'))
+    # EVALUATION
+    eval_table = evaluate_estimator(pb_config.INTEREST_PARAM_NAME, results)
+    print_line()
+    print_line()
+    print(eval_table)
+    print_line()
+    print_line()
+    eval_table.to_csv(os.path.join(model.directory, 'evaluation.csv'))
+    gather_images(model.directory)
 
 
 
