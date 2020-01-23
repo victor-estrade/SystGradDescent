@@ -38,7 +38,7 @@ from archi.net import RegNet
 from ..my_argparser import REG_parse_args
 
 BENCHMARK_NAME = 'AP1'
-N_ITER = 3
+N_ITER = 9
 
 
 def param_generator():

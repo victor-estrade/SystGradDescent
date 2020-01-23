@@ -97,7 +97,6 @@ def run(args, i_cv):
     save_model(model)
 
     # CHECK TRAINING
-
     logger.info('Plot losses')
     plot_REG_losses(model)
     plot_REG_log_mse(model)
