@@ -24,6 +24,7 @@ class Regressor(BaseModel):
     def __init__(self, net, n_steps=5000, batch_size=20, sample_size=1000, 
                 learning_rate=1e-3, cuda=False, verbose=0):
         super().__init__()
+        self.base_name   = "Regressor"
         self.n_steps     = n_steps
         self.batch_size  = batch_size
         self.sample_size = sample_size
@@ -137,11 +138,10 @@ class Regressor(BaseModel):
         return self
 
     def describe(self):
-        return dict(name='regressor', learning_rate=self.learning_rate,
+        return dict(name=self.basic_name, learning_rate=self.learning_rate,
                     n_steps=self.n_steps, batch_size=self.batch_size)
 
     def get_name(self):
-        name = "Regressor-{}-{}-{}-{}".format(self.n_steps, self.batch_size,
-                self.sample_size, self.learning_rate)
+        name = "{basic_name}-{n_steps}-{batch_size}-{sample_size}-{learning_rate}".format(**self.__dict__)
         return name
 

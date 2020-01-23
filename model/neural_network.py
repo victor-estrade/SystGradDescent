@@ -30,6 +30,7 @@ from .utils import classwise_balance_weight
 class NeuralNetClassifier(BaseClassifierModel):
     def __init__(self, net, n_steps=5000, batch_size=20, learning_rate=1e-3, cuda=False, verbose=0):
         super().__init__()
+        self.basic_name = "NeuralNetClassifier"
         self.n_steps    = n_steps
         self.batch_size = batch_size
         self.cuda_flag  = cuda
@@ -118,6 +119,7 @@ class NeuralNetClassifier(BaseClassifierModel):
         return y_proba
 
     def save(self, save_directory):
+        super().save(save_directory)
         path = os.path.join(save_directory, 'weights.pth')
         torch.save(self.net.state_dict(), path)
 
@@ -129,6 +131,7 @@ class NeuralNetClassifier(BaseClassifierModel):
         return self
 
     def load(self, save_directory):
+        super().load(save_directory)
         path = os.path.join(save_directory, 'weights.pth')
         if self.cuda_flag:
             self.net.load_state_dict(torch.load(path))
@@ -143,11 +146,11 @@ class NeuralNetClassifier(BaseClassifierModel):
         return self
 
     def describe(self):
-        return dict(name='neural_net', learning_rate=self.learning_rate,
+        return dict(name=self.basic_name, learning_rate=self.learning_rate,
                     n_steps=self.n_steps, batch_size=self.batch_size)
 
     def get_name(self):
-        name = "NeuralNetClf-{}-{}-{}".format(self.n_steps, self.batch_size, self.learning_rate)
+        name = "{basic_name}-{n_steps}-{batch_size}-{learning_rate}".format(**self.__dict__)
         return name
 
 
@@ -156,6 +159,7 @@ class AugmentedNeuralNetModel(NeuralNetClassifier):
                  cuda=False, verbose=0):
         super().__init__(net, n_steps=n_steps, batch_size=batch_size, 
                         learning_rate=learning_rate, cuda=cuda, verbose=verbose)
+        self.basic_name = "AugmentedNeuralNetClf"
         self.width = width
         self.n_augment = n_augment
         self.augmenter = augmenter
@@ -170,8 +174,7 @@ class AugmentedNeuralNetModel(NeuralNetClassifier):
                     n_steps=self.n_steps, batch_size=self.batch_size, width=self.width, n_augment=self.n_augment)
 
     def get_name(self):
-        name = "AugmentedNeuralNetClf-{}-{}-{}-{}-{}".format(self.n_steps, self.batch_size, self.learning_rate,
-                        self.width, self.n_augment)
+        name = "{basic_name}-{n_steps}-{batch_size}-{learning_rate}-{width}-{n_augment}".format(**self.__dict__)
         return name
 
 
@@ -179,6 +182,7 @@ class BlindNeuralNetModel(NeuralNetClassifier):
     def __init__(self, net, n_steps=5000, batch_size=20, learning_rate=1e-3, cuda=False, verbose=0):
         super().__init__(net, n_steps=n_steps, batch_size=batch_size, 
                         learning_rate=learning_rate, cuda=cuda, verbose=verbose)
+        self.basic_name = "BlindNeuralNetClf"
         self.skewed_idx = [0, 1, 8, 9, 10, 12, 18, 19]
         # ['DER_mass_transverse_met_lep', 'DER_mass_vis', 'DER_sum_pt',
         #  'DER_pt_ratio_lep_tau', 'DER_met_phi_centrality', 'PRI_tau_pt',
@@ -205,7 +209,3 @@ class BlindNeuralNetModel(NeuralNetClassifier):
     def describe(self):
         return dict(name='blind_neural_net', learning_rate=self.learning_rate,
                     n_steps=self.n_steps, batch_size=self.batch_size)
-
-    def get_name(self):
-        name = "BlindNeuralNetClf-{}-{}-{}".format(self.n_steps, self.batch_size, self.learning_rate)
-        return name

@@ -11,6 +11,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.externals import joblib
 
 from .base import BaseClassifierModel
+from .base import BaseModel
 from .utils import to_numpy
 from .utils import classwise_balance_weight
 
@@ -18,6 +19,7 @@ from .utils import classwise_balance_weight
 class GradientBoostingModel(BaseClassifierModel):
     def __init__(self, learning_rate=0.1, n_estimators=1000, max_depth=3,):
         super().__init__()
+        self.base_name = "GradientBoostingModel"
         self.learning_rate = learning_rate
         self.n_estimators = n_estimators
         self.max_depth = max_depth
@@ -58,13 +60,14 @@ class GradientBoostingModel(BaseClassifierModel):
         return self
 
     def get_name(self):
-        name = "GradientBoostingModel-{}-{}-{}".format(self.learning_rate, self.n_estimators, self.max_depth)
+        name = "{base_name}-{learning_rate}-{n_estimators}-{max_depth}".format(**self.__dict__)
         return name
 
 
 class BlindGradientBoostingModel(GradientBoostingModel):
     def __init__(self, learning_rate=0.1, n_estimators=1000, max_depth=3,):
         super().__init__()
+        self.basic_name = "BlindGradientBoostingModel"
         self.learning_rate = learning_rate
         self.n_estimators = n_estimators
         self.max_depth = max_depth
@@ -112,7 +115,3 @@ class BlindGradientBoostingModel(GradientBoostingModel):
         path = os.path.join(save_directory, 'GradientBoosting.pkl')
         self.clf = joblib.load(path)
         return self
-
-    def get_name(self):
-        name = "BlindGradientBoostingModel-{}-{}-{}".format(self.learning_rate, self.n_estimators, self.max_depth)
-        return name

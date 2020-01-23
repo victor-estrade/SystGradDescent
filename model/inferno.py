@@ -15,6 +15,7 @@ class Inferno(BaseModel):
     def __init__(self, net, criterion, n_steps=5000, batch_size=150, learning_rate=1e-3, 
                 temperature=1.0, cuda=False, verbose=0):
         super().__init__()
+        self.basic_name = "INFERNO"
         self.n_steps    = n_steps
         self.batch_size = batch_size
         self.temperature= temperature
@@ -69,6 +70,10 @@ class Inferno(BaseModel):
         probas = torch.softmax(logits / self.temperature, 1)
         counts = torch.sum(probas, 0, keepdim=False)
         return counts
+
+    def get_name(self):
+        name = "{basic_name}-{n_steps}-{batch_size}-{temperature}-{learning_rate}".format(**self.__dict__)
+        return name
 
 
 class S3DLoss(nn.Module):
