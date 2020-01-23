@@ -12,6 +12,8 @@ import os
 import logging
 import config
 
+import pandas as pd
+
 from utils.plot import set_plot_config
 set_plot_config()
 from utils.log import set_logger
@@ -21,7 +23,11 @@ from utils.model import get_model
 from utils.model import save_model
 from utils.plot import plot_REG_losses
 from utils.plot import plot_REG_log_mse
+from utils.plot import plot_params
 from utils.misc import gather_images
+from utils.misc import _ERROR
+from utils.misc import _TRUTH
+from utils.misc import evaluate_estimator
 
 from problem.synthetic3D import S3D2
 from problem.synthetic3D import S3D2Config
@@ -32,7 +38,7 @@ from archi.net import RegNet
 from ..my_argparser import REG_parse_args
 
 BENCHMARK_NAME = 'S3D2'
-N_ITER = 5
+N_ITER = 9
 
 
 def param_generator():
@@ -46,7 +52,12 @@ def param_generator():
     
     r = pb_config.CALIBRATED_R
     lam = pb_config.CALIBRATED_LAMBDA
-    
+    mu_min = min(pb_config.TRUE_MU_RANGE)
+    mu_max = max(pb_config.TRUE_MU_RANGE)
+    mu_range = mu_max - mu_min
+    mu_min = max(0.0, mu_min - mu_range/10)
+    mu_max = min(1.0, mu_max + mu_range/10)
+
     mu = np.random.uniform(0, 1)
     return (r, lam, mu,)
 
@@ -57,12 +68,24 @@ def main():
     args = REG_parse_args(main_description="Training launcher for Regressor on S3D2 benchmark")
     logger.info(args)
     flush(logger)
-
-    for i_cv in range(N_ITER):
-        run(args, i_cv)
-    logger.info("Gathering sub plots")
+    # INFO
+    args.net = RegNet(n_in=1, n_out=2)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, -1)
+    pb_config = S3D2Config()
+
+    # RUN
+    results = [run(args, i_cv) for i_cv in range(N_ITER)]
+    results = pd.concat(results, ignore_index=True)
+    results.to_csv(os.path.join(model.directory, 'results.csv'))
+    # EVALUATION
+    eval_table = evaluate_estimator(pb_config.INTEREST_PARAM_NAME, results)
+    print_line()
+    print_line()
+    print(eval_table)
+    print_line()
+    print_line()
+    eval_table.to_csv(os.path.join(model.directory, 'evaluation.csv'))
     gather_images(model.directory)
 
 
@@ -71,6 +94,10 @@ def run(args, i_cv):
     print_line()
     logger.info('Running iter n°{}'.format(i_cv))
     print_line()
+
+    result_row = {'i_cv': i_cv}
+    result_table = []
+
     # LOAD/GENERATE DATA
     logger.info('Set up data generator')
     pb_config = S3D2Config()
@@ -100,25 +127,40 @@ def run(args, i_cv):
     logger.info('Plot losses')
     plot_REG_losses(model)
     plot_REG_log_mse(model)
-
+    result_row['loss'] = model.losses[-1]
+    result_row['mse_loss'] = model.mse_losses[-1]
 
     # MEASUREMENT
-    logger.info('Generate testing data')
-    X_test, y_test, w_test = test_generator.generate(
-                                     # pb_config.TRUE_R,
-                                     # pb_config.TRUE_LAMBDA,
-                                     pb_config.CALIBRATED_R,
-                                     pb_config.CALIBRATED_LAMBDA,
-                                     pb_config.TRUE_MU,
-                                     n_samples=pb_config.N_TESTING_SAMPLES)
+    for mu in pb_config.TRUE_MU_RANGE:
+        pb_config.TRUE_MU = mu
+        logger.info('Generate testing data')
+        X_test, y_test, w_test = test_generator.generate(
+                                         # pb_config.TRUE_R,
+                                         # pb_config.TRUE_LAMBDA,
+                                         pb_config.CALIBRATED_R,
+                                         pb_config.CALIBRATED_LAMBDA,
+                                         pb_config.TRUE_MU,
+                                         n_samples=pb_config.N_TESTING_SAMPLES)
     
-    import numpy as np
-    p_test = np.array( (pb_config.CALIBRATED_R, pb_config.CALIBRATED_LAMBDA) )
-    pred, sigma = model.predict(X_test, w_test, p_test)
-    print(pb_config.TRUE_MU, '=vs=', pred, '+/-', sigma)
+        import numpy as np
+        p_test = np.array( (pb_config.CALIBRATED_R, pb_config.CALIBRATED_LAMBDA) )
+
+        pred, sigma = model.predict(X_test, w_test, p_test)
+        name = pb_config.INTEREST_PARAM_NAME 
+        result_row[name] = pred
+        result_row[name+_ERROR] = sigma
+        result_row[name+_TRUTH] = pb_config.TRUE_MU
+        logger.info('{} =vs= {} +/- {}'.format(pb_config.TRUE_MU, pred, sigma) ) 
+        result_table.append(result_row.copy())
+    result_table = pd.DataFrame(result_table)
+
+    logger.info('Plot params')
+    name = pb_config.INTEREST_PARAM_NAME 
+    plot_params(name, result_table, model)
 
 
     logger.info('DONE')
+    return result_table
 
 if __name__ == '__main__':
     main()
