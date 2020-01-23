@@ -91,8 +91,11 @@ def estimate(minimizer):
     if minimizer.migrad_ok():
         logger.info('Mingrad is VALID !')
         logger.info('Hesse()')
-        params = minimizer.hesse()
-        logger.info('Hesse DONE')
+        try:
+            params = minimizer.hesse()
+            logger.info('Hesse DONE')
+        except Exception as e:
+            logger.error('Exception during Hesse computation : {}'.format(e))
     else:
         logger.warning('Mingrad IS NOT VALID !')
     return fmin, params
