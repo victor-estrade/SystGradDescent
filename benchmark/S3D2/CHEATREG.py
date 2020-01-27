@@ -37,7 +37,7 @@ from archi.net import RegNet
 
 from ..my_argparser import REG_parse_args
 
-BENCHMARK_NAME = 'S3D2'
+BENCHMARK_NAME = 'S3D2-CHEAT'
 N_ITER = 9
 
 
