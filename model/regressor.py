@@ -115,6 +115,20 @@ class Regressor(BaseModel):
         sigma = np.exp(logsigma.item())
         return mu, sigma
 
+    def many_predict(self, X, w, param_generator, ncall=100):
+        all_pred = []
+        all_sigma = []
+        all_nuisance_params = []
+        for _ in range(ncall):
+            params = param_generator()
+            nuisance_params = np.array(params[:-1])
+            pred, sigma = self.predict(X, w, nuisance_params)
+            all_pred.append(pred)
+            all_sigma.append(sigma)
+            all_nuisance_params.append(nuisance_params)
+        
+        return all_pred, all_sigma, all_nuisance_params
+
 
     def save(self, save_directory):
         super(BaseModel, self).save(save_directory)
