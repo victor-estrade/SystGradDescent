@@ -171,7 +171,7 @@ def plot_params(param_name, result_table, model):
             plt.errorbar(valid_x, valid_values, yerr=valid_errors, fmt='o', capsize=20, capthick=2, label='valid_infer')
             plt.errorbar(x, values, yerr=errors, fmt='o', capsize=20, capthick=2, label='invalid_infer')
         else:
-            plt.errorbar(x, values, yerr=errors, fmt='o', capsize=20, capthick=2, label='infer')
+            plt.errorbar(xx, values, yerr=errors, fmt='o', capsize=20, capthick=2, label='infer')
         plt.scatter(xx, truths, c='red', label='truth')
         plt.xticks(xx, map(lambda x: round(x, 3), truths))
         plt.xlabel('truth value')
