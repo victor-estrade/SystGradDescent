@@ -142,6 +142,6 @@ class Regressor(BaseModel):
                     n_steps=self.n_steps, batch_size=self.batch_size)
 
     def get_name(self):
-        name = "{basic_name}-{n_steps}-{batch_size}-{sample_size}-{learning_rate}".format(**self.__dict__)
+        name = "{base_name}-{n_steps}-{batch_size}-{sample_size}-{learning_rate}".format(**self.__dict__)
         return name
 
