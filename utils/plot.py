@@ -144,7 +144,7 @@ def plot_param_around_min(param_array, nll_array, true_value, param_name, model)
         plt.ylabel('nll')
         plt.title('NLL around min')
         plt.legend()
-        plt.savefig(os.path.join(model.path, '{}_nll.png'.format(param_name)))
+        plt.savefig(os.path.join(model.path, 'NLL_{}.png'.format(param_name)))
         plt.clf()
     except Exception as e:
         logger.warning('Plot nll around min failed')
@@ -156,17 +156,29 @@ def plot_params(param_name, result_table, model):
     values = result_table[param_name]
     errors = result_table[param_name+_ERROR]
     truths = result_table[param_name+_TRUTH]
-    x = list(range(len(values)))
+    xx = np.arange(len(values))
+    if 'is_valid' in result_table:
+        valid_values = values[result_table['is_valid']]
+        valid_errors = errors[result_table['is_valid']]
+        valid_x = xx[result_table['is_valid']]
+        logger.info("{}, {}, {}".format(len(valid_x), len(valid_values), len(valid_errors)))
+        values =  values[result_table['is_valid'] == False]
+        errors =  errors[result_table['is_valid'] == False]
+        x = xx[result_table['is_valid'] == False]
+        logger.info('{}, {}, {}'.format(len(x), len(values), len(errors)))
     try:
-        plt.errorbar(x, values, yerr=errors, fmt='o', capsize=20, capthick=2, label='infer')
-        plt.scatter(x, truths, c='red', label='truth')
-        plt.xticks(x, map(lambda x: round(x, 3), truths))
+        if 'is_valid' in result_table:
+            plt.errorbar(valid_x, valid_values, yerr=valid_errors, fmt='o', capsize=20, capthick=2, label='valid_infer')
+            plt.errorbar(x, values, yerr=errors, fmt='o', capsize=20, capthick=2, label='invalid_infer')
+        else:
+            plt.errorbar(x, values, yerr=errors, fmt='o', capsize=20, capthick=2, label='infer')
+        plt.scatter(xx, truths, c='red', label='truth')
+        plt.xticks(xx, map(lambda x: round(x, 3), truths))
         plt.xlabel('truth value')
         plt.ylabel(param_name)
-        # plt.yscale('log')
         plt.title(model.full_name)
         plt.legend()
-        plt.savefig(os.path.join(model.path, '{}_estimate.png'.format(param_name)))
+        plt.savefig(os.path.join(model.path, 'estimate_{}.png'.format(param_name)))
         plt.clf()
     except Exception as e:
         logger.warning('Plot params failed')

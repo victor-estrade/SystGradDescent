@@ -102,12 +102,14 @@ def estimate(minimizer):
 
 
 
-def evaluate_estimator(name, results):
+def evaluate_estimator(name, results, valid_only=False):
     # TODO : evaluate mingrad's VALID only !
     truths = results[name+_TRUTH]
     eval_table = []
     for t in np.unique(truths):
         res = results[results[name+_TRUTH] == t]
+        if valid_only:
+            res = res[res['is_valid']]
         values = res[name]
         errors = res[name+_ERROR]
         row = evaluate_one_estimation(values, errors, t)
