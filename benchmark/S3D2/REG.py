@@ -39,8 +39,8 @@ from archi.net import RegNet
 from ..my_argparser import REG_parse_args
 
 BENCHMARK_NAME = 'S3D2'
-N_ITER = 3
-NCALL = 15
+N_ITER = 9
+NCALL = 100
 
 def param_generator():
     import numpy as np
@@ -59,6 +59,14 @@ def param_generator():
 
     mu = np.random.uniform(0, 1)
     return (r, lam, mu,)
+
+
+def monte_carlo(all_pred, all_sigma):
+    pred  = np.mean(all_pred)
+    s_squared = all_sigma ** 2
+    mu_squared = all_pred ** 2
+    sigma = np.mean(s_squared + mu_squared) - (pred ** 2)
+    return pred, sigma
 
 
 def main():
