@@ -45,7 +45,7 @@ def save_model(model):
     os.makedirs(model.path, exist_ok=True)
     model.save(model.path)
 
-def extract_model_args(args, model_class):
+def extract_class_args(args, model_class):
     sig = inspect.signature(model_class)
     args_dict = vars(args)
     model_args = { k: args_dict[k] for k in sig.parameters.keys() if k in args_dict }
@@ -54,7 +54,30 @@ def extract_model_args(args, model_class):
 def get_model(args, model_class):
     logger = logging.getLogger()
     logger.info('Building model ...')
-    model_args = extract_model_args(args, model_class)
+    model_args = extract_class_args(args, model_class)
     logger.info( 'model_args :{}'.format(model_args) )
     model = model_class(**model_args)
     return model
+
+
+def get_optimizer(args):
+    import torch.optim as optim
+    all_optims = dict(
+        sgd  = optim.SGD,
+        SGD  = optim.SGD,
+        adam = optim.Adam,
+        Adam = optim.Adam,
+        ADAM = optim.Adam,
+        )
+    logger = logging.getLogger()
+    optim_class = all_optims[args.optimizer_name]
+
+    args.lr = args.learning_rate
+    args.betas = (args.beta1, args.beta2)
+    kwargs = extract_class_args(args, optim_class)
+    
+    net = args.net
+    optimizer =  optim_class(net.parameters(), **kwargs)
+    logger.info( '{} args :{}'.format(args.optimizer_name, kwargs) )
+    return optimizer
+

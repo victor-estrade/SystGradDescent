@@ -9,11 +9,11 @@ import json
 import numpy as np
 
 import torch
-import torch.optim as optim
 
 from .base import BaseModel
+from .base import BaseNeuralNet
 
-from .monitor import LightLossMonitorHook
+# from .monitor import LightLossMonitorHook
 
 from .utils import to_torch
 # from .utils import to_numpy
@@ -21,9 +21,9 @@ from .utils import to_torch
 from .criterion import GaussNLLLoss
 
 
-class Regressor(BaseModel):
-    def __init__(self, net, n_steps=5000, batch_size=20, sample_size=1000, 
-                learning_rate=1e-3, cuda=False, verbose=0):
+class Regressor(BaseModel, BaseNeuralNet):
+    def __init__(self, net, optimizer, n_steps=5000, batch_size=20, sample_size=1000, 
+                cuda=False, verbose=0):
         super().__init__()
         self.base_name   = "Regressor"
         self.n_steps     = n_steps
@@ -33,10 +33,8 @@ class Regressor(BaseModel):
         self.verbose     = verbose
 
         self.net           = net
-        self.learning_rate = learning_rate
-        # self.optimizer     = optim.Adam(self.net.parameters(), lr=learning_rate)
-        self.optimizer     = optim.Adam(self.net.parameters(), lr=learning_rate, betas=(0.5, 0.9))
-        # self.optimizer     = optim.SGD(self.net.parameters(), lr=learning_rate, weight_decay=1e-3)
+        self.optimizer     = optimizer
+        self.set_optimizer_name()
         self.criterion     = GaussNLLLoss()
 
         # self.loss_hook = LightLossMonitorHook()
@@ -164,6 +162,6 @@ class Regressor(BaseModel):
                     n_steps=self.n_steps, batch_size=self.batch_size)
 
     def get_name(self):
-        name = "{base_name}-{n_steps}-{batch_size}-{sample_size}-{learning_rate}".format(**self.__dict__)
+        name = "{base_name}-{optimizer_name}-{n_steps}-{batch_size}-{sample_size}".format(**self.__dict__)
         return name
 

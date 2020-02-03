@@ -90,3 +90,29 @@ class BaseClassifierModel(BaseModel, ClassifierMixin):
         count, _ = np.histogram(proba[:, 1], range=(0., 1.), weights=W, bins=n_bins)
         return count
 
+
+
+class BaseNeuralNet():
+    optimizer = None
+
+    def get_adam_name(self):
+        lr = self.optimizer.defaults['lr']
+        beta1, beta2 = self.optimizer.defaults['betas']
+        name = "Adam-{lr}-({beta1}-{beta2})".format(**locals())
+        return name
+
+    def get_sgd_name(self):
+        lr = self.optimizer.defaults['lr']
+        weight_decay = self.optimizer.defaults['weight_decay']
+        name = "SGD-{lr}-({weight_decay})".format(**locals())
+        return name
+
+    def get_optimizer_name(self):
+        import torch.optim as optim
+        if isinstance(self.optimizer, optim.Adam):
+            return self.get_adam_name()
+        if isinstance(self.optimizer, optim.SGD):
+            return self.get_sgd_name()
+
+    def set_optimizer_name(self):
+        self.optimizer_name = self.get_optimizer_name()

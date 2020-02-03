@@ -20,6 +20,7 @@ from utils.log import set_logger
 from utils.log import flush
 from utils.log import print_line
 from utils.model import get_model
+from utils.model import get_optimizer
 from utils.model import save_model
 from utils.plot import plot_REG_losses
 from utils.plot import plot_REG_log_mse
@@ -55,6 +56,7 @@ def main():
     flush(logger)
     # INFO
     args.net = RegNet(n_in=1, n_out=2)
+    args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, -1)
     pb_config = AP1Config()
@@ -92,8 +94,8 @@ def run(args, i_cv):
 
     # SET MODEL
     logger.info('Set up rergessor')
-    net = RegNet(n_in=1, n_out=2)
-    args.net = net
+    args.net = RegNet(n_in=1, n_out=2)
+    args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, i_cv)
     model.param_generator = param_generator

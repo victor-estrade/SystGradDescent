@@ -8,10 +8,10 @@ import os
 import numpy as np
 
 import torch
-import torch.optim as optim
 import torch.nn.functional as F
 
 from .base import BaseClassifierModel
+from .base import BaseNeuralNet
 from sklearn.preprocessing import StandardScaler
 from sklearn.externals import joblib
 
@@ -27,8 +27,8 @@ from .utils import to_numpy
 from .utils import classwise_balance_weight
 
 
-class NeuralNetClassifier(BaseClassifierModel):
-    def __init__(self, net, n_steps=5000, batch_size=20, learning_rate=1e-3, cuda=False, verbose=0):
+class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
+    def __init__(self, net, optimizer, n_steps=5000, batch_size=20, learning_rate=1e-3, cuda=False, verbose=0):
         super().__init__()
         self.basic_name = "NeuralNetClassifier"
         self.n_steps    = n_steps
@@ -39,7 +39,8 @@ class NeuralNetClassifier(BaseClassifierModel):
         self.scaler        = StandardScaler()
         self.net           = net
         self.learning_rate = learning_rate
-        self.optimizer     = optim.Adam(self.net.parameters(), lr=learning_rate)
+        self.optimizer     = optimizer
+        self.set_optimizer_name()
         self.criterion     = WeightedCrossEntropyLoss()
 
         self.loss_hook = LightLossMonitorHook()
@@ -150,7 +151,7 @@ class NeuralNetClassifier(BaseClassifierModel):
                     n_steps=self.n_steps, batch_size=self.batch_size)
 
     def get_name(self):
-        name = "{basic_name}-{n_steps}-{batch_size}-{learning_rate}".format(**self.__dict__)
+        name = "{basic_name}-{optimizer_name}-{n_steps}-{batch_size}".format(**self.__dict__)
         return name
 
 
