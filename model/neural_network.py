@@ -15,7 +15,7 @@ from .base import BaseClassifierModel
 from sklearn.preprocessing import StandardScaler
 from sklearn.externals import joblib
 
-from .weighted_criterion import WeightedCrossEntropyLoss
+from .criterion import WeightedCrossEntropyLoss
 from .monitor import LightLossMonitorHook
 
 from itertools import islice

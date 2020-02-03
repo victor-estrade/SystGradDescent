@@ -7,12 +7,8 @@ from __future__ import unicode_literals
 import torch
 import torch.nn as nn
 
-# 
-# Put this into model.weighted criterion ???
-# 
 
-class RegressorLoss(nn.Module):
-	# TODO Rename with a gaussian like name
+class GaussNLLLoss(nn.Module):
     def forward(self, input, target, logsigma):
         error = (input - target)
         error_sigma = error / torch.exp(logsigma)

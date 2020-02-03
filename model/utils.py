@@ -9,6 +9,12 @@ import numpy as np
 import pandas as pd
 
 
+def to_one_hot(y, n_class=2):
+    oh = np.zeros((y.shape[0], n_class), np.float32)
+    oh[np.arange(y.shape[0]), y] = 1
+    return oh
+
+
 def to_torch(arr, cuda=True):
     """
     Transform given numpy array to a torch.autograd.Variable

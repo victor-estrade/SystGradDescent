@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import os
+import json
 import numpy as np
 
 import torch
@@ -17,7 +18,7 @@ from .monitor import LightLossMonitorHook
 from .utils import to_torch
 # from .utils import to_numpy
 
-from archi.losses import RegressorLoss
+from .criterion import GaussNLLLoss
 
 
 class Regressor(BaseModel):
@@ -33,8 +34,10 @@ class Regressor(BaseModel):
 
         self.net           = net
         self.learning_rate = learning_rate
-        self.optimizer     = optim.Adam(self.net.parameters(), lr=learning_rate)
-        self.criterion     = RegressorLoss()
+        # self.optimizer     = optim.Adam(self.net.parameters(), lr=learning_rate)
+        self.optimizer     = optim.Adam(self.net.parameters(), lr=learning_rate, betas=(0.5, 0.9))
+        # self.optimizer     = optim.SGD(self.net.parameters(), lr=learning_rate, weight_decay=1e-3)
+        self.criterion     = GaussNLLLoss()
 
         # self.loss_hook = LightLossMonitorHook()
         # self.criterion.register_forward_hook(self.loss_hook)
@@ -135,8 +138,10 @@ class Regressor(BaseModel):
         path = os.path.join(save_directory, 'weights.pth')
         torch.save(self.net.state_dict(), path)
 
-        # path = os.path.join(save_directory, 'losses.json')
-        # self.loss_hook.save_state(path)
+        path = os.path.join(save_directory, 'losses.json')
+        losses_to_save = dict(losses=self.losses, mse_losses=self.mse_losses)
+        with open(path, 'w') as f:
+            json.dump(losses_to_save, f)
         return self
 
     def load(self, save_directory):
@@ -147,8 +152,11 @@ class Regressor(BaseModel):
         else:
             self.net.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage))
 
-        # path = os.path.join(save_directory, 'losses.json')
-        # self.loss_hook.load_state(path)
+        path = os.path.join(save_directory, 'losses.json')
+        with open(path, 'r') as f:
+            losses_to_load = json.load(f)
+        self.losses = losses_to_load['losses']
+        self.mse_losses = losses_to_load['mse_losses']
         return self
 
     def describe(self):
