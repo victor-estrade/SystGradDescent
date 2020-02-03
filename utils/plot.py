@@ -28,6 +28,7 @@ def set_plot_config():
 
     mpl.rcParams['font.size'] = 10
     mpl.rcParams['axes.labelsize'] = 10
+    mpl.rcParams['axes.titlesize'] = 17
     mpl.rcParams['ytick.labelsize'] = 10
     mpl.rcParams['xtick.labelsize'] = 10
     mpl.rcParams['legend.fontsize'] = 'large'
