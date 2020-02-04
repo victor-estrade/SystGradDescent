@@ -33,6 +33,7 @@ class Regressor(BaseModel, BaseNeuralNet):
         self.verbose     = verbose
 
         self.net           = net
+        self.archi_name    = net.__class__.__name__
         self.optimizer     = optimizer
         self.set_optimizer_name()
         self.criterion     = GaussNLLLoss()
@@ -162,6 +163,6 @@ class Regressor(BaseModel, BaseNeuralNet):
                     n_steps=self.n_steps, batch_size=self.batch_size)
 
     def get_name(self):
-        name = "{base_name}-{optimizer_name}-{n_steps}-{batch_size}-{sample_size}".format(**self.__dict__)
+        name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{sample_size}".format(**self.__dict__)
         return name
 

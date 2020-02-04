@@ -38,6 +38,7 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
 
         self.scaler        = StandardScaler()
         self.net           = net
+        self.archi_name    = net.__class__.__name__
         self.learning_rate = learning_rate
         self.optimizer     = optimizer
         self.set_optimizer_name()
@@ -151,7 +152,7 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
                     n_steps=self.n_steps, batch_size=self.batch_size)
 
     def get_name(self):
-        name = "{basic_name}-{optimizer_name}-{n_steps}-{batch_size}".format(**self.__dict__)
+        name = "{basic_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}".format(**self.__dict__)
         return name
 
 
