@@ -13,15 +13,15 @@ class RegNet(nn.Module):
     def __init__(self, n_in=1, n_out=1):
         super().__init__()
         N_UNITS = 80
-        self.bloc1 = layers.Average2(n_in, N_UNITS)
-        self.bloc2 = layers.Average2(N_UNITS, N_UNITS)
-        self.bloc3 = layers.Average2(N_UNITS, N_UNITS)
+        self.bloc1 = layers.Average(n_in, N_UNITS)
+        self.bloc2 = layers.Average(N_UNITS, N_UNITS)
+        self.bloc3 = layers.Average(N_UNITS, N_UNITS)
 
         self.fc1 = nn.Linear(N_UNITS, N_UNITS)
         self.fc2 = nn.Linear(N_UNITS, N_UNITS)
         self.fc3 = nn.Linear(N_UNITS*2, N_UNITS)
         self.fc_out = nn.Linear(N_UNITS, n_out)
-        
+
     def forward(self, x, w, p=None):
         x = self.bloc1(x, w)
         x = torch.relu(x)
@@ -93,5 +93,63 @@ class RegNetExtra(nn.Module):
         self.fc2.reset_parameters()
         self.fc3.reset_parameters()
         self.fc_out.reset_parameters()
+
+
+class FullyClassifier_1x3(nn.Module):
+    def __init__(self, n_in=1, n_out=1, n_unit=80):
+        super().__init__()
+        self.fc_in = nn.Linear(n_in, n_unit)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+
+class FullyDenseClassifier_1x3(nn.Module):
+    def __init__(self, n_in=1, n_out=1, n_unit=80):
+        super().__init__()
+        self.fc_in = nn.Linear(n_in, n_unit)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+
+class AverageClassifier_1x3(nn.Module):
+    def __init__(self, n_in=1, n_out=1, n_unit=80):
+        super().__init__()
+        self.avg_in = layers.Average(n_in, n_unit)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+
+class AverageDenseClassifier_1x3(nn.Module):
+    def __init__(self, n_in=1, n_out=1, n_unit=80):
+        super().__init__()
+        self.avg_in = layers.Average(n_in, n_unit)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+
+
+
+class FullyReducer_1x3(nn.Module):
+    def __init__(self, n_in=1, n_out=1, n_unit=80):
+        super().__init__()
+        self.fc_in = nn.Linear(n_in, n_unit)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+
+class FullyDenseReducer_1x3(nn.Module):
+    def __init__(self, n_in=1, n_out=1, n_unit=80):
+        super().__init__()
+        self.fc_in = nn.Linear(n_in, n_unit)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+
+class AverageReducer_1x3(nn.Module):
+    def __init__(self, n_in=1, n_out=1, n_unit=80):
+        super().__init__()
+        self.avg_in = layers.Average(n_in, n_unit)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+
+class AverageDenseReducer_1x3(nn.Module):
+    def __init__(self, n_in=1, n_out=1, n_unit=80):
+        super().__init__()
+        self.avg_in = layers.Average(n_in, n_unit)
+        self.fc_out = nn.Linear(n_unit, n_out)
 
 
