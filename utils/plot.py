@@ -162,11 +162,11 @@ def plot_params(param_name, result_table, model):
         valid_values = values[result_table['is_valid']]
         valid_errors = errors[result_table['is_valid']]
         valid_x = xx[result_table['is_valid']]
-        logger.info("{}, {}, {}".format(len(valid_x), len(valid_values), len(valid_errors)))
+        logger.debug("Plot_params valid lenght = {}, {}, {}".format(len(valid_x), len(valid_values), len(valid_errors)))
         values =  values[result_table['is_valid'] == False]
         errors =  errors[result_table['is_valid'] == False]
         x = xx[result_table['is_valid'] == False]
-        logger.info('{}, {}, {}'.format(len(x), len(values), len(errors)))
+        logger.debug('Plot_params invalid lenght = {}, {}, {}'.format(len(x), len(values), len(errors)))
     try:
         if 'is_valid' in result_table:
             plt.errorbar(valid_x, valid_values, yerr=valid_errors, fmt='o', capsize=20, capthick=2, label='valid_infer')
