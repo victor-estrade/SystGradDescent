@@ -10,113 +10,79 @@ import torch.nn as nn
 from . import layers
 
 
-class Fully_3(nn.Module):
-    __constants__ = ['n_unit']
+def softmax_cat(x_, x):
+    x_ = torch.softmax(x_, 1)
+    x = torch.cat((x, x_), 1)
+    return x
 
-    def __init__(self, n_unit):
+
+class ResidualBlock(nn.Module):
+    __constants__ = ['n_in', 'n_middle', 'bias', 'activation']
+
+    def __init__(self, n_in, n_middle, bias=False, activation=torch.relu):
         super().__init__()
-        self.n_unit = n_unit
-        self.fc1 = nn.Linear(n_unit, n_unit)
-        self.fc2 = nn.Linear(n_unit, n_unit)
-        self.fc3 = nn.Linear(n_unit, n_unit)
+        self.n_in = n_in
+        self.n_middle = n_middle
+        self.bias = bias
+        self.fc_in = nn.Linear(n_in, n_middle, bias)
+        self.fc_out = nn.Linear(n_middle, n_in, bias)
+        self.activation = activation
 
-    def forward(self, x, w, p=None):
-        x = self.fc1(x)
-        x = torch.relu(x)
-        x = self.fc2(x)
-        x = torch.relu(x)
-        x = self.fc3(x)
+    def forward(self, x):
+        x_ = self.fc_in(x)
+        x_ = self.activation(x_)
+        x_ = self.fc_out(x_)
+        x  = x + x_
         return x
 
     def reset_parameters(self):
-        self.fc1.reset_parameters()
-        self.fc2.reset_parameters()
-        self.fc3.reset_parameters()
+        self.fc_in.reset_parameters()
+        self.fc_out.reset_parameters()
 
 
-class FullyDense_3(nn.Module):
-    __constants__ = ['n_unit']
+class ResidualAverageBlock(nn.Module):
+    __constants__ = ['n_in', 'n_middle', 'bias', 'activation']
 
-    def __init__(self, n_unit):
+    def __init__(self, n_in, n_middle, bias=False, activation=torch.relu):
         super().__init__()
-        self.n_unit = n_unit
-        self.fc1 = nn.Linear(n_unit, n_unit)
-        self.fc2 = nn.Linear(n_unit, n_unit)
-        self.fc3 = nn.Linear(n_unit, n_unit)
+        self.n_in = n_in
+        self.n_middle = n_middle
+        self.avg_in = layers.Average(n_in, n_middle, bias)
+        self.avg_out = layers.Average(n_middle, n_in, bias)
+        self.activation = activation
 
     def forward(self, x, w, p=None):
-    	x_0 = x
-        
-        x_1 = self.fc1(x)
-        x = x_0 + x_1
-        x = torch.relu(x)
-
-        x_2 = self.fc2(x)
-        x = x_0 + x_1 + x_2
-        x = torch.relu(x)
-
-        x_3 = self.fc3(x)
-        x = x_0 + x_1 + x_2 + x_3
+        x_ = self.avg_in(x, w)
+        x_ = self.activation(x_)
+        x_ = self.avg_out(x_, w)
+        x  = x + x_
         return x
 
     def reset_parameters(self):
-        self.fc1.reset_parameters()
-        self.fc2.reset_parameters()
-        self.fc3.reset_parameters()
+        self.fc_in.reset_parameters()
+        self.fc_out.reset_parameters()
 
 
-class Average_3(nn.Module):
-    __constants__ = ['n_unit']
+class ResidualAverageExtraBlock(nn.Module):
+    __constants__ = ['n_in', 'n_middle', 'n_extra', 'bias', 'activation']
 
-    def __init__(self, n_unit):
+    def __init__(self, n_in, n_middle, n_extra,  bias=False, activation=torch.relu):
         super().__init__()
-        self.n_unit = n_unit
-        self.avg1 = layers.Average(n_unit, n_unit)
-        self.avg2 = layers.Average(n_unit, n_unit)
-        self.avg3 = layers.Average(n_unit, n_unit)
+        self.n_in = n_in
+        self.n_middle = n_middle
+        self.n_extra = n_extra
+        self.avg_in = layers.AverageExtra(n_in, n_middle, n_extra, bias)
+        self.avg_out = layers.Average(n_middle, n_in, bias)
+        self.activation = activation
 
-    def forward(self, x, w, p=None):
-        x = self.avg1(x)
-        x = torch.relu(x)
-        x = self.avg2(x)
-        x = torch.relu(x)
-        x = self.avg3(x)
+    def forward(self, x, w, p):
+        x_ = self.avg_in(x, w, p)
+        x_ = self.activation(x_)
+        x_ = self.avg_out(x_, w)
+        x  = x + x_
         return x
 
     def reset_parameters(self):
-        self.avg1.reset_parameters()
-        self.avg2.reset_parameters()
-        self.avg3.reset_parameters()
-
-
-class AverageDense_3(nn.Module):
-    __constants__ = ['n_unit']
-
-    def __init__(self, n_unit):
-        super().__init__()
-        self.n_unit = n_unit
-        self.avg1 = layers.Average(n_unit, n_unit)
-        self.avg2 = layers.Average(n_unit, n_unit)
-        self.avg3 = layers.Average(n_unit, n_unit)
-
-    def forward(self, x, w, p=None):
-    	x_0 = x
-        
-        x_1 = self.avg1(x)
-        x = x_0 + x_1
-        x = torch.relu(x)
-
-        x_2 = self.avg2(x)
-        x = x_0 + x_1 + x_2
-        x = torch.relu(x)
-
-        x_3 = self.avg3(x)
-        x = x_0 + x_1 + x_2 + x_3
-        return x
-
-    def reset_parameters(self):
-        self.avg1.reset_parameters()
-        self.avg2.reset_parameters()
-        self.avg3.reset_parameters()
-
+        self.fc_in.reset_parameters()
+        self.fc_out.reset_parameters()
 
