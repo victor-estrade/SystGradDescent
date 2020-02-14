@@ -35,7 +35,8 @@ from problem.synthetic3D import S3D2
 from problem.synthetic3D import S3D2Config
 
 from model.regressor import Regressor
-from archi.net import RegNetExtra
+# from archi.net import RegNetExtra
+from archi.net import AR5R5E
 
 from ..my_argparser import REG_parse_args
 
@@ -77,7 +78,7 @@ def main():
     logger.info(args)
     flush(logger)
     # INFO
-    args.net = RegNetExtra(n_in=3, n_out=2, n_extra=2)
+    args.net = AR5R5E(n_in=3, n_out=2, n_extra=2)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, -1)
@@ -117,7 +118,7 @@ def run(args, i_cv):
 
     # SET MODEL
     logger.info('Set up rergessor')
-    args.net = RegNetExtra(n_in=3, n_out=2, n_extra=2)
+    args.net = AR5R5E(n_in=3, n_out=2, n_extra=2)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, i_cv)

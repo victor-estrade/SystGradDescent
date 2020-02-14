@@ -34,7 +34,8 @@ from problem.apples_and_pears import AP1
 from problem.apples_and_pears import AP1Config
 
 from model.regressor import Regressor
-from archi.net import RegNet
+# from archi.net import RegNet
+from archi.net import F3R3
 
 from ..my_argparser import REG_parse_args
 
@@ -55,7 +56,7 @@ def main():
     logger.info(args)
     flush(logger)
     # INFO
-    args.net = RegNet(n_in=1, n_out=2)
+    args.net = F3R3(n_in=1, n_out=2)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, -1)
@@ -94,7 +95,7 @@ def run(args, i_cv):
 
     # SET MODEL
     logger.info('Set up rergessor')
-    args.net = RegNet(n_in=1, n_out=2)
+    args.net = F3R3(n_in=1, n_out=2)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, i_cv)
@@ -103,7 +104,10 @@ def run(args, i_cv):
 
     # TRAINING
     logger.info('Training {}'.format(model.get_name()))
-    model.fit_batch(train_generator)
+    if args.batch_size == 1:
+        model.fit(train_generator)
+    else:
+        model.fit_batch(train_generator)
     logger.info('Training DONE')
 
     # SAVE MODEL
