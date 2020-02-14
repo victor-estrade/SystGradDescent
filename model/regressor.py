@@ -33,7 +33,7 @@ class Regressor(BaseModel, BaseNeuralNet):
         self.verbose     = verbose
 
         self.net           = net
-        self.archi_name    = net.__class__.__name__
+        self.archi_name    = net.name
         self.optimizer     = optimizer
         self.set_optimizer_name()
         self.criterion     = GaussNLLLoss()
