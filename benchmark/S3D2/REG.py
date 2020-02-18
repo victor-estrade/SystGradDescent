@@ -150,8 +150,8 @@ def run(args, i_cv):
                                          pb_config.TRUE_MU,
                                          n_samples=pb_config.N_TESTING_SAMPLES)
         # MONTE CARLO
-        all_pred, all_nuisance_params = many_predict(model, X_test, w_test, param_generator, ncall=NCALL)
-        mc_data = monte_carlo_data(all_pred, all_nuisance_params)
+        all_pred, all_params = many_predict(model, X_test, w_test, param_generator, ncall=NCALL)
+        mc_data = monte_carlo_data(all_pred, all_params)
         target, sigma = monte_carlo_infer(mc_data)
        
         name = pb_config.INTEREST_PARAM_NAME 
