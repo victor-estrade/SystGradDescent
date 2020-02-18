@@ -54,6 +54,12 @@ class Regressor(BaseModel, BaseNeuralNet):
         self.criterion = self.criterion.cpu()
 
     def fit(self, generator):
+        if self.batch_size > 1:
+            return self._fit_batch(generator)
+        else:
+            return self._fit(generator)
+
+    def _fit(self, generator):
         for i in range(self.n_steps):
             loss, mse = self._forward(generator)
 
@@ -65,7 +71,7 @@ class Regressor(BaseModel, BaseNeuralNet):
             self.optimizer.step()
         return self
 
-    def fit_batch(self, generator):
+    def _fit_batch(self, generator):
         for i in range(self.n_steps):
             losses = []
             mse_losses = []

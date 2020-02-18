@@ -124,7 +124,7 @@ def run(args, i_cv):
 
     # TRAINING
     logger.info('Training {}'.format(model.get_name()))
-    model.fit_batch(train_generator)
+    model.fit(train_generator)
     logger.info('Training DONE')
 
 

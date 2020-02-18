@@ -104,10 +104,7 @@ def run(args, i_cv):
 
     # TRAINING
     logger.info('Training {}'.format(model.get_name()))
-    if args.batch_size == 1:
-        model.fit(train_generator)
-    else:
-        model.fit_batch(train_generator)
+    model.fit(train_generator)
     logger.info('Training DONE')
 
     # SAVE MODEL
