@@ -97,17 +97,25 @@ def run(args, i_cv):
     model.set_info(BENCHMARK_NAME, i_cv)
     flush(logger)
 
-    # TRAINING
-    logger.info('Generate training data')
-    X_train, y_train, w_train = train_generator.generate(
-                                    apple_ratio=pb_config.CALIBRATED_APPLE_RATIO,
-                                    n_samples=pb_config.N_TRAINING_SAMPLES)
-    logger.info('Training {}'.format(model.get_name()))
-    model.fit(X_train, y_train, w_train)
-    logger.info('Training DONE')
+    # TRAINING / LOADING
+    if not args.retrain:
+        try:
+            logger.info('loading from {}'.format(model.path))
+            model.load(model.path)
+        except Exception as e:
+            logger.warning(e)
+            args.retrain = True
+    if args.retrain:
+        logger.info('Generate training data')
+        X_train, y_train, w_train = train_generator.generate(
+                                        apple_ratio=pb_config.CALIBRATED_APPLE_RATIO,
+                                        n_samples=pb_config.N_TRAINING_SAMPLES)
+        logger.info('Training {}'.format(model.get_name()))
+        model.fit(X_train, y_train, w_train)
+        logger.info('Training DONE')
 
-    # SAVE MODEL
-    save_model(model)
+        # SAVE MODEL
+        save_model(model)
 
 
     # CHECK TRAINING

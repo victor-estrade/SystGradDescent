@@ -102,13 +102,21 @@ def run(args, i_cv):
     model.param_generator = param_generator
     flush(logger)
 
-    # TRAINING
-    logger.info('Training {}'.format(model.get_name()))
-    model.fit(train_generator)
-    logger.info('Training DONE')
+    # TRAINING / LOADING
+    if not args.retrain:
+        try:
+            logger.info('loading from {}'.format(model.path))
+            model.load(model.path)
+        except Exception as e:
+            logger.warning(e)
+            args.retrain = True
+    if args.retrain:
+        logger.info('Training {}'.format(model.get_name()))
+        model.fit(train_generator)
+        logger.info('Training DONE')
 
-    # SAVE MODEL
-    save_model(model)
+        # SAVE MODEL
+        save_model(model)
 
     # CHECK TRAINING
     logger.info('Plot losses')
