@@ -25,21 +25,23 @@ def many_predict(model, X, w, param_generator, ncall=100):
 def monte_carlo_data(all_pred, all_nuisance_params):
     all_target = [target for target, sigma in all_pred] 
     all_sigma  = [sigma for target, sigma in all_pred] 
-    all_target          = np.array(all_target).reshape(-1, 1)
-    all_sigma           = np.array(all_sigma).reshape(-1, 1)
-    all_nuisance_params = np.array(all_nuisance_params)
     data = dict(target=all_target, sigma=all_sigma)
-    data = np.concatenate([all_pred, all_sigma, all_nuisance_params], axis=1)
+    nuisance_params_names = all_nuisance_params[0].nuisance_parameters_names
+    data.update({name: [p[i] for p in all_nuisance_params] 
+                    for i, name in enumerate(nuisance_params_names)})
     data = pd.DataFrame(data)
     return data
 
+
 def monte_carlo_infer(data):
     all_target = data.target
-    all_sigma = data.sigma
-    value  = np.mean(all_target)
-    sigma = np.mean(all_sigma)
-    return value, sigma
+    target  = np.mean(all_target)
 
+    all_sigma = data.sigma
+    sigma_squared = all_sigma ** 2
+    target_squared = all_target ** 2
+    sigma = np.mean(sigma_squared + target_squared) - (target ** 2)
+    return target, sigma
 
 
 def save_monte_carlo(data, model_path):
