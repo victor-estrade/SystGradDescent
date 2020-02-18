@@ -35,6 +35,7 @@ def monte_carlo_data(all_pred, all_params):
 
 
 def monte_carlo_infer(data):
+    # FIXME :  Check that I am using the right formulas ! 
     all_target = data.target
     target  = np.mean(all_target)
 
