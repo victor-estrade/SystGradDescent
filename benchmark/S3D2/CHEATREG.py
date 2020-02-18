@@ -34,7 +34,7 @@ from problem.synthetic3D import S3D2
 from problem.synthetic3D import S3D2Config
 
 from model.regressor import Regressor
-from archi.net import RegNet
+from archi.net import AR5R5E
 
 from ..my_argparser import REG_parse_args
 
@@ -70,7 +70,7 @@ def main():
     logger.info(args)
     flush(logger)
     # INFO
-    args.net = RegNet(n_in=3, n_out=2, n_extra=2)
+    args.net = AR5R5E(n_in=3, n_out=2, n_extra=2)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, -1)
@@ -110,20 +110,28 @@ def run(args, i_cv):
 
     # SET MODEL
     logger.info('Set up rergessor')
-    net = RegNet(n_in=3, n_out=2, n_extra=2)
+    net = AR5R5E(n_in=3, n_out=2, n_extra=2)
     args.net = net
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, i_cv)
     model.param_generator = param_generator
     flush(logger)
 
-    # TRAINING
-    logger.info('Training {}'.format(model.get_name()))
-    model.fit_batch(train_generator)
-    logger.info('Training DONE')
+    # TRAINING / LOADING
+    if not args.retrain:
+        try:
+            logger.info('loading from {}'.format(model.path))
+            model.load(model.path)
+        except Exception as e:
+            logger.warning(e)
+            args.retrain = True
+    if args.retrain:
+        logger.info('Training {}'.format(model.get_name()))
+        model.fit_batch(train_generator)
+        logger.info('Training DONE')
 
-    # SAVE MODEL
-    save_model(model)
+        # SAVE MODEL
+        save_model(model)
 
     # CHECK TRAINING
     logger.info('Plot losses')
