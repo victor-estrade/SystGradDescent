@@ -167,12 +167,13 @@ class AR5R5(BaseArchi):
         self.avg4.reset_parameters()
         self.fc_out.reset_parameters()
 
+
 class AR5R5E(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_extra=0, n_unit=80):
         super().__init__(n_unit)
         activation = torch.relu
         self.activation = activation
-        self.avg_in = layers.AverageExtra(n_in, n_unit, bias=True)
+        self.avg_in = layers.AverageExtra(n_in, n_unit, n_extra, bias=True)
         self.avg1   = ResidualAverageBlock(n_unit, n_unit//2, n_extra, activation=activation)
         self.avg2   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
         self.res3   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
@@ -180,7 +181,7 @@ class AR5R5E(BaseArchi):
         self.fc_out = nn.Linear(n_unit, n_out)
 
     def forward(self, x, w, p):
-        x = self.fc_in(x, w, p)
+        x = self.avg_in(x, w, p)
         x = self.avg1(x, w)
         x = self.avg2(x, w)
 
@@ -236,6 +237,41 @@ class AF3R3(BaseArchi):
         self.fc_out.reset_parameters()
 
 
+class AF3R3E(BaseArchi):
+    def __init__(self, n_in=1, n_out=1, n_extra=0, n_unit=80):
+        super().__init__(n_unit)
+        self.avg_in = layers.AverageExtra(n_in, n_unit, n_extra)
+        self.avg1   = layers.Average(n_unit, n_unit)
+        self.avg2   = layers.Average(n_unit, n_unit)
+        self.fc3    = nn.Linear(n_unit, n_unit)
+        self.fc4    = nn.Linear(n_unit, n_unit)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+    def forward(self, x, w, p):
+        x = self.avg_in(x, w, p)
+        x = torch.relu(x)
+        x = self.avg1(x, w)
+        x = torch.relu(x)
+        x = self.avg2(x, w)
+
+        x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
+        x = torch.relu(x)
+        x = self.fc3(x)
+        x = torch.relu(x)
+        x = self.fc4(x)
+        x = torch.relu(x)
+        x = self.fc_out(x)
+        return x
+
+    def reset_parameters(self):
+        self.avg_in.reset_parameters()
+        self.avg1.reset_parameters()
+        self.avg2.reset_parameters()
+        self.avg3.reset_parameters()
+        self.avg4.reset_parameters()
+        self.fc_out.reset_parameters()
+
+
 class F3R3(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_unit=80):
         super().__init__(n_unit)
@@ -254,6 +290,42 @@ class F3R3(BaseArchi):
         x = self.fc2(x)
 
         x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
+        x = torch.relu(x)
+        x = self.fc3(x)
+        x = torch.relu(x)
+        x = self.fc4(x)
+        x = torch.relu(x)
+        x = self.fc_out(x)
+        return x
+
+    def reset_parameters(self):
+        self.fc_in.reset_parameters()
+        self.avg1.reset_parameters()
+        self.avg2.reset_parameters()
+        self.avg3.reset_parameters()
+        self.avg4.reset_parameters()
+        self.fc_out.reset_parameters()
+
+
+class F3R3E(BaseArchi):
+    def __init__(self, n_in=1, n_out=1, n_unit=80):
+        super().__init__(n_unit)
+        self.fc_in  = nn.Linear(n_in, n_unit, bias=True)
+        self.fc1    = nn.Linear(n_unit, n_unit)
+        self.fc2    = nn.Linear(n_unit, n_unit)
+        self.fc3    = nn.Linear(n_unit, n_unit)
+        self.fc4    = nn.Linear(n_unit, n_unit)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+    def forward(self, x, w, p):
+        x = self.fc_in(x)
+        x = torch.relu(x)
+        x = self.fc1(x)
+        x = torch.relu(x)
+        x = self.fc2(x)
+
+        x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
+        x = torch.cat((x, p), 1)
         x = torch.relu(x)
         x = self.fc3(x)
         x = torch.relu(x)
