@@ -33,6 +33,7 @@ from utils.misc import evaluate_estimator
 
 from problem.synthetic3D import S3D2
 from problem.synthetic3D import S3D2Config
+from problem.synthetic3D import Parameter
 
 from model.regressor import Regressor
 # from archi.net import RegNetExtra
@@ -60,7 +61,7 @@ def param_generator():
     mu_max = min(1.0, mu_max + mu_range/10)
 
     mu = np.random.uniform(0, 1)
-    return (r, lam, mu,)
+    return Parameter(r, lam, mu)
 
 
 def monte_carlo(all_pred, all_sigma):
