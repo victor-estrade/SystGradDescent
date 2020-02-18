@@ -36,6 +36,9 @@ from problem.synthetic3D import S3D2Config
 from problem.synthetic3D import Parameter
 
 from model.regressor import Regressor
+from model.monte_carlo import many_predict
+from model.monte_carlo import monte_carlo_data
+from model.monte_carlo import monte_carlo_infer
 # from archi.net import RegNetExtra
 from archi.net import AR5R5E
 
@@ -63,13 +66,6 @@ def param_generator():
     mu = np.random.uniform(0, 1)
     return Parameter(r, lam, mu)
 
-
-def monte_carlo(all_pred, all_sigma):
-    pred  = np.mean(all_pred)
-    s_squared = all_sigma ** 2
-    mu_squared = all_pred ** 2
-    sigma = np.mean(s_squared + mu_squared) - (pred ** 2)
-    return pred, sigma
 
 
 def main():
@@ -154,22 +150,15 @@ def run(args, i_cv):
                                          pb_config.TRUE_MU,
                                          n_samples=pb_config.N_TESTING_SAMPLES)
         # MONTE CARLO
-        all_pred, all_sigma, all_nuisance_params = model.many_predict(X_test, w_test, param_generator, ncall=NCALL)
-        all_pred            = np.array(all_pred).reshape(-1, 1)
-        all_sigma           = np.array(all_sigma).reshape(-1, 1)
-        all_nuisance_params = np.array(all_nuisance_params)
-        monte_carlo = np.concatenate([all_pred, all_sigma, all_nuisance_params], axis=1)
-        monte_carlo = pd.DataFrame(monte_carlo)
-        monte_carlo.to_csv(os.path.join(model.path, 'monte_carlo.csv'))
-
-        pred  = np.mean(all_pred)
-        sigma = np.mean(all_sigma)
+        all_pred, all_nuisance_params = many_predict(model, X_test, w_test, param_generator, ncall=NCALL)
+        mc_data = monte_carlo_data(all_pred, all_nuisance_params)
+        target, sigma = monte_carlo_infer(mc_data)
        
         name = pb_config.INTEREST_PARAM_NAME 
-        result_row[name] = pred
+        result_row[name] = target
         result_row[name+_ERROR] = sigma
         result_row[name+_TRUTH] = pb_config.TRUE_MU
-        logger.info('{} =vs= {} +/- {}'.format(pb_config.TRUE_MU, pred, sigma) ) 
+        logger.info('{} =vs= {} +/- {}'.format(pb_config.TRUE_MU, target, sigma) ) 
         result_table.append(result_row.copy())
     result_table = pd.DataFrame(result_table)
 
