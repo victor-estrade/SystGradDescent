@@ -14,7 +14,7 @@ def many_predict(model, X, w, param_generator, ncall=100):
     all_nuisance_params = []
     for _ in range(ncall):
         params = param_generator()
-        nuisance_params = params.nuisance_params
+        nuisance_params = params.nuisance_parameters
         p = np.array(nuisance_params)
         pred = model.predict(X, w, p)
         all_pred.append(pred)
