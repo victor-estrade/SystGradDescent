@@ -6,8 +6,8 @@ from __future__ import absolute_import
 import numpy as np
 
 from collections import namedtuple
-from .nll import gauss_nll
-from .nll import poisson_nll
+from ..nll import gauss_nll
+from ..nll import poisson_nll
 
 
 
