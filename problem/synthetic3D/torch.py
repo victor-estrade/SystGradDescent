@@ -8,7 +8,7 @@ from hessian import hessian
 
 SEED = 42
 
-class Synthetic3DGeneratoTorch():
+class Synthetic3DGeneratorTorch():
     def __init__(self, seed=SEED, r_dist=2.0, b_rate=3.0, s_rate=2.0, ratio=50/(1000+50),
                         reset_every=None):
         self.seed = seed
