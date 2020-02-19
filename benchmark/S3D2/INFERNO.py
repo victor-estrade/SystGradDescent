@@ -27,6 +27,7 @@ from utils.model import get_optimizer
 from utils.model import save_model
 from utils.plot import plot_summaries
 from utils.plot import plot_params
+from utils.plot import plot_INFERNO_losses
 from utils.misc import gather_images
 from utils.misc import estimate
 from utils.misc import register_params
@@ -59,7 +60,7 @@ def main():
     logger.info(args)
     flush(logger)
     # INFO
-    args.net = F6(n_in=3, n_out=2)
+    args.net = F6(n_in=3, n_out=args.n_bins)
     args.optimizer = get_optimizer(args)
     args.criterion = S3DLoss()
     model = get_model(args, Inferno)
@@ -100,7 +101,7 @@ def run(args, i_cv):
 
     # SET MODEL
     logger.info('Set up rergessor')
-    args.net = F6(n_in=3, n_out=2)
+    args.net = F6(n_in=3, n_out=args.n_bins)
     args.optimizer = get_optimizer(args)
     args.criterion = S3DLoss()
     model = get_model(args, Inferno)
@@ -125,10 +126,8 @@ def run(args, i_cv):
 
     # CHECK TRAINING
     logger.info('Plot losses')
-    plot_REG_losses(model)
-    plot_REG_log_mse(model)
-    result_row['loss'] = model.losses[-1]
-    result_row['mse_loss'] = model.mse_losses[-1]
+    plot_INFERNO_losses(model)
+    result_row['loss'] = model.loss_hook.losses[-1]
 
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(
@@ -139,7 +138,7 @@ def run(args, i_cv):
 
 
     # MEASUREMENT
-    n_bins = 10
+    n_bins = args.n_bins
     compute_summaries = model.compute_summaries
     for mu in pb_config.TRUE_MU_RANGE:
         pb_config.TRUE_MU = mu

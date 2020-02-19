@@ -86,14 +86,17 @@ def INFERNO_parse_args(main_description="Training launcher"):
                         default=1.0, type=float)
 
     parser.add_argument('--beta1', help='beta 1 for Adam',
-                        default=0.5, type=float)
-    parser.add_argument('--beta2', help='beta 2 for Adam',
                         default=0.9, type=float)
+    parser.add_argument('--beta2', help='beta 2 for Adam',
+                        default=0.999, type=float)
     parser.add_argument('--weight-decay', help='weight decay for SGD',
                         default=0.0, type=float)
 
     parser.add_argument('--optimizer', help='optimizer name', dest='optimizer_name',
                         default='Adam', type=str, choices=('Adam', 'SGD', 'ADAM', 'sgd', 'adam'))
+
+    parser.add_argument('--n-bins', help='number of output bins',
+                        default=10, type=int)
 
     parser.add_argument('--sample-size', help='data sample size',
                         default=1000, type=int)
