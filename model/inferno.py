@@ -83,7 +83,7 @@ class Inferno(BaseModel, BaseNeuralNet):
 
     def compute_summaries(self, X, W, n_bins=None):
         proba = self.predict_proba(X)
-        weighted_counts = np.sum(proba*W, 0)
+        weighted_counts = np.sum(proba*W.reshape(-1,1), 0)
         return weighted_counts
 
     def save(self, save_directory):
