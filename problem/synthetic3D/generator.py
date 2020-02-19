@@ -4,31 +4,8 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import numpy as np
-from collections import namedtuple
 
 SEED = 42
-
-
-class Parameter(namedtuple('Parameter', ['r', 'lam', 'mu'])):
-    @property
-    def nuisance_parameters(self):
-        return self[:-1]
-
-    @property
-    def interest_parameters(self):
-        return self[-1]
-
-    @property
-    def parameter_names(self):
-        return self._fields
-
-    @property
-    def nuisance_parameters_names(self):
-        return self._fields[:-1]
-
-    @property
-    def interest_parameters_names(self):
-        return self._fields[-1]
 
 
 class S3D2():
