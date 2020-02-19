@@ -49,7 +49,6 @@ N_ITER = 9
 NCALL = 100
 
 def param_generator():
-    import numpy as np
     pb_config = S3D2Config()
 
     r = np.random.normal(pb_config.CALIBRATED_R, pb_config.CALIBRATED_R_ERROR)
