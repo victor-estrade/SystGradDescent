@@ -9,7 +9,6 @@ import torch.nn as nn
 
 from . import layers
 from .blocks import ResidualAverageBlock
-from .blocks import ResidualAverageExtraBlock
 from .blocks import ResidualBlock
 from .blocks import softmax_cat
 
@@ -17,6 +16,32 @@ class BaseArchi(nn.Module):
     def __init__(self, n_unit=80):
         super().__init__()
         self.name = "{}x{:d}".format(self.__class__.__name__, n_unit)
+
+
+class F6(BaseArchi):
+    def __init__(self, n_in=1, n_out=1, n_unit=80):
+        super().__init__(n_unit)
+        self.fc_in  = nn.Linear(n_in, n_unit, bias=True)
+        self.fc1    = nn.Linear(n_unit, n_unit)
+        self.fc2    = nn.Linear(n_unit, n_unit)
+        self.fc3    = nn.Linear(n_unit, n_unit)
+        self.fc4    = nn.Linear(n_unit, n_unit)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+    def forward(self, x):
+        x = self.fc_in(x)
+        x = torch.relu(x)
+        x = self.fc1(x)
+        x = torch.relu(x)
+        x = self.fc2(x)
+
+        x = torch.relu(x)
+        x = self.fc3(x)
+        x = torch.relu(x)
+        x = self.fc4(x)
+        x = torch.relu(x)
+        x = self.fc_out(x)
+        return x
 
 
 class RegNet(BaseArchi):

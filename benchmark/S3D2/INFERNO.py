@@ -32,7 +32,8 @@ from utils.misc import estimate
 from utils.misc import register_params
 from utils.misc import evaluate_estimator
 
-from problem.synthetic3D import Synthetic3DGeneratorTorch
+from problem.synthetic3D.torch import Synthetic3DGeneratorTorch
+from problem.synthetic3D.torch import S3DLoss
 from problem.synthetic3D import S3D2
 from problem.synthetic3D import S3D2Config
 from problem.synthetic3D import S3D2NLL
@@ -43,7 +44,7 @@ from utils.S3D2 import plot_MU_around_min
 
 from model.inferno import Inferno
 # from archi.net import RegNetExtra
-from archi.net import AR5R5E
+from archi.net import F6
 
 from ..my_argparser import INFERNO_parse_args
 
@@ -58,8 +59,9 @@ def main():
     logger.info(args)
     flush(logger)
     # INFO
-    args.net = AR5R5E(n_in=3, n_out=2, n_extra=2)
+    args.net = F6(n_in=3, n_out=2)
     args.optimizer = get_optimizer(args)
+    args.criterion = S3DLoss()
     model = get_model(args, Inferno)
     model.set_info(BENCHMARK_NAME, -1)
     pb_config = S3D2Config()
@@ -98,8 +100,9 @@ def run(args, i_cv):
 
     # SET MODEL
     logger.info('Set up rergessor')
-    args.net = AR5R5E(n_in=3, n_out=2, n_extra=2)
+    args.net = F6(n_in=3, n_out=2)
     args.optimizer = get_optimizer(args)
+    args.criterion = S3DLoss()
     model = get_model(args, Inferno)
     model.set_info(BENCHMARK_NAME, i_cv)
     flush(logger)
