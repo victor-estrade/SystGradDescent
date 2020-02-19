@@ -152,7 +152,7 @@ def run(args, i_cv):
         compute_nll = S3D2NLL(compute_summaries, valid_generator, X_test, w_test)
 
         logger.info('Plot summaries')
-        extension = '-mu={:1.1f}_r={}_lambda={}'.format(pb_config.TRUE_MU, 
+        extension = '-mu={:1.2f}_r={}_lambda={}'.format(pb_config.TRUE_MU, 
                                     pb_config.TRUE_R, pb_config.TRUE_LAMBDA)
         plot_summaries( model, n_bins, extension,
                         X_valid, y_valid, w_valid,
