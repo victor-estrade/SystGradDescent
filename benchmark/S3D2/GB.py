@@ -188,6 +188,7 @@ def run(args, i_cv):
     logger.info('DONE')
     return result_table
 
+
 def get_minimizer(compute_nll, pb_config):
     minimizer = iminuit.Minuit(compute_nll,
                            errordef=ERRORDEF_NLL,
