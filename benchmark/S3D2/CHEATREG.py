@@ -12,6 +12,7 @@ import os
 import logging
 import config
 
+import numpy as np
 import pandas as pd
 
 from utils.plot import set_plot_config
@@ -32,6 +33,7 @@ from utils.misc import evaluate_estimator
 
 from problem.synthetic3D import S3D2
 from problem.synthetic3D import S3D2Config
+from problem.synthetic3D import Parameter
 
 from model.regressor import Regressor
 from archi.net import AR5R5E
@@ -43,7 +45,6 @@ N_ITER = 9
 
 
 def param_generator():
-    import numpy as np
     pb_config = S3D2Config()
 
     # r = np.random.normal(pb_config.CALIBRATED_R, pb_config.CALIBRATED_R_ERROR)
@@ -60,7 +61,7 @@ def param_generator():
     mu_max = min(1.0, mu_max + mu_range/10)
 
     mu = np.random.uniform(0, 1)
-    return (r, lam, mu,)
+    return Parameter(r, lam, mu,)
 
 
 def main():
@@ -110,8 +111,8 @@ def run(args, i_cv):
 
     # SET MODEL
     logger.info('Set up rergessor')
-    net = AR5R5E(n_in=3, n_out=2, n_extra=2)
-    args.net = net
+    args.net = AR5R5E(n_in=3, n_out=2, n_extra=2)
+    args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, i_cv)
     model.param_generator = param_generator
@@ -152,7 +153,6 @@ def run(args, i_cv):
                                          pb_config.TRUE_MU,
                                          n_samples=pb_config.N_TESTING_SAMPLES)
     
-        import numpy as np
         p_test = np.array( (pb_config.CALIBRATED_R, pb_config.CALIBRATED_LAMBDA) )
 
         pred, sigma = model.predict(X_test, w_test, p_test)
