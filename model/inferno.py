@@ -13,17 +13,18 @@ from hessian import hessian
 
 
 class Inferno(BaseModel, BaseNeuralNet):
-    def __init__(self, net, criterion, optimizer, n_steps=5000, batch_size=150,
+    def __init__(self, net, criterion, optimizer, n_steps=5000, sample_size=1500,
                 temperature=1.0, cuda=False, verbose=0):
         super().__init__()
-        self.basic_name = "INFERNO"
+        self.base_name = "INFERNO"
         self.n_steps    = n_steps
-        self.batch_size = batch_size
+        self.sample_size = sample_size
         self.temperature= temperature
         self.cuda_flag  = cuda
         self.verbose    = verbose
 
         self.net           = net
+        self.archi_name    = net.name
         self.optimizer     = optimizer
         self.set_optimizer_name()
         self.criterion     = criterion
@@ -37,7 +38,7 @@ class Inferno(BaseModel, BaseNeuralNet):
         params.update(generator.nuisance_params)
 
         for i in range(self.n_steps):
-            s, b = generator(self.batch_size)
+            s, b = generator(self.sample_size)
             s_prime, b_prime = s.detach(), b.detach()
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
 
@@ -86,7 +87,7 @@ class Inferno(BaseModel, BaseNeuralNet):
 
 
     def get_name(self):
-        name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{temperature}-{learning_rate}".format(**self.__dict__)
+        name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{sample_size}-{temperature}".format(**self.__dict__)
         return name
 
 
