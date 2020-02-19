@@ -2,7 +2,12 @@ import torch
 import numpy as np
 from collections import OrderedDict
 
+import torch.nn as nn
+
+from hessian import hessian
+
 SEED = 42
+
 class Synthetic3DGeneratoTorch():
     def __init__(self, seed=SEED, r_dist=2.0, b_rate=3.0, s_rate=2.0, ratio=50/(1000+50),
                         reset_every=None):
@@ -52,3 +57,39 @@ class Synthetic3DGeneratoTorch():
 
     def __call__(self, n_samples):
         return self.generate(n_samples)
+
+
+class S3DLoss(nn.Module):
+    def __init__(self):
+        super().__init__()
+        r_loc, r_std = 0.0, 0.4
+        self.r_constraints = torch.distributions.Normal(r_loc, r_std)
+
+        b_rate_loc, b_rate_std = 0.0, 0.4
+        self.b_rate_constraints = torch.distributions.Normal(b_rate_loc, b_rate_std)
+        self.constraints_distrib = {'r_dist': self.r_constraints,
+                                    'b_rate': self.b_rate_constraints,
+                                   }
+        self.i =  0
+    def constraints_nll(self, params):
+        nll = 0
+        for param_name, distrib in self.constraints_distrib.items():
+            if param_name in params:
+                nll = nll - distrib.log_prob(params['b_rate'])
+        return nll
+
+    def forward(self, input, target, params):
+        """
+        input is the total count, the summaries, 
+        target is the asimov, the expected
+        param_list is the OrderedDict of tensor containing the parameters
+                [MU, R_DIST, B_RATE]
+        """
+        poisson = torch.distributions.Poisson(input)
+        nll = - torch.sum(poisson.log_prob(target)) + self.constraints_nll(params)
+        param_list = params.values()
+        h = hessian(nll, param_list, create_graph=True)
+        h_inverse = torch.inverse(h)  # FIXME : may break, handle exception
+        loss = h_inverse[0,0]
+        return loss
+
