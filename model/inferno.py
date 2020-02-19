@@ -6,12 +6,14 @@ import numpy as np
 
 from collections import OrderedDict
 from .base import BaseModel
-from sklearn.preprocessing import StandardScaler
+from .base import BaseNeuralNet
+from .utils import to_torch
+from .monitor import LightLossMonitorHook
+
 from hessian import hessian
-from net.monitor import LightLossMonitorHook
 
 
-class Inferno(BaseModel):
+class Inferno(BaseModel, BaseNeuralNet):
     def __init__(self, net, criterion, n_steps=5000, batch_size=150, learning_rate=1e-3, 
                 temperature=1.0, cuda=False, verbose=0):
         super().__init__()
@@ -22,18 +24,15 @@ class Inferno(BaseModel):
         self.cuda_flag  = cuda
         self.verbose    = verbose
 
-        self.scaler        = StandardScaler()
         self.net           = net
         self.learning_rate = learning_rate
         self.optimizer     = optim.Adam(self.net.parameters(), lr=learning_rate)
+        self.set_optimizer_name()
         self.criterion     = criterion
         self.loss_hook = LightLossMonitorHook()
         self.criterion.register_forward_hook(self.loss_hook)
         
-    def fit(self, X, y, w):
-        pass
-    
-    def fit_generator(self, generator):
+    def fit(self, generator):
         mu = torch.tensor(1.0, requires_grad=True)
         mu_prime = mu.detach()
         params = OrderedDict([('mu', mu)])
@@ -62,8 +61,19 @@ class Inferno(BaseModel):
                 loss.backward()
                 self.optimizer.step()  # update params                
 
-    def predict(self, X, w):
-        pass
+    def predict(self, X):
+        proba = self.predict_proba(X)
+        y_pred = np.argmax(proba, axis=1)
+        return y_pred
+
+    def predict_proba(self, X):
+        X = X.astype(np.float32)
+        with torch.no_grad():
+            X_torch = to_torch(X, cuda=self.cuda_flag)
+            logits = self.net(X_torch)
+            probas = torch.softmax(logits / self.temperature, 1)
+        y_proba = np.array(probas)
+        return y_proba
     
     def forward(self, x):
         logits = self.net(x)
@@ -71,8 +81,14 @@ class Inferno(BaseModel):
         counts = torch.sum(probas, 0, keepdim=False)
         return counts
 
+    def compute_summaries(self, X, W):
+        proba = self.predict_proba(X)
+        weighted_counts = np.sum(proba*W, 0)
+        return weighted_counts
+
+
     def get_name(self):
-        name = "{basic_name}-{n_steps}-{batch_size}-{temperature}-{learning_rate}".format(**self.__dict__)
+        name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{temperature}-{learning_rate}".format(**self.__dict__)
         return name
 
 
