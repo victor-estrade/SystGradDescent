@@ -4,8 +4,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import numpy as np
-from .nll import gauss_nll
-from .nll import poisson_nll
 
 SEED = 42
 
@@ -66,37 +64,3 @@ class AP1(ApplePear):
         X, y, w = super().generate(apple_ratio=apple_ratio, n_apple=n_apple, n_pear=n_pear)
         return X, y, w
 
-
-class AP1Config():
-    PARAM_NAMES = ['apple_ratio']
-    INTEREST_PARAM_NAME = 'apple_ratio'
-
-    CALIBRATED_APPLE_RATIO = 0.5
-    CALIBRATED_APPLE_RATIO_ERROR = 1  # minuit default
-    TRUE_APPLE_RATIO = 0.8
-    TRUE_APPLE_RATIO_RANGE = np.arange(0, 1, 0.1)
-
-    N_TRAINING_SAMPLES = 2000
-    N_VALIDATION_SAMPLES = 2000
-    N_TESTING_SAMPLES = 2000
-
-
-class AP1NLL():
-    def __init__(self, compute_summaries, valid_generator, X_exp, w_exp):
-        self.compute_summaries = compute_summaries
-        self.valid_generator = valid_generator
-        self.X_exp = X_exp
-        self.w_exp = w_exp
-    
-    def __call__(self, apple_ratio):
-        pb_config = AP1Config()
-        self.valid_generator.reset()
-        X, y, w = self.valid_generator.generate(apple_ratio, n_samples=pb_config.N_VALIDATION_SAMPLES)
-        valid_summaries = self.compute_summaries(X, w)
-        test_summaries  = self.compute_summaries(self.X_exp, self.w_exp)
-
-        # Compute NLL
-        EPSILON = 1e-6  # avoid log(0)
-        rate = valid_summaries# + EPSILON
-        total_nll = np.sum(poisson_nll(test_summaries, rate))
-        return total_nll
