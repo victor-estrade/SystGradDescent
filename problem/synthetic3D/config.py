@@ -19,7 +19,7 @@ class S3D2Config():
     TRUE = Parameter(r=0.1, lam=2.7, mu=150/1050)
 
     PARAM_NAMES = ['mu', 'r', 'lam']
-    INTEREST_PARAM_NAME = 'mu'
+    INTEREST_PARAM_NAME = TRUE.interest_parameters_names
 
     CALIBRATED_MU = CALIBRATED.mu
     CALIBRATED_R = CALIBRATED.r
