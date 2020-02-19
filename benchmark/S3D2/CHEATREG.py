@@ -127,7 +127,7 @@ def run(args, i_cv):
             args.retrain = True
     if args.retrain:
         logger.info('Training {}'.format(model.get_name()))
-        model.fit_batch(train_generator)
+        model.fit(train_generator)
         logger.info('Training DONE')
 
         # SAVE MODEL
