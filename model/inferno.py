@@ -14,7 +14,7 @@ from hessian import hessian
 
 
 class Inferno(BaseModel, BaseNeuralNet):
-    def __init__(self, net, criterion, n_steps=5000, batch_size=150, learning_rate=1e-3, 
+    def __init__(self, net, criterion, optimizer, n_steps=5000, batch_size=150,
                 temperature=1.0, cuda=False, verbose=0):
         super().__init__()
         self.basic_name = "INFERNO"
@@ -25,8 +25,7 @@ class Inferno(BaseModel, BaseNeuralNet):
         self.verbose    = verbose
 
         self.net           = net
-        self.learning_rate = learning_rate
-        self.optimizer     = optim.Adam(self.net.parameters(), lr=learning_rate)
+        self.optimizer     = optimizer
         self.set_optimizer_name()
         self.criterion     = criterion
         self.loss_hook = LightLossMonitorHook()
@@ -81,7 +80,7 @@ class Inferno(BaseModel, BaseNeuralNet):
         counts = torch.sum(probas, 0, keepdim=False)
         return counts
 
-    def compute_summaries(self, X, W):
+    def compute_summaries(self, X, W, n_bins=None):
         proba = self.predict_proba(X)
         weighted_counts = np.sum(proba*W, 0)
         return weighted_counts
