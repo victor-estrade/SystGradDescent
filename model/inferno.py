@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+import os
 import numpy as np
 
 from collections import OrderedDict
@@ -84,6 +85,27 @@ class Inferno(BaseModel, BaseNeuralNet):
         proba = self.predict_proba(X)
         weighted_counts = np.sum(proba*W, 0)
         return weighted_counts
+
+    def save(self, save_directory):
+        super(BaseModel, self).save(save_directory)
+        path = os.path.join(save_directory, 'weights.pth')
+        torch.save(self.net.state_dict(), path)
+
+        path = os.path.join(save_directory, 'losses.json')
+        self.loss_hook.save_state(path)
+        return self
+
+    def load(self, save_directory):
+        super(BaseModel, self).load(save_directory)
+        path = os.path.join(save_directory, 'weights.pth')
+        if self.cuda_flag:
+            self.net.load_state_dict(torch.load(path))
+        else:
+            self.net.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage))
+
+        path = os.path.join(save_directory, 'losses.json')
+        self.loss_hook.load_state(path)
+        return self
 
 
     def get_name(self):
