@@ -23,7 +23,7 @@ def flush(logger):
 
 
 def print_line():
-    print('='*145)
+    logger.info('='*145)
 
 
 def print_params(param, params_truth):
