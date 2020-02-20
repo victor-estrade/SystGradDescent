@@ -123,15 +123,13 @@ SBATCH_TEMPLATE = \
 #SBATCH --partition={partition}
 #SBATCH --gres=gpu:{gpu}
 #SBATCH --exclude=baltic-1
+#SBATCH --nodelist=republic-1-2
 
 GRID_PARAMS=$(cat {parameters_file} | head -n $SLURM_ARRAY_TASK_ID | tail -n 1)
 WORKDIR="/home/tao/vestrade/workspace/SystML/SystGradDescent"
 
-sdocker -i  -v /home/tao/vestrade/datawarehouse:/datawarehouse \
-            -v /data/titanic_3/users/vestrade/savings:/data/titanic_3/users/vestrade/savings \
-            -v $WORKDIR:$WORKDIR \
-            {docker_image} \
-            /bin/sh -c "cd ${{WORKDIR}}; python -m {benchmark} {main_args} ${{GRID_PARAMS}}"
+python -m {benchmark} {main_args} ${{GRID_PARAMS}}
+
 """
 
 
@@ -203,8 +201,10 @@ def main():
     pd.DataFrame(grid).to_csv(parameters_file_csv, index=False)
 
     # Start job
-    print('sbatch', script_slurm)
-    call(['sbatch', script_slurm])
+    print('sbatch-docker', script_slurm)
+    call(['sbatch-docker', '--docker_image', docker_image,
+        '-v /home/tao/vestrade/datawarehouse:/datawarehouse',
+        script_slurm])
 
 if __name__ == '__main__':
     main()
