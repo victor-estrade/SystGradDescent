@@ -201,7 +201,7 @@ def main():
 
     # Start job
     cmd = ['sbatch-docker', '--docker_image', docker_image,
-        "--docker_args", '"-v /home/tao/vestrade/datawarehouse:/datawarehouse"',
+        "--docker_args", '"-v /home/tao/vestrade/datawarehouse:/datawarehouse "',
         script_slurm]
     print(" ".join(cmd))
     call(cmd)
