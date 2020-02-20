@@ -203,7 +203,7 @@ def main():
     cmd = ['sbatch-docker', '--docker_image', docker_image,
         "--docker_args", '"-v /home/tao/vestrade/datawarehouse:/datawarehouse"',
         script_slurm]
-    print(cmd)
+    print(" ".join(cmd))
     call(cmd)
 
 if __name__ == '__main__':
