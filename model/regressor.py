@@ -70,6 +70,7 @@ class Regressor(BaseModel, BaseNeuralNet):
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
+            self.scheduler.step()
         return self
 
     def _fit_batch(self, generator):
@@ -89,6 +90,7 @@ class Regressor(BaseModel, BaseNeuralNet):
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
+            self.scheduler.step()
 
     def _forward(self, generator):
         params = self.param_generator()
