@@ -34,6 +34,8 @@ def parse_args():
 
     # main arguments
     main_args = parser.add_argument_group('main_args', 'arguments passed to the all subjobs')
+    main_args.add_argument('--no-cuda', '--no-gpu', help='flag to use or not the gpu',
+                        action='store_false', dest='cuda')
     main_args.add_argument('--retrain', help='flag to force retraining',
                         action='store_true')
     main_args.add_argument('--skip-minuit', help='flag to skip minuit NLL minization',
@@ -173,6 +175,10 @@ def main():
         main_args['--retrain'] = ' '
     else:
         main_args.pop('--retrain')
+    if main_args['--no-cuda'] :
+        main_args['--no-cuda'] = ' '
+    else:
+        main_args.pop('--no-cuda')
     if main_args['--skip-minuit'] :
         main_args['--skip-minuit'] = ' '
     else:

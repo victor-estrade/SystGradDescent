@@ -63,8 +63,8 @@ def REG_parse_args(main_description="Training launcher"):
                         default=1000, type=int)
 
     # OTHER
-    # parser.add_argument('--no-cuda', '--no-gpu', help='flag to use or not the gpu',
-    #                     action='store_false', dest='cuda')
+    parser.add_argument('--no-cuda', '--no-gpu', help='flag to use or not the gpu',
+                        action='store_false', dest='cuda')
     parser.add_argument('--retrain', help='flag to force retraining',
                         action='store_true')
 
@@ -108,8 +108,8 @@ def INFERNO_parse_args(main_description="Training launcher"):
                         default=1000, type=int)
 
     # OTHER
-    # parser.add_argument('--no-cuda', '--no-gpu', help='flag to use or not the gpu',
-    #                     action='store_false', dest='cuda')
+    parser.add_argument('--no-cuda', '--no-gpu', help='flag to use or not the gpu',
+                        action='store_false', dest='cuda')
     parser.add_argument('--retrain', help='flag to force retraining',
                         action='store_true')
 
@@ -146,8 +146,8 @@ def NET_parse_args(main_description="Training launcher"):
                         default=1000, type=int)
 
     # OTHER
-    # parser.add_argument('--no-cuda', '--no-gpu', help='flag to use or not the gpu',
-    #                     action='store_false', dest='cuda')
+    parser.add_argument('--no-cuda', '--no-gpu', help='flag to use or not the gpu',
+                        action='store_false', dest='cuda')
     parser.add_argument('--retrain', help='flag to force retraining',
                         action='store_true')
 
