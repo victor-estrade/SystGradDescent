@@ -21,7 +21,7 @@ class BaseArchi(nn.Module):
 class F6(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_unit=80):
         super().__init__(n_unit)
-        self.fc_in  = nn.Linear(n_in, n_unit, bias=True)
+        self.fc_in  = nn.Linear(n_in, n_unit)
         self.fc1    = nn.Linear(n_unit, n_unit)
         self.fc2    = nn.Linear(n_unit, n_unit)
         self.fc3    = nn.Linear(n_unit, n_unit)
@@ -134,7 +134,7 @@ class RegNetExtra(BaseArchi):
 class AR9R1(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_unit=80):
         super().__init__(n_unit)
-        self.avg_in  = layers.Average(n_in, n_unit, bias=True)
+        self.avg_in  = layers.Average(n_in, n_unit)
         self.avg1   = ResidualAverageBlock(n_unit, n_unit//2)
         self.avg2   = ResidualAverageBlock(n_unit, n_unit//2)
         self.avg3   = ResidualAverageBlock(n_unit, n_unit//2)
@@ -165,7 +165,7 @@ class AR5R5(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_unit=80):
         super().__init__(n_unit)
         activation = torch.relu
-        self.avg_in = layers.Average(n_in, n_unit, bias=True)
+        self.avg_in = layers.Average(n_in, n_unit)
         self.avg1   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
         self.avg2   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
         self.res3   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
@@ -198,8 +198,8 @@ class AR5R5E(BaseArchi):
         super().__init__(n_unit)
         activation = torch.relu
         self.activation = activation
-        self.avg_in = layers.AverageExtra(n_in, n_unit, n_extra, bias=True)
-        self.avg1   = ResidualAverageBlock(n_unit, n_unit//2, n_extra, activation=activation)
+        self.avg_in = layers.AverageExtra(n_in, n_unit, n_extra)
+        self.avg1   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
         self.avg2   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
         self.res3   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
         self.res4   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
@@ -223,6 +223,50 @@ class AR5R5E(BaseArchi):
         self.avg2.reset_parameters()
         self.avg3.reset_parameters()
         self.avg4.reset_parameters()
+        self.fc_out.reset_parameters()
+
+class AR9R9E(BaseArchi):
+    def __init__(self, n_in=1, n_out=1, n_extra=0, n_unit=80):
+        super().__init__(n_unit)
+        activation = torch.tanh
+        self.activation = activation
+        self.avg_in = layers.AverageExtra(n_in, n_unit, n_extra)
+        self.avg1   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
+        self.avg2   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
+        self.avg3   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
+        self.avg4   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
+        self.res5   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
+        self.res6   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
+        self.res7   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
+        self.res8   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+    def forward(self, x, w, p):
+        x = self.avg_in(x, w, p)
+        x = self.avg1(x, w)
+        x = self.avg2(x, w)
+        x = self.avg3(x, w)
+        x = self.avg4(x, w)
+
+        x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
+        x = self.res5(x)
+        x = self.res6(x)
+        x = self.res7(x)
+        x = self.res8(x)
+        x = self.activation(x)
+        x = self.fc_out(x)
+        return x
+
+    def reset_parameters(self):
+        self.avg_in.reset_parameters()
+        self.avg1.reset_parameters()
+        self.avg2.reset_parameters()
+        self.avg3.reset_parameters()
+        self.avg4.reset_parameters()
+        self.res5.reset_parameters()
+        self.res6.reset_parameters()
+        self.res7.reset_parameters()
+        self.res8.reset_parameters()
         self.fc_out.reset_parameters()
 
 
@@ -300,7 +344,7 @@ class AF3R3E(BaseArchi):
 class F3R3(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_unit=80):
         super().__init__(n_unit)
-        self.fc_in  = nn.Linear(n_in, n_unit, bias=True)
+        self.fc_in  = nn.Linear(n_in, n_unit)
         self.fc1    = nn.Linear(n_unit, n_unit)
         self.fc2    = nn.Linear(n_unit, n_unit)
         self.fc3    = nn.Linear(n_unit, n_unit)
@@ -335,7 +379,7 @@ class F3R3(BaseArchi):
 class F3R3E(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_unit=80):
         super().__init__(n_unit)
-        self.fc_in  = nn.Linear(n_in, n_unit, bias=True)
+        self.fc_in  = nn.Linear(n_in, n_unit)
         self.fc1    = nn.Linear(n_unit, n_unit)
         self.fc2    = nn.Linear(n_unit, n_unit)
         self.fc3    = nn.Linear(n_unit, n_unit)
@@ -372,7 +416,7 @@ class F3R3E(BaseArchi):
 class AR5S2S2R1(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_unit=80):
         super().__init__(n_unit)
-        self.avg_in = layers.Average(n_in, n_unit, bias=True)
+        self.avg_in = layers.Average(n_in, n_unit)
         self.avg1   = ResidualAverageBlock(n_unit, n_unit//2)
         self.avg2   = ResidualAverageBlock(n_unit, n_unit//2)
         self.avg3   = ResidualAverageBlock(n_unit, n_unit//2)
@@ -404,7 +448,7 @@ class AR5S2S2R1(BaseArchi):
 class AR3S2S2R3(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_unit=200):
         super().__init__(n_unit)
-        self.avg_in = layers.Average(n_in, n_unit, bias=True)
+        self.avg_in = layers.Average(n_in, n_unit)
         self.avg1   = ResidualAverageBlock(n_unit, n_unit//2)
         self.avg2   = ResidualAverageBlock(n_unit, n_unit//2)
         self.avg3   = ResidualAverageBlock(n_unit+n_unit, n_unit//2)
