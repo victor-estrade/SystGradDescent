@@ -175,7 +175,7 @@ def main():
         main_args['--retrain'] = ' '
     else:
         main_args.pop('--retrain')
-    if main_args['--no-cuda'] :
+    if not main_args['--no-cuda'] :
         main_args['--no-cuda'] = ' '
     else:
         main_args.pop('--no-cuda')
