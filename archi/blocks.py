@@ -19,13 +19,12 @@ def softmax_cat(x_, x):
 class ResidualBlock(nn.Module):
     __constants__ = ['n_in', 'n_middle', 'bias', 'activation']
 
-    def __init__(self, n_in, n_middle, bias=False, activation=torch.relu):
+    def __init__(self, n_in, n_middle, activation=torch.relu):
         super().__init__()
         self.n_in = n_in
         self.n_middle = n_middle
-        self.bias = bias
-        self.fc_in = nn.Linear(n_in, n_middle, bias)
-        self.fc_out = nn.Linear(n_middle, n_in, bias)
+        self.fc_in = nn.Linear(n_in, n_middle, True)
+        self.fc_out = nn.Linear(n_middle, n_in, False)
         self.activation = activation
 
     def forward(self, x):
@@ -43,12 +42,12 @@ class ResidualBlock(nn.Module):
 class ResidualAverageBlock(nn.Module):
     __constants__ = ['n_in', 'n_middle', 'bias', 'activation']
 
-    def __init__(self, n_in, n_middle, bias=False, activation=torch.relu):
+    def __init__(self, n_in, n_middle, activation=torch.relu):
         super().__init__()
         self.n_in = n_in
         self.n_middle = n_middle
-        self.avg_in = layers.Average(n_in, n_middle, bias)
-        self.avg_out = layers.Average(n_middle, n_in, bias)
+        self.avg_in = layers.Average(n_in, n_middle, True)
+        self.avg_out = layers.Average(n_middle, n_in, False)
         self.activation = activation
 
     def forward(self, x, w, p=None):
@@ -66,13 +65,13 @@ class ResidualAverageBlock(nn.Module):
 class ResidualAverageExtraBlock(nn.Module):
     __constants__ = ['n_in', 'n_middle', 'n_extra', 'bias', 'activation']
 
-    def __init__(self, n_in, n_middle, n_extra,  bias=False, activation=torch.relu):
+    def __init__(self, n_in, n_middle, n_extra, activation=torch.relu):
         super().__init__()
         self.n_in = n_in
         self.n_middle = n_middle
         self.n_extra = n_extra
-        self.avg_in = layers.AverageExtra(n_in, n_middle, n_extra, bias)
-        self.avg_out = layers.Average(n_middle, n_in, bias)
+        self.avg_in = layers.AverageExtra(n_in, n_middle, n_extra, True)
+        self.avg_out = layers.Average(n_middle, n_in, False)
         self.activation = activation
 
     def forward(self, x, w, p):
