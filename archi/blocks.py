@@ -23,8 +23,8 @@ class ResidualBlock(nn.Module):
         super().__init__()
         self.n_in = n_in
         self.n_middle = n_middle
-        self.fc_in = nn.Linear(n_in, n_middle, True)
-        self.fc_out = nn.Linear(n_middle, n_in, False)
+        self.fc_in = nn.Linear(n_in, n_middle, bias=True)
+        self.fc_out = nn.Linear(n_middle, n_in, bias=False)
         self.activation = activation
 
     def forward(self, x):
@@ -46,8 +46,8 @@ class ResidualAverageBlock(nn.Module):
         super().__init__()
         self.n_in = n_in
         self.n_middle = n_middle
-        self.avg_in = layers.Average(n_in, n_middle, True)
-        self.avg_out = layers.Average(n_middle, n_in, False)
+        self.avg_in = layers.Average(n_in, n_middle, bias=True)
+        self.avg_out = layers.Average(n_middle, n_in, bias=False)
         self.activation = activation
 
     def forward(self, x, w, p=None):
@@ -70,8 +70,8 @@ class ResidualAverageExtraBlock(nn.Module):
         self.n_in = n_in
         self.n_middle = n_middle
         self.n_extra = n_extra
-        self.avg_in = layers.AverageExtra(n_in, n_middle, n_extra, True)
-        self.avg_out = layers.Average(n_middle, n_in, False)
+        self.avg_in = layers.AverageExtra(n_in, n_middle, n_extra, bias=True)
+        self.avg_out = layers.Average(n_middle, n_in, bias=False)
         self.activation = activation
 
     def forward(self, x, w, p):
