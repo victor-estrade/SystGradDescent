@@ -129,6 +129,9 @@ SBATCH_TEMPLATE = \
 GRID_PARAMS=$(cat {parameters_file} | head -n $SLURM_ARRAY_TASK_ID | tail -n 1)
 WORKDIR="/home/tao/vestrade/workspace/SystML/SystGradDescent"
 
+echo "GRID_PARAMS"
+echo $GRID_PARAMS
+
 python -m {benchmark} {main_args} ${{GRID_PARAMS}}
 
 """
