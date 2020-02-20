@@ -200,10 +200,11 @@ def main():
     pd.DataFrame(grid).to_csv(parameters_file_csv, index=False)
 
     # Start job
-    print('sbatch-docker', script_slurm)
-    call(['sbatch-docker', '--docker_image', docker_image,
+    cmd = ['sbatch-docker', '--docker_image', docker_image,
         "--docker_args", '"-v /home/tao/vestrade/datawarehouse:/datawarehouse"',
-        script_slurm])
+        script_slurm]
+    print(cmd)
+    call(cmd)
 
 if __name__ == '__main__':
     main()
