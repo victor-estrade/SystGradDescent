@@ -58,7 +58,7 @@ def main():
     # INFO
     args.net = F3R3(n_in=1, n_out=2)
     args.optimizer = get_optimizer(args)
-    model = get_model(args, Regressor)
+    model = get_model(args, Regressor, quiet=False)
     model.set_info(BENCHMARK_NAME, -1)
     pb_config = AP1Config()
     # RUN
