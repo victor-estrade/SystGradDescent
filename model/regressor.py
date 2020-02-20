@@ -36,6 +36,7 @@ class Regressor(BaseModel, BaseNeuralNet):
         self.archi_name    = net.name
         self.optimizer     = optimizer
         self.set_optimizer_name()
+        self.scheduler     = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1000, gamma=0.5)
         self.criterion     = GaussNLLLoss()
 
         # self.loss_hook = LightLossMonitorHook()
