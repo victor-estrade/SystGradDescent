@@ -11,6 +11,7 @@ from subprocess import call
 def parse_args():
     parser = argparse.ArgumentParser(description="Job launcher")
 
+    parser.add_argument('benchmark', help='benchmark main',)
     parser.add_argument('--logdir', help='path to the log directory',
                         default='logs')
     parser.add_argument('--xp-name', help='name of the experiment',
@@ -33,8 +34,6 @@ def parse_args():
 
     # main arguments
     main_args = parser.add_argument_group('main_args', 'arguments passed to the all subjobs')
-    main_args.add_argument('--model', help='model to train',
-                        type=str, )
     main_args.add_argument('--retrain', help='flag to force retraining',
                         action='store_true')
     main_args.add_argument('--skip-minuit', help='flag to skip minuit NLL minization',
@@ -44,57 +43,57 @@ def parse_args():
     grid_args.add_argument('--n-estimators',
                         nargs='+',
                         help='number of estimators',
-                        default=1000, type=int)
+                        type=int)
 
     grid_args.add_argument('--max-depth',
                         nargs='+',
                         help='maximum depth of trees',
-                        default=3, type=int)
+                        type=int)
 
     grid_args.add_argument('--learning-rate', '--lr',
                         nargs='+',
                         help='learning rate',
-                        default=1e-3, type=float)
+                        type=float)
 
     grid_args.add_argument('--trade-off',
                         nargs='+',
                         help='trade-off for multi-objective models',
-                        default=1.0, type=float)
+                        type=float)
 
     grid_args.add_argument('-w', '--width',
                         nargs='+',
                         help='width for the data augmentation sampling',
-                        default=1, type=float)
+                        type=float)
 
     grid_args.add_argument('--batch-size',
                         nargs='+',
                         help='mini-batch size',
-                        default=1024, type=int)
+                        type=int)
 
     grid_args.add_argument('--n-steps',
                         nargs='+',
                         help='number of update steps',
-                        default=10000, type=int)
+                        type=int)
 
     grid_args.add_argument('--n-augment',
                         nargs='+',
                         help='number of times the dataset is augmented',
-                        default=2, type=int)
+                        type=int)
 
     grid_args.add_argument('--n-adv-pre-training-steps',
                         nargs='+',
                         help='number of update steps for the pre-training',
-                        default=3000, type=int)
+                        type=int)
 
     grid_args.add_argument('--n-clf-pre-training-steps',
                         nargs='+',
                         help='number of update steps for the pre-training',
-                        default=3000, type=int)
+                        type=int)
 
     grid_args.add_argument('--n-recovery-steps',
                         nargs='+',
                         help='number of update steps for the catch training of auxiliary models',
-                        default=5, type=int)
+                        type=int)
 
     args = parser.parse_args()
     grid_args_dict = extract_group_args(parser, args, 'grid_args')
@@ -104,10 +103,10 @@ def parse_args():
 
 
 def extract_group_args(parser, args, group_title):
-    parser_groups = {group.title:{action.option_strings[0]:getattr(args,action.dest,None) 
-                        for action in group._group_actions} 
-                    for group in parser._action_groups}
-    group_args = parser_groups[group_title]
+    is_group_title = lambda group : group.title == group_title
+    group = list(filter(is_group_title, parser._action_groups))[0]
+    group_args = {action.option_strings[0]: getattr(args, action.dest, None)
+                                    for action in group._group_actions}
     return group_args
 
 
@@ -132,7 +131,7 @@ sdocker -i  -v /home/tao/vestrade/datawarehouse:/datawarehouse \
             -v /data/titanic_3/users/vestrade/savings:/data/titanic_3/users/vestrade/savings \
             -v $WORKDIR:$WORKDIR \
             {docker_image} \
-            /bin/sh -c "cd ${{WORKDIR}}; python main.py {main_args} ${{GRID_PARAMS}}" 
+            /bin/sh -c "cd ${{WORKDIR}}; python -m {benchmark} {main_args} ${{GRID_PARAMS}}"
 """
 
 
@@ -158,7 +157,7 @@ def to_list(l):
 def main():
     # Extract arguments :
     args, grid_args, main_args = parse_args()
-    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")    
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     xp_name = args.xp_name
     logdir = os.path.join(args.logdir, xp_name, now)
     max_time = args.max_time
@@ -167,9 +166,10 @@ def main():
     partition = args.partition
     gpu = args.gpu
     docker_image = args.docker_image
+    benchmark = args.benchmark
 
     # Main parameters for grid search
-    parameter_dict = {k:to_list(v) for k, v in grid_args.items()}
+    parameter_dict = {k: to_list(v) for k, v in grid_args.items() if v is not None}
     grid = param_to_grid(parameter_dict)
     array = "1-{}".format(len(grid))
     if main_args['--retrain'] :
@@ -203,7 +203,8 @@ def main():
     pd.DataFrame(grid).to_csv(parameters_file_csv, index=False)
 
     # Start job
-    call(['sbatch', script_slurm])
+    print('sbatch', script_slurm)
+    #call(['sbatch', script_slurm])
 
 if __name__ == '__main__':
     main()
