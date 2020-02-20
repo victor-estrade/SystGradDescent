@@ -41,7 +41,7 @@ def REG_parse_args(main_description="Training launcher"):
 
     # MODEL HYPER PARAMETERS
     parser.add_argument('--learning-rate', '--lr', help='learning rate',
-                        default=1e-3, type=float)
+                        default=1e-4, type=float)
 
     parser.add_argument('--beta1', help='beta 1 for Adam',
                         default=0.5, type=float)
