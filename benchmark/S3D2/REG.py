@@ -40,7 +40,7 @@ from model.monte_carlo import many_predict
 from model.monte_carlo import monte_carlo_data
 from model.monte_carlo import monte_carlo_infer
 # from archi.net import RegNetExtra
-from archi.net import AR5R5E
+from archi.net import AR9R9E as ARCHI
 
 from ..my_argparser import REG_parse_args
 
@@ -74,7 +74,7 @@ def main():
     logger.info(args)
     flush(logger)
     # INFO
-    args.net = AR5R5E(n_in=3, n_out=2, n_extra=2)
+    args.net = ARCHI(n_in=3, n_out=2, n_extra=2)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, -1)
@@ -114,7 +114,7 @@ def run(args, i_cv):
 
     # SET MODEL
     logger.info('Set up rergessor')
-    args.net = AR5R5E(n_in=3, n_out=2, n_extra=2)
+    args.net = ARCHI(n_in=3, n_out=2, n_extra=2, n_unit=200)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, i_cv)
@@ -158,8 +158,9 @@ def run(args, i_cv):
         # MONTE CARLO
         all_pred, all_params = many_predict(model, X_test, w_test, param_generator, ncall=NCALL)
         mc_data = monte_carlo_data(all_pred, all_params)
+        save_monte_carlo(mc_data, model.path)
         target, sigma = monte_carlo_infer(mc_data)
-       
+
         name = pb_config.INTEREST_PARAM_NAME 
         result_row[name] = target
         result_row[name+_ERROR] = sigma
