@@ -204,7 +204,7 @@ def main():
 
     # Start job
     print('sbatch', script_slurm)
-    #call(['sbatch', script_slurm])
+    call(['sbatch', script_slurm])
 
 if __name__ == '__main__':
     main()
