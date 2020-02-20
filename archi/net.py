@@ -43,6 +43,14 @@ class F6(BaseArchi):
         x = self.fc_out(x)
         return x
 
+    def reset_parameters(self):
+        self.fc_in.reset_parameters()
+        self.fc1.reset_parameters()
+        self.fc2.reset_parameters()
+        self.fc3.reset_parameters()
+        self.fc4.reset_parameters()
+        self.fc_out.reset_parameters()
+
 
 class RegNet(BaseArchi):
     def __init__(self, n_in=1, n_out=1):
@@ -188,8 +196,8 @@ class AR5R5(BaseArchi):
         self.avg_in.reset_parameters()
         self.avg1.reset_parameters()
         self.avg2.reset_parameters()
-        self.avg3.reset_parameters()
-        self.avg4.reset_parameters()
+        self.res3.reset_parameters()
+        self.res4.reset_parameters()
         self.fc_out.reset_parameters()
 
 
@@ -221,8 +229,8 @@ class AR5R5E(BaseArchi):
         self.avg_in.reset_parameters()
         self.avg1.reset_parameters()
         self.avg2.reset_parameters()
-        self.avg3.reset_parameters()
-        self.avg4.reset_parameters()
+        self.res3.reset_parameters()
+        self.res4.reset_parameters()
         self.fc_out.reset_parameters()
 
 class AR9R9E(BaseArchi):
@@ -301,8 +309,8 @@ class AF3R3(BaseArchi):
         self.avg_in.reset_parameters()
         self.avg1.reset_parameters()
         self.avg2.reset_parameters()
-        self.avg3.reset_parameters()
-        self.avg4.reset_parameters()
+        self.fc3.reset_parameters()
+        self.fc4.reset_parameters()
         self.fc_out.reset_parameters()
 
 
@@ -336,8 +344,8 @@ class AF3R3E(BaseArchi):
         self.avg_in.reset_parameters()
         self.avg1.reset_parameters()
         self.avg2.reset_parameters()
-        self.avg3.reset_parameters()
-        self.avg4.reset_parameters()
+        self.fc3.reset_parameters()
+        self.fc4.reset_parameters()
         self.fc_out.reset_parameters()
 
 
@@ -369,10 +377,10 @@ class F3R3(BaseArchi):
 
     def reset_parameters(self):
         self.fc_in.reset_parameters()
-        self.avg1.reset_parameters()
-        self.avg2.reset_parameters()
-        self.avg3.reset_parameters()
-        self.avg4.reset_parameters()
+        self.fc1.reset_parameters()
+        self.fc2.reset_parameters()
+        self.fc3.reset_parameters()
+        self.fc4.reset_parameters()
         self.fc_out.reset_parameters()
 
 
@@ -405,10 +413,10 @@ class F3R3E(BaseArchi):
 
     def reset_parameters(self):
         self.fc_in.reset_parameters()
-        self.avg1.reset_parameters()
-        self.avg2.reset_parameters()
-        self.avg3.reset_parameters()
-        self.avg4.reset_parameters()
+        self.fc1.reset_parameters()
+        self.fc2.reset_parameters()
+        self.fc3.reset_parameters()
+        self.fc4.reset_parameters()
         self.fc_out.reset_parameters()
 
 
