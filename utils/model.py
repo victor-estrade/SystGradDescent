@@ -51,12 +51,13 @@ def extract_class_args(args, model_class):
     model_args = { k: args_dict[k] for k in sig.parameters.keys() if k in args_dict }
     return model_args
 
-def get_model(args, model_class):
-    logger = logging.getLogger()
-    logger.info('Building model ...')
+def get_model(args, model_class, quiet=True):
     model_args = extract_class_args(args, model_class)
-    logger.info( 'model_args :{}'.format(model_args) )
     model = model_class(**model_args)
+    if not quiet:
+        logger = logging.getLogger()
+        logger.info('Building model ...')
+        logger.info( 'model_args :{}'.format(model_args) )
     return model
 
 
