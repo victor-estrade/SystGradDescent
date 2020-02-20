@@ -23,6 +23,7 @@ def flush(logger):
 
 
 def print_line():
+    logger = logging.getLogger()
     logger.info('='*145)
 
 
