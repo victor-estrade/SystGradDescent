@@ -126,8 +126,11 @@ SBATCH_TEMPLATE = \
 #SBATCH --gres=gpu:{gpu}
 #SBATCH --exclude=baltic-1
 
-GRID_PARAMS=$(cat {parameters_file} | head -n ${{SLURM_ARRAY_TASK_ID}} | tail -n 1)
+GRID_PARAMS=$(cat {parameters_file} | head -n $SLURM_ARRAY_TASK_ID | tail -n 1)
 WORKDIR="/home/tao/vestrade/workspace/SystML/SystGradDescent"
+
+echo "SLURM_ARRAY_TASK_ID"
+echo $SLURM_ARRAY_TASK_ID
 
 echo "GRID_PARAMS"
 echo "${{GRID_PARAMS}}"
