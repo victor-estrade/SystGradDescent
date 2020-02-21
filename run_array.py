@@ -127,13 +127,18 @@ SBATCH_TEMPLATE = \
 #SBATCH --gres=gpu:{gpu}
 #SBATCH --exclude=baltic-1
 
+1>&2 echo "msg to STDERR"
+1>&2 echo "Define dockerkill"
+
 function dockerkill
 {{
-    echo "Killing docker {container_name}"
-    docker kill {container_name}
-    echo "Cancelling job ${{SLURM_JOB_ID}}"
-    scancel $SLURM_JOB_ID
+    echo "Killing docker {container_name}_${{SLURM_ARRAY_TASK_ID}}"
+    docker kill {container_name}_${{SLURM_ARRAY_TASK_ID}}
+    echo "Cancelling job ${{SLURM_JOB_ID}}_${{SLURM_ARRAY_TASK_ID}}"
+    scancel "${{SLURM_JOB_ID}}_${{SLURM_ARRAY_TASK_ID}}"
 }}
+
+1>&2 echo "trap dockerkill"
 trap dockerkill TERM
 trap dockerkill INT
 trap dockerkill CONT
@@ -148,7 +153,7 @@ echo "GRID_PARAMS"
 echo "${{GRID_PARAMS}}"
 
 sdocker -i  -v /home/tao/vestrade/datawarehouse:/datawarehouse \
-            -v $WORKDIR:$WORKDIR --name {container_name} \
+            -v $WORKDIR:$WORKDIR --name "{container_name}_${{SLURM_ARRAY_TASK_ID}}" \
             {docker_image} \
             /bin/sh -c "cd ${{WORKDIR}}; python -m {benchmark} {main_args} ${{GRID_PARAMS}}"
 """
