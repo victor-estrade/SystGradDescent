@@ -3,6 +3,7 @@ import sys
 import argparse
 import datetime
 import itertools
+from uuid import uuid4
 
 import pandas as pd
 
@@ -147,7 +148,7 @@ echo "GRID_PARAMS"
 echo "${{GRID_PARAMS}}"
 
 sdocker -i  -v /home/tao/vestrade/datawarehouse:/datawarehouse \
-            -v $WORKDIR:$WORKDIR \
+            -v $WORKDIR:$WORKDIR --name {container_name} \
             {docker_image} \
             /bin/sh -c "cd ${{WORKDIR}}; python -m {benchmark} {main_args} ${{GRID_PARAMS}}"
 """
@@ -189,6 +190,8 @@ def main():
     gpu = args.gpu
     docker_image = args.docker_image
     benchmark = args.benchmark
+
+    container_name = str(uuid4())[:8]
 
     # Main parameters for grid search
     parameter_dict = {k: to_list(v) for k, v in grid_args.items() if v is not None}
