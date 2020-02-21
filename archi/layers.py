@@ -19,6 +19,26 @@ def torch_weighted_sum(input, weight, dim, keepdim=False, dtype=None):
     out = torch.sum(input * weight, dim, keepdim=keepdim)
     return out
 
+
+def n_activation_factory(*activations, dim=1):
+    """
+    Factory to build multiple activation.
+    Splits data in N chunks and apply a different activation to each chunk
+    before concatenating them again.
+    """
+    N = len(activations)
+    assert N > 1, "Should have at least 2 activations {} found".format(N)
+    def n_activation(x):
+        chunks = torch.chunk(x, N, dim=dim)
+        out = [ activation(x_i) for x_i, activation in zip(chunks, activations) ]
+        x = torch.cat(out, dim)
+        return x
+    return n_activation
+
+relu_tanh = n_activation_factory(torch.relu, torch.tanh)
+elu_tanh = n_activation_factory(F.elu, torch.tanh)
+
+
 # Pytorch example to add a module
 # https://pytorch.org/docs/stable/notes/extending.html#adding-a-module
 # Pytorch Linear module implementation

@@ -15,11 +15,12 @@ def softmax_cat(x_, x):
     x = torch.cat((x, x_), 1)
     return x
 
+DEFAULT_ACTIVATION = layers.relu_tanh
 
 class ResidualBlock(nn.Module):
     __constants__ = ['n_in', 'n_middle', 'bias', 'activation']
 
-    def __init__(self, n_in, n_middle, activation=torch.relu):
+    def __init__(self, n_in, n_middle, activation=DEFAULT_ACTIVATION):
         super().__init__()
         self.n_in = n_in
         self.n_middle = n_middle
@@ -42,7 +43,7 @@ class ResidualBlock(nn.Module):
 class ResidualAverageBlock(nn.Module):
     __constants__ = ['n_in', 'n_middle', 'bias', 'activation']
 
-    def __init__(self, n_in, n_middle, activation=torch.relu):
+    def __init__(self, n_in, n_middle, activation=DEFAULT_ACTIVATION):
         super().__init__()
         self.n_in = n_in
         self.n_middle = n_middle
@@ -65,7 +66,7 @@ class ResidualAverageBlock(nn.Module):
 class ResidualAverageExtraBlock(nn.Module):
     __constants__ = ['n_in', 'n_middle', 'n_extra', 'bias', 'activation']
 
-    def __init__(self, n_in, n_middle, n_extra, activation=torch.relu):
+    def __init__(self, n_in, n_middle, n_extra, activation=DEFAULT_ACTIVATION):
         super().__init__()
         self.n_in = n_in
         self.n_middle = n_middle
