@@ -75,7 +75,7 @@ def main():
     logger.info(args)
     flush(logger)
     # INFO
-    args.net = ARCHI(n_in=3, n_out=2, n_extra=2)
+    args.net = ARCHI(n_in=3, n_out=2, n_extra=2, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, -1)
@@ -115,7 +115,7 @@ def run(args, i_cv):
 
     # SET MODEL
     logger.info('Set up rergessor')
-    args.net = ARCHI(n_in=3, n_out=2, n_extra=2, n_unit=200)
+    args.net = ARCHI(n_in=3, n_out=2, n_extra=2, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, i_cv)

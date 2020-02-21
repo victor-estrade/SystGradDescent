@@ -53,6 +53,9 @@ def REG_parse_args(main_description="Training launcher"):
     parser.add_argument('--optimizer', help='optimizer name', dest='optimizer_name',
                         default='Adam', type=str, choices=('Adam', 'SGD', 'ADAM', 'sgd', 'adam'))
 
+    parser.add_argument('--n-unit', help='Number of units in layers. Controls NN width.',
+                        default=200, type=int)
+
     parser.add_argument('--sample-size', help='data sample size',
                         default=1000, type=int)
 
