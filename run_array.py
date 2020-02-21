@@ -129,9 +129,6 @@ SBATCH_TEMPLATE = \
 
 hostname
 
-1>&2 echo "msg to STDERR"
-1>&2 echo "Define dockerkill"
-
 function dockerkill
 {{
     echo "Killing docker {container_name}_${{SLURM_ARRAY_TASK_ID}}"
@@ -140,7 +137,6 @@ function dockerkill
     scancel "${{SLURM_JOB_ID}}_${{SLURM_ARRAY_TASK_ID}}"
 }}
 
-1>&2 echo "trap dockerkill"
 trap dockerkill TERM
 trap dockerkill INT
 trap dockerkill CONT
