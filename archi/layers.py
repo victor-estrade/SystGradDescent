@@ -20,7 +20,7 @@ def torch_weighted_sum(input, weight, dim, keepdim=False, dtype=None):
     return out
 
 
-def n_activation_factory(*activations, dim=1):
+def n_activation_factory(*activations, dim=-1):
     """
     Factory to build multiple activation.
     Splits data in N chunks and apply a different activation to each chunk
