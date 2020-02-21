@@ -126,6 +126,17 @@ SBATCH_TEMPLATE = \
 #SBATCH --gres=gpu:{gpu}
 #SBATCH --exclude=baltic-1
 
+function dockerkill
+{{
+    echo "Killing docker {container_name}"
+    docker kill {container_name}
+    echo "Cancelling job ${{SLURM_JOB_ID}}"
+    scancel $SLURM_JOB_ID
+}}
+trap dockerkill TERM
+trap dockerkill INT
+trap dockerkill CONT
+
 GRID_PARAMS=$(cat {parameters_file} | head -n $SLURM_ARRAY_TASK_ID | tail -n 1)
 WORKDIR="/home/tao/vestrade/workspace/SystML/SystGradDescent"
 
