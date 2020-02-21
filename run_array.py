@@ -127,6 +127,8 @@ SBATCH_TEMPLATE = \
 #SBATCH --gres=gpu:{gpu}
 #SBATCH --exclude=baltic-1
 
+hostname
+
 1>&2 echo "msg to STDERR"
 1>&2 echo "Define dockerkill"
 
