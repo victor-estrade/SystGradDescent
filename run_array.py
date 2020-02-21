@@ -155,7 +155,7 @@ echo "${{GRID_PARAMS}}"
 sdocker -i  -v /home/tao/vestrade/datawarehouse:/datawarehouse \
             -v $WORKDIR:$WORKDIR --name "{container_name}_${{SLURM_ARRAY_TASK_ID}}" \
             {docker_image} \
-            /bin/sh -c "cd ${{WORKDIR}}; python -m {benchmark} {main_args} ${{GRID_PARAMS}}"
+            bash -c "cd ${{WORKDIR}}; python -m {benchmark} {main_args} ${{GRID_PARAMS}}"
 """
 
 # 
