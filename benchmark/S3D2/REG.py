@@ -159,7 +159,6 @@ def run(args, i_cv):
         # MONTE CARLO
         all_pred, all_params = many_predict(model, X_test, w_test, param_generator, ncall=NCALL)
         mc_data = monte_carlo_data(all_pred, all_params)
-        logger.info('Saving monte carlo in {}'.format(model.path))
         save_monte_carlo(mc_data, model.path)
         target, sigma = monte_carlo_infer(mc_data)
 
