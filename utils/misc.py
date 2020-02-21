@@ -126,8 +126,9 @@ def evaluate_one_estimation(values, errors, truth):
           ,err_variance = np.var(errors)
           )
     row['v_bias'] = row['v_mean'] - truth
-    row['err_bias'] = row['err_mean'] - row['v_variance']
+    row['err_bias'] = row['err_mean'] - row['v_std']
     row['v_mse'] = row['v_bias']**2 + row['v_variance']
+    row['v_rmse'] = np.sqrt(row['v_mse'])
     row['err_mse'] = row['err_bias']**2 + row['err_variance']
     row['truth'] = truth
     return row
