@@ -278,6 +278,58 @@ class AR9R9E(BaseArchi):
         self.fc_out.reset_parameters()
 
 
+class AR19R5E(BaseArchi):
+    def __init__(self, n_in=1, n_out=1, n_extra=0, n_unit=80):
+        super().__init__(n_unit)
+        self.avg_in = layers.AverageExtra(n_in, n_unit, n_extra)
+        self.avg1   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.avg2   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.avg3   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.avg4   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.avg5   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.avg6   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.avg7   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.avg8   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.avg9   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.res10  = ResidualBlock       (n_unit, n_unit//2)
+        self.res11  = ResidualBlock       (n_unit, n_unit//2)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+    def forward(self, x, w, p):
+        x = self.avg_in(x, w, p)
+        x = self.avg1(x, w)
+        x = self.avg2(x, w)
+        x = self.avg3(x, w)
+        x = self.avg4(x, w)
+        x = self.avg5(x, w)
+        x = self.avg6(x, w)
+        x = self.avg7(x, w)
+        x = self.avg8(x, w)
+        x = self.avg9(x, w)
+
+        x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
+        x = self.res10(x)
+        x = self.res11(x)
+        x = layers.relu_tanh(x)
+        x = self.fc_out(x)
+        return x
+
+    def reset_parameters(self):
+        self.avg_in.reset_parameters()
+        self.avg1.reset_parameters()
+        self.avg2.reset_parameters()
+        self.avg3.reset_parameters()
+        self.avg4.reset_parameters()
+        self.avg5.reset_parameters()
+        self.avg6.reset_parameters()
+        self.avg7.reset_parameters()
+        self.avg8.reset_parameters()
+        self.avg9.reset_parameters()
+        self.res10.reset_parameters()
+        self.res11.reset_parameters()
+        self.fc_out.reset_parameters()
+
+
 
 class AF3R3(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_unit=80):

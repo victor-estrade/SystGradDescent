@@ -41,7 +41,7 @@ from model.monte_carlo import monte_carlo_data
 from model.monte_carlo import monte_carlo_infer
 from model.monte_carlo import save_monte_carlo
 # from archi.net import RegNetExtra
-from archi.net import AR9R9E as ARCHI
+from archi.net import AR19R5E as ARCHI
 
 from ..my_argparser import REG_parse_args
 
