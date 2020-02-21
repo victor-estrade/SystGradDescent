@@ -118,18 +118,18 @@ def evaluate_estimator(name, results, valid_only=False):
     return eval_table
 
 def evaluate_one_estimation(values, errors, truth):
-    row = dict(v_mean = np.mean(values)
-          ,v_std = np.std(values)
-          ,v_variance = np.var(values)
-          ,err_mean = np.mean(errors)
-          ,err_std = np.std(errors)
-          ,err_variance = np.var(errors)
+    row = dict(target_mean = np.mean(values)
+          ,target_std = np.std(values)
+          ,target_variance = np.var(values)
+          ,sigma_mean = np.mean(errors)
+          ,sigma_std = np.std(errors)
+          ,sigma_variance = np.var(errors)
           )
-    row['v_bias'] = row['v_mean'] - truth
-    row['err_bias'] = row['err_mean'] - row['v_std']
-    row['v_mse'] = row['v_bias']**2 + row['v_variance']
-    row['v_rmse'] = np.sqrt(row['v_mse'])
-    row['err_mse'] = row['err_bias']**2 + row['err_variance']
+    row['target_bias'] = row['target_mean'] - truth
+    row['sigma_bias'] = row['sigma_mean'] - row['target_std']
+    row['target_mse'] = row['target_bias']**2 + row['target_variance']
+    row['target_rmse'] = np.sqrt(row['target_mse'])
+    row['sigma_mse'] = row['sigma_bias']**2 + row['sigma_variance']
     row['truth'] = truth
     return row
 
