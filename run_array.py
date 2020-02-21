@@ -135,9 +135,15 @@ echo $SLURM_ARRAY_TASK_ID
 echo "GRID_PARAMS"
 echo "${{GRID_PARAMS}}"
 
-python -m {benchmark} {main_args} ${{GRID_PARAMS}}
-
+sdocker -i  -v /home/tao/vestrade/datawarehouse:/datawarehouse \
+            -v $WORKDIR:$WORKDIR \
+            {docker_image} \
+            /bin/sh -c "cd ${{WORKDIR}}; python -m {benchmark} {main_args} ${{GRID_PARAMS}}"
 """
+
+# 
+# python -m {benchmark} {main_args} ${{GRID_PARAMS}}
+# 
 
 
 def param_to_grid(parameter_dict):
@@ -212,9 +218,7 @@ def main():
     pd.DataFrame(grid).to_csv(parameters_file_csv, index=False)
 
     # Start job
-    cmd = ['sbatch-docker', '--docker_image', docker_image,
-        "--docker_args", '-v /home/tao/vestrade/datawarehouse:/datawarehouse',
-        script_slurm]
+    cmd = ['sbatch', script_slurm]
     print(" ".join(cmd))
     call(cmd)
 
