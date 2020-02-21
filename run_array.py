@@ -68,6 +68,10 @@ def parse_args():
                         help='width for the data augmentation sampling',
                         type=float)
 
+    parser.add_argument('--n-unit', help='Number of units in layers. Controls NN width.',
+                        type=int)
+
+
     grid_args.add_argument('--batch-size',
                         nargs='+',
                         help='mini-batch size',
