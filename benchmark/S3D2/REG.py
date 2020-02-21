@@ -39,6 +39,7 @@ from model.regressor import Regressor
 from model.monte_carlo import many_predict
 from model.monte_carlo import monte_carlo_data
 from model.monte_carlo import monte_carlo_infer
+from model.monte_carlo import save_monte_carlo
 # from archi.net import RegNetExtra
 from archi.net import AR9R9E as ARCHI
 
