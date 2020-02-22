@@ -71,6 +71,10 @@ def parse_args():
     grid_args.add_argument('--n-unit', help='Number of units in layers. Controls NN width.',
                         type=int)
 
+    grid_args.add_argument('--sample-size',
+                        nargs='+',
+                        help='mini-batch size',
+                        type=int)
 
     grid_args.add_argument('--batch-size',
                         nargs='+',
