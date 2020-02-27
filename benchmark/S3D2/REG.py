@@ -159,7 +159,7 @@ def run(args, i_cv):
         # MONTE CARLO
         all_pred, all_params = many_predict(model, X_test, w_test, param_generator, ncall=NCALL)
         mc_data = monte_carlo_data(all_pred, all_params)
-        save_monte_carlo(mc_data, model.path)
+        save_monte_carlo(mc_data, model.path, ext='_mu={:1.2f}'.format(mu))
         target, sigma = monte_carlo_infer(mc_data)
 
         name = pb_config.INTEREST_PARAM_NAME 

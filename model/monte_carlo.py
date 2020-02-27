@@ -47,6 +47,6 @@ def monte_carlo_infer(data):
     return target, sigma
 
 
-def save_monte_carlo(data, model_path):
-    data.to_csv(os.path.join(model_path, 'monte_carlo.csv'))
+def save_monte_carlo(data, model_path, ext=''):
+    data.to_csv(os.path.join(model_path, 'monte_carlo{}.csv'.format(ext)))
 
