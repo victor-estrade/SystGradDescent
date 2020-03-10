@@ -215,6 +215,7 @@ def run(args, i_cv):
     # MEASUREMENT
     for mu in pb_config.TRUE_MU_RANGE:
         pb_config.TRUE_MU = mu
+        print_line()
         logger.info('Generate testing data')
         X_test, y_test, w_test = test_generator.generate(
                                          pb_config.TRUE_R,
@@ -246,7 +247,7 @@ def run(args, i_cv):
         result_row[name] = target
         result_row[name+_ERROR] = sigma
         result_row[name+_TRUTH] = pb_config.TRUE_MU
-        logger.info('{} =vs= {} +/- {}'.format(pb_config.TRUE_MU, target, sigma) ) 
+        logger.info('mu  = {} =vs= {} +/- {}'.format(pb_config.TRUE_MU, target, sigma) ) 
         result_table.append(result_row.copy())
     result_table = pd.DataFrame(result_table)
 
