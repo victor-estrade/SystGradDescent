@@ -25,7 +25,6 @@ class Regressor(BaseModel, BaseNeuralNet):
     def __init__(self, net, optimizer, n_steps=5000, batch_size=20, sample_size=1000, 
                 cuda=False, verbose=0):
         super().__init__()
-        self.base_name   = "Regressor"
         self.n_steps     = n_steps
         self.batch_size  = batch_size
         self.sample_size = sample_size
@@ -93,23 +92,21 @@ class Regressor(BaseModel, BaseNeuralNet):
             self.scheduler.step()
 
     def _forward(self, generator):
-        params = self.param_generator()
-        X, y, w = generator.generate(*params, n_samples=self.sample_size)
-        target = params[-1]
+        X, y, w, p = generator.generate(n_samples=self.sample_size)
         
         X = X.astype(np.float32)
         w = w.astype(np.float32).reshape(-1, 1)
-        target = np.array(target).astype(np.float32)
-        p = np.array(params[:-1]).astype(np.float32).reshape(1, -1)
+        y = np.array(y).astype(np.float32)
+        p = np.array(p).astype(np.float32).reshape(1, -1) if p is not None else None
 
         X_torch = to_torch(X, cuda=self.cuda_flag)
         w_torch = to_torch(w, cuda=self.cuda_flag)
-        target = to_torch(target.reshape(-1), cuda=self.cuda_flag)
-        p_torch = to_torch(p, cuda=self.cuda_flag)
+        y_torch = to_torch(y.reshape(-1), cuda=self.cuda_flag)
+        p_torch = to_torch(p, cuda=self.cuda_flag) if p is not None else None
 
         X_out = self.net.forward(X_torch, w_torch, p_torch)
         mu, logsigma = torch.split(X_out, 1, dim=0)
-        loss, mse = self.criterion(mu, target, logsigma)
+        loss, mse = self.criterion(mu, y_torch, logsigma)
         return loss, mse
 
 
