@@ -49,6 +49,17 @@ def param_generator():
     return (apple_ratio,)
 
 
+class Generator:
+    def __init__(self, param_generator, data_generator):
+        self.param_generator = param_generator
+        self.data_generator = data_generator
+
+    def generate(self, n_samples):
+        apple_ratio = self.param_generator()
+        X, y, w = self.data_generator.generate(apple_ratio, n_samples)
+        return X, apple_ratio, w, None
+
+
 def main():
     # BASIC SETUP
     logger = set_logger()
@@ -89,7 +100,7 @@ def run(args, i_cv):
     logger.info('Set up data generator')
     pb_config = AP1Config()
     seed = config.SEED + i_cv * 5
-    train_generator = AP1(seed)
+    train_generator = Generator(param_generator, AP1(seed))
     valid_generator = AP1(seed+1)
     test_generator  = AP1(seed+2)
 
@@ -99,7 +110,6 @@ def run(args, i_cv):
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, i_cv)
-    model.param_generator = param_generator
     flush(logger)
 
     # TRAINING / LOADING

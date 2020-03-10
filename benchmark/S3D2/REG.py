@@ -67,6 +67,16 @@ def param_generator():
     return Parameter(r, lam, mu)
 
 
+class Generator_mu:
+    def __init__(self, param_generator, data_generator):
+        self.param_generator = param_generator
+        self.data_generator = data_generator
+
+    def generate(self, n_samples):
+        r, lam, mu = self.param_generator()
+        X, y, w = self.data_generator.generate(r, lam, mu, n_samples)
+        return X, mu, w, None
+
 
 def main():
     # BASIC SETUP
@@ -109,7 +119,7 @@ def run(args, i_cv):
     logger.info('Set up data generator')
     pb_config = S3D2Config()
     seed = config.SEED + i_cv * 5
-    train_generator = S3D2(seed)
+    train_generator = Generator_mu(param_generator, S3D2(seed))
     valid_generator = S3D2(seed+1)
     test_generator  = S3D2(seed+2)
 
@@ -119,7 +129,6 @@ def run(args, i_cv):
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, i_cv)
-    model.param_generator = param_generator
     flush(logger)
 
     # TRAINING / LOADING
