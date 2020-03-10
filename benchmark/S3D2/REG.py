@@ -215,7 +215,7 @@ def run(args, i_cv):
     # MEASUREMENT
     for mu in pb_config.TRUE_MU_RANGE:
         pb_config.TRUE_MU = mu
-        print_line()
+        print_line('-')
         logger.info('Generate testing data')
         X_test, y_test, w_test = test_generator.generate(
                                          pb_config.TRUE_R,

@@ -22,9 +22,9 @@ def flush(logger):
 	logger.handlers[0].flush()
 
 
-def print_line():
+def print_line(symbol='='):
     logger = logging.getLogger()
-    logger.info('='*105)
+    logger.info(symbol*105)
 
 
 def print_params(param, params_truth):
