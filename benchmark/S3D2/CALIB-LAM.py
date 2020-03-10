@@ -37,10 +37,10 @@ from archi.net import AR5R5 as ARCHI
 from ..my_argparser import REG_parse_args
 
 BENCHMARK_NAME = 'S3D2'
-CALIB = "Calib_r"
+CALIB = "Calib_lam"
 
 
-class Generator_r:
+class Generator_lam:
     def __init__(self, param_generator, data_generator):
         self.param_generator = param_generator
         self.data_generator = data_generator
@@ -48,7 +48,7 @@ class Generator_r:
     def generate(self, n_samples):
         r, lam, mu = self.param_generator()
         X, y, w = self.data_generator.generate(r, lam, mu, n_samples)
-        return X, r, w, None
+        return X, lam, w, None
 
 
 def main():
@@ -70,7 +70,7 @@ def main():
     logger.info("Setup data")
     pb_config = S3D2Config()
     seed = config.SEED + 99999
-    train_generator = Generator_r(param_generator, S3D2(seed))
+    train_generator = Generator_lam(param_generator, S3D2(seed))
     valid_generator = S3D2(seed+1)
     test_generator  = S3D2(seed+2)
 
@@ -102,25 +102,25 @@ def main():
 
     print_line()
 
-    for r in pb_config.TRUE_R_RANGE:
+    for lam in pb_config.TRUE_LAMBDA_RANGE:
         X_test, y_test, w_test = test_generator.generate(
-                                         r,
-                                         pb_config.TRUE_LAMBDA,
+                                         pb_config.TRUE_R,
+                                         lam,
                                          pb_config.TRUE_MU,
                                          n_samples=pb_config.N_TESTING_SAMPLES)
         target, sigma = model.predict(X_test, w_test)
-        logger.info('{} =vs= {} +/- {}'.format(r, target, sigma))
+        logger.info('{} =vs= {} +/- {}'.format(lam, target, sigma))
 
-        name = "r"
+        name = "lam"
         result_row[name] = target
         result_row[name+_ERROR] = sigma
-        result_row[name+_TRUTH] = r
+        result_row[name+_TRUTH] = lam
         result_table.append(result_row.copy())
     print_line()
     result_table = pd.DataFrame(result_table)
 
     logger.info('Plot params')
-    param_names = ["r"]
+    param_names = ["lam"]
     for name in param_names:
         plot_params(name, result_table, model)
 
