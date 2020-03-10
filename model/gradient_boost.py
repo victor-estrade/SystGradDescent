@@ -19,7 +19,6 @@ from .utils import classwise_balance_weight
 class GradientBoostingModel(BaseClassifierModel):
     def __init__(self, learning_rate=0.1, n_estimators=1000, max_depth=3,):
         super().__init__()
-        self.base_name = "GradientBoostingModel"
         self.learning_rate = learning_rate
         self.n_estimators = n_estimators
         self.max_depth = max_depth
@@ -67,7 +66,6 @@ class GradientBoostingModel(BaseClassifierModel):
 class BlindGradientBoostingModel(GradientBoostingModel):
     def __init__(self, learning_rate=0.1, n_estimators=1000, max_depth=3,):
         super().__init__()
-        self.basic_name = "BlindGradientBoostingModel"
         self.learning_rate = learning_rate
         self.n_estimators = n_estimators
         self.max_depth = max_depth

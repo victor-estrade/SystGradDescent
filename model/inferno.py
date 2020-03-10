@@ -17,7 +17,6 @@ class Inferno(BaseModel, BaseNeuralNet):
     def __init__(self, net, criterion, optimizer, n_steps=5000, sample_size=1500,
                 temperature=1.0, cuda=False, verbose=0):
         super().__init__()
-        self.base_name = "INFERNO"
         self.n_steps    = n_steps
         self.sample_size = sample_size
         self.temperature= temperature

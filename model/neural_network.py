@@ -30,7 +30,6 @@ from .utils import classwise_balance_weight
 class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
     def __init__(self, net, optimizer, n_steps=5000, batch_size=20, learning_rate=1e-3, cuda=False, verbose=0):
         super().__init__()
-        self.basic_name = "NeuralNetClassifier"
         self.n_steps    = n_steps
         self.batch_size = batch_size
         self.cuda_flag  = cuda
