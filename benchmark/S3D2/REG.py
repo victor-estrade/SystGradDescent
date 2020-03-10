@@ -46,6 +46,8 @@ from archi.net import AR19R5E as ARCHI
 from ..my_argparser import REG_parse_args
 
 BENCHMARK_NAME = 'S3D2'
+CALIB_R = "Calib_r"
+CALIB_LAM = "Calib_lam"
 N_ITER = 9
 NCALL = 100
 
@@ -77,6 +79,57 @@ class Generator_mu:
         X, y, w = self.data_generator.generate(r, lam, mu, n_samples)
         return X, mu, w, None
 
+
+def load_calib_r():
+    from archi.net import AR5R5
+    args = lambda : None
+    args.n_unit     = 80
+    args.optimizer_name  = "adam"
+    args.beta1      = 0.5
+    args.beta2      = 0.9
+    args.learning_rate = 5e-4
+    args.n_samples  = 1000
+    args.n_steps    = 5000
+    args.batch_size = 20
+
+    args.net = AR5R5(n_in=3, n_out=2, n_unit=args.n_unit)
+    args.optimizer = get_optimizer(args)
+    model = get_model(args, Regressor)
+    model.base_name = CALIB_R
+    model.set_info(BENCHMARK_NAME, 0)
+    model.load(model.path)
+    return model
+
+def load_calib_lam():
+    from archi.net import AR5R5
+    args = lambda : None
+    args.n_unit     = 80
+    args.optimizer_name  = "adam"
+    args.beta1      = 0.5
+    args.beta2      = 0.9
+    args.learning_rate = 5e-4
+    args.n_samples  = 1000
+    args.n_steps    = 5000
+    args.batch_size = 20
+
+    args.net = AR5R5(n_in=3, n_out=2, n_unit=args.n_unit)
+    args.optimizer = get_optimizer(args)
+    model = get_model(args, Regressor)
+    model.base_name = CALIB_LAM
+    model.set_info(BENCHMARK_NAME, 0)
+    model.load(model.path)
+    return model
+
+def calib_param_sampler(r_mean, r_sigma, lam_mean, lam_sigma):
+    def param_sampler():
+        r = np.random.normal(r_mean, r_sigma)
+        lam = -1
+        while lam <= 0:
+            lam = np.random.normal(lam_mean, lam_sigma)
+        
+        mu = np.random.uniform(0, 1)
+        return Parameter(r, lam, mu)
+    return param_sampler
 
 def main():
     # BASIC SETUP
@@ -131,6 +184,9 @@ def run(args, i_cv):
     model.set_info(BENCHMARK_NAME, i_cv)
     flush(logger)
 
+    calib_r = load_calib_r()
+    calib_lam = load_calib_lam()
+
     # TRAINING / LOADING
     if not args.retrain:
         try:
@@ -165,8 +221,23 @@ def run(args, i_cv):
                                          pb_config.TRUE_LAMBDA,
                                          pb_config.TRUE_MU,
                                          n_samples=pb_config.N_TESTING_SAMPLES)
+        # CALIBRATION
+        r_mean, r_sigma = calib_r.predict(X_test, w_test)
+        lam_mean, lam_sigma = calib_lam.predict(X_test, w_test)
+        param_sampler = calib_param_sampler(r_mean, r_sigma, lam_mean, lam_sigma)
+        logger.info('r   = {} =vs= {} +/- {}'.format(pb_config.TRUE_R, r_mean, r_sigma) ) 
+        logger.info('lam = {} =vs= {} +/- {}'.format(pb_config.TRUE_LAMBDA, lam_mean, lam_sigma) )
+        result_row['r'] = r_mean
+        result_row['r'+_ERROR] = r_sigma
+        result_row['r'+_TRUTH] = pb_config.TRUE_R
+        result_row['lam'] = lam_mean
+        result_row['lam'+_ERROR] = lam_sigma
+        result_row['lam'+_TRUTH] = pb_config.TRUE_LAMBDA
+
         # MONTE CARLO
-        all_pred, all_params = many_predict(model, X_test, w_test, param_generator, ncall=NCALL)
+        logger.info('Making {} predictions'.format(NCALL))
+        all_pred, all_params = many_predict(model, X_test, w_test, param_sampler, ncall=NCALL)
+        logger.info('Gathering it all')
         mc_data = monte_carlo_data(all_pred, all_params)
         save_monte_carlo(mc_data, model.path, ext='_mu={:1.2f}'.format(mu))
         target, sigma = monte_carlo_infer(mc_data)
