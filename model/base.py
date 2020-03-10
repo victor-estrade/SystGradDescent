@@ -29,6 +29,9 @@ class ModelInfo(object):
     i_cv = None
     benchmark_name = None
 
+    def __init__(self):
+        self.base_name = type(self).__name__
+
     def get_name(self):
         raise NotImplementedError("Should be implemented in child class")
 
@@ -60,11 +63,10 @@ class ModelInfo(object):
         self.full_name = '{}{}{}'.format(self.get_name(), os.sep, i_cv)
 
     def _set_path(self, benchmark_name, i_cv):
-        model_class = type(self).__name__
         name = self.get_name()
         cv_id = "{:d}".format(i_cv)
         self.directory = os.path.join(config.SAVING_DIR, benchmark_name, 
-                                        model_class, name)
+                                        self.base_name, name)
         self.path = os.path.join(self.directory, cv_id)
 
     def set_info(self, benchmark_name, i_cv):
