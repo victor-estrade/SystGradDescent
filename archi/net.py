@@ -172,12 +172,11 @@ class AR9R1(BaseArchi):
 class AR5R5(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_unit=80):
         super().__init__(n_unit)
-        activation = torch.relu
         self.avg_in = layers.Average(n_in, n_unit)
-        self.avg1   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
-        self.avg2   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
-        self.res3   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
-        self.res4   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
+        self.avg1   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.avg2   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.res3   = ResidualBlock       (n_unit, n_unit//2)
+        self.res4   = ResidualBlock       (n_unit, n_unit//2)
         self.fc_out = nn.Linear(n_unit, n_out)
 
     def forward(self, x, w, p=None):
@@ -188,7 +187,7 @@ class AR5R5(BaseArchi):
         x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
         x = self.res3(x)
         x = self.res4(x)
-        x = self.activation(x)
+        x = layers.relu_tanh(x)
         x = self.fc_out(x)
         return x
 
@@ -204,13 +203,11 @@ class AR5R5(BaseArchi):
 class AR5R5E(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_extra=0, n_unit=80):
         super().__init__(n_unit)
-        activation = torch.relu
-        self.activation = activation
         self.avg_in = layers.AverageExtra(n_in, n_unit, n_extra)
-        self.avg1   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
-        self.avg2   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
-        self.res3   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
-        self.res4   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
+        self.avg1   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.avg2   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.res3   = ResidualBlock       (n_unit, n_unit//2)
+        self.res4   = ResidualBlock       (n_unit, n_unit//2)
         self.fc_out = nn.Linear(n_unit, n_out)
 
     def forward(self, x, w, p):
@@ -221,7 +218,7 @@ class AR5R5E(BaseArchi):
         x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
         x = self.res3(x)
         x = self.res4(x)
-        x = self.activation(x)
+        x = layers.relu_tanh(x)
         x = self.fc_out(x)
         return x
 
@@ -236,17 +233,15 @@ class AR5R5E(BaseArchi):
 class AR9R9E(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_extra=0, n_unit=80):
         super().__init__(n_unit)
-        activation = torch.tanh
-        self.activation = activation
         self.avg_in = layers.AverageExtra(n_in, n_unit, n_extra)
-        self.avg1   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
-        self.avg2   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
-        self.avg3   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
-        self.avg4   = ResidualAverageBlock(n_unit, n_unit//2, activation=activation)
-        self.res5   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
-        self.res6   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
-        self.res7   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
-        self.res8   = ResidualBlock       (n_unit, n_unit//2, activation=activation)
+        self.avg1   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.avg2   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.avg3   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.avg4   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.res5   = ResidualBlock       (n_unit, n_unit//2)
+        self.res6   = ResidualBlock       (n_unit, n_unit//2)
+        self.res7   = ResidualBlock       (n_unit, n_unit//2)
+        self.res8   = ResidualBlock       (n_unit, n_unit//2)
         self.fc_out = nn.Linear(n_unit, n_out)
 
     def forward(self, x, w, p):
@@ -261,7 +256,7 @@ class AR9R9E(BaseArchi):
         x = self.res6(x)
         x = self.res7(x)
         x = self.res8(x)
-        x = self.activation(x)
+        x = layers.relu_tanh(x)
         x = self.fc_out(x)
         return x
 
