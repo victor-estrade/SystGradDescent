@@ -55,7 +55,7 @@ class Generator:
         self.data_generator = data_generator
 
     def generate(self, n_samples):
-        apple_ratio = self.param_generator()
+        apple_ratio, = self.param_generator()
         X, y, w = self.data_generator.generate(apple_ratio, n_samples)
         return X, apple_ratio, w, None
 
