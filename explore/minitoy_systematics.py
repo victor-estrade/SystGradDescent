@@ -86,37 +86,33 @@ class Generator():
         return nll
 
 
-
-class PriorAlpha():
-    def __init__(self, alpha_min=0.7, alpha_max=1.3):
-        self.alpha_min = alpha_min
-        self.alpha_max = alpha_max
-
-    def proba_density(self, alpha):
-        scale = self.alpha_max - self.alpha_min
-        p = sts.uniform.pdf(alpha, loc=self.alpha_min, scale=scale)
-        return p
-
-    def log_proba_density(self, alpha):
-        scale = self.alpha_max - self.alpha_min
-        p = sts.uniform.pdf(alpha, loc=self.alpha_min, scale=scale)
-        return p
-
-
-class PriorY():
-    def __init__(self, y_min=0.01, y_max=0.3):
-        self.y_min = y_min
-        self.y_max = y_max
+class UniformPrior():
+    def __init__(self, min_value, max_value):
+        self.min_value = min_value
+        self.max_value = max_value
 
     def proba_density(self, y):
-        scale = self.y_max - self.y_min
-        p = sts.uniform.pdf(y, loc=self.y_min, scale=scale)
+        scale = self.max_value - self.min_value
+        p = sts.uniform.pdf(y, loc=self.min_value, scale=scale)
         return p
 
     def log_proba_density(self, y):
-        scale = self.y_max - self.y_min
-        p = sts.uniform.pdf(y, loc=self.y_min, scale=scale)
+        scale = self.max_value - self.min_value
+        p = sts.uniform.pdf(y, loc=self.min_value, scale=scale)
         return p
+
+    def grid(self, n_samples=10000):
+        g = np.linspace(self.min_value, self.max_value, size=n_samples)
+        return g
+
+
+class PriorAlpha(UniformPrior):
+    def __init__(self, alpha_min=0.7, alpha_max=1.3):
+        super().__init__(alpha_min, alpha_max)
+
+class PriorY(UniformPrior):
+    def __init__(self, y_min=0.01, y_max=0.3):
+        super().__init__(y_min, y_max)
 
 
 
