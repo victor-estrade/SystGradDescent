@@ -19,11 +19,33 @@ alpha = nuisance parameter = rescaling of the observable
 
 """
 
+import itertools
+import os
+
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
+
 import scipy.stats as sts
+from scipy.special import softmax
+
+def set_plot_config():
+    sns.set()
+    sns.set_style("whitegrid")
+    sns.set_context("poster")
+
+    mpl.rcParams['figure.figsize'] = [8.0, 6.0]
+    mpl.rcParams['figure.dpi'] = 80
+    mpl.rcParams['savefig.dpi'] = 100
+
+    mpl.rcParams['font.size'] = 10
+    mpl.rcParams['axes.labelsize'] = 10
+    mpl.rcParams['axes.titlesize'] = 17
+    mpl.rcParams['ytick.labelsize'] = 10
+    mpl.rcParams['xtick.labelsize'] = 10
+    mpl.rcParams['legend.fontsize'] = 'large'
+    mpl.rcParams['figure.titlesize'] = 'medium'
 
 
 def assert_clean_alpha(alpha):
@@ -49,7 +71,7 @@ class Generator():
         normal_mean  = self.normal_mean * alpha
         normal_sigma = self.normal_sigma * alpha
         x_b = sts.gamma.rvs(gamma_k, loc=gamma_loc, scale=gamma_scale, size=size)
-        x_s  = sts.norm.rvs(loc=normal_mean, scale=normal_sigma, size=size)
+        x_s = sts.norm.rvs(loc=normal_mean, scale=normal_sigma, size=size)
         idx = np.random.random(size=size) < y
         x_b[idx] = x_s[idx]
         return x_b, idx
@@ -58,8 +80,8 @@ class Generator():
         """
         computes p(x | y, alpha)
         """
-        assert_clean_alpha(alpha)
-        assert_clean_y(y)
+        # assert_clean_alpha(alpha)
+        # assert_clean_y(y)
         gamma_k      = self.gamma_k
         gamma_loc    = self.gamma_loc
         gamma_scale  = alpha
@@ -98,11 +120,11 @@ class UniformPrior():
 
     def log_proba_density(self, y):
         scale = self.max_value - self.min_value
-        p = sts.uniform.pdf(y, loc=self.min_value, scale=scale)
+        p = sts.uniform.logpdf(y, loc=self.min_value, scale=scale)
         return p
 
     def grid(self, n_samples=10000):
-        g = np.linspace(self.min_value, self.max_value, size=n_samples)
+        g = np.linspace(self.min_value, self.max_value, num=n_samples)
         return g
 
 
@@ -115,9 +137,16 @@ class PriorY(UniformPrior):
         super().__init__(y_min, y_max)
 
 
+def expectancy(values, probabilities):
+    return np.sum(values * probabilities)
 
+def variance(values, probabilities):
+    return np.sum(values * values * probabilities ) - np.square(expectancy(values, probabilities))
 
-def main():
+def stat_uncertainty(values, posterior, marginal):
+    return sum([variance(values, posterior[:, j]) * marginal[j] for j in range(marginal.shape[0])])
+
+def small_test():
     print('hello world !')
     x_range = np.linspace(0, 10, 1000)
     generator = Generator()
@@ -165,6 +194,142 @@ def main():
     
     nll = generator.nll(data, 0.5, 1)
     print('best nll =', nll )
+
+
+def main():
+    set_plot_config()
+    DIRECTORY = "/home/estrade/Bureau/PhD/SystML/SystGradDescent/savings/MINITOY"
+    ALPHA_MIN = 0.8
+    ALPHA_TRUE = 1.1
+    ALPHA_MAX = 1.2
+    Y_MIN = 0.1
+    Y_TRUE = 0.15
+    Y_MAX = 0.2
+    ALPHA_N_SAMPLES = 210
+    Y_N_SAMPLES = 190
+    DATA_N_SAMPLES = 10000
+
+    assert Y_MIN <= Y_TRUE and Y_TRUE <= Y_MAX, \
+        f"truth value of y ({Y_TRUE}) should be inside its interval [{Y_MIN}, {Y_MAX}]"
+    assert ALPHA_MIN <= ALPHA_TRUE and ALPHA_TRUE <= ALPHA_MAX, \
+        f"truth value of y ({ALPHA_TRUE}) should be inside its interval [{ALPHA_MIN}, {ALPHA_MAX}]"
+
+    prior_alpha = PriorAlpha(ALPHA_MIN, ALPHA_MAX)
+    prior_y = PriorY(Y_MIN, Y_MAX)
+    
+    alpha_grid = prior_alpha.grid(ALPHA_N_SAMPLES)
+    y_grid = prior_y.grid(Y_N_SAMPLES)
+    
+    data_generator = Generator()
+    data, label = data_generator.sample_event(Y_TRUE, ALPHA_TRUE, size=DATA_N_SAMPLES)
+    n_sig = np.sum(label==1)
+    n_bkg = np.sum(label==0)
+    print(f"nb of signal      = {n_sig}")
+    print(f"nb of backgrounds = {n_bkg}")
+    # Artificially inflate alpha uncertainty
+    noise_lvl = 0.1
+    if noise_lvl:
+        print(f'apply noise ({noise_lvl*100}%) on alpha')
+        noise = np.random.uniform(1-noise_lvl, 1+noise_lvl, size=DATA_N_SAMPLES)
+        data = data * noise
+
+    shape = (Y_N_SAMPLES, ALPHA_N_SAMPLES)
+    log_likelihood = np.zeros(shape)
+    log_prior_proba = np.zeros(shape)
+    for i, j in itertools.product(range(Y_N_SAMPLES), range(ALPHA_N_SAMPLES)):
+        log_likelihood[i, j] = data_generator.log_proba_density(data, y_grid[i], alpha_grid[j]).sum()
+        log_prior_proba[i, j] = prior_y.log_proba_density(y_grid[i]) + prior_alpha.log_proba_density(alpha_grid[j])
+    
+    element_min = (log_likelihood + log_prior_proba).min()
+    print("min element = ", element_min)
+    posterior_y_alpha = softmax(log_likelihood + log_prior_proba)
+    n_zeros = (posterior_y_alpha == 0).sum()
+    n_elements = np.prod(posterior_y_alpha.shape)
+    print()
+    print(f"number of zeros in posterior = {n_zeros}/{n_elements} ({n_zeros/n_elements*100:2.3f} %)")
+
+    marginal_y = posterior_y_alpha.sum(axis=1)
+    marginal_alpha = posterior_y_alpha.sum(axis=0)
+    assert marginal_y.shape == y_grid.shape, "sum along the wrong axis for marginal y"
+    assert marginal_alpha.shape == alpha_grid.shape, "sum along the wrong axis for marginal alpha"
+
+    n_zeros = (marginal_y == 0).sum()
+    n_elements = np.prod(marginal_y.shape)
+    print(f"number of zeros in marginal y = {n_zeros}/{n_elements} ({n_zeros/n_elements*100:2.3f} %)")
+    n_zeros = (marginal_alpha == 0).sum()
+    n_elements = np.prod(marginal_alpha.shape)
+    print(f"number of zeros in marginal alpha = {n_zeros}/{n_elements} ({n_zeros/n_elements*100:2.3f} %)")
+
+    posterior_y = np.divide(posterior_y_alpha, marginal_alpha,
+        out=np.zeros_like(posterior_y_alpha), where=(posterior_y_alpha!=0))
+
+    print("probability densities should sum to one")
+    # TODO : posterior_y sum to ALPHA_N_SAMPLES. is it ok ?
+    # TODO : with new division policy posterior_y/ALPHA_N sums to 1-zero_ration in marginal_y
+    #        ... It does not look good
+    print(np.sum(posterior_y)/ALPHA_N_SAMPLES, np.sum(posterior_y_alpha), np.sum(marginal_y), np.sum(marginal_alpha))
+
+    print()
+    print("True y value    =", Y_TRUE)
+    sig_ratio = n_sig/DATA_N_SAMPLES
+    print("Sig ratio       =", sig_ratio)
+    print("E[y|x]          =", expectancy(y_grid, marginal_y))
+    full_var = variance(y_grid, marginal_y)
+    print("Var[y|x]        =", full_var)
+    print("argmax_y p(y|x) =", y_grid[np.argmax(marginal_y)])
+    i_max = np.argmax(log_likelihood) // ALPHA_N_SAMPLES
+    j_max = np.argmax(log_likelihood) % ALPHA_N_SAMPLES
+    assert np.max(log_likelihood) == log_likelihood[i_max, j_max], "max and argmax should point to the same value"
+    print("argmax_y_alpha logp(x|y, alpha) =", y_grid[i_max], alpha_grid[j_max])
+    stat_err = stat_uncertainty(y_grid, posterior_y, marginal_alpha)
+    print("stat_uncertainty=", stat_err)
+    print("syst_uncertainty=", full_var - stat_err)
+
+    print()
+    print("check marginals")
+    print("y    ", marginal_y.min(), marginal_y.max())
+    print("alpha", marginal_alpha.min(), marginal_alpha.max())
+    print("check posterior")
+    print("p(y|x)  ", posterior_y.min(), posterior_y.max())
+    print("p(y|x,a)", posterior_y_alpha.min(), posterior_y_alpha.max())
+
+
+    # return None
+
+    plt.plot(y_grid, marginal_y, label="posterior")
+    plt.axvline(Y_TRUE, c="orange", label="true y")
+    plt.axvline(Y_TRUE-full_var, c="orange", label="true y - var(y)")
+    plt.axvline(Y_TRUE-full_var, c="orange", label="true y + var(y)")
+    plt.axvline(sig_ratio, c="red", label="signal ratio")
+    plt.xlabel("y")
+    plt.ylabel("proba density")
+    plt.title("posterior marginal proba of y vs y values")
+    plt.legend()
+    plt.savefig(os.path.join(DIRECTORY, 'marginal_y.png'))
+    plt.clf()
+
+
+    plt.plot(alpha_grid, marginal_alpha, label="posterior")
+    plt.axvline(ALPHA_TRUE, c="orange", label="true alpha")
+    plt.xlabel("alpha")
+    plt.ylabel("proba density")
+    plt.title("posterior marginal proba of alpha vs alpha values")
+    plt.legend()
+    plt.savefig(os.path.join(DIRECTORY, 'marginal_alpha.png'))
+    plt.clf()
+
+    sns.distplot(data, label="data hist")
+    x_range = np.linspace(np.min(data), np.max(data), 1000)
+    p = data_generator.proba_density(x_range, Y_TRUE, ALPHA_TRUE)
+    plt.plot(x_range, p, label="true proba")
+    plt.legend()
+    plt.savefig(os.path.join(DIRECTORY, 'data_dstrib.png'))
+    plt.clf()
+
+
+
+
+
 
 
 
