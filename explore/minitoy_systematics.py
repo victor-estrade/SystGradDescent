@@ -112,15 +112,14 @@ class UniformPrior():
     def __init__(self, min_value, max_value):
         self.min_value = min_value
         self.max_value = max_value
+        self.scale = self.max_value - self.min_value
 
     def proba_density(self, y):
-        scale = self.max_value - self.min_value
-        p = sts.uniform.pdf(y, loc=self.min_value, scale=scale)
+        p = sts.uniform.pdf(y, loc=self.min_value, scale=self.scale)
         return p
 
     def log_proba_density(self, y):
-        scale = self.max_value - self.min_value
-        p = sts.uniform.logpdf(y, loc=self.min_value, scale=scale)
+        p = sts.uniform.logpdf(y, loc=self.min_value, scale=self.scale)
         return p
 
     def grid(self, n_samples=10000):
@@ -140,8 +139,11 @@ class PriorY(UniformPrior):
 def expectancy(values, probabilities):
     return np.sum(values * probabilities)
 
+# def variance(values, probabilities):
+#     return np.sum(values * values * probabilities ) - np.square(expectancy(values, probabilities))
+
 def variance(values, probabilities):
-    return np.sum(values * values * probabilities ) - np.square(expectancy(values, probabilities))
+    return np.sum(probabilities * np.square(values - expectancy(values, probabilities)))
 
 def stat_uncertainty(values, posterior, marginal):
     return sum([variance(values, posterior[:, j]) * marginal[j] for j in range(marginal.shape[0])])
@@ -199,14 +201,14 @@ def small_test():
 def main():
     set_plot_config()
     DIRECTORY = "/home/estrade/Bureau/PhD/SystML/SystGradDescent/savings/MINITOY"
-    ALPHA_MIN = 0.8
-    ALPHA_TRUE = 1.1
-    ALPHA_MAX = 1.2
+    ALPHA_MIN = 0.9
+    ALPHA_TRUE = 1.05
+    ALPHA_MAX = 1.1
     Y_MIN = 0.1
     Y_TRUE = 0.15
     Y_MAX = 0.2
-    ALPHA_N_SAMPLES = 210
-    Y_N_SAMPLES = 190
+    ALPHA_N_SAMPLES = 310
+    Y_N_SAMPLES = 290
     DATA_N_SAMPLES = 10000
 
     assert Y_MIN <= Y_TRUE and Y_TRUE <= Y_MAX, \
@@ -227,7 +229,7 @@ def main():
     print(f"nb of signal      = {n_sig}")
     print(f"nb of backgrounds = {n_bkg}")
     # Artificially inflate alpha uncertainty
-    noise_lvl = 0.1
+    noise_lvl = 0.0
     if noise_lvl:
         print(f'apply noise ({noise_lvl*100}%) on alpha')
         noise = np.random.uniform(1-noise_lvl, 1+noise_lvl, size=DATA_N_SAMPLES)
@@ -239,6 +241,10 @@ def main():
     for i, j in itertools.product(range(Y_N_SAMPLES), range(ALPHA_N_SAMPLES)):
         log_likelihood[i, j] = data_generator.log_proba_density(data, y_grid[i], alpha_grid[j]).sum()
         log_prior_proba[i, j] = prior_y.log_proba_density(y_grid[i]) + prior_alpha.log_proba_density(alpha_grid[j])
+    # log_likelihood = np.array([data_generator.log_proba_density(data, y_grid[i], alpha_grid[j]).sum()
+    #                             for i, j in itertools.product(range(Y_N_SAMPLES), range(ALPHA_N_SAMPLES))]).reshape(shape)
+    # log_prior_proba = np.array([prior_y.log_proba_density(y_grid[i]) + prior_alpha.log_proba_density(alpha_grid[j])
+    #                             for i, j in itertools.product(range(Y_N_SAMPLES), range(ALPHA_N_SAMPLES))]).reshape(shape)
     
     element_min = (log_likelihood + log_prior_proba).min()
     print("min element = ", element_min)
@@ -273,9 +279,12 @@ def main():
     print("True y value    =", Y_TRUE)
     sig_ratio = n_sig/DATA_N_SAMPLES
     print("Sig ratio       =", sig_ratio)
-    print("E[y|x]          =", expectancy(y_grid, marginal_y))
+    expect_y = expectancy(y_grid, marginal_y)
+    print("E[y|x]          =", expect_y)
     full_var = variance(y_grid, marginal_y)
     print("Var[y|x]        =", full_var)
+    std_y = np.sqrt(full_var)
+    print("sqrt(Var[y|x])  =", std_y)
     print("argmax_y p(y|x) =", y_grid[np.argmax(marginal_y)])
     i_max = np.argmax(log_likelihood) // ALPHA_N_SAMPLES
     j_max = np.argmax(log_likelihood) % ALPHA_N_SAMPLES
@@ -296,11 +305,12 @@ def main():
 
     # return None
 
-    plt.plot(y_grid, marginal_y, label="posterior")
     plt.axvline(Y_TRUE, c="orange", label="true y")
-    plt.axvline(Y_TRUE-full_var, c="orange", label="true y - var(y)")
-    plt.axvline(Y_TRUE-full_var, c="orange", label="true y + var(y)")
+    plt.axvline(Y_TRUE-std_y, c="orange", label="true y - std(y)")
+    plt.axvline(Y_TRUE+std_y, c="orange", label="true y + std(y)")
     plt.axvline(sig_ratio, c="red", label="signal ratio")
+    plt.axvline(expect_y, c="green", label="E[y|x]")
+    plt.plot(y_grid, marginal_y, label="posterior")
     plt.xlabel("y")
     plt.ylabel("proba density")
     plt.title("posterior marginal proba of y vs y values")
