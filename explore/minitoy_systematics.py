@@ -65,16 +65,34 @@ class Generator():
     def sample_event(self, y, alpha, size=1):
         assert_clean_alpha(alpha)
         assert_clean_y(y)
+        n_sig = int(y * size)
+        n_bkg = size - n_sig
+        x = self._generate_vars(y, alpha, n_bkg, n_sig)
+        labels = self._generate_labels(n_bkg, n_sig)
+        return x, labels
+
+    def _generate_vars(self, y, alpha, n_bkg, n_sig):
         gamma_k      = self.gamma_k
         gamma_loc    = self.gamma_loc
         gamma_scale  = alpha
         normal_mean  = self.normal_mean * alpha
         normal_sigma = self.normal_sigma * alpha
-        x_b = sts.gamma.rvs(gamma_k, loc=gamma_loc, scale=gamma_scale, size=size)
-        x_s = sts.norm.rvs(loc=normal_mean, scale=normal_sigma, size=size)
-        idx = np.random.random(size=size) < y
-        x_b[idx] = x_s[idx]
-        return x_b, idx
+        x_b = sts.gamma.rvs(gamma_k, loc=gamma_loc, scale=gamma_scale, size=n_bkg)
+        x_s = sts.norm.rvs(loc=normal_mean, scale=normal_sigma, size=n_sig)
+        x = np.concatenate([x_b, x_s], axis=0)
+        return x
+
+    def _generate_labels(self, n_bkg, n_sig):
+        y_b = np.zeros(n_bkg)
+        y_s = np.ones(n_sig)
+        y = np.concatenate([y_b, y_s], axis=0)
+        return y
+
+    def _generate_weights(self, mu, n_bkg, n_sig, n_expected_events):
+        w_b = np.ones(n_bkg) * (1-mu) * n_expected_events/n_bkg
+        w_s = np.ones(n_sig) * mu * n_expected_events/n_sig
+        w = np.concatenate([w_b, w_s], axis=0)
+        return w
 
     def proba_density(self, x, y, alpha):
         """
