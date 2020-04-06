@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import numpy as np
+import scipy.stats as sts
 
 SEED = 42
 
@@ -13,6 +14,7 @@ class S3D2():
         self.n_expected_events = n_expected_events
         self.seed = seed
         self.random = np.random.RandomState(seed=seed)
+        self.sig_rate =  2
 
     def reset(self):
         self.random = np.random.RandomState(seed=self.seed)
@@ -46,14 +48,14 @@ class S3D2():
         return X, y, w
     
     def _generate_vars(self, r, lam, mu, n_bkg, n_sig):
-        bkg_mean = np.array([2.+r, 0.])
-        bkg_cov = np.array([[5., 0.], [0., 9.]])
-        sig_mean = np.array([0., 0.])
-        sig_cov = np.eye(2)
+        bkg_mean = self.get_bkg_mean(r)
+        bkg_cov  = self.get_bkg_cov()
+        sig_mean = self.get_sig_mean()
+        sig_cov  = self.get_sig_cov()
         X_b_12 = self.random.multivariate_normal(bkg_mean, bkg_cov, n_bkg)
         X_s_12 = self.random.multivariate_normal(sig_mean, sig_cov, n_sig)
-        X_b_3 =  self.random.exponential(lam, n_bkg).reshape(-1, 1)
-        X_s_3 =  self.random.exponential(2, n_sig).reshape(-1, 1)
+        X_b_3  = self.random.exponential(scale=1./lam, size=n_bkg).reshape(-1, 1)
+        X_s_3  = self.random.exponential(scale=1./self.sig_rate, size=n_sig).reshape(-1, 1)
 
         X_b = np.concatenate([X_b_12, X_b_3], axis=1)
         X_s = np.concatenate([X_s_12, X_s_3], axis=1)
@@ -71,3 +73,38 @@ class S3D2():
         w_s = np.ones(n_sig) * mu * n_expected_events/n_sig
         w = np.concatenate([w_b, w_s], axis=0)
         return w
+
+    def get_bkg_mean(self, r):
+        return np.array([2.+r, 0.])
+
+    def get_bkg_cov(self):
+        return np.array([[5., 0.], [0., 9.]])
+
+    def get_sig_mean(self):
+        return np.array([0., 0.])
+
+    def get_sig_cov(self):
+        return np.eye(2)
+
+    def proba_density(self, x, r, lam, mu):
+        bkg_mean = self.get_bkg_mean(r)
+        bkg_cov  = self.get_bkg_cov()
+        sig_mean = self.get_sig_mean()
+        sig_cov  = self.get_sig_cov()
+        p_bkg =  sts.multivariate_normal.pdf(x, bkg_mean, bkg_cov)
+        p_sig =  sts.multivariate_normal.pdf(x, sig_mean, sig_cov)
+        p_bkg = p_bkg * sts.expon.pdf(x, loc=0., scale=1./lam)
+        p_sig = p_sig * sts.expon.pdf(x, loc=0., scale=1./self.sig_rate)
+        proba_density = mu * p_sig + (1-mu) * p_bkg
+        return proba_density
+
+    def log_proba_density(self, x, r, lam, mu):
+        """
+        computes log p(x | y, alpha)
+        """
+        proba_density = self.proba_density(x, r, lam, mu)
+        log_proba_density = np.log(proba_density)
+        return log_proba_density
+
+
+
