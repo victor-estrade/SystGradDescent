@@ -56,7 +56,8 @@ def assert_clean_y(y):
 
 
 class Generator():
-    def __init__(self, gamma_k=2, gamma_loc=0, normal_mean=5, normal_sigma=0.5):
+    def __init__(self, seed=None, gamma_k=2, gamma_loc=0, normal_mean=5, normal_sigma=0.5):
+        self.seed = seed
         self.gamma_k = gamma_k
         self.gamma_loc = gamma_loc
         self.normal_mean = normal_mean
@@ -77,8 +78,8 @@ class Generator():
         gamma_scale  = alpha
         normal_mean  = self.normal_mean * alpha
         normal_sigma = self.normal_sigma * alpha
-        x_b = sts.gamma.rvs(gamma_k, loc=gamma_loc, scale=gamma_scale, size=n_bkg)
-        x_s = sts.norm.rvs(loc=normal_mean, scale=normal_sigma, size=n_sig)
+        x_b = sts.gamma.rvs(gamma_k, loc=gamma_loc, scale=gamma_scale, size=n_bkg, random_state=self.seed)
+        x_s = sts.norm.rvs(loc=normal_mean, scale=normal_sigma, size=n_sig, random_state=self.seed)
         x = np.concatenate([x_b, x_s], axis=0)
         return x
 
