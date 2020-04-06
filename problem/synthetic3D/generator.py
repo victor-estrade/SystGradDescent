@@ -86,15 +86,26 @@ class S3D2():
     def get_sig_cov(self):
         return np.eye(2)
 
+    def sample_event(self, r, lam, mu, size=1):
+        assert 0 < mu and mu < 1, 'mu should be in ]0, 1[ : {} found'.format(mu)
+        n_sig = int(mu * size)
+        n_bkg = size - n_sig
+        X = self._generate_vars(r, lam, mu, n_bkg, n_sig)
+        y = self._generate_labels(n_bkg, n_sig)
+        return X, y
+
+
     def proba_density(self, x, r, lam, mu):
         bkg_mean = self.get_bkg_mean(r)
         bkg_cov  = self.get_bkg_cov()
         sig_mean = self.get_sig_mean()
         sig_cov  = self.get_sig_cov()
-        p_bkg =  sts.multivariate_normal.pdf(x, bkg_mean, bkg_cov)
-        p_sig =  sts.multivariate_normal.pdf(x, sig_mean, sig_cov)
-        p_bkg = p_bkg * sts.expon.pdf(x, loc=0., scale=1./lam)
-        p_sig = p_sig * sts.expon.pdf(x, loc=0., scale=1./self.sig_rate)
+        x_1_2 = x[:, :2]
+        x_3 = x[:, -1]
+        p_bkg =  sts.multivariate_normal.pdf(x_1_2, bkg_mean, bkg_cov)
+        p_sig =  sts.multivariate_normal.pdf(x_1_2, sig_mean, sig_cov)
+        p_bkg = p_bkg * sts.expon.pdf(x_3, loc=0., scale=1./lam)
+        p_sig = p_sig * sts.expon.pdf(x_3, loc=0., scale=1./self.sig_rate)
         proba_density = mu * p_sig + (1-mu) * p_bkg
         return proba_density
 
