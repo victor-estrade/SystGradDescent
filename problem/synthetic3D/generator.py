@@ -117,5 +117,11 @@ class S3D2():
         log_proba_density = np.log(proba_density)
         return log_proba_density
 
+    def nll(self, x, r, lam, mu):
+        """
+        Computes the negative log likelihood of teh data given y and alpha.
+        """
+        nll = - self.log_proba_density(x, r, lam, mu).sum()
+        return nll
 
 
