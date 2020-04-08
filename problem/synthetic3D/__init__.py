@@ -9,4 +9,4 @@ from .parameter import Parameter
 from .nll import S3D2NLL
 from .config import S3D2Config
 from .calibration import param_generator
-
+from .minimizer import get_minimizer
