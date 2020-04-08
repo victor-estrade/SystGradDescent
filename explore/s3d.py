@@ -15,6 +15,8 @@ import seaborn as sns; sns.set()
 
 from scipy.special import softmax
 
+from tqdm import tqdm
+
 from utils.plot import set_plot_config
 
 from problem.synthetic3D import S3D2
@@ -59,9 +61,6 @@ def explore():
     LAM_MAX = 4
     MU_MIN  = 0.0
     MU_MAX  = 1.0 
-    prior_r   = UniformPrior(R_MIN, R_MAX)
-    prior_lam = UniformPrior(LAM_MIN, LAM_MAX)
-    prior_mu  = UniformPrior(MU_MIN, MU_MAX)
 
     generator = S3D2(SEED)
     X, label = generator.sample_event(config.TRUE.r, config.TRUE.lam, config.TRUE.mu, size=N_SAMPLES)
@@ -118,17 +117,17 @@ def main():
     print("Hello world !")
     set_plot_config()
     config = S3D2Config()
-    DATA_N_SAMPLES = 5_000
+    DATA_N_SAMPLES = 8_000
     R_MIN   = -0.3
     R_MAX   = 0.3 
     LAM_MIN = 2
     LAM_MAX = 4
-    MU_MIN  = 0.0
-    MU_MAX  = 1.0 
+    MU_MIN  = 0.1
+    MU_MAX  = 0.3 
 
-    R_N_SAMPLES = 25
-    LAM_N_SAMPLES = 12
-    MU_N_SAMPLES = 17
+    R_N_SAMPLES = 71
+    LAM_N_SAMPLES = 72
+    MU_N_SAMPLES = 73
 
     prior_r   = UniformPrior(R_MIN, R_MAX)
     prior_lam = UniformPrior(LAM_MIN, LAM_MAX)
@@ -147,10 +146,11 @@ def main():
 
 
     shape = (R_N_SAMPLES, LAM_N_SAMPLES, MU_N_SAMPLES)
-    print(f"3D grid has {np.prod(shape)} elements")
+    n_elements = np.prod(shape)
+    print(f"3D grid has {n_elements} elements")
     log_likelihood = np.zeros(shape)
     log_prior_proba = np.zeros(shape)
-    for i, j, k in itertools.product(range(R_N_SAMPLES), range(LAM_N_SAMPLES), range(MU_N_SAMPLES)):
+    for i, j, k in tqdm(itertools.product(range(R_N_SAMPLES), range(LAM_N_SAMPLES), range(MU_N_SAMPLES)), total=n_elements):
         log_likelihood[i, j, k] = data_generator.log_proba_density(data, r_grid[i], lam_grid[j], mu_grid[k]).sum()
         log_prior_proba[i, j, k] = prior_r.log_proba_density(r_grid[i]) \
                                     + prior_lam.log_proba_density(lam_grid[j]) \
