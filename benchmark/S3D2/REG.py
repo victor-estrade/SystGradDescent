@@ -83,7 +83,7 @@ class Generator_mu:
 
 def load_calib_r():
     args = lambda : None
-    args.n_unit     = 200
+    args.n_unit     = 80
     args.optimizer_name  = "adam"
     args.beta1      = 0.5
     args.beta2      = 0.9
@@ -102,7 +102,7 @@ def load_calib_r():
 
 def load_calib_lam():
     args = lambda : None
-    args.n_unit     = 200
+    args.n_unit     = 80
     args.optimizer_name  = "adam"
     args.beta1      = 0.5
     args.beta2      = 0.9
