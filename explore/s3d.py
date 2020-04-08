@@ -7,8 +7,6 @@ from __future__ import unicode_literals
 
 import os
 import itertools
-import iminuit
-ERRORDEF_NLL = 0.5
 
 import numpy as np
 import pandas as pd
@@ -22,15 +20,10 @@ from scipy import stats
 from tqdm import tqdm
 
 from utils.plot import set_plot_config
-from utils.plot import plot_params
 
 from problem.synthetic3D import S3D2
 from problem.synthetic3D import S3D2Config
-
-from .minitoy_systematics import UniformPrior
-# from .minitoy_systematics import expectancy
-# from .minitoy_systematics import variance
-# from .minitoy_systematics import stat_uncertainty
+from problem.synthetic3D import get_minimizer
 
 from utils.misc import estimate
 from utils.misc import register_params
@@ -333,22 +326,6 @@ def my_print_params(param, params_truth):
         value = p['value']
         error = p['error']
         print('{name:4} = {truth} vs {value} +/- {error}'.format(**locals()))
-
-
-def get_minimizer(compute_nll, pb_config):
-    minimizer = iminuit.Minuit(compute_nll,
-                           errordef=ERRORDEF_NLL,
-                           r=pb_config.CALIBRATED_R,
-                           error_r=pb_config.CALIBRATED_R_ERROR,
-                           #limit_r=(0, None),
-                           lam=pb_config.CALIBRATED_LAMBDA,
-                           error_lam=pb_config.CALIBRATED_LAMBDA_ERROR,
-                           limit_lam=(0, None),
-                           mu=pb_config.CALIBRATED_MU,
-                           error_mu=pb_config.CALIBRATED_MU_ERROR,
-                           limit_mu=(0, 1),
-                          )
-    return minimizer
 
 
 def my_plot_params(param_name, result_table, directory=DIRECTORY):
