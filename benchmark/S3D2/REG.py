@@ -34,6 +34,7 @@ from utils.misc import evaluate_estimator
 from problem.synthetic3D import S3D2
 from problem.synthetic3D import S3D2Config
 from problem.synthetic3D import Parameter
+from problem.synthetic3D import param_generator
 
 from model.regressor import Regressor
 from model.monte_carlo import many_predict
@@ -51,23 +52,6 @@ CALIB_R = "Calib_r"
 CALIB_LAM = "Calib_lam"
 N_ITER = 9
 NCALL = 100
-
-def param_generator():
-    pb_config = S3D2Config()
-
-    r = np.random.normal(pb_config.CALIBRATED_R, pb_config.CALIBRATED_R_ERROR)
-    lam = -1
-    while lam <= 0:
-        lam = np.random.normal(pb_config.CALIBRATED_LAMBDA, pb_config.CALIBRATED_LAMBDA_ERROR)
-    
-    mu_min = min(pb_config.TRUE_MU_RANGE)
-    mu_max = max(pb_config.TRUE_MU_RANGE)
-    mu_range = mu_max - mu_min
-    mu_min = max(0.0, mu_min - mu_range/10)
-    mu_max = min(1.0, mu_max + mu_range/10)
-
-    mu = np.random.uniform(0, 1)
-    return Parameter(r, lam, mu)
 
 
 class Generator_mu:
