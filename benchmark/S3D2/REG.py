@@ -42,6 +42,7 @@ from model.monte_carlo import monte_carlo_infer
 from model.monte_carlo import save_monte_carlo
 # from archi.net import RegNetExtra
 from archi.net import AR19R5E as ARCHI
+from archi.net import AR5R5 as CALIB_ARCHI
 
 from ..my_argparser import REG_parse_args
 
@@ -77,13 +78,12 @@ class Generator_mu:
     def generate(self, n_samples):
         r, lam, mu = self.param_generator()
         X, y, w = self.data_generator.generate(r, lam, mu, n_samples)
-        return X, mu, w, None
+        return X, mu, w, (r, lam)
 
 
 def load_calib_r():
-    from archi.net import AR5R5
     args = lambda : None
-    args.n_unit     = 80
+    args.n_unit     = 200
     args.optimizer_name  = "adam"
     args.beta1      = 0.5
     args.beta2      = 0.9
@@ -92,7 +92,7 @@ def load_calib_r():
     args.n_steps    = 5000
     args.batch_size = 20
 
-    args.net = AR5R5(n_in=3, n_out=2, n_unit=args.n_unit)
+    args.net = CALIB_ARCHI(n_in=3, n_out=2, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.base_name = CALIB_R
@@ -101,9 +101,8 @@ def load_calib_r():
     return model
 
 def load_calib_lam():
-    from archi.net import AR5R5
     args = lambda : None
-    args.n_unit     = 80
+    args.n_unit     = 200
     args.optimizer_name  = "adam"
     args.beta1      = 0.5
     args.beta2      = 0.9
@@ -112,7 +111,7 @@ def load_calib_lam():
     args.n_steps    = 5000
     args.batch_size = 20
 
-    args.net = AR5R5(n_in=3, n_out=2, n_unit=args.n_unit)
+    args.net = CALIB_ARCHI(n_in=3, n_out=2, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.base_name = CALIB_LAM
