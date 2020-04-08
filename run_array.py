@@ -133,7 +133,7 @@ SBATCH_TEMPLATE = \
 #SBATCH --mem={memory}
 #SBATCH --partition={partition}
 #SBATCH --gres=gpu:{gpu}
-#SBATCH --exclude=baltic-1,republic-3
+#SBATCH --exclude=baltic-1,republic-3,republic-2
 
 hostname
 
