@@ -42,8 +42,8 @@ def monte_carlo_infer(data):
     all_sigma = data.sigma
     sigma_squared = all_sigma ** 2
     target_squared = all_target ** 2
-    sigma = np.mean(sigma_squared + target_squared) - (target ** 2)
-    sigma = np.sqrt(sigma)
+    variance = np.mean(sigma_squared + target_squared) - (target ** 2)
+    sigma = np.sqrt(variance)
     return target, sigma
 
 
