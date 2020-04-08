@@ -7,17 +7,22 @@ from __future__ import unicode_literals
 
 import os
 import itertools
+import iminuit
+ERRORDEF_NLL = 0.5
 
 import numpy as np
+import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
 
 from scipy.special import softmax
+from scipy import stats
 
 from tqdm import tqdm
 
 from utils.plot import set_plot_config
+from utils.plot import plot_params
 
 from problem.synthetic3D import S3D2
 from problem.synthetic3D import S3D2Config
@@ -26,6 +31,10 @@ from .minitoy_systematics import UniformPrior
 # from .minitoy_systematics import expectancy
 # from .minitoy_systematics import variance
 # from .minitoy_systematics import stat_uncertainty
+
+from utils.misc import estimate
+from utils.misc import register_params
+# from utils.log import print_params
 
 
 
@@ -68,6 +77,19 @@ def explore():
     n_bkg = np.sum(label==0)
     print(f"nb of signal      = {n_sig}")
     print(f"nb of backgrounds = {n_bkg}")
+
+
+    df = pd.DataFrame(X, columns=["x1","x2","x3"])
+    df['label'] = label
+    g = sns.PairGrid(df, vars=["x1","x2","x3"], hue='label')
+    g = g.map_upper(sns.scatterplot)
+    g = g.map_diag(sns.kdeplot)
+    g = g.map_lower(sns.kdeplot)
+    # g = g.map_offdiag(sns.kdeplot, n_levels=6)
+    plt.legend()
+    plt.savefig(os.path.join(DIRECTORY, 'pairgrid.png'))
+    plt.clf()
+
 
     nll = generator.nll(X, config.TRUE.r, config.TRUE.lam, config.TRUE.mu)
     print(f"NLL = {nll}")
@@ -129,13 +151,13 @@ def main():
     LAM_N_SAMPLES = 72
     MU_N_SAMPLES = 73
 
-    prior_r   = UniformPrior(R_MIN, R_MAX)
-    prior_lam = UniformPrior(LAM_MIN, LAM_MAX)
-    prior_mu  = UniformPrior(MU_MIN, MU_MAX)
+    prior_r   = stats.uniform(loc=R_MIN, scale=R_MAX-R_MIN)
+    prior_lam = stats.uniform(loc=LAM_MIN, scale=LAM_MAX-LAM_MIN)
+    prior_mu  = stats.uniform(loc=MU_MIN, scale=MU_MAX-MU_MIN)
 
-    r_grid   = prior_r.grid(R_N_SAMPLES)
-    lam_grid = prior_lam.grid(LAM_N_SAMPLES)
-    mu_grid  = prior_mu.grid(MU_N_SAMPLES)
+    r_grid   = np.linspace(R_MIN, R_MAX, R_N_SAMPLES)
+    lam_grid = np.linspace(LAM_MIN, LAM_MAX, LAM_N_SAMPLES)
+    mu_grid  = np.linspace(MU_MIN, MU_MAX, MU_N_SAMPLES)
 
     data_generator = S3D2(SEED)
     data, label = data_generator.sample_event(config.TRUE.r, config.TRUE.lam, config.TRUE.mu, size=DATA_N_SAMPLES)
@@ -152,9 +174,9 @@ def main():
     log_prior_proba = np.zeros(shape)
     for i, j, k in tqdm(itertools.product(range(R_N_SAMPLES), range(LAM_N_SAMPLES), range(MU_N_SAMPLES)), total=n_elements):
         log_likelihood[i, j, k] = data_generator.log_proba_density(data, r_grid[i], lam_grid[j], mu_grid[k]).sum()
-        log_prior_proba[i, j, k] = prior_r.log_proba_density(r_grid[i]) \
-                                    + prior_lam.log_proba_density(lam_grid[j]) \
-                                    + prior_mu.log_proba_density(mu_grid[k])
+        log_prior_proba[i, j, k] = prior_r.logpdf(r_grid[i]) \
+                                    + prior_lam.logpdf(lam_grid[j]) \
+                                    + prior_mu.logpdf(mu_grid[k])
 
     element_min = (log_likelihood + log_prior_proba).min()
     print("min element = ", element_min)
@@ -267,8 +289,105 @@ def main():
     # plt.savefig(os.path.join(DIRECTORY, 'data_dstrib.png'))
     # plt.clf()
 
+def likelihood_fit():
+    print("Hello world !")
+    set_plot_config()
+    config = S3D2Config()
+    DATA_N_SAMPLES = 80_000
+
+    result_table = []
+
+    for mu in config.TRUE_MU_RANGE[1:]:
+        result_row = {}
+        config.TRUE_MU = mu
+        generator = S3D2(SEED)
+        data, label = generator.sample_event(config.TRUE.r, config.TRUE.lam, config.TRUE_MU, size=DATA_N_SAMPLES)
+        n_sig = np.sum(label==1)
+        n_bkg = np.sum(label==0)
+        print(f"nb of signal      = {n_sig}")
+        print(f"nb of backgrounds = {n_bkg}")
+
+
+        compute_nll = lambda r, lam, mu : generator.nll(data, r, lam, mu)
+
+        print('Prepare minuit minimizer')
+        minimizer = get_minimizer(compute_nll, config)
+        fmin, params = estimate(minimizer)
+        params_truth = [config.TRUE_R, config.TRUE_LAMBDA, config.TRUE_MU]
+        my_print_params(params, params_truth)
+        register_params(params, params_truth, result_row)
+        result_row['is_mingrad_valid'] = minimizer.migrad_ok()
+        result_row.update(fmin)
+        result_table.append(result_row.copy())
+    result_table = pd.DataFrame(result_table)
+    result_table.to_csv(os.path.join(DIRECTORY, 'results.csv'))
+    print('Plot params')
+    param_names = config.PARAM_NAMES
+    for name in param_names:
+        my_plot_params(name, result_table)
+
+
+def my_print_params(param, params_truth):
+    for p, truth in zip(param, params_truth):
+        name  = p['name']
+        value = p['value']
+        error = p['error']
+        print('{name:4} = {truth} vs {value} +/- {error}'.format(**locals()))
+
+
+def get_minimizer(compute_nll, pb_config):
+    minimizer = iminuit.Minuit(compute_nll,
+                           errordef=ERRORDEF_NLL,
+                           r=pb_config.CALIBRATED_R,
+                           error_r=pb_config.CALIBRATED_R_ERROR,
+                           #limit_r=(0, None),
+                           lam=pb_config.CALIBRATED_LAMBDA,
+                           error_lam=pb_config.CALIBRATED_LAMBDA_ERROR,
+                           limit_lam=(0, None),
+                           mu=pb_config.CALIBRATED_MU,
+                           error_mu=pb_config.CALIBRATED_MU_ERROR,
+                           limit_mu=(0, 1),
+                          )
+    return minimizer
+
+
+def my_plot_params(param_name, result_table, directory=DIRECTORY):
+    from utils.misc import _ERROR
+    from utils.misc import _TRUTH
+
+    values = result_table[param_name]
+    errors = result_table[param_name+_ERROR]
+    truths = result_table[param_name+_TRUTH]
+    xx = np.arange(len(values))
+    if 'is_valid' in result_table:
+        valid_values = values[result_table['is_valid']]
+        valid_errors = errors[result_table['is_valid']]
+        valid_x = xx[result_table['is_valid']]
+        print("Plot_params valid lenght = {}, {}, {}".format(len(valid_x), len(valid_values), len(valid_errors)))
+        values =  values[result_table['is_valid'] == False]
+        errors =  errors[result_table['is_valid'] == False]
+        x = xx[result_table['is_valid'] == False]
+        print('Plot_params invalid lenght = {}, {}, {}'.format(len(x), len(values), len(errors)))
+    try:
+        if 'is_valid' in result_table:
+            plt.errorbar(valid_x, valid_values, yerr=valid_errors, fmt='o', capsize=20, capthick=2, label='valid_infer')
+            plt.errorbar(x, values, yerr=errors, fmt='o', capsize=20, capthick=2, label='invalid_infer')
+        else:
+            plt.errorbar(xx, values, yerr=errors, fmt='o', capsize=20, capthick=2, label='infer')
+        plt.scatter(xx, truths, c='red', label='truth')
+        plt.xticks(xx, map(lambda x: round(x, 3), truths))
+        plt.xlabel('truth value')
+        plt.ylabel(param_name)
+        plt.title("Likelihood fit")
+        plt.legend()
+        plt.savefig(os.path.join(directory, 'estimate_{}.png'.format(param_name)))
+        plt.clf()
+    except Exception as e:
+        print('Plot params failed')
+        print(str(e))
 
 if __name__ == '__main__':
-    # explore()
+    explore()
     main()
+    likelihood_fit()
     print('DONE !')
