@@ -32,7 +32,7 @@ from problem.synthetic3D import param_generator
 
 from model.regressor import Regressor
 
-from archi.net import AR5R5 as ARCHI
+from archi.net import AR9R9 as ARCHI
 
 from ..my_argparser import REG_parse_args
 
