@@ -30,6 +30,8 @@ import seaborn as sns; sns.set()
 import scipy.stats as sts
 from scipy.special import softmax
 
+from tqdm import tqdm
+
 def set_plot_config():
     sns.set()
     sns.set_style("whitegrid")
@@ -155,17 +157,37 @@ class PriorY(UniformPrior):
         super().__init__(y_min, y_max)
 
 
-def expectancy(values, probabilities):
-    return np.sum(values * probabilities)
+def expectancy(values, probabilities, axis=None):
+    return np.sum(values * probabilities, axis=axis)
 
-# def variance(values, probabilities):
-#     return np.sum(values * values * probabilities ) - np.square(expectancy(values, probabilities))
+def variance(values, probabilities, axis=None):
+    return np.sum(probabilities * np.square(values - expectancy(values, probabilities, axis=axis)), axis=axis)
 
-def variance(values, probabilities):
-    return np.sum(probabilities * np.square(values - expectancy(values, probabilities)))
+def variance_bis(values, probabilities, axis=None):
+    return np.sum(values * values * probabilities, axis=axis) - np.square(expectancy(values, probabilities, axis=axis))
+
 
 def stat_uncertainty(values, posterior, marginal):
     return sum([variance(values, posterior[:, j]) * marginal[j] for j in range(marginal.shape[0])])
+
+def stat_uncertainty2(values, posterior, marginal):
+    v = np.array([variance(values, posterior[:, j]) for j in range(posterior.shape[1])])
+    return expectancy(v, marginal)
+
+def stat_uncertainty3(values, posterior, marginal):
+    v = variance(values.reshape(-1, 1), posterior, axis=0)
+    return expectancy(v.ravel(), marginal.ravel())
+
+
+def syst_uncertainty(values, posterior, marginal):
+    v = np.array([expectancy(values, posterior[:, j]) for j in range(posterior.shape[1])])
+    return variance(v, marginal)
+
+def syst_uncertainty3(values, posterior, marginal):
+    v = expectancy(values.reshape(-1, 1), posterior, axis=0)
+    return variance(v.ravel(), marginal.ravel())
+
+
 
 def small_test():
     print('hello world !')
@@ -226,8 +248,8 @@ def main():
     Y_MIN = 0.1
     Y_TRUE = 0.15
     Y_MAX = 0.2
-    ALPHA_N_SAMPLES = 310
-    Y_N_SAMPLES = 290
+    ALPHA_N_SAMPLES = 310 // 2
+    Y_N_SAMPLES = 290 // 2
     DATA_N_SAMPLES = 10000
 
     assert Y_MIN <= Y_TRUE and Y_TRUE <= Y_MAX, \
@@ -255,9 +277,10 @@ def main():
         data = data * noise
 
     shape = (Y_N_SAMPLES, ALPHA_N_SAMPLES)
+    n_elements = np.prod(shape)
     log_likelihood = np.zeros(shape)
     log_prior_proba = np.zeros(shape)
-    for i, j in itertools.product(range(Y_N_SAMPLES), range(ALPHA_N_SAMPLES)):
+    for i, j in tqdm(itertools.product(range(Y_N_SAMPLES), range(ALPHA_N_SAMPLES)), total=n_elements):
         log_likelihood[i, j] = data_generator.log_proba_density(data, y_grid[i], alpha_grid[j]).sum()
         log_prior_proba[i, j] = prior_y.log_proba_density(y_grid[i]) + prior_alpha.log_proba_density(alpha_grid[j])
     # log_likelihood = np.array([data_generator.log_proba_density(data, y_grid[i], alpha_grid[j]).sum()
@@ -311,7 +334,15 @@ def main():
     print("argmax_y_alpha logp(x|y, alpha) =", y_grid[i_max], alpha_grid[j_max])
     stat_err = stat_uncertainty(y_grid, posterior_y, marginal_alpha)
     print("stat_uncertainty=", stat_err)
+    stat_err = stat_uncertainty2(y_grid, posterior_y, marginal_alpha)
+    print("stat_uncertainty=", stat_err)
+    stat_err = stat_uncertainty3(y_grid, posterior_y, marginal_alpha)
+    print("stat_uncertainty=", stat_err)
     print("syst_uncertainty=", full_var - stat_err)
+    syst_err = syst_uncertainty(y_grid, posterior_y, marginal_alpha)
+    print("syst_uncertainty=", syst_err)
+    syst_err = syst_uncertainty3(y_grid, posterior_y, marginal_alpha)
+    print("syst_uncertainty=", syst_err)
 
     print()
     print("check marginals")

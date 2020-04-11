@@ -34,21 +34,43 @@ from utils.misc import register_params
 SEED = None
 DIRECTORY = "/home/estrade/Bureau/PhD/SystML/SystGradDescent/savings/S3D2/Likelihood"
 
-def expectancy(values, probabilities):
-    return np.sum(values * probabilities)
 
-# def variance(values, probabilities):
-#     return np.sum(values * values * probabilities ) - np.square(expectancy(values, probabilities))
+def expectancy(values, probabilities, axis=None, keepdims=False):
+    return np.sum(values * probabilities, axis=axis, keepdims=keepdims)
 
-def variance(values, probabilities):
-    return np.sum(probabilities * np.square(values - expectancy(values, probabilities)))
+def variance(values, probabilities, axis=None):
+    return np.sum(probabilities * np.square(values - expectancy(values, probabilities, axis=axis, keepdims=True)), axis=axis)
+
+def variance_bis(values, probabilities, axis=None):
+    return np.sum(values * values * probabilities, axis=axis) - np.square(expectancy(values, probabilities, axis=axis, keepdims=True))
+
 
 def stat_uncertainty(values, posterior, marginal):
-    print("posterior.shape", posterior.shape)
-    print("values.shape", values.shape)
-    print("marginal.shape", marginal.shape)
     return sum([variance(values, posterior[i, j, :]) * marginal[i, j] 
-                    for i, j in zip(range(marginal.shape[0]), range(marginal.shape[1]))])
+                    for i, j in itertools.product(range(marginal.shape[0]), range(marginal.shape[1]))])
+
+def stat_uncertainty2(values, posterior, marginal):
+    v = np.array([variance(values, posterior[i, j, :]) 
+        for i, j in itertools.product(range(posterior.shape[0]), range(posterior.shape[1]))])
+    return expectancy(v.ravel(), marginal.ravel())
+
+def stat_uncertainty3(values, posterior, marginal):
+    v = variance(values.reshape(1, 1, -1), posterior, axis=2)
+    return expectancy(v.ravel(), marginal.ravel())
+
+def syst_uncertainty(values, posterior, marginal, marginal_posterior):
+    E_y_x = expectancy(values, marginal_posterior)
+    return sum([np.square(expectancy(values, posterior[i, j, :]) - E_y_x) * marginal[i, j] 
+                    for i, j in itertools.product(range(marginal.shape[0]), range(marginal.shape[1]))])
+
+def syst_uncertainty2(values, posterior, marginal):
+    v = np.array([expectancy(values, posterior[i, j, :]) 
+        for i, j in itertools.product(range(posterior.shape[0]), range(posterior.shape[1]))])
+    return variance(v.ravel(), marginal.ravel())
+
+def syst_uncertainty3(values, posterior, marginal):
+    v = expectancy(values.reshape(1, 1, -1), posterior, axis=2)
+    return variance(v.ravel(), marginal.ravel())
 
 
 
@@ -77,10 +99,10 @@ def explore():
     g = sns.PairGrid(df, vars=["x1","x2","x3"], hue='label')
     g = g.map_upper(sns.scatterplot)
     g = g.map_diag(sns.kdeplot)
-    g = g.map_lower(sns.kdeplot)
+    g = g.map_lower(sns.kdeplot, n_levels=6)
+    g = g.add_legend()
     # g = g.map_offdiag(sns.kdeplot, n_levels=6)
-    plt.legend()
-    plt.savefig(os.path.join(DIRECTORY, 'pairgrid.png'))
+    g.savefig(os.path.join(DIRECTORY, 'pairgrid.png'))
     plt.clf()
 
 
@@ -140,9 +162,9 @@ def main():
     MU_MIN  = 0.1
     MU_MAX  = 0.3 
 
-    R_N_SAMPLES = 71
-    LAM_N_SAMPLES = 72
-    MU_N_SAMPLES = 73
+    R_N_SAMPLES = 101
+    LAM_N_SAMPLES = 102
+    MU_N_SAMPLES = 103
 
     prior_r   = stats.uniform(loc=R_MIN, scale=R_MAX-R_MIN)
     prior_lam = stats.uniform(loc=LAM_MIN, scale=LAM_MAX-LAM_MIN)
@@ -228,7 +250,17 @@ def main():
     print("argmax_r_lam_mu logp(x|r, lam, mu) =", r_grid[i_max], lam_grid[j_max], mu_grid[k_max])
     stat_err = stat_uncertainty(mu_grid, posterior_mu, marginal_r_lam)
     print("stat_uncertainty=", stat_err)
+    stat_err = stat_uncertainty2(mu_grid, posterior_mu, marginal_r_lam)
+    print("stat_uncertainty=", stat_err)
+    stat_err = stat_uncertainty3(mu_grid, posterior_mu, marginal_r_lam)
+    print("stat_uncertainty=", stat_err)
     print("syst_uncertainty=", full_var - stat_err)
+    syst_err = syst_uncertainty(mu_grid, posterior_mu, marginal_r_lam, marginal_mu)
+    print("syst_uncertainty=", syst_err)
+    syst_err = syst_uncertainty2(mu_grid, posterior_mu, marginal_r_lam)
+    print("syst_uncertainty=", syst_err)
+    syst_err = syst_uncertainty3(mu_grid, posterior_mu, marginal_r_lam)
+    print("syst_uncertainty=", syst_err)
 
     print()
     print("check marginals")
@@ -364,7 +396,7 @@ def my_plot_params(param_name, result_table, directory=DIRECTORY):
         print(str(e))
 
 if __name__ == '__main__':
-    explore()
+    # explore()
     main()
-    likelihood_fit()
+    # likelihood_fit()
     print('DONE !')
