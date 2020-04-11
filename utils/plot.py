@@ -33,6 +33,7 @@ def set_plot_config():
     mpl.rcParams['xtick.labelsize'] = 10
     mpl.rcParams['legend.fontsize'] = 'large'
     mpl.rcParams['figure.titlesize'] = 'medium'
+    mpl.rcParams['lines.markersize'] = np.sqrt(20)
 
 
 def plot_test_distrib(model, X_test, y_test):
