@@ -30,6 +30,20 @@ class Inferno(BaseModel, BaseNeuralNet):
         self.criterion     = criterion
         self.loss_hook = LightLossMonitorHook()
         self.criterion.register_forward_hook(self.loss_hook)
+        if cuda:
+            self.cuda()
+
+    def cuda(self, device=None):
+        self.net = self.net.cuda(device=device)
+        self.criterion = self.criterion.cuda(device=device)
+
+    def cpu(self):
+        self.net = self.net.cpu()
+        self.criterion = self.criterion.cpu()
+
+    def get_losses(self):
+        losses = dict(loss=self.loss_hook.losses)
+        return losses
         
     def fit(self, generator):
         mu = torch.tensor(1.0, requires_grad=True)

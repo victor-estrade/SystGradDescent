@@ -53,6 +53,10 @@ class Regressor(BaseModel, BaseNeuralNet):
         self.net = self.net.cpu()
         self.criterion = self.criterion.cpu()
 
+    def get_losses(self):
+        losses = dict(loss=self.losses, mse_loss=self.mse_losses)
+        return losses
+
     def fit(self, generator):
         if self.batch_size > 1:
             return self._fit_batch(generator)

@@ -56,6 +56,10 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
         self.net = self.net.cpu()
         self.criterion = self.criterion.cpu()
 
+    def get_losses(self):
+        losses = dict(loss=self.loss_hook.losses)
+        return losses
+
     def fit(self, X, y, sample_weight=None):
         # To numpy arrays
         X = to_numpy(X)
