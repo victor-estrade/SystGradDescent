@@ -15,8 +15,8 @@ import seaborn as sns
 
 from config import DEFAULT_DIR
 
-from .misc import _ERROR
-from .misc import _TRUTH
+from utils.misc import _ERROR
+from utils.misc import _TRUTH
 
 
 def set_plot_config():
