@@ -82,3 +82,22 @@ def get_optimizer(args):
     logger.info( '{} args :{}'.format(args.optimizer_name, kwargs) )
     return optimizer
 
+
+def train_or_load_classifier(model, X_train, y_train, w_train=None, retrain=True):
+    logger = logging.getLogger()
+    if not retrain:
+        try:
+            logger.info('loading from {}'.format(model.path))
+            model.load(model.path)
+        except Exception as e:
+            logger.warning(e)
+            retrain = True
+    if retrain:
+        logger.info('Generate training data')
+        logger.info('Training {}'.format(model.get_name()))
+        model.fit(X_train, y_train, w_train)
+        logger.info('Training DONE')
+
+        # SAVE MODEL
+        save_model(model)
+
