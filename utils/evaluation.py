@@ -80,17 +80,17 @@ def evaluate_classifier(model, X, y, w=None, prefix='test', suffix=''):
     return results
 
 
-def evaluate_summary_computer(model, X_valid, y_valid, w_valid, X_test, w_test, n_bins=10, prefix='', suffix=''):
+def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix=''):
     logger = logging.getLogger()
 
-    X_sig = X_valid[y_valid==1]
-    w_sig = w_valid[y_valid==1]
-    X_bkg = X_valid[y_valid==0]
-    w_bkg = w_valid[y_valid==0]
+    X_sig = X[y==1]
+    w_sig = w[y==1]
+    X_bkg = X[y==0]
+    w_bkg = w[y==0]
 
     s_histogram = model.compute_summaries(X_sig, w_sig, n_bins)
     b_histogram = model.compute_summaries(X_bkg, w_bkg, n_bins)
-    n_histogram = model.compute_summaries(X_test, w_test, n_bins)
+    n_histogram = model.compute_summaries(X, w, n_bins)
 
     logger.info('Plot summaries')
     fname = f'{prefix}summaries{suffix}.png'

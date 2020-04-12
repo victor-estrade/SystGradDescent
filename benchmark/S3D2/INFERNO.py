@@ -38,6 +38,7 @@ from problem.synthetic3D import S3D2
 from problem.synthetic3D import get_minimizer
 from problem.synthetic3D import S3D2Config
 from problem.synthetic3D import S3D2NLL
+from problem.synthetic3D import Parameter
 
 from visual.special.synthetic3D import plot_nll_around_min
 
@@ -125,28 +126,23 @@ def run(args, i_cv):
     N_BINS = args.n_bins
     compute_summaries = model.compute_summaries
     for mu in pb_config.TRUE_MU_RANGE:
-        pb_config.TRUE_MU = mu
-        suffix = f'-mu={pb_config.TRUE_MU:1.2f}_r={pb_config.TRUE_R}_lambda={pb_config.TRUE_LAMBDA}'
+        true_params = Parameter(pb_config.TRUE.r, pb_config.TRUE.lam, mu)
+        suffix = f'-mu={true_params.mu:1.2f}_r={true_params.r}_lambda={true_params.lam}'
         logger.info('Generate testing data')
-        X_test, y_test, w_test = test_generator.generate(
-                                         pb_config.TRUE_R,
-                                         pb_config.TRUE_LAMBDA,
-                                         pb_config.TRUE_MU,
-                                         n_samples=pb_config.N_TESTING_SAMPLES)
+        X_test, y_test, w_test = test_generator.generate(*true_params, n_samples=pb_config.N_TESTING_SAMPLES)
         # PLOT SUMMARIES
         evaluate_summary_computer(model, X_valid, y_valid, w_valid, X_test, w_test, n_bins=N_BINS, prefix='', suffix=suffix)
 
         logger.info('Set up NLL computer')
         compute_nll = S3D2NLL(compute_summaries, valid_generator, X_test, w_test)
         # NLL PLOTS
-        plot_nll_around_min(compute_nll, pb_config, model.path, suffix)
+        plot_nll_around_min(compute_nll, true_params, model.path, suffix)
 
         # MINIMIZE NLL
         logger.info('Prepare minuit minimizer')
-        minimizer = get_minimizer(compute_nll, pb_config)
+        minimizer = get_minimizer(compute_nll, pb_config.CALIBRATED, pb_config.CALIBRATED_ERROR)
         fmin, params = estimate(minimizer)
-        params_truth = [pb_config.TRUE_R, pb_config.TRUE_LAMBDA, pb_config.TRUE_MU]
-        result_row.update(evaluate_minuit(minimizer, fmin, params, params_truth))
+        result_row.update(evaluate_minuit(minimizer, fmin, params, true_params))
 
         result_table.append(result_row.copy())
     result_table = pd.DataFrame(result_table)
