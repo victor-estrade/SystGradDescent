@@ -15,21 +15,6 @@ import seaborn as sns
 from config import DEFAULT_DIR
 
 
-def old_plot_test_distrib(model, X_test, y_test):
-    logger = logging.getLogger()
-    logger.info( 'Test accuracy = {} %'.format(100 * model.score(X_test, y_test)) )
-    proba = model.predict_proba(X_test)
-    try:
-        sns.distplot(proba[y_test==0, 1], label='b')
-        sns.distplot(proba[y_test==1, 1], label='s')
-        plt.title(model.full_name)
-        plt.legend()
-        plt.savefig(os.path.join(model.path, 'test_distrib.png'))
-        plt.clf()
-    except Exception as e:
-        logger.warning('Plot test distrib failed')
-        logger.warning(str(e))
-
 
 def plot_test_distrib(y_proba, y_test, title="no title", 
                       directory=DEFAULT_DIR, fname='test_distrib.png', classes=('b', 's')):
@@ -44,24 +29,6 @@ def plot_test_distrib(y_proba, y_test, title="no title",
         plt.clf()
     except Exception as e:
         logger.warning('Plot test distrib failed')
-        logger.warning(str(e))
-
-
-def plot_valid_distrib(model, X, y, classes=('b', 's')):
-    logger = logging.getLogger()
-    logger.info( 'Valid accuracy = {} %'.format(100 * model.score(X, y)) )
-    proba = model.predict_proba(X)
-    try:
-        sns.distplot(proba[y==0, 1], label=classes[0])
-        sns.distplot(proba[y==1, 1], label=classes[1])
-        plt.xlabel('classifier score')
-        plt.ylabel('density')
-        plt.title(model.full_name)
-        plt.legend()
-        plt.savefig(os.path.join(model.path, 'valid_distrib.png'))
-        plt.clf()
-    except Exception as e:
-        logger.warning('Plot valid distrib failed')
         logger.warning(str(e))
 
 
