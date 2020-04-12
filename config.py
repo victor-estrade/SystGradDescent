@@ -4,9 +4,12 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import os
+
 RANDOM_STATE = 42
 SEED = 42
 SAVING_DIR = 'savings'
+DEFAULT_DIR = os.path.join(SAVING_DIR, "Default")
 
 PRECISION = 1e-3
 N_CV = 6
