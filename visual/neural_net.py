@@ -15,39 +15,20 @@ import seaborn as sns
 from config import DEFAULT_DIR
 
 
-def plot_REG_losses(model):
+def plot_losses(losses, title='no title', directory=DEFAULT_DIR, fname='losses.png'):
     logger = logging.getLogger()
-    losses = model.losses
-    mse_losses = model.mse_losses
     try:
-        plt.plot(mse_losses, label='mse')
-        plt.plot(losses, label='loss')
-        plt.title(model.full_name)
+        for name, values in losses:
+            plt.plot(values, label=name)
+        plt.title(title)
         plt.xlabel('# iter')
         plt.ylabel('Loss/MSE')
         plt.legend()
-        plt.savefig(os.path.join(model.path, 'losses.png'))
+        plt.savefig(os.path.join(directory, fname))
         plt.clf()
     except Exception as e:
         logger.warning('Plot REG losses failed')
         logger.warning(str(e))
-
-
-def plot_INFERNO_losses(model):
-    logger = logging.getLogger()
-    losses = model.loss_hook.losses
-    try:
-        plt.plot(losses, label='loss')
-        plt.title(model.full_name)
-        plt.xlabel('# iter')
-        plt.ylabel('Loss')
-        plt.legend()
-        plt.savefig(os.path.join(model.path, 'losses.png'))
-        plt.clf()
-    except Exception as e:
-        logger.warning('Plot INFERNO losses failed')
-        logger.warning(str(e))
-
 
 
 def plot_REG_log_mse(model):
