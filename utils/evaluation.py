@@ -18,6 +18,8 @@ from .log import print_params
 from visual.classifier import plot_test_distrib
 from visual.classifier import plot_ROC
 from visual.likelihood import plot_summaries
+from visual.neural_net import plot_losses
+from visual.neural_net import plot_REG_log_mse
 
 from config import _ERROR
 from config import _TRUTH
@@ -105,12 +107,21 @@ def evaluate_minuit(minimizer, fmin, params, params_truth):
 
 
 
-def evaluate_neural_net(model, prefix='test', suffix=''):
-    pass
+def evaluate_neural_net(model, prefix='', suffix=''):
+    logger = logging.getLogger()
+    results = {}
+
+    logger.info('Plot losses')
+    losses = model.get_losses()
+    plot_losses(losses, title=model.full_name, directory=model.path)
+    results['loss'] = model.loss_hook.losses[-1]
+
+    return results
+
 
 
 def evaluate_regressor(model, prefix='test', suffix=''):
-    pass
+    plot_REG_log_mse(model)
 
 
 def evaluate_inferno(model, prefix='test', suffix=''):
