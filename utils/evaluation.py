@@ -58,7 +58,6 @@ def estimate(minimizer):
 
 
 
-
 def evaluate_classifier(model, X, y, w=None, prefix='test', suffix=''):
     logger = logging.getLogger()
     results = {}
@@ -80,6 +79,7 @@ def evaluate_classifier(model, X, y, w=None, prefix='test', suffix=''):
 
     return results
 
+
 def evaluate_summary_computer(model, X_valid, y_valid, w_valid, X_test, w_test, n_bins=10, prefix='', suffix=''):
     logger = logging.getLogger()
 
@@ -96,6 +96,7 @@ def evaluate_summary_computer(model, X_valid, y_valid, w_valid, X_test, w_test, 
     fname = f'{prefix}summaries{suffix}.png'
     plot_summaries(b_histogram, s_histogram, n_histogram, 
                     title=model.full_name, directory=model.path, fname=fname)
+
 
 def evaluate_minuit(minimizer, fmin, params, params_truth):
     results = {}
@@ -120,8 +121,8 @@ def evaluate_neural_net(model, prefix='', suffix=''):
 
 
 
-def evaluate_regressor(model, prefix='test', suffix=''):
-    plot_REG_log_mse(model)
+def evaluate_regressor(model, prefix='', suffix=''):
+    plot_REG_log_mse(model.mse_losses, title=model.full_name, directory=model.path)
 
 
 def evaluate_inferno(model, prefix='test', suffix=''):

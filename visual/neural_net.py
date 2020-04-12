@@ -31,17 +31,16 @@ def plot_losses(losses, title='no title', directory=DEFAULT_DIR, fname='losses.p
         logger.warning(str(e))
 
 
-def plot_REG_log_mse(model):
+def plot_REG_log_mse(mse_losses, title='no title', directory=DEFAULT_DIR, fname='log_mse_loss.png'):
     logger = logging.getLogger()
-    mse_losses = model.mse_losses
     try:
         plt.plot(mse_losses, label='mse')
-        plt.title(model.full_name)
+        plt.title(title)
         plt.xlabel('# iter')
         plt.ylabel('Loss/MSE')
         plt.yscale('log')
         plt.legend()
-        plt.savefig(os.path.join(model.path, 'log_mse_loss.png'))
+        plt.savefig(os.path.join(directory, fname))
         plt.clf()
     except Exception as e:
         logger.warning('Plot REG log losses failed')
