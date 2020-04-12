@@ -33,7 +33,7 @@ class S3D2Config():
     TRUE_R = TRUE.r
     TRUE_LAMBDA = TRUE.lam
 
-    TRUE_MU_RANGE = np.arange(0, 0.3, 0.05)
+    TRUE_MU_RANGE = np.arange(0, 0.3, 0.05)[1:]
     # TRUE_MU_RANGE = [100/1050, 150/1050, 200/1050]
     TRUE_R_RANGE = np.arange(-0.2, 0.2, 0.1)
     TRUE_LAMBDA_RANGE = np.arange(2.1, 3.5, 0.2)
