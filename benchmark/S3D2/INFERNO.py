@@ -14,22 +14,23 @@ import config
 
 import pandas as pd
 
-from utils.plot import set_plot_config
+from visual.misc import set_plot_config
 set_plot_config()
+
 from utils.log import set_logger
 from utils.log import flush
 from utils.log import print_line
-from utils.log import print_params
 from utils.model import get_model
 from utils.model import get_optimizer
-from utils.model import save_model
-from utils.plot import plot_summaries
-from utils.plot import plot_params
-from utils.plot import plot_INFERNO_losses
-from utils.misc import gather_images
-from utils.misc import estimate
-from utils.misc import register_params
-from utils.misc import evaluate_estimator
+from utils.model import train_or_load_inferno
+from utils.evaluation import evaluate_neural_net
+from utils.evaluation import evaluate_summary_computer
+from utils.evaluation import evaluate_minuit
+from utils.evaluation import estimate
+from utils.evaluation import evaluate_estimator
+from utils.images import gather_images
+
+from visual.misc import plot_params
 
 from problem.synthetic3D.torch import Synthetic3DGeneratorTorch
 from problem.synthetic3D.torch import S3DLoss
@@ -38,9 +39,7 @@ from problem.synthetic3D import get_minimizer
 from problem.synthetic3D import S3D2Config
 from problem.synthetic3D import S3D2NLL
 
-from utils.S3D2 import plot_R_around_min
-from utils.S3D2 import plot_LAMBDA_around_min
-from utils.S3D2 import plot_MU_around_min
+from visual.special.synthetic3D import plot_nll_around_min
 
 from model.inferno import Inferno
 # from archi.net import RegNetExtra
@@ -51,6 +50,16 @@ from ..my_argparser import INFERNO_parse_args
 BENCHMARK_NAME = 'S3D2'
 N_ITER = 3
 
+def build_model(args, i_cv):
+    logger = logging.getLogger()
+    logger.info('Set up rergessor')
+    args.net = F6(n_in=3, n_out=args.n_bins)
+    args.optimizer = get_optimizer(args)
+    args.criterion = S3DLoss()
+    model = get_model(args, Inferno)
+    model.set_info(BENCHMARK_NAME, i_cv)
+    return model
+
 
 def main():
     # BASIC SETUP
@@ -59,11 +68,7 @@ def main():
     logger.info(args)
     flush(logger)
     # INFO
-    args.net = F6(n_in=3, n_out=args.n_bins)
-    args.optimizer = get_optimizer(args)
-    args.criterion = S3DLoss()
-    model = get_model(args, Inferno)
-    model.set_info(BENCHMARK_NAME, -1)
+    model = build_model(args, -1)
     pb_config = S3D2Config()
 
     # RUN
@@ -99,34 +104,14 @@ def run(args, i_cv):
     test_generator  = S3D2(seed+2)
 
     # SET MODEL
-    logger.info('Set up rergessor')
-    args.net = F6(n_in=3, n_out=args.n_bins)
-    args.optimizer = get_optimizer(args)
-    args.criterion = S3DLoss()
-    model = get_model(args, Inferno)
-    model.set_info(BENCHMARK_NAME, i_cv)
+    model = build_model(args, i_cv)
     flush(logger)
 
     # TRAINING / LOADING
-    if not args.retrain:
-        try:
-            logger.info('loading from {}'.format(model.path))
-            model.load(model.path)
-        except Exception as e:
-            logger.warning(e)
-            args.retrain = True
-    if args.retrain:
-        logger.info('Training {}'.format(model.get_name()))
-        model.fit(train_generator)
-        logger.info('Training DONE')
-
-        # SAVE MODEL
-        save_model(model)
+    train_or_load_inferno(model, train_generator, retrain=args.retrain)
 
     # CHECK TRAINING
-    logger.info('Plot losses')
-    plot_INFERNO_losses(model)
-    result_row['loss'] = model.loss_hook.losses[-1]
+    result_row.update(evaluate_neural_net(model))
 
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(
@@ -137,7 +122,7 @@ def run(args, i_cv):
 
 
     # MEASUREMENT
-    n_bins = args.n_bins
+    N_BINS = args.n_bins
     compute_summaries = model.compute_summaries
     for mu in pb_config.TRUE_MU_RANGE:
         pb_config.TRUE_MU = mu
@@ -150,35 +135,27 @@ def run(args, i_cv):
         logger.info('Set up NLL computer')
         compute_nll = S3D2NLL(compute_summaries, valid_generator, X_test, w_test)
 
-        logger.info('Plot summaries')
-        extension = '-mu={:1.2f}_r={}_lambda={}'.format(pb_config.TRUE_MU, 
+        suffix = '-mu={:1.2f}_r={}_lambda={}'.format(pb_config.TRUE_MU, 
                                     pb_config.TRUE_R, pb_config.TRUE_LAMBDA)
-        plot_summaries( model, n_bins, extension,
-                        X_valid, y_valid, w_valid,
-                        X_test, w_test, classes=('b', 's', 'n') )
+        evaluate_summary_computer(model, X_valid, y_valid, w_valid, X_test, w_test, n_bins=N_BINS, prefix='', suffix=suffix)
 
         # NLL PLOTS
-        logger.info('Plot NLL around minimum')
-        plot_R_around_min(compute_nll, pb_config, model, extension)
-        plot_LAMBDA_around_min(compute_nll, pb_config, model, extension)
-        plot_MU_around_min(compute_nll, pb_config, model, extension)
+        plot_nll_around_min(compute_nll, pb_config, model.path, suffix)
 
         # MINIMIZE NLL
         logger.info('Prepare minuit minimizer')
         minimizer = get_minimizer(compute_nll, pb_config)
         fmin, params = estimate(minimizer)
         params_truth = [pb_config.TRUE_R, pb_config.TRUE_LAMBDA, pb_config.TRUE_MU]
+        result_row.update(evaluate_minuit(minimizer, fmin, params, params_truth))
 
-        print_params(params, params_truth)
-        register_params(params, params_truth, result_row)
-        result_row['is_mingrad_valid'] = minimizer.migrad_ok()
-        result_row.update(fmin)
         result_table.append(result_row.copy())
     result_table = pd.DataFrame(result_table)
 
     logger.info('Plot params')
-    name = pb_config.INTEREST_PARAM_NAME 
-    plot_params(name, result_table, model)
+    param_names = pb_config.PARAM_NAMES
+    for name in param_names:
+        plot_params(name, result_table, model)
 
 
     logger.info('DONE')
