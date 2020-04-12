@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import logging
 import numpy as np
 
-from .likelihood import plot_param_around_min
+from ..likelihood import plot_param_around_min
 
 def plot_R_around_min(compute_nll, pb_config, directory, suffix):
     r_array = np.linspace(-1, 1, 50)
