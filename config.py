@@ -14,6 +14,9 @@ DEFAULT_DIR = os.path.join(SAVING_DIR, "Default")
 PRECISION = 1e-3
 N_CV = 6
 
+_ERROR = '_error'
+_TRUTH = '_truth'
+
 # FIT PARAMETERS
 #---------------
 # TODO : one day maybe put all these values as input arguments 
