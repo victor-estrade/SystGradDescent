@@ -36,7 +36,7 @@ from problem.synthetic3D import get_minimizer
 from problem.synthetic3D import S3D2
 from problem.synthetic3D import S3D2NLL
 
-from visual.S3D2 import plot_nll_around_min
+from visual.special.synthetic3D import plot_nll_around_min
 
 from model.gradient_boost import GradientBoostingModel
 from model.summaries import ClassifierSummaryComputer
