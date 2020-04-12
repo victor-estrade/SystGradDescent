@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 import numpy as np
 
-from .plot import plot_param_around_min
+from .likelihood import plot_param_around_min
 
 def plot_apple_ratio_around_min(compute_nll, true_apple_ratio, model_path, extension=''):
     apple_ratio_array = np.linspace(0.0, 1.0, 50)

@@ -29,7 +29,7 @@ def plot_summaries(b_histogram, s_histogram, n_histogram,
         plt.xlabel("bins")
         plt.ylabel("summary_value")
         plt.xticks(x_ticks)
-        plt.title()
+        plt.title(title)
         plt.legend()
         plt.savefig(os.path.join(directory, fname))
         plt.clf()
@@ -41,7 +41,7 @@ def plot_summaries(b_histogram, s_histogram, n_histogram,
 def plot_param_around_min(param_array, nll_array, true_value, param_name, model):
     logger = logging.getLogger()
     try:
-        plt.plot(param_array, nll_array, label='{} nll'.format(param_name))
+        plt.plot(param_array, nll_array, label='NLL {}'.format(param_name))
         plt.axvline(x=true_value, c='red', label='true value')
         vmin = param_array[np.argmin(nll_array)]
         plt.axvline(x=vmin, c='orange', label='min')
