@@ -6,15 +6,10 @@ from __future__ import unicode_literals
 
 import os
 
-import numpy as np
-import pandas as pd
-
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
-_ERROR = '_error'
-_TRUTH = '_truth'
 
 def gather_images(model_directory):
     cv_dirs = [os.path.join(model_directory, d) for d in sorted(os.listdir(model_directory))]

@@ -19,10 +19,8 @@ from visual.classifier import plot_test_distrib
 from visual.classifier import plot_ROC
 from visual.likelihood import plot_summaries
 
-
-_ERROR = '_error'
-_TRUTH = '_truth'
-
+from config import _ERROR
+from config import _TRUTH
 
 def register_params(param, params_truth, measure_dict):
     for p, truth in zip(param, params_truth):
