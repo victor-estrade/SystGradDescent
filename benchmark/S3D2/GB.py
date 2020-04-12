@@ -103,11 +103,7 @@ def run(args, i_cv):
 
     # CHECK TRAINING
     logger.info('Generate validation data')
-    X_valid, y_valid, w_valid = valid_generator.generate(
-                                     pb_config.CALIBRATED_R,
-                                     pb_config.CALIBRATED_LAMBDA,
-                                     pb_config.CALIBRATED_MU,
-                                     n_samples=pb_config.N_VALIDATION_SAMPLES)
+    X_valid, y_valid, w_valid = valid_generator.generate(*pb_config.CALIBRATED, n_samples=pb_config.N_VALIDATION_SAMPLES)
     
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
