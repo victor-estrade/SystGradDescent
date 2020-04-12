@@ -38,18 +38,18 @@ def plot_summaries(b_histogram, s_histogram, n_histogram,
         logger.warning(str(e))
 
 
-def plot_param_around_min(param_array, nll_array, true_value, param_name, model):
+def plot_param_around_min(param_array, nll_array, true_value, param_name, suffix='', directory=DEFAULT_DIR):
     logger = logging.getLogger()
     try:
-        plt.plot(param_array, nll_array, label='NLL {}'.format(param_name))
+        plt.plot(param_array, nll_array, label=f'NLL {param_name}')
         plt.axvline(x=true_value, c='red', label='true value')
         vmin = param_array[np.argmin(nll_array)]
         plt.axvline(x=vmin, c='orange', label='min')
         plt.xlabel(param_name)
         plt.ylabel('nll')
-        plt.title('NLL around min')
+        plt.title(f'{param_name} ({suffix[1:]}) NLL around minimum')
         plt.legend()
-        plt.savefig(os.path.join(model.path, 'NLL_{}.png'.format(param_name)))
+        plt.savefig(os.path.join(directory, f'NLL_{param_name}{suffix}.png'))
         plt.clf()
     except Exception as e:
         logger.warning('Plot nll around min failed')
