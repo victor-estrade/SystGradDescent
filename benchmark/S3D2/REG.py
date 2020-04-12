@@ -26,10 +26,10 @@ from utils.model import save_model
 from utils.plot import plot_REG_losses
 from utils.plot import plot_REG_log_mse
 from utils.plot import plot_params
-from utils.misc import gather_images
-from utils.misc import _ERROR
-from utils.misc import _TRUTH
-from utils.misc import evaluate_estimator
+from utils.images import gather_images
+from config import _ERROR
+from config import _TRUTH
+from utils.evaluation import evaluate_estimator
 
 from problem.synthetic3D import S3D2
 from problem.synthetic3D import S3D2Config
