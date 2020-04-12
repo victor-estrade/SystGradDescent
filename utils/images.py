@@ -68,36 +68,3 @@ def load_ImageFont():
     return font
 
 
-def register_params(param, params_truth, measure_dict):
-    for p, truth in zip(param, params_truth):
-        name  = p['name']
-        value = p['value']
-        error = p['error']
-        measure_dict[name] = value
-        measure_dict[name+_ERROR] = error
-        measure_dict[name+_TRUTH] = truth
-
-
-def estimate(minimizer):
-    import logging
-    logger = logging.getLogger()
-
-    if logger.getEffectiveLevel() <= logging.DEBUG:
-        minimizer.print_param()
-    logger.info('Mingrad()')
-    fmin, params = minimizer.migrad()
-    logger.info('Mingrad DONE')
-
-    if minimizer.migrad_ok():
-        logger.info('Mingrad is VALID !')
-        logger.info('Hesse()')
-        try:
-            params = minimizer.hesse()
-            logger.info('Hesse DONE')
-        except Exception as e:
-            logger.error('Exception during Hesse computation : {}'.format(e))
-    else:
-        logger.warning('Mingrad IS NOT VALID !')
-    return fmin, params
-
-
