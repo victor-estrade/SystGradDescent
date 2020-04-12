@@ -11,8 +11,6 @@ from __future__ import unicode_literals
 import os
 import logging
 import config
-import iminuit
-ERRORDEF_NLL = 0.5
 
 import pandas as pd
 
@@ -36,6 +34,7 @@ from utils.misc import evaluate_estimator
 from problem.synthetic3D.torch import Synthetic3DGeneratorTorch
 from problem.synthetic3D.torch import S3DLoss
 from problem.synthetic3D import S3D2
+from problem.synthetic3D import get_minimizer
 from problem.synthetic3D import S3D2Config
 from problem.synthetic3D import S3D2NLL
 
@@ -185,21 +184,6 @@ def run(args, i_cv):
     logger.info('DONE')
     return result_table
 
-
-def get_minimizer(compute_nll, pb_config):
-    minimizer = iminuit.Minuit(compute_nll,
-                           errordef=ERRORDEF_NLL,
-                           r=pb_config.CALIBRATED_R,
-                           error_r=pb_config.CALIBRATED_R_ERROR,
-                           #limit_r=(0, None),
-                           lam=pb_config.CALIBRATED_LAMBDA,
-                           error_lam=pb_config.CALIBRATED_LAMBDA_ERROR,
-                           limit_lam=(0, None),
-                           mu=pb_config.CALIBRATED_MU,
-                           error_mu=pb_config.CALIBRATED_MU_ERROR,
-                           limit_mu=(0, 1),
-                          )
-    return minimizer
 
 if __name__ == '__main__':
     main()
