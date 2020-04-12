@@ -99,12 +99,7 @@ def run(args, i_cv):
     flush(logger)
     
     # TRAINING / LOADING
-    X_train, y_train, w_train = train_generator.generate(
-                                     pb_config.CALIBRATED_R,
-                                     pb_config.CALIBRATED_LAMBDA,
-                                     pb_config.CALIBRATED_MU,
-                                     n_samples=pb_config.N_TRAINING_SAMPLES)
-    train_or_load_classifier(model, X_train, y_train, w_train, retrain=args.retrain)
+    train_or_load_classifier(model, train_generator, pb_config.CALIBRATED, pb_config.N_TRAINING_SAMPLES, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
@@ -121,21 +116,18 @@ def run(args, i_cv):
     compute_summaries = ClassifierSummaryComputer(model, n_bins=N_BINS)
     for mu in pb_config.TRUE_MU_RANGE:
         pb_config.TRUE_MU = mu
+        suffix = f'-mu={pb_config.TRUE_MU:1.2f}_r={pb_config.TRUE_R}_lambda={pb_config.TRUE_LAMBDA}'
         logger.info('Generate testing data')
         X_test, y_test, w_test = test_generator.generate(
                                          pb_config.TRUE_R,
                                          pb_config.TRUE_LAMBDA,
                                          pb_config.TRUE_MU,
                                          n_samples=pb_config.N_TESTING_SAMPLES)
+        # PLOT SUMMARIES
+        evaluate_summary_computer(model, X_valid, y_valid, w_valid, X_test, w_test, n_bins=N_BINS, prefix='', suffix=suffix)
 
         logger.info('Set up NLL computer')
         compute_nll = S3D2NLL(compute_summaries, valid_generator, X_test, w_test)
-
-        suffix = '-mu={:1.2f}_r={}_lambda={}'.format(pb_config.TRUE_MU,
-                                    pb_config.TRUE_R, pb_config.TRUE_LAMBDA)
-
-        evaluate_summary_computer(model, X_valid, y_valid, w_valid, X_test, w_test, n_bins=N_BINS, prefix='', suffix=suffix)
-
         # NLL PLOTS
         plot_nll_around_min(compute_nll, pb_config, model.path, suffix)
 

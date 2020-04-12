@@ -83,7 +83,7 @@ def get_optimizer(args):
     return optimizer
 
 
-def train_or_load_classifier(model, X_train, y_train, w_train=None, retrain=True):
+def train_or_load_classifier(model, train_generator, parameters, n_samples, retrain=True):
     logger = logging.getLogger()
     if not retrain:
         try:
@@ -95,6 +95,7 @@ def train_or_load_classifier(model, X_train, y_train, w_train=None, retrain=True
     if retrain:
         logger.info('Generate training data')
         logger.info('Training {}'.format(model.get_name()))
+        X_train, y_train, w_train = train_generator.generate(*parameters, n_samples=n_samples)
         model.fit(X_train, y_train, w_train)
         logger.info('Training DONE')
 
