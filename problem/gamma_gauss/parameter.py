@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from collections import namedtuple
 
 
-class Parameter(namedtuple('Parameter', ['scale', 'mix'])):
+class Parameter(namedtuple('Parameter', ['alpha', 'mix'])):
     @property
     def nuisance_parameters(self):
         return self[:-1]
