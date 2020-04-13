@@ -15,12 +15,6 @@ def param_generator():
     while lam <= 0:
         lam = np.random.normal(pb_config.CALIBRATED_LAMBDA, pb_config.CALIBRATED_LAMBDA_ERROR)
     
-    mu_min = min(pb_config.TRUE_MU_RANGE)
-    mu_max = max(pb_config.TRUE_MU_RANGE)
-    mu_range = mu_max - mu_min
-    mu_min = max(0.0, mu_min - mu_range/10)
-    mu_max = min(1.0, mu_max + mu_range/10)
-
     mu = np.random.uniform(0, 1)
     return Parameter(r, lam, mu)
 
