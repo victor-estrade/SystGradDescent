@@ -23,6 +23,7 @@ class Generator():
         self.gamma_loc = gamma_loc
         self.normal_mean = normal_mean
         self.normal_sigma = normal_sigma
+        self.n_expected_events = 2000
 
     def sample_event(self, rescale, mix, size=1):
         assert_clean_rescale(rescale)
