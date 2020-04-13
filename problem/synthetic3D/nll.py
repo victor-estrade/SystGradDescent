@@ -17,7 +17,7 @@ class S3D2NLL():
         self.w_test = w_test
         
     def __call__(self, r, lam, mu):
-        """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""        
+        """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""
         pb_config = S3D2Config()
         self.valid_generator.reset()
         X, y, w = self.valid_generator.generate(r, lam, mu, n_samples=pb_config.N_VALIDATION_SAMPLES)
