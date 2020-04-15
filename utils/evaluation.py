@@ -66,14 +66,14 @@ def evaluate_classifier(model, X, y, w=None, prefix='test', suffix=''):
     y_predict = model.predict(X)
     accuracy = np.mean(y_predict == y)
 
-    results[f'{prefix}_accuracy'] = accuracy
+    results[f'{prefix}_accuracy{suffix}'] = accuracy
     logger.info('Plot distribution of the decision')
     fname = f'{prefix}_distrib{suffix}.png'
     plot_test_distrib(y_proba, y, title=model.full_name, directory=model.path, fname=fname)
 
     logger.info('Plot ROC curve')
     fpr, tpr, thresholds = roc_curve(y, y_decision, pos_label=1)
-    results[f"{prefix}_auc"] = auc(fpr, tpr)
+    results[f"{prefix}_auc{suffix}"] = auc(fpr, tpr)
     fname = f'{prefix}_roc{suffix}.png'
     plot_ROC(fpr, tpr, title=model.full_name, directory=model.path, fname=fname)
 
