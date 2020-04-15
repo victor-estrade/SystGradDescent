@@ -35,11 +35,11 @@ def set_plot_config():
     mpl.rcParams['xtick.labelsize'] = 10
     mpl.rcParams['legend.fontsize'] = 'large'
     mpl.rcParams['figure.titlesize'] = 'medium'
-    mpl.rcParams['lines.markersize'] = np.sqrt(20)
+    mpl.rcParams['lines.markersize'] = np.sqrt(30)
 
 
 
-def plot_params(param_name, result_table, model):
+def plot_params(param_name, result_table, title='no title', directory=DEFAULT_DIR):
     logger = logging.getLogger()
     values = result_table[param_name]
     errors = result_table[param_name+_ERROR]
@@ -56,17 +56,18 @@ def plot_params(param_name, result_table, model):
         logger.debug('Plot_params invalid lenght = {}, {}, {}'.format(len(x), len(values), len(errors)))
     try:
         if 'is_valid' in result_table:
-            plt.errorbar(valid_x, valid_values, yerr=valid_errors, fmt='o', capsize=20, capthick=2, label='valid_infer')
-            plt.errorbar(x, values, yerr=errors, fmt='o', capsize=20, capthick=2, label='invalid_infer')
+            plt.errorbar(valid_x, valid_values, yerr=valid_errors, fmt='o', capsize=15, capthick=2, label='valid_infer')
+            plt.errorbar(x, values, yerr=errors, fmt='o', capsize=15, capthick=2, label='invalid_infer')
         else:
-            plt.errorbar(xx, values, yerr=errors, fmt='o', capsize=20, capthick=2, label='infer')
+            plt.errorbar(xx, values, yerr=errors, fmt='o', capsize=15, capthick=2, label='infer')
         plt.scatter(xx, truths, c='red', label='truth')
-        plt.xticks(xx, map(lambda x: round(x, 3), truths))
-        plt.xlabel('truth value')
+        plt.xticks(xx)
+        # plt.xticks(xx, map(lambda x: round(x, 3), truths))
+        plt.xlabel('#iter')
         plt.ylabel(param_name)
-        plt.title(model.full_name)
+        plt.title(title)
         plt.legend()
-        plt.savefig(os.path.join(model.path, 'estimate_{}.png'.format(param_name)))
+        plt.savefig(os.path.join(directory, 'estimate_{}.png'.format(param_name)))
         plt.clf()
     except Exception as e:
         logger.warning('Plot params failed')

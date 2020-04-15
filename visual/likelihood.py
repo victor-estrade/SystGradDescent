@@ -10,10 +10,8 @@ import logging
 import numpy as np
 
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 from config import DEFAULT_DIR
-
 
 
 def plot_summaries(b_histogram, s_histogram, n_histogram, 
