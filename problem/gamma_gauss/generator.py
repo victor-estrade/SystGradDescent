@@ -30,7 +30,7 @@ class Generator():
         assert_clean_mix(mix)
         n_sig = int(mix * size)
         n_bkg = size - n_sig
-        x = self._generate_vars(rescale, mix, n_bkg, n_sig)
+        x = self._generate_vars(rescale, n_bkg, n_sig)
         labels = self._generate_labels(n_bkg, n_sig)
         return x, labels
 
