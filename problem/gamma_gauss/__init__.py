@@ -9,5 +9,5 @@ from .parameter import Parameter
 from .nll import GGNLL
 from .config import GGConfig
 from .calibration import param_generator
-
+from .minimizer import get_minimizer
 
