@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import itertools
 import numpy as np
 from .parameter import Parameter
 
@@ -17,6 +18,10 @@ class S3D2Config():
                         mu=MINUIT_DEFAULT_ERROR)
 
     TRUE = Parameter(r=0.1, lam=2.7, mu=150/1050)
+
+    RANGE = Parameter(r=np.linspace(0.2, 2, 2), 
+                    lam=np.linspace(2, 4, 1),
+                    mu=np.linspace(0.01, 0.99, 2),)
 
     PARAM_NAMES = ['mu', 'r', 'lam']
     INTEREST_PARAM_NAME = TRUE.interest_parameters_names
@@ -41,4 +46,10 @@ class S3D2Config():
     N_TRAINING_SAMPLES = 30000
     N_VALIDATION_SAMPLES = 30000
     N_TESTING_SAMPLES = 30000
+
+    def iter_test_config(self):
+        for true_r, true_lam, true_mu in itertools.product(*self.RANGE):
+            new_config = S3D2Config()
+            new_config.TRUE = Parameter(true_r, true_lam, true_mu)
+            yield new_config
 
