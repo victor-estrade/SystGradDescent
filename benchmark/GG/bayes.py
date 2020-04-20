@@ -184,7 +184,7 @@ def run_iter(i_cv, i_iter, config, seed, directory):
 
     # Log estimator values
     logger.info(f"True mix value    = {config.TRUE.mix}")
-    logger.info(f"Sig ratio        = {sig_ratio}")
+    logger.info(f"Sig ratio         = {sig_ratio}")
     logger.info(f"E[mix|x]          = {expect_mix}")
     logger.info(f"Var[mix|x]        = {var_mix}")
     logger.info(f"sqrt(Var[mix|x])  = {std_mix}")
