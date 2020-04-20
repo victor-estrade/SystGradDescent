@@ -64,7 +64,7 @@ class ModelInfo(object):
 
     def _set_path(self, benchmark_name, i_cv):
         name = self.get_name()
-        cv_id = "{:d}".format(i_cv)
+        cv_id = "cv_{:d}".format(i_cv)
         self.directory = os.path.join(config.SAVING_DIR, benchmark_name, 
                                         self.base_name, name)
         self.path = os.path.join(self.directory, cv_id)
