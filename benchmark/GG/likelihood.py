@@ -91,8 +91,7 @@ def run(args, i_cv):
 
         logger.info('Prepare minuit minimizer')
         minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
-        fmin, params = estimate(minimizer)
-        result_row.update(evaluate_minuit(minimizer, fmin, params, true_params))
+        result_row.update(evaluate_minuit(minimizer, true_params))
 
         result_table.append(result_row.copy())
     result_table = pd.DataFrame(result_table)

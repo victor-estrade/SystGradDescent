@@ -98,8 +98,9 @@ def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix=''):
                     title=model.full_name, directory=model.path, fname=fname)
 
 
-def evaluate_minuit(minimizer, fmin, params, params_truth):
+def evaluate_minuit(minimizer, params_truth):
     results = {}
+    fmin, params = estimate(minimizer)
     print_params(params, params_truth)
     register_params(params, params_truth, results)
     results['is_mingrad_valid'] = minimizer.migrad_ok()
