@@ -61,7 +61,6 @@ def main():
     results = pd.DataFrame(results)
     results.to_csv(os.path.join(DIRECTORY, 'results.csv'))
 
-        
 
 
 def run(i_iter, true_params):
