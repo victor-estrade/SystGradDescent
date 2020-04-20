@@ -38,6 +38,13 @@ from problem.gamma_gauss import GGConfig
 from problem.gamma_gauss import get_minimizer
 from problem.gamma_gauss import Parameter
 
+from model.bayes import expectancy
+from model.bayes import variance
+from model.bayes import stat_uncertainty
+from model.bayes import syst_uncertainty
+from model.bayes import get_iter_prod
+
+
 SEED = None
 BENCHMARK_NAME = "GG"
 DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "Bayes")
@@ -46,31 +53,6 @@ N_ITER = 9
 from config import _ERROR
 from config import _TRUTH
 
-
-def expectancy(values, probabilities, axis=None, keepdims=False):
-    return np.sum(values * probabilities, axis=axis, keepdims=keepdims)
-
-def variance(values, probabilities, axis=None):
-    return np.sum(probabilities * np.square(values - expectancy(values, probabilities, axis=axis, keepdims=True)), axis=axis)
-
-def variance_bis(values, probabilities, axis=None):
-    return np.sum(values * values * probabilities, axis=axis) - np.square(expectancy(values, probabilities, axis=axis, keepdims=True))
-
-def stat_uncertainty(values, posterior, marginal):
-    v = variance(values.reshape(1, -1), posterior, axis=1)
-    return expectancy(v.ravel(), marginal.ravel())
-
-def syst_uncertainty(values, posterior, marginal):
-    v = expectancy(values.reshape(1, -1), posterior, axis=1)
-    return variance(v.ravel(), marginal.ravel())
-
-
-def get_iter_prod(*sizes, progress_bar=False):
-    generator = itertools.product(*(range(n) for n in sizes))
-    if progress_bar:
-        total = np.prod(sizes)
-        return tqdm(generator, total=total)
-    return generator
 
 
 def main():
