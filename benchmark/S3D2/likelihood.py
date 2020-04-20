@@ -24,7 +24,7 @@ from utils.evaluation import evaluate_minuit
 from utils.evaluation import evaluate_estimator
 from utils.images import gather_images
 
-from problem.synthetic3D import S3D2
+from problem.synthetic3D import Generator
 from problem.synthetic3D import S3D2Config
 from problem.synthetic3D import get_minimizer
 from problem.synthetic3D import Parameter
@@ -64,37 +64,15 @@ def run(args, i_cv):
     print_line()
     logger.info('Running iter n°{}'.format(i_cv))
     print_line()
-    directory = os.path.join(DIRECTORY, f'{i_cv}')
+    directory = os.path.join(DIRECTORY, f'cv_{i_cv}')
     os.makedirs(directory, exist_ok=True)
 
     config = S3D2Config()
-    DATA_N_SAMPLES = 80_000
 
     seed = SEED + i_cv * 5
-    generator  = S3D2(seed+2)  # test_generator
+    test_seed = seed + 2
 
-    result_row = {'i_cv': i_cv}
-    result_table = []
-    for true_mu in config.TRUE_MU_RANGE:
-        true_params = Parameter(config.TRUE.r, config.TRUE.lam, true_mu)
-        logger.info(f"True Parameters   = {true_params}")
-        suffix = f'-mu={true_params.mu:1.2f}_r={true_params.r}_lambda={true_params.lam}'
-        data, label = generator.sample_event(*true_params, size=DATA_N_SAMPLES)
-        n_sig = np.sum(label==1)
-        n_bkg = np.sum(label==0)
-        logger.info(f"nb of signal      = {n_sig}")
-        logger.info(f"nb of backgrounds = {n_bkg}")
-
-        compute_nll = lambda r, lam, mu : generator.nll(data, r, lam, mu)
-        # NLL PLOTS
-        plot_nll_around_min(compute_nll, true_params, directory, suffix)
-
-        logger.info('Prepare minuit minimizer')
-        minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
-        fmin, params = estimate(minimizer)
-        result_row.update(evaluate_minuit(minimizer, fmin, params, true_params))
-
-        result_table.append(result_row.copy())
+    result_table = [run_iter(i_cv, i, test_config, test_seed, directory) for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
     result_table.to_csv(os.path.join(directory, 'results.csv'))
     logger.info('Plot params')
@@ -103,6 +81,35 @@ def run(args, i_cv):
         plot_params(name, result_table, title='Likelihood fit', directory=directory)
 
     return result_table
+
+
+def run_iter(i_cv, i_iter, config, seed, directory):
+    logger = logging.getLogger()
+    result_row = dict(i_cv=i_cv, i=i_iter)
+    iter_directory = os.path.join(directory, f'iter_{i_iter}')
+    os.makedirs(iter_directory, exist_ok=True)
+
+    logger.info(f"True Parameters   = {config.TRUE}")
+    suffix = f'-mu={config.TRUE.mu:1.2f}_r={config.TRUE.r}_lambda={config.TRUE.lam}'
+    generator  = Generator(seed)  # test_generator
+    data, label = generator.sample_event(*config.TRUE, size=config.N_TESTING_SAMPLES)
+    debug_label(label)
+
+    compute_nll = lambda r, lam, mu : generator.nll(data, r, lam, mu)
+    plot_nll_around_min(compute_nll, config.TRUE, iter_directory, suffix)
+
+    logger.info('Prepare minuit minimizer')
+    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
+    result_row.update(evaluate_minuit(minimizer, config.TRUE))
+    return result_row
+
+
+def debug_label(label):
+    logger = logging.getLogger()
+    n_sig = np.sum(label==1)
+    n_bkg = np.sum(label==0)
+    logger.debug(f"nb of signal      = {n_sig}")
+    logger.debug(f"nb of backgrounds = {n_bkg}")
 
 if __name__ == '__main__':
     main()
