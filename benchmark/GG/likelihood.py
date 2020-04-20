@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 
 import os
 import logging
-import itertools
 
 import numpy as np
 import pandas as pd
@@ -21,7 +20,6 @@ from visual.misc import plot_params
 
 from utils.log import set_logger
 from utils.log import print_line
-from utils.evaluation import estimate
 from utils.evaluation import evaluate_minuit
 from utils.evaluation import evaluate_estimator
 from utils.images import gather_images
@@ -29,7 +27,6 @@ from utils.images import gather_images
 from problem.gamma_gauss import Generator
 from problem.gamma_gauss import GGConfig
 from problem.gamma_gauss import get_minimizer
-from problem.gamma_gauss import Parameter
 
 from visual.special.gamma_gauss import plot_nll_around_min
 
