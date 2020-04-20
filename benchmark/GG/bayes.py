@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 
 
 import os
-import itertools
 import logging
 import numpy as np
 import pandas as pd
