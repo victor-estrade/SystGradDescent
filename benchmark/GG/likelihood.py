@@ -7,6 +7,8 @@ from __future__ import unicode_literals
 
 import os
 import logging
+import itertools
+
 import numpy as np
 import pandas as pd
 
@@ -75,9 +77,11 @@ def run(args, i_cv):
 
     result_row = {'i_cv': i_cv}
     result_table = []
-    # for i, (true_rescale, true_mix) in enumerate(itertools.product(*config.RANGE)):
-    for true_mix in config.RANGE.mix:
-        true_params = Parameter(config.TRUE.rescale, true_mix)
+    for i, (true_rescale, true_mix) in enumerate(itertools.product(*config.RANGE)):
+        iter_directory = os.path.join(directory, f'iter_{i}')
+        os.makedirs(iter_directory, exist_ok=True)
+        result_row['i'] = i
+        true_params = Parameter(true_rescale, true_mix)
         logger.info(f"True Parameters   = {true_params}")
         suffix = f'-mix={true_params.mix:1.2f}_rescale={true_params.rescale}'
         data, label = generator.sample_event(*true_params, size=DATA_N_SAMPLES)
@@ -87,7 +91,7 @@ def run(args, i_cv):
         logger.info(f"nb of backgrounds = {n_bkg}")
 
         compute_nll = lambda rescale, mix : generator.nll(data, rescale, mix)
-        plot_nll_around_min(compute_nll, true_params, directory, suffix)
+        plot_nll_around_min(compute_nll, true_params, iter_directory, suffix)
 
         logger.info('Prepare minuit minimizer')
         minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
