@@ -25,7 +25,6 @@ from utils.model import train_or_load_classifier
 from utils.evaluation import evaluate_classifier
 from utils.evaluation import evaluate_summary_computer
 from utils.evaluation import evaluate_minuit
-from utils.evaluation import estimate
 from utils.evaluation import evaluate_estimator
 from utils.images import gather_images
 
@@ -128,8 +127,7 @@ def run(args, i_cv):
         # MINIMIZE NLL
         logger.info('Prepare minuit minimizer')
         minimizer = get_minimizer(compute_nll, pb_config.CALIBRATED, pb_config.CALIBRATED_ERROR)
-        fmin, params = estimate(minimizer)
-        result_row.update(evaluate_minuit(minimizer, fmin, params, true_params))
+        result_row.update(evaluate_minuit(minimizer, true_params))
 
         result_table.append(result_row.copy())
     result_table = pd.DataFrame(result_table)
