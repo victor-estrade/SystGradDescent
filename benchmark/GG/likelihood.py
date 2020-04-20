@@ -64,7 +64,7 @@ def run(args, i_cv):
     print_line()
     logger.info('Running iter n°{}'.format(i_cv))
     print_line()
-    directory = os.path.join(DIRECTORY, f'{i_cv}')
+    directory = os.path.join(DIRECTORY, f'cv_{i_cv}')
     os.makedirs(directory, exist_ok=True)
 
     config = GGConfig()
@@ -75,6 +75,7 @@ def run(args, i_cv):
 
     result_row = {'i_cv': i_cv}
     result_table = []
+    # for i, (true_rescale, true_mix) in enumerate(itertools.product(*config.RANGE)):
     for true_mix in config.RANGE.mix:
         true_params = Parameter(config.TRUE.rescale, true_mix)
         logger.info(f"True Parameters   = {true_params}")
