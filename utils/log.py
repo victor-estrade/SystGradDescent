@@ -6,13 +6,13 @@ from __future__ import unicode_literals
 
 import logging
 
-def set_logger():
+def set_logger(lvl=logging.INFO):
     logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
+    logger.setLevel(lvl)
     formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s')
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
-    stream_handler.setLevel(logging.INFO)
+    stream_handler.setLevel(lvl)
     logger.addHandler(stream_handler)
     logger.info('Hello')
     return logger
