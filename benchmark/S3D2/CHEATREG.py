@@ -166,7 +166,7 @@ def run(args, i_cv):
 
     logger.info('Plot params')
     name = pb_config.INTEREST_PARAM_NAME 
-    plot_params(name, result_table, model)
+    plot_params(name, result_table, title=model.full_name, directory=model.path)
 
 
     logger.info('DONE')

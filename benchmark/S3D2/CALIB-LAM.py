@@ -122,7 +122,7 @@ def main():
     logger.info('Plot params')
     param_names = ["lam"]
     for name in param_names:
-        plot_params(name, result_table, model)
+        plot_params(name, result_table, title=model.full_name, directory=model.path)
 
     logger.info('DONE')
 

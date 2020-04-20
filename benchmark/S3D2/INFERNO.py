@@ -150,7 +150,7 @@ def run(args, i_cv):
     logger.info('Plot params')
     param_names = pb_config.PARAM_NAMES
     for name in param_names:
-        plot_params(name, result_table, model)
+        plot_params(name, result_table, title=model.full_name, directory=model.path)
 
 
     logger.info('DONE')
