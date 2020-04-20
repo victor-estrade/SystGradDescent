@@ -150,7 +150,8 @@ def evaluate_estimator(name, results, valid_only=False):
     return eval_table
 
 def evaluate_one_estimation(values, errors, truth):
-    row = dict(target_mean = np.mean(values)
+    row = dict(truth=truth
+          ,target_mean = np.mean(values)
           ,target_std = np.std(values)
           ,target_variance = np.var(values)
           ,sigma_mean = np.mean(errors)
@@ -162,7 +163,6 @@ def evaluate_one_estimation(values, errors, truth):
     row['target_mse'] = row['target_bias']**2 + row['target_variance']
     row['target_rmse'] = np.sqrt(row['target_mse'])
     row['sigma_mse'] = row['sigma_bias']**2 + row['sigma_variance']
-    row['truth'] = truth
     return row
 
 
