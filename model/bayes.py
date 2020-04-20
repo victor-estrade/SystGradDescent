@@ -20,12 +20,12 @@ def variance(values, probabilities, axis=None):
 def variance_bis(values, probabilities, axis=None):
     return np.sum(values * values * probabilities, axis=axis) - np.square(expectancy(values, probabilities, axis=axis, keepdims=True))
 
-def stat_uncertainty(values, posterior, marginal):
-    v = variance(values.reshape(1, -1), posterior, axis=1)
+def stat_uncertainty(values, posterior, marginal, reshape=(1, -1), axis=-1):
+    v = variance(values.reshape(reshape), posterior, axis=axis)
     return expectancy(v.ravel(), marginal.ravel())
 
-def syst_uncertainty(values, posterior, marginal):
-    v = expectancy(values.reshape(1, -1), posterior, axis=1)
+def syst_uncertainty(values, posterior, marginal, reshape=(1, -1), axis=-1):
+    v = expectancy(values.reshape(reshape), posterior, axis=axis)
     return variance(v.ravel(), marginal.ravel())
 
 
