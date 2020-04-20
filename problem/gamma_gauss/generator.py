@@ -19,11 +19,15 @@ def assert_clean_mix(mix):
 class Generator():
     def __init__(self, seed=None, gamma_k=2, gamma_loc=0, normal_mean=5, normal_sigma=0.5):
         self.seed = seed
+        self.random = np.random.RandomState(seed=seed)
         self.gamma_k = gamma_k
         self.gamma_loc = gamma_loc
         self.normal_mean = normal_mean
         self.normal_sigma = normal_sigma
         self.n_expected_events = 2000
+
+    def reset(self):
+        self.random = np.random.RandomState(seed=self.seed)
 
     def sample_event(self, rescale, mix, size=1):
         assert_clean_rescale(rescale)
@@ -54,8 +58,8 @@ class Generator():
         gamma_scale  = rescale
         normal_mean  = self.normal_mean * rescale
         normal_sigma = self.normal_sigma * rescale
-        x_b = stats.gamma.rvs(gamma_k, loc=gamma_loc, scale=gamma_scale, size=n_bkg, random_state=self.seed)
-        x_s = stats.norm.rvs(loc=normal_mean, scale=normal_sigma, size=n_sig, random_state=self.seed)
+        x_b = stats.gamma.rvs(gamma_k, loc=gamma_loc, scale=gamma_scale, size=n_bkg, random_state=self.random)
+        x_s = stats.norm.rvs(loc=normal_mean, scale=normal_sigma, size=n_sig, random_state=self.random)
         x = np.concatenate([x_b, x_s], axis=0)
         return x
 
