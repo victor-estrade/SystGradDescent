@@ -58,13 +58,13 @@ def main():
     # INFO
     model = get_model(args, GradientBoostingModel)
     model.set_info(BENCHMARK_NAME, -1)
-    pb_config = S3D2Config()
+    config = S3D2Config()
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     results = pd.concat(results, ignore_index=True)
     results.to_csv(os.path.join(model.directory, 'results.csv'))
     # EVALUATION
-    eval_table = evaluate_estimator(pb_config.INTEREST_PARAM_NAME, results)
+    eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, results)
     print_line()
     print_line()
     print(eval_table)
@@ -84,7 +84,7 @@ def run(args, i_cv):
 
     # LOAD/GENERATE DATA
     logger.info('Set up data generator')
-    pb_config = S3D2Config()
+    config = S3D2Config()
     seed = SEED + i_cv * 5
     train_generator = Generator(seed)
     valid_generator = Generator(seed+1)
@@ -97,11 +97,11 @@ def run(args, i_cv):
     flush(logger)
     
     # TRAINING / LOADING
-    train_or_load_classifier(model, train_generator, pb_config.CALIBRATED, pb_config.N_TRAINING_SAMPLES, retrain=args.retrain)
+    train_or_load_classifier(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
-    X_valid, y_valid, w_valid = valid_generator.generate(*pb_config.CALIBRATED, n_samples=pb_config.N_VALIDATION_SAMPLES)
+    X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
     
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
@@ -109,11 +109,11 @@ def run(args, i_cv):
     N_BINS = 10
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
     result_table = [run_iter(model, result_row, i, test_config, seed, n_bins=10)
-                    for i, test_config in enumerate(pb_config.iter_test_config())]
+                    for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
     result_table.to_csv(os.path.join(model.path, 'results.csv'))
     logger.info('Plot params')
-    param_names = pb_config.PARAM_NAMES
+    param_names = config.PARAM_NAMES
     for name in param_names:
         plot_params(name, result_table, title=model.full_name, directory=model.path)
 
