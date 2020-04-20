@@ -84,11 +84,9 @@ def run(args, i_cv):
         true_params = Parameter(true_rescale, true_mix)
         logger.info(f"True Parameters   = {true_params}")
         suffix = f'-mix={true_params.mix:1.2f}_rescale={true_params.rescale}'
+        generator.reset()
         data, label = generator.sample_event(*true_params, size=DATA_N_SAMPLES)
-        n_sig = np.sum(label==1)
-        n_bkg = np.sum(label==0)
-        logger.info(f"nb of signal      = {n_sig}")
-        logger.info(f"nb of backgrounds = {n_bkg}")
+        debug_label(label)
 
         compute_nll = lambda rescale, mix : generator.nll(data, rescale, mix)
         plot_nll_around_min(compute_nll, true_params, iter_directory, suffix)
@@ -106,6 +104,15 @@ def run(args, i_cv):
         plot_params(name, result_table, title='Likelihood fit', directory=directory)
 
     return result_table
+
+
+
+def debug_label(label):
+    logger = logging.getLogger()
+    n_sig = np.sum(label==1)
+    n_bkg = np.sum(label==0)
+    logger.debug(f"nb of signal      = {n_sig}")
+    logger.debug(f"nb of backgrounds = {n_bkg}")
 
 if __name__ == '__main__':
     main()
