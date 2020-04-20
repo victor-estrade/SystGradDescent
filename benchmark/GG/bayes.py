@@ -88,7 +88,6 @@ def run(args, i_cv):
 
     seed = SEED + i_cv * 5
     test_seed = seed + 2
-    # FIXME : i_cv not in results !
     result_table = [run_iter(i_cv, i, test_config, test_seed, directory) for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
     result_table.to_csv(os.path.join(directory, 'results.csv'))

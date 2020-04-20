@@ -89,8 +89,6 @@ def run_iter(i_cv, i_iter, config, seed, directory):
     result_row = dict(i_cv=i_cv, i=i_iter)
     iter_directory = os.path.join(directory, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
-    result_row['i'] = i_iter
-    result_row['i_cv'] = i_cv
 
     logger.info(f"True Parameters   = {config.TRUE}")
     suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
