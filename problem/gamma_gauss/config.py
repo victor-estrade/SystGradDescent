@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import itertools
 import numpy as np
 from .parameter import Parameter
 
@@ -18,3 +19,10 @@ class GGConfig():
     N_TRAINING_SAMPLES = 2000
     N_VALIDATION_SAMPLES = 2000
     N_TESTING_SAMPLES = 2000
+
+    def iter_test_config(self):
+        for true_rescale, true_mix in itertools.product(*self.RANGE):
+            new_config = GGConfig()
+            new_config.TRUE = Parameter(true_rescale, true_mix)
+            yield new_config
+
