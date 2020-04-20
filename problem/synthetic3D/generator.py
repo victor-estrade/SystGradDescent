@@ -124,4 +124,4 @@ class S3D2():
         nll = - self.log_proba_density(x, r, lam, mu).sum()
         return nll
 
-
+Generator = S3D2 # alias
