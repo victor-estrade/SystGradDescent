@@ -18,10 +18,6 @@ from config import SEED
 from scipy.special import softmax
 from scipy import stats
 
-from tqdm import tqdm
-
-import matplotlib.pyplot as plt
-import seaborn as sns
 from visual import set_plot_config
 set_plot_config()
 from visual.misc import plot_params
@@ -30,15 +26,11 @@ from visual.special.gamma_gauss import plot_distrib
 
 from utils.log import set_logger
 from utils.log import print_line
-from utils.evaluation import estimate
-from utils.evaluation import evaluate_minuit
 from utils.evaluation import evaluate_estimator
 from utils.images import gather_images
 
 from problem.gamma_gauss import Generator
 from problem.gamma_gauss import GGConfig
-from problem.gamma_gauss import get_minimizer
-from problem.gamma_gauss import Parameter
 
 from model.bayes import expectancy
 from model.bayes import variance
