@@ -19,7 +19,6 @@ from visual.misc import plot_params
 
 from utils.log import set_logger
 from utils.log import print_line
-from utils.evaluation import estimate
 from utils.evaluation import evaluate_minuit
 from utils.evaluation import evaluate_estimator
 from utils.images import gather_images
@@ -27,7 +26,6 @@ from utils.images import gather_images
 from problem.synthetic3D import Generator
 from problem.synthetic3D import S3D2Config
 from problem.synthetic3D import get_minimizer
-from problem.synthetic3D import Parameter
 
 from visual.special.synthetic3D import plot_nll_around_min
 
