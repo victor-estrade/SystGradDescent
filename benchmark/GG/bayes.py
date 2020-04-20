@@ -87,9 +87,10 @@ def run(args, i_cv):
     os.makedirs(directory, exist_ok=True)
 
     seed = SEED + i_cv * 5
-    results = [run_iter(i, Parameter(rescale, mix), seed, directory) 
-                for i, (rescale, mix) in enumerate(itertools.product(*config.RANGE))]
-    result_table = pd.DataFrame(results)
+    test_seed = seed + 2
+    # FIXME : i_cv not in results !
+    result_table = [run_iter(i_cv, i, test_config, test_seed, directory) for i, test_config in enumerate(config.iter_test_config())]
+    result_table = pd.DataFrame(result_table)
     result_table.to_csv(os.path.join(directory, 'results.csv'))
     param_names = config.PARAM_NAMES
     for name in param_names:
@@ -97,26 +98,25 @@ def run(args, i_cv):
     return result_table
 
 
-def run_iter(i_iter, true_params, seed, directory):
+def run_iter(i_cv, i_iter, config, seed, directory):
     # Init
     logger = logging.getLogger()
     print_line()
     logger.info('running iter n°{}'.format(i_iter))
     directory = os.path.join(directory, f'iter_{i_iter}')
     os.makedirs(directory, exist_ok=True)
-    results = {'i': i_iter}
+    results = dict(i_cv=i_cv, i=i_iter)
 
     # Config
-    RESCALE_MIN = true_params.rescale - 0.2
-    RESCALE_MAX = true_params.rescale + 0.2
+    RESCALE_MIN = config.TRUE.rescale - 0.2
+    RESCALE_MAX = config.TRUE.rescale + 0.2
     
-    MIX_MIN = max(0, true_params.mix - 0.1)
-    MIX_MAX = min(1.0, true_params.mix + 0.1)
+    MIX_MIN = max(0, config.TRUE.mix - 0.1)
+    MIX_MAX = min(1.0, config.TRUE.mix + 0.1)
 
     MIX_N_SAMPLES = 142
     RESCALE_N_SAMPLES = 145
     DATA_N_SAMPLES = 2000
-    TRUE = true_params
 
     # Prior
     prior_rescale = stats.uniform(loc=RESCALE_MIN, scale=RESCALE_MAX-RESCALE_MIN)
@@ -128,7 +128,7 @@ def run_iter(i_iter, true_params, seed, directory):
 
     # Data Generator
     generator = Generator(seed)
-    data, label = generator.sample_event(*TRUE, size=DATA_N_SAMPLES)
+    data, label = generator.sample_event(*config.TRUE, size=DATA_N_SAMPLES)
     debug_label(label)
 
     # Compute likelihood
@@ -182,18 +182,18 @@ def run_iter(i_iter, true_params, seed, directory):
 
     # Save estimator values
     results['mix'] = expect_mix
-    results['mix'+_TRUTH] = TRUE.mix
+    results['mix'+_TRUTH] = config.TRUE.mix
     results['mix_std'] = std_mix
     results['mix'+_ERROR] = var_mix
     results['mix_stat'] = stat_err
     results['mix_syst'] = syst_err
     results['rescale'] = expect_rescale
-    results['rescale'+_TRUTH] = TRUE.rescale
+    results['rescale'+_TRUTH] = config.TRUE.rescale
     results['rescale_std'] = std_rescale
     results['rescale'+_ERROR] = var_rescale
 
     # Log estimator values
-    logger.info(f"True mix value    = {TRUE.mix}")
+    logger.info(f"True mix value    = {config.TRUE.mix}")
     logger.info(f"Sig ratio        = {sig_ratio}")
     logger.info(f"E[mix|x]          = {expect_mix}")
     logger.info(f"Var[mix|x]        = {var_mix}")
@@ -212,14 +212,14 @@ def run_iter(i_iter, true_params, seed, directory):
 
     # Plots
     plot_infer(mix_grid, marginal_mix, expected_value=expect_mix,
-                true_value=TRUE.mix, std=std_mix, name='mix',
+                true_value=config.TRUE.mix, std=std_mix, name='mix',
                 directory=directory, fname='marginal_mix.png')
 
     plot_infer(rescale_grid, marginal_rescale, expected_value=expect_rescale,
-                true_value=TRUE.rescale, std=std_rescale, name='rescale',
+                true_value=config.TRUE.rescale, std=std_rescale, name='rescale',
                 directory=directory, fname='marginal_rescale.png')
 
-    plot_distrib(data, generator, true_params, expect_rescale, expect_mix,
+    plot_distrib(data, generator, config.TRUE, expect_rescale, expect_mix,
                 title="data distribution", directory=directory, fname='data_distrib.png')
 
     return results
