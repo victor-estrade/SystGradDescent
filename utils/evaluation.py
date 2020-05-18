@@ -111,12 +111,14 @@ def evaluate_minuit(minimizer, params_truth):
 
 def evaluate_neural_net(model, prefix='', suffix=''):
     logger = logging.getLogger()
-    results = {}
-
     logger.info('Plot losses')
+    directory = model.path
+
     losses = model.get_losses()
-    plot_losses(losses, title=model.full_name, directory=model.path)
-    results['loss'] = model.loss_hook.losses[-1]
+    plot_losses(losses, title=model.full_name, directory=directory)
+    for loss_name, loss_values in losses.items():
+        plot_losses({loss_name: loss_values}, title=model.full_name, directory=directory, fname=f"{loss_name}.png")
+    results = {loss_name: loss_values[-1] for loss_name, loss_values in losses.items() if loss_values}
 
     return results
 
