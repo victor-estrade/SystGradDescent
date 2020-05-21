@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 from collections import namedtuple
 
 
-class Parameter(namedtuple('Parameter', ['tes', 'jes', 'les', 'nasty_bkg', 'soft_term'])):
+class Parameter(namedtuple('Parameter', ['tes', 'jes', 'les', 'nasty_bkg', 'sigma_soft', 'mu'])):
     @property
     def nuisance_parameters(self):
         return self[:-1]
