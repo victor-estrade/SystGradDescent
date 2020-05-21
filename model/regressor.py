@@ -20,6 +20,7 @@ from .utils import to_torch
 
 from .criterion import GaussNLLLoss
 
+from sklearn.preprocessing import StandardScaler
 
 class Regressor(BaseModel, BaseNeuralNet):
     def __init__(self, net, optimizer, n_steps=5000, batch_size=20, sample_size=1000, 
@@ -42,6 +43,7 @@ class Regressor(BaseModel, BaseNeuralNet):
         # self.criterion.register_forward_hook(self.loss_hook)
         self.losses = []
         self.mse_losses = []
+        self.msre_sigma_losses = []
         if cuda:
             self.cuda()
 
@@ -54,10 +56,12 @@ class Regressor(BaseModel, BaseNeuralNet):
         self.criterion = self.criterion.cpu()
 
     def get_losses(self):
-        losses = dict(loss=self.losses, mse_loss=self.mse_losses)
+        losses = dict(loss=self.losses, mse_loss=self.mse_losses, msre_sigma=self.msre_sigma_losses)
         return losses
 
     def fit(self, generator):
+        X, _, _, _ = generator.generate(n_samples=None)
+        self.scaler = StandardScaler().fit(X)
         if self.batch_size > 1:
             return self._fit_batch(generator)
         else:
@@ -77,27 +81,47 @@ class Regressor(BaseModel, BaseNeuralNet):
         return self
 
     def _fit_batch(self, generator):
+        self.hasnan = False
+        self.optimizer.zero_grad()
         for i in range(self.n_steps):
             losses = []
             mse_losses = []
+            msre_sigma_losses = []
             for j in range(self.batch_size):
-                loss, mse = self._forward(generator)
-                losses.append(loss.view(1, 1))
-                mse_losses.append(mse.view(1, 1))
-            loss = torch.mean( torch.cat(losses), 0 )
-            mse  = torch.mean( torch.cat(mse_losses), 0 )
-            self.losses.append(loss.item())
-            self.mse_losses.append(mse.item())
+                loss, mse, msre_sigma = self._forward(generator)
+                losses.append(loss.item())
+                mse_losses.append(mse.item())
+                msre_sigma_losses.append(msre_sigma.item())
+                loss.backward()
 
+            loss = np.mean( losses )
+            mse  = np.mean( mse_losses )
+            msre_sigma  = np.mean( msre_sigma_losses )
+            self.losses.append(loss)
+            self.mse_losses.append(mse)
+            self.msre_sigma_losses.append(msre_sigma)
+
+            print(f"---- {i:5d} loss={loss}, mse={mse}, msre_sigma={msre_sigma} ")
             # Backward
-            self.optimizer.zero_grad()
-            loss.backward()
-            self.optimizer.step()
-            self.scheduler.step()
+            if np.isnan(loss.item()):
+                print("="*50)
+                print('/!\\ NaN detected at iter /!\\ ', i)
+                print("="*50)
+                break
+            else:
+                grad_rescale = 1.0/self.batch_size
+                for p in self.net.parameters():
+                    p.grad *= grad_rescale
+                # torch.nn.utils.clip_grad_norm_(self.net.parameters(), 1, norm_type=2)
+                # self.chocolat = [p.grad for p in self.net.parameters()]
+                self.optimizer.step()
+                self.scheduler.step()
+                self.optimizer.zero_grad()
 
     def _forward(self, generator):
-        X, y, w, p = generator.generate(n_samples=self.sample_size)
-        
+        X_0, y, w, p = generator.generate(n_samples=self.sample_size)
+        X = self.scaler.transform(X_0)
+
         X = X.astype(np.float32)
         w = w.astype(np.float32).reshape(-1, 1)
         y = np.array(y).astype(np.float32)
@@ -110,19 +134,27 @@ class Regressor(BaseModel, BaseNeuralNet):
 
         X_out = self.net.forward(X_torch, w_torch, p_torch)
         mu, logsigma = torch.split(X_out, 1, dim=0)
-        loss, mse = self.criterion(mu, y_torch, logsigma)
-        return loss, mse
+        loss, mse, msre_sigma = self.criterion(mu, y_torch, logsigma)
+        if np.abs(mu.item()) > 5 :
+            print(f"target={y.item()}  predict={mu.item()}   mse={mse.item()}")
+            print(f"logsigma={logsigma.item()}  loss={loss.item()} ")
+            print(f"mean={X.mean(axis=0)}  std={X.std(axis=0)}  max={X.max(axis=0)}  min={X.min(axis=0)}  ")
+            print(f"mean={X_0.mean()}  std={X_0.std()}  max={X_0.max()}  min={X_0.min()}  ")
+        return loss, mse, msre_sigma
 
 
     def predict(self, X, w, p=None):
+        X = self.scaler.transform(X)
         X = X.astype(np.float32)
         w = w.astype(np.float32).reshape(-1, 1)
         p = p.astype(np.float32).reshape(1, -1) if p is not None else None
-        X_torch = to_torch(X, cuda=self.cuda_flag)
-        w_torch = to_torch(w, cuda=self.cuda_flag)
-        p_torch = to_torch(p, cuda=self.cuda_flag) if p is not None else None
-        X_out = self.net.forward(X_torch, w_torch, p_torch)
-        mu, logsigma = torch.split(X_out, 1, dim=0)
+
+        with torch.no_grad():
+            X_torch = to_torch(X, cuda=self.cuda_flag)
+            w_torch = to_torch(w, cuda=self.cuda_flag)
+            p_torch = to_torch(p, cuda=self.cuda_flag) if p is not None else None
+            X_out = self.net.forward(X_torch, w_torch, p_torch)
+            mu, logsigma = torch.split(X_out, 1, dim=0)
         mu = mu.item()
         sigma = np.exp(logsigma.item())
         return mu, sigma
