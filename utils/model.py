@@ -103,6 +103,24 @@ def train_or_load_classifier(model, train_generator, parameters, n_samples, retr
         save_model(model)
 
 
+def train_or_load_neural_net(model, train_generator, retrain=True):
+    logger = logging.getLogger()
+    if not retrain:
+        try:
+            logger.info('loading from {}'.format(model.path))
+            model.load(model.path)
+        except Exception as e:
+            logger.warning(e)
+            retrain = True
+    if retrain:
+        logger.info('Training {}'.format(model.get_name()))
+        model.fit(train_generator)
+        logger.info('Training DONE')
+
+        # SAVE MODEL
+        save_model(model)
+
+
 def train_or_load_inferno(model, train_generator, retrain=True):
     logger = logging.getLogger()
     if not retrain:

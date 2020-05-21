@@ -116,6 +116,7 @@ def evaluate_neural_net(model, prefix='', suffix=''):
 
     losses = model.get_losses()
     plot_losses(losses, title=model.full_name, directory=directory)
+    plot_losses(losses, log=True, title=model.full_name, directory=directory, fname=f"log_losses.png")
     for loss_name, loss_values in losses.items():
         plot_losses({loss_name: loss_values}, title=model.full_name, directory=directory, fname=f"{loss_name}.png")
     results = {loss_name: loss_values[-1] for loss_name, loss_values in losses.items() if loss_values}
