@@ -36,6 +36,7 @@ def n_activation_factory(*activations, dim=-1):
     return n_activation
 
 relu_tanh = n_activation_factory(torch.relu, torch.tanh)
+relu6_tanh = n_activation_factory(torch.nn.functional.relu6, torch.tanh)
 elu_tanh = n_activation_factory(F.elu, torch.tanh)
 
 

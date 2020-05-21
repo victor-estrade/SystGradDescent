@@ -18,6 +18,14 @@ class BaseArchi(nn.Module):
         self.name = "{}x{:d}".format(self.__class__.__name__, n_unit)
 
 
+"""
+Fix residual net initialization
+https://openreview.net/forum?id=H1gsz30cKX
+
+Or use batch norm ?
+
+"""
+
 class F6(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_unit=80):
         super().__init__(n_unit)
@@ -96,35 +104,34 @@ class RegNet(BaseArchi):
 
 
 class RegNetExtra(BaseArchi):
-    def __init__(self, n_in=1, n_out=1, n_extra=0):
-        N_UNITS = 80
-        super().__init__(N_UNITS)
-        self.avg1 = layers.AverageExtra(n_in, N_UNITS, n_extra)
-        self.avg2 = layers.Average(N_UNITS, N_UNITS)
-        self.avg3 = layers.Average(N_UNITS, N_UNITS)
+    def __init__(self, n_in=1, n_out=1, n_extra=0, n_unit=80):
+        super().__init__(n_unit)
+        self.avg1 = layers.AverageExtra(n_in, n_unit, n_extra)
+        self.avg2 = layers.Average(n_unit, n_unit)
+        self.avg3 = layers.Average(n_unit, n_unit)
 
-        self.fc1 = nn.Linear(N_UNITS, N_UNITS)
-        self.fc2 = nn.Linear(N_UNITS, N_UNITS)
-        self.fc3 = nn.Linear(N_UNITS*2, N_UNITS)
-        self.fc_out = nn.Linear(N_UNITS, n_out)
+        self.fc1 = nn.Linear(n_unit, n_unit)
+        self.fc2 = nn.Linear(n_unit, n_unit)
+        self.fc3 = nn.Linear(n_unit*2, n_unit)
+        self.fc_out = nn.Linear(n_unit, n_out)
         
     def forward(self, x, w, p):
         x = self.avg1(x, w, p)
-        x = torch.relu(x)
+        x = torch.nn.functional.relu6(x)
         # x = self.fc1(x)
         # x = torch.softmax(x, 1)
         x = self.avg2(x, w)
-        x = torch.relu(x)
+        x = torch.nn.functional.relu6(x)
 
         x_ = self.fc2(x)
         x_ = torch.softmax(x_, 1)
         x_ = self.avg3(x_, w)
-        x_ = torch.relu(x_)
+        x_ = torch.nn.functional.relu6(x_)
         x = torch.cat((x, x_), 1)
 
         x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
         x = self.fc3(x)
-        x = torch.relu(x)
+        x = torch.nn.functional.relu6(x)
 
         x = self.fc_out(x)
         return x
@@ -187,7 +194,7 @@ class AR5R5(BaseArchi):
         x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
         x = self.res3(x)
         x = self.res4(x)
-        x = layers.relu_tanh(x)
+        x = layers.relu6_tanh(x)
         x = self.fc_out(x)
         return x
 
@@ -218,7 +225,7 @@ class AR5R5E(BaseArchi):
         x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
         x = self.res3(x)
         x = self.res4(x)
-        x = layers.relu_tanh(x)
+        x = layers.relu6_tanh(x)
         x = self.fc_out(x)
         return x
 

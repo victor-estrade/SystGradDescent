@@ -15,7 +15,7 @@ def softmax_cat(x_, x):
     x = torch.cat((x, x_), 1)
     return x
 
-DEFAULT_ACTIVATION = layers.relu_tanh
+DEFAULT_ACTIVATION = layers.relu6_tanh
 
 class ResidualBlock(nn.Module):
     __constants__ = ['n_in', 'n_middle', 'bias', 'activation']
