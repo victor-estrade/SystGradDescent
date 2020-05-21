@@ -36,7 +36,7 @@ def plot_summaries(b_histogram, s_histogram, n_histogram,
         logger.warning(str(e))
 
 
-def plot_param_around_min(param_array, nll_array, true_value, param_name, suffix='', directory=DEFAULT_DIR):
+def plot_param_around_min(param_array, nll_array, true_value, param_name, suffix='', directory=DEFAULT_DIR, title=None):
     logger = logging.getLogger()
     try:
         plt.plot(param_array, nll_array, label=f'NLL {param_name}')
@@ -45,7 +45,8 @@ def plot_param_around_min(param_array, nll_array, true_value, param_name, suffix
         plt.axvline(x=vmin, c='orange', label='min')
         plt.xlabel(param_name)
         plt.ylabel('nll')
-        plt.title(f'{param_name} ({suffix[1:]}) NLL around minimum')
+        title = f'{param_name} ({suffix[1:]}) NLL around minimum' if title is None else title
+        plt.title(title)
         plt.legend()
         plt.savefig(os.path.join(directory, f'NLL_{param_name}{suffix}.png'))
         plt.clf()
