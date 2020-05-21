@@ -15,4 +15,5 @@ class GaussNLLLoss(nn.Module):
         loss = logsigma + 0.5 * (error_sigma * error_sigma)
         mean_loss = torch.mean(loss)
         mse = torch.mean( error * error )
-        return mean_loss, mse
+        msre_sigma = torch.mean(error_sigma)
+        return mean_loss, mse, msre_sigma
