@@ -15,14 +15,16 @@ import seaborn as sns
 from config import DEFAULT_DIR
 
 
-def plot_losses(losses, title='no title', directory=DEFAULT_DIR, fname='losses.png'):
+def plot_losses(losses, log=False, title='no title', directory=DEFAULT_DIR, fname='losses.png'):
     logger = logging.getLogger()
     try:
-        for name, values in losses:
+        for name, values in losses.items():
             plt.plot(values, label=name)
         plt.title(title)
         plt.xlabel('# iter')
         plt.ylabel('Loss/MSE')
+        if log:
+            plt.yscale('log')
         plt.legend()
         plt.savefig(os.path.join(directory, fname))
         plt.clf()
