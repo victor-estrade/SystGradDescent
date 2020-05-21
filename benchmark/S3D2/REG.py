@@ -10,26 +10,27 @@ from __future__ import unicode_literals
 
 import os
 import logging
-import config
+from config import SEED
 
 import numpy as np
 import pandas as pd
 
-from utils.plot import set_plot_config
+from visual.misc import set_plot_config
 set_plot_config()
+
 from utils.log import set_logger
 from utils.log import flush
 from utils.log import print_line
 from utils.model import get_model
 from utils.model import get_optimizer
 from utils.model import save_model
-from utils.plot import plot_REG_losses
-from utils.plot import plot_REG_log_mse
-from utils.plot import plot_params
+from utils.evaluation import evaluate_regressor
+from utils.evaluation import evaluate_estimator
 from utils.images import gather_images
+
 from config import _ERROR
 from config import _TRUTH
-from utils.evaluation import evaluate_estimator
+from visual.misc import plot_params
 
 from problem.synthetic3D import S3D2
 from problem.synthetic3D import S3D2Config
