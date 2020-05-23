@@ -24,6 +24,19 @@ https://openreview.net/forum?id=H1gsz30cKX
 
 Or use batch norm ?
 
+---
+
+Note :
+
+E = Extra input
+L = Linear
+A = Average layer
+S = Sum layer
+M = Mean operation
+R = Residual block
+AR = Average Residual block
+
+
 """
 
 class F6(BaseArchi):
