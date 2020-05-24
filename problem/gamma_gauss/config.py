@@ -15,6 +15,7 @@ class GGConfig():
                         mix=np.linspace(0.1, 0.9, 4))
 
     PARAM_NAMES = TRUE._fields
+    INTEREST_PARAM_NAME = 'mix'
 
     N_TRAINING_SAMPLES = 2000
     N_VALIDATION_SAMPLES = 2000
