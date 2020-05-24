@@ -88,7 +88,7 @@ def run(args, i_cv):
     seed = SEED + i_cv * 5
     train_generator = Generator(seed)
     valid_generator = Generator(seed+1)
-    # test_generator  = Generator(seed+2)
+    test_generator  = Generator(seed+2)
 
     # SET MODEL
     logger.info('Set up classifier')
@@ -108,7 +108,7 @@ def run(args, i_cv):
     # MEASUREMENT
     N_BINS = 10
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
-    result_table = [run_iter(model, result_row, i, test_config, seed, n_bins=10)
+    result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=10)
                     for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
     result_table.to_csv(os.path.join(model.path, 'results.csv'))
@@ -121,15 +121,13 @@ def run(args, i_cv):
     return result_table
 
 
-def run_iter(model, result_row, i_iter, config, seed, n_bins=10):
+def run_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=10):
     logger = logging.getLogger()
     iter_directory = os.path.join(model.path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
     suffix = f'-mu={config.TRUE.mu:1.2f}_r={config.TRUE.r}_lambda={config.TRUE.lam}'
     logger.info('Generate testing data')
-    valid_generator = Generator(seed+1)
-    test_generator  = Generator(seed+2)
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     # PLOT SUMMARIES
     evaluate_summary_computer(model, X_test, y_test, w_test, n_bins=n_bins, prefix='', suffix=suffix)
