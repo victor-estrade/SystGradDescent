@@ -30,11 +30,11 @@ from utils.images import gather_images
 
 from visual.misc import plot_params
 
-from problem.higgs import HiggsConfig
+from problem.higgs import HiggsConfig as Config
 from problem.higgs import get_minimizer
 from problem.higgs import get_generators
 from problem.higgs import Generator
-from problem.higgs import HiggsNLL
+from problem.higgs import HiggsNLL as NLLComputer
 
 from visual.special.higgs import plot_nll_around_min
 
@@ -59,7 +59,7 @@ def main():
     # INFO
     model = get_model(args, GradientBoostingModel)
     model.set_info(BENCHMARK_NAME, -1)
-    config = HiggsConfig()
+    config = Config()
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     results = pd.concat(results, ignore_index=True)
@@ -85,7 +85,7 @@ def run(args, i_cv):
 
     # LOAD/GENERATE DATA
     logger.info('Set up data generator')
-    config = HiggsConfig()
+    config = Config()
     seed = SEED + i_cv * 5
     train_generator, valid_generator, test_generator = get_generators(seed)
 
@@ -134,7 +134,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
 
     logger.info('Set up NLL computer')
     compute_summaries = ClassifierSummaryComputer(model, n_bins=n_bins)
-    compute_nll = HiggsNLL(compute_summaries, valid_generator, X_test, w_test, config=config)
+    compute_nll = NLLComputer(compute_summaries, valid_generator, X_test, w_test, config=config)
     # NLL PLOTS
     plot_nll_around_min(compute_nll, config.TRUE, iter_directory, suffix)
 
