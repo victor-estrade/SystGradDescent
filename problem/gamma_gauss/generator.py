@@ -42,7 +42,7 @@ class Generator():
         n_bkg = n_samples // 2
         n_sig = n_samples // 2
         X, y, w = self._generate(rescale, mix, n_bkg=n_bkg, n_sig=n_sig)
-        return X, y, w
+        return X.reshape(-1, 1), y, w
 
     def _generate(self, rescale, mix, n_bkg=1000, n_sig=50):
         """
