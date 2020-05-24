@@ -30,10 +30,10 @@ from utils.images import gather_images
 
 from visual.misc import plot_params
 
-from problem.synthetic3D import S3D2Config
+from problem.synthetic3D import S3D2Config as Config
 from problem.synthetic3D import get_minimizer
 from problem.synthetic3D import Generator
-from problem.synthetic3D import S3D2NLL
+from problem.synthetic3D import S3D2NLL as NLLComputer
 
 from visual.special.synthetic3D import plot_nll_around_min
 
@@ -58,7 +58,7 @@ def main():
     # INFO
     model = get_model(args, GradientBoostingModel)
     model.set_info(BENCHMARK_NAME, -1)
-    config = S3D2Config()
+    config = Config()
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     results = pd.concat(results, ignore_index=True)
@@ -84,7 +84,7 @@ def run(args, i_cv):
 
     # LOAD/GENERATE DATA
     logger.info('Set up data generator')
-    config = S3D2Config()
+    config = Config()
     seed = SEED + i_cv * 5
     train_generator = Generator(seed)
     valid_generator = Generator(seed+1)
@@ -134,7 +134,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
 
     logger.info('Set up NLL computer')
     compute_summaries = ClassifierSummaryComputer(model, n_bins=n_bins)
-    compute_nll = S3D2NLL(compute_summaries, valid_generator, X_test, w_test)
+    compute_nll = NLLComputer(compute_summaries, valid_generator, X_test, w_test)
     # NLL PLOTS
     plot_nll_around_min(compute_nll, config.TRUE, iter_directory, suffix)
 
