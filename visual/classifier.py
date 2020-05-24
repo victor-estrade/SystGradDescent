@@ -28,6 +28,7 @@ def plot_test_distrib(y_proba, y_test, title="no title",
         plt.savefig(os.path.join(directory, fname))
         plt.clf()
     except Exception as e:
+        plt.clf()
         logger.warning('Plot test distrib failed')
         logger.warning(str(e))
 
@@ -44,6 +45,7 @@ def plot_ROC(fpr, tpr, title="no title", directory=DEFAULT_DIR, fname='roc.png')
         plt.savefig(os.path.join(directory, fname))
         plt.clf()
     except Exception as e:
+        plt.clf()
         logger.warning('Plot ROC failed')
         logger.warning(str(e))
 
