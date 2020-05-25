@@ -21,6 +21,7 @@ from .utils import to_torch
 from .criterion import GaussNLLLoss
 
 from sklearn.preprocessing import StandardScaler
+from sklearn.externals import joblib
 
 class Regressor(BaseModel, BaseNeuralNet):
     def __init__(self, net, optimizer, n_steps=5000, batch_size=20, sample_size=1000, 
@@ -101,7 +102,8 @@ class Regressor(BaseModel, BaseNeuralNet):
             self.mse_losses.append(mse)
             self.msre_sigma_losses.append(msre_sigma)
 
-            print(f"---- {i:5d} loss={loss}, mse={mse}, msre_sigma={msre_sigma} ")
+            if self.verbose:
+                print(f"---- {i:5d} loss={loss}, mse={mse}, msre_sigma={msre_sigma} ")
             # Backward
             if np.isnan(loss.item()):
                 print("="*50)
@@ -133,10 +135,10 @@ class Regressor(BaseModel, BaseNeuralNet):
         p_torch = to_torch(p, cuda=self.cuda_flag) if p is not None else None
 
         X_out = self.net.forward(X_torch, w_torch, p_torch)
-        mu, logsigma = torch.split(X_out, 1, dim=0)
-        loss, mse, msre_sigma = self.criterion(mu, y_torch, logsigma)
-        if np.abs(mu.item()) > 5 :
-            print(f"target={y.item()}  predict={mu.item()}   mse={mse.item()}")
+        target, logsigma = torch.split(X_out, 1, dim=0)
+        loss, mse, msre_sigma = self.criterion(target, y_torch, logsigma)
+        if self.verbose and np.abs(target.item()) > 5 :
+            print(f"target={y.item()}  predict={target.item()}   mse={mse.item()}")
             print(f"logsigma={logsigma.item()}  loss={loss.item()} ")
             print(f"mean={X.mean(axis=0)}  std={X.std(axis=0)}  max={X.max(axis=0)}  min={X.min(axis=0)}  ")
             print(f"mean={X_0.mean()}  std={X_0.std()}  max={X_0.max()}  min={X_0.min()}  ")
@@ -154,15 +156,18 @@ class Regressor(BaseModel, BaseNeuralNet):
             w_torch = to_torch(w, cuda=self.cuda_flag)
             p_torch = to_torch(p, cuda=self.cuda_flag) if p is not None else None
             X_out = self.net.forward(X_torch, w_torch, p_torch)
-            mu, logsigma = torch.split(X_out, 1, dim=0)
-        mu = mu.item()
+            target, logsigma = torch.split(X_out, 1, dim=0)
+        target = target.item()
         sigma = np.exp(logsigma.item())
-        return mu, sigma
+        return target, sigma
 
     def save(self, save_directory):
         super(BaseModel, self).save(save_directory)
         path = os.path.join(save_directory, 'weights.pth')
         torch.save(self.net.state_dict(), path)
+
+        path = os.path.join(save_directory, 'Scaler.pkl')
+        joblib.dump(self.scaler, path)
 
         path = os.path.join(save_directory, 'losses.json')
         losses_to_save = dict(losses=self.losses, mse_losses=self.mse_losses)
@@ -177,6 +182,9 @@ class Regressor(BaseModel, BaseNeuralNet):
             self.net.load_state_dict(torch.load(path))
         else:
             self.net.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage))
+
+        path = os.path.join(save_directory, 'Scaler.pkl')
+        self.scaler = joblib.load(path)
 
         path = os.path.join(save_directory, 'losses.json')
         with open(path, 'r') as f:
