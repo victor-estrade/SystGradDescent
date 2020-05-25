@@ -108,7 +108,7 @@ def run(args, i_cv):
     # MEASUREMENT
     N_BINS = 10
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
-    result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=10)
+    result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=N_BINS)
                     for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
     result_table.to_csv(os.path.join(model.path, 'results.csv'))
