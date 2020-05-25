@@ -164,21 +164,8 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     # CALIBRATION
     # logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) ) 
     # logger.info('lam = {} =vs= {} +/- {}'.format(config.TRUE_LAMBDA, lam_mean, lam_sigma) )
-    result_row['tes'] = config.CALIBRATED.tes
-    result_row['tes'+_ERROR] = config.CALIBRATED_ERROR.tes
-    result_row['tes'+_TRUTH] = config.TRUE.tes
-    result_row['jes'] = config.CALIBRATED.jes
-    result_row['jes'+_ERROR] = config.CALIBRATED_ERROR.jes
-    result_row['jes'+_TRUTH] = config.TRUE.jes
-    result_row['les'] = config.CALIBRATED.les
-    result_row['les'+_ERROR] = config.CALIBRATED_ERROR.les
-    result_row['les'+_TRUTH] = config.TRUE.les
-    result_row['nasty_bkg'] = config.CALIBRATED.nasty_bkg
-    result_row['nasty_bkg'+_ERROR] = config.CALIBRATED_ERROR.nasty_bkg
-    result_row['nasty_bkg'+_TRUTH] = config.TRUE.nasty_bkg
-    result_row['sigma_soft'] = config.CALIBRATED.sigma_soft
-    result_row['sigma_soft'+_ERROR] = config.CALIBRATED_ERROR.sigma_soft
-    result_row['sigma_soft'+_TRUTH] = config.TRUE.sigma_soft
+    
+
     param_sampler = param_generator
 
     # MONTE CARLO
@@ -189,12 +176,20 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     save_monte_carlo(mc_data, iter_directory, ext=suffix)
     target, sigma = monte_carlo_infer(mc_data)
 
+
+    result_row.update(params_to_dict(config.CALIBRATED))
+    result_row.update(params_to_dict(config.CALIBRATED_ERROR, ext=_ERROR ))
+    result_row.update(params_to_dict(config.TRUE, ext=_TRUTH ))
     name = config.INTEREST_PARAM_NAME 
     result_row[name] = target
     result_row[name+_ERROR] = sigma
     result_row[name+_TRUTH] = config.TRUE.mu
     logger.info('mu  = {} =vs= {} +/- {}'.format(config.TRUE.mu, target, sigma) ) 
     return result_row.copy()
+
+
+def params_to_dict(params, ext=""):
+    return {name+ext: value for name, value in zip(params._fields, params)}
 
 if __name__ == '__main__':
     main()
