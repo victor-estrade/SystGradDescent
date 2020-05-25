@@ -10,24 +10,25 @@ from __future__ import unicode_literals
 
 import os
 import logging
-import config
+from config import SEED
+from config import _ERROR
+from config import _TRUTH
 
 import pandas as pd
 
 from utils.log import set_logger
 from utils.log import flush
 from utils.log import print_line
-from utils.plot import plot_REG_losses
-from utils.plot import plot_REG_log_mse
+from utils.evaluation import evaluate_neural_net
+from utils.evaluation import evaluate_regressor
 from utils.plot import plot_params
 from utils.model import get_model
 from utils.model import get_optimizer
 from utils.model import save_model
-from utils.misc import _ERROR
-from utils.misc import _TRUTH
+from utils.model import train_or_load_neural_net
 
-from problem.synthetic3D import S3D2
-from problem.synthetic3D import S3D2Config
+from problem.synthetic3D import S3D2 as Generator
+from problem.synthetic3D import S3D2Config as Config
 from problem.synthetic3D import param_generator
 
 from model.regressor import Regressor
@@ -38,9 +39,10 @@ from ..my_argparser import REG_parse_args
 
 BENCHMARK_NAME = 'S3D2'
 CALIB = "Calib_lam"
+CALIB_PARAM_NAME = "lam"
 
 
-class Generator_lam:
+class TrainGenerator:
     def __init__(self, param_generator, data_generator):
         self.param_generator = param_generator
         self.data_generator = data_generator
@@ -68,56 +70,29 @@ def main():
 
     # Setup data
     logger.info("Setup data")
-    pb_config = S3D2Config()
+    config = Config()
     seed = config.SEED + 99999
-    train_generator = Generator_lam(param_generator, S3D2(seed))
-    valid_generator = S3D2(seed+1)
-    test_generator  = S3D2(seed+2)
+    train_generator = TrainGenerator(param_generator, Generator(seed))
+    valid_generator = Generator(seed+1)
+    test_generator  = Generator(seed+2)
 
-    # TRAIN / LOAD
-    if not args.retrain:
-        try:
-            logger.info('loading from {}'.format(model.path))
-            model.load(model.path)
-        except Exception as e:
-            logger.warning(e)
-            args.retrain = True
-    if args.retrain:
-        logger.info('Training {}'.format(model.get_name()))
-        model.fit(train_generator)
-        logger.info('Training DONE')
-        # SAVE
-        save_model(model)
-    flush(logger)
+    i_cv = -1
+    result_row = {'i_cv': i_cv}
+
+    # TRAINING / LOADING
+    train_or_load_neural_net(model, train_generator, retrain=args.retrain)
 
     # CHECK TRAINING
-    logger.info('Plot losses')
-    plot_REG_losses(model)
-    plot_REG_log_mse(model)
-
-    result_row = {}
-    result_row['loss'] = model.losses[-1]
-    result_row['mse_loss'] = model.mse_losses[-1]
-    result_table = []
-
+    result_row.update(evaluate_neural_net(model, prefix='valid'))
+    evaluate_regressor(model, prefix='valid')
     print_line()
 
-    for lam in pb_config.TRUE_LAMBDA_RANGE:
-        X_test, y_test, w_test = test_generator.generate(
-                                         pb_config.TRUE_R,
-                                         lam,
-                                         pb_config.TRUE_MU,
-                                         n_samples=pb_config.N_TESTING_SAMPLES)
-        target, sigma = model.predict(X_test, w_test)
-        logger.info('{} =vs= {} +/- {}'.format(lam, target, sigma))
 
-        name = "lam"
-        result_row[name] = target
-        result_row[name+_ERROR] = sigma
-        result_row[name+_TRUTH] = lam
-        result_table.append(result_row.copy())
     print_line()
+    result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator)
+                    for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
+    result_table.to_csv(os.path.join(model.path, 'results.csv'))
 
     logger.info('Plot params')
     param_names = ["lam"]
@@ -125,6 +100,26 @@ def main():
         plot_params(name, result_table, title=model.full_name, directory=model.path)
 
     logger.info('DONE')
+
+
+def run_iter(model, result_row, i_iter, config, valid_generator, test_generator):
+    logger = logging.getLogger()
+    logger.info('-'*45)
+    logger.info(f'iter : {i_iter}')
+    X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
+    target, sigma = model.predict(X_test, w_test)
+    logger.info('{} =vs= {} +/- {}'.format(config.TRUE.r, target, sigma))
+
+    result_row.update(params_to_dict(config.TRUE, ext=_TRUTH ))
+    name = CALIB_PARAM_NAME
+    result_row[name] = target
+    result_row[name+_ERROR] = sigma
+    result_row[name+_TRUTH] = config.TRUE.r
+    return result_row.copy()
+
+
+def params_to_dict(params, ext=""):
+    return {name+ext: value for name, value in zip(params._fields, params)}
 
 
 if __name__ == '__main__':
