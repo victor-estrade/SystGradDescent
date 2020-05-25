@@ -39,6 +39,7 @@ class Generator():
         return x, labels
 
     def generate(self, rescale, mix, n_samples=1000):
+        n_samples = 10000 if n_samples is None else n_samples
         n_bkg = n_samples // 2
         n_sig = n_samples // 2
         X, y, w = self._generate(rescale, mix, n_bkg=n_bkg, n_sig=n_sig)

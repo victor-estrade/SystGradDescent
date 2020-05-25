@@ -12,9 +12,9 @@ from .config import GGConfig
 
 def param_generator():
     pb_config = GGConfig()
-    prior_alpha = stats.norm(loc=pb_config.CALIBRATED.alpha, scale=pb_config.CALIBRATED_ERROR.alpha)
+    prior_rescale = stats.truncnorm(0.1, 10, loc=pb_config.CALIBRATED.rescale, scale=pb_config.CALIBRATED_ERROR.rescale)
     prior_mix   = stats.uniform(loc=0, scale=1)
-    alpha = prior_alpha.rvs()
+    rescale = prior_rescale.rvs()
     mix   = prior_mix.rvs()
-    return Parameter(alpha, mix)
+    return Parameter(rescale, mix)
 
