@@ -10,7 +10,7 @@ import argparse
 def GB_parse_args(main_description="Training launcher"):
     parser = argparse.ArgumentParser(description=main_description)
 
-    parser.add_argument("--verbosity", "-v", type=int, choices=[0, 1, 2],
+    parser.add_argument("--verbose", "-v", type=int, choices=[0, 1, 2],
                         default=0, help="increase output verbosity")
 
     # MODEL HYPER PARAMETERS
@@ -36,7 +36,7 @@ def GB_parse_args(main_description="Training launcher"):
 def REG_parse_args(main_description="Training launcher"):
     parser = argparse.ArgumentParser(description=main_description)
 
-    parser.add_argument("--verbosity", "-v", type=int, choices=[0, 1, 2],
+    parser.add_argument("--verbose", "-v", type=int, choices=[0, 1, 2],
                         default=0, help="increase output verbosity")
 
     # MODEL HYPER PARAMETERS
@@ -79,7 +79,7 @@ def REG_parse_args(main_description="Training launcher"):
 def INFERNO_parse_args(main_description="Training launcher"):
     parser = argparse.ArgumentParser(description=main_description)
 
-    parser.add_argument("--verbosity", "-v", type=int, choices=[0, 1, 2],
+    parser.add_argument("--verbose", "-v", type=int, choices=[0, 1, 2],
                         default=0, help="increase output verbosity")
 
     # MODEL HYPER PARAMETERS
@@ -122,7 +122,7 @@ def INFERNO_parse_args(main_description="Training launcher"):
 def NET_parse_args(main_description="Training launcher"):
     parser = argparse.ArgumentParser(description=main_description)
 
-    parser.add_argument("--verbosity", "-v", type=int, choices=[0, 1, 2],
+    parser.add_argument("--verbose", "-v", type=int, choices=[0, 1, 2],
                         default=0, help="increase output verbosity")
 
     # MODEL HYPER PARAMETERS
