@@ -47,17 +47,17 @@ class A3ML3(BaseArchi):
 
     def forward(self, x, w, p=None):
         x = self.avg_in(x, w)
-        x = torch.relu6(x)
+        x = layers.relu6_tanh(x)
         x = self.avg1(x, w)
-        x = torch.relu6(x)
+        x = layers.relu6_tanh(x)
         x = self.avg2(x, w)
 
         x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
-        x = torch.relu6(x)
+        x = layers.relu6_tanh(x)
         x = self.fc3(x)
-        x = torch.relu6(x)
+        x = layers.relu6_tanh(x)
         x = self.fc4(x)
-        x = torch.relu6(x)
+        x = layers.relu6_tanh(x)
         x = self.fc_out(x)
         return x
 
@@ -82,17 +82,17 @@ class EA3ML3(BaseArchi):
 
     def forward(self, x, w, p):
         x = self.avg_in(x, w, p)
-        x = torch.relu6(x)
+        x = layers.relu6_tanh(x)
         x = self.avg1(x, w)
-        x = torch.relu6(x)
+        x = layers.relu6_tanh(x)
         x = self.avg2(x, w)
 
         x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
-        x = torch.relu6(x)
+        x = layers.relu6_tanh(x)
         x = self.fc3(x)
-        x = torch.relu6(x)
+        x = layers.relu6_tanh(x)
         x = self.fc4(x)
-        x = torch.relu6(x)
+        x = layers.relu6_tanh(x)
         x = self.fc_out(x)
         return x
 
