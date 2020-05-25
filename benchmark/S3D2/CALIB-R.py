@@ -10,7 +10,7 @@ from __future__ import unicode_literals
 
 import os
 import logging
-import config
+from config import SEED
 
 import pandas as pd
 
@@ -68,8 +68,8 @@ def main():
 
     # Setup data
     logger.info("Setup data")
-    pb_config = S3D2Config()
-    seed = config.SEED + 99999
+    config = S3D2Config()
+    seed = SEED + 99999
     train_generator = Generator_r(param_generator, S3D2(seed))
     valid_generator = S3D2(seed+1)
     test_generator  = S3D2(seed+2)
@@ -102,22 +102,10 @@ def main():
 
     print_line()
 
-    for r in pb_config.TRUE_R_RANGE:
-        X_test, y_test, w_test = test_generator.generate(
-                                         r,
-                                         pb_config.TRUE_LAMBDA,
-                                         pb_config.TRUE_MU,
-                                         n_samples=pb_config.N_TESTING_SAMPLES)
-        target, sigma = model.predict(X_test, w_test)
-        logger.info('{} =vs= {} +/- {}'.format(r, target, sigma))
-
-        name = "r"
-        result_row[name] = target
-        result_row[name+_ERROR] = sigma
-        result_row[name+_TRUTH] = r
-        result_table.append(result_row.copy())
-    print_line()
+    result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator)
+                    for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
+    result_table.to_csv(os.path.join(model.path, 'results.csv'))
 
     logger.info('Plot params')
     param_names = ["r"]
@@ -125,6 +113,21 @@ def main():
         plot_params(name, result_table, title=model.full_name, directory=model.path)
 
     logger.info('DONE')
+
+
+def run_iter(model, result_row, i_iter, config, valid_generator, test_generator):
+    logger = logging.getLogger()
+    logger.info('-'*45)
+    logger.info(f'iter : {i_iter}')
+    X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
+    target, sigma = model.predict(X_test, w_test)
+    logger.info('{} =vs= {} +/- {}'.format(config.TRUE.r, target, sigma))
+
+    name = "r"
+    result_row[name] = target
+    result_row[name+_ERROR] = sigma
+    result_row[name+_TRUTH] = config.TRUE.r
+    return result_row.copy()
 
 
 if __name__ == '__main__':
