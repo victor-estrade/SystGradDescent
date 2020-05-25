@@ -11,6 +11,9 @@ from __future__ import unicode_literals
 import os
 import logging
 from config import SEED
+from config import _ERROR
+from config import _TRUTH
+
 
 import pandas as pd
 
@@ -19,14 +22,9 @@ from utils.log import flush
 from utils.log import print_line
 from utils.evaluation import evaluate_neural_net
 from utils.evaluation import evaluate_regressor
-from utils.evaluation import evaluate_estimator
-from utils.images import gather_images
 from utils.model import get_model
 from utils.model import get_optimizer
-from utils.model import save_model
-
-from config import _ERROR
-from config import _TRUTH
+from utils.model import train_or_load_neural_net
 
 from visual.misc import plot_params
 
@@ -42,6 +40,7 @@ from ..my_argparser import REG_parse_args
 
 BENCHMARK_NAME = 'GG'
 CALIB = "Calib_rescale"
+CALIB_PARAM_NAME = "rescale"
 
 
 class TainGenerator:
@@ -81,24 +80,12 @@ def main():
     i_cv = -1
     result_row = {'i_cv': i_cv}
 
-    # TRAIN / LOAD
-    if not args.retrain:
-        try:
-            logger.info('loading from {}'.format(model.path))
-            model.load(model.path)
-        except Exception as e:
-            logger.warning(e)
-            args.retrain = True
-    if args.retrain:
-        logger.info('Training {}'.format(model.get_name()))
-        model.fit(train_generator)
-        logger.info('Training DONE')
-        # SAVE
-        save_model(model)
-    flush(logger)
+    # TRAINING / LOADING
+    train_or_load_neural_net(model, train_generator, retrain=args.retrain)
 
     # CHECK TRAINING
     result_row.update(evaluate_neural_net(model, prefix='valid'))
+    evaluate_regressor(model, prefix='valid')
     print_line()
 
 
@@ -108,7 +95,7 @@ def main():
     result_table.to_csv(os.path.join(model.path, 'results.csv'))
 
     logger.info('Plot params')
-    param_names = ["r"]
+    param_names = [CALIB_PARAM_NAME]
     for name in param_names:
         plot_params(name, result_table, title=model.full_name, directory=model.path)
 
@@ -123,11 +110,15 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     target, sigma = model.predict(X_test, w_test)
     logger.info('{} =vs= {} +/- {}'.format(config.TRUE.rescale, target, sigma))
 
-    name = "r"
+    result_row.update(params_to_dict(config.TRUE, ext=_TRUTH ))
+    name = CALIB_PARAM_NAME
     result_row[name] = target
     result_row[name+_ERROR] = sigma
-    result_row[name+_TRUTH] = config.TRUE.r
     return result_row.copy()
+
+
+def params_to_dict(params, ext=""):
+    return {name+ext: value for name, value in zip(params._fields, params)}
 
 
 if __name__ == '__main__':
