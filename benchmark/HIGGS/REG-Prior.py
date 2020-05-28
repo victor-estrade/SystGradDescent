@@ -163,7 +163,11 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     # CALIBRATION
     # logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) ) 
     # logger.info('lam = {} =vs= {} +/- {}'.format(config.TRUE_LAMBDA, lam_mean, lam_sigma) )
-    
+
+    # CHEATER :
+    cheat_target, cheat_sigma = model.predict(X_test, w_test, np.array(config.TRUE.nuisance_parameters))
+    result_row['cheat_mu'] = cheat_target
+    result_row['cheat_sigma_mu'] = cheat_sigma
 
     param_sampler = param_generator
 
