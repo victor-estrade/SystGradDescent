@@ -45,10 +45,9 @@ from model.monte_carlo import monte_carlo_data
 from model.monte_carlo import monte_carlo_infer
 from model.monte_carlo import save_monte_carlo
 
-# from archi.net import RegNetExtra  as ARCHI
-# from archi.net import AR19R5E as ARCHI
-from archi.net import AR5R5E as ARCHI
-# from archi.net import AR5R5 as CALIB_ARCHI
+# from archi.reducer import EA3ML3 as ARCHI
+from archi.reducer import EA1AR8MR8L1 as ARCHI
+# from archi.reducer import AR5R5 as CALIB_ARCHI
 
 from ..my_argparser import REG_parse_args
 
