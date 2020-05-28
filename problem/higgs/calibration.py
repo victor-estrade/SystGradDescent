@@ -20,6 +20,25 @@ def param_generator(config=HiggsConfig()):
     offset = - config.CALIBRATED.les / config.CALIBRATED_ERROR.les
     prior_les = stats.truncnorm(offset, 10, loc=config.CALIBRATED.les, scale=config.CALIBRATED_ERROR.les)
 
+
+    tes = prior_tes.rvs()
+    jes = prior_jes.rvs()
+    les = prior_les.rvs()
+    mu = np.random.uniform(config.MIN.mu, config.MAX.mu)
+    return Parameter(tes, jes, les, mu)
+
+
+
+def futur_param_generator(config=HiggsConfig()):
+    offset = - config.CALIBRATED.tes / config.CALIBRATED_ERROR.tes
+    prior_tes = stats.truncnorm(offset, 10, loc=config.CALIBRATED.tes, scale=config.CALIBRATED_ERROR.tes)
+
+    offset = - config.CALIBRATED.jes / config.CALIBRATED_ERROR.jes
+    prior_jes = stats.truncnorm(offset, 10, loc=config.CALIBRATED.jes, scale=config.CALIBRATED_ERROR.jes)
+
+    offset = - config.CALIBRATED.les / config.CALIBRATED_ERROR.les
+    prior_les = stats.truncnorm(offset, 10, loc=config.CALIBRATED.les, scale=config.CALIBRATED_ERROR.les)
+
     offset = - config.CALIBRATED.nasty_bkg / config.CALIBRATED_ERROR.nasty_bkg
     prior_nasty_bkg = stats.truncnorm(offset, 10, loc=config.CALIBRATED.nasty_bkg, scale=config.CALIBRATED_ERROR.nasty_bkg)
 

@@ -661,8 +661,60 @@ def cut_tau_pt(data, cut_threshold=22.0):
     return data_cut
 
 
+def syst_effect(data, tes=1.0, jes=1.0, les=1.0, missing_value=0.0):
+    """
+    Manipulate primaries input and recompute the others values accordingly.
 
-def syst_effect(data, tes=1.0, jes=1.0, les=1.0, sigma_met=3.0, missing_value=0.0):
+    Args
+    ----
+        data: the dataset should be a OrderedDict like object.
+            This function will modify the given data inplace.
+        tes : the tau energy factor applied : PRI_tau_pt <-- PRI_tau_pt * scale
+        jes : the jet energy factor applied : PRI_jet_pt <-- PRI_jet_pt * scale
+        les : the lep energy factor applied : PRI_lep_pt <-- PRI_lep_pt * scale
+        missing_value : (default=0.0) the value used to code missing value.
+            This is not used to find missing values but to write them in feature column that have some.
+
+    """
+    vtau_original = V4_tau(data) # tau 4-vector
+    vj1_original = V4_leading_jet(data) # first jet if it exists
+    vj2_original = V4_subleading_jet(data) # second jet if it exists
+    vlep_original = V4_lep(data) # lepton 4-vector
+
+    # scale tau energy scale, arbitrary but reasonable value
+    data["PRI_tau_pt"] *= tes
+    # scale jet energy, arbitrary but reasonable value
+    data["PRI_jet_leading_pt"] *= jes
+    data["PRI_jet_subleading_pt"] *= jes
+    data["PRI_jet_all_pt"] *= jes
+    # scale jet energy, arbitrary but reasonable value
+    data["PRI_lep_pt"] *= les
+
+    # build new 4-vectors
+    vtau = V4_tau(data) # tau 4-vector
+    vlep = V4_lep(data) # lepton 4-vector
+    vmet = V4_met(data) # met 4-vector
+    vj1 = V4_leading_jet(data) # first jet if it exists
+    vj2 = V4_subleading_jet(data) # second jet if it exists
+
+    # fix MET according to tau pt change
+    vtau_original.scaleFixedM( tes - 1.0 )
+    vmet -= vtau_original
+    # fix MET according to jet pt change
+    vj1_original.scaleFixedM( jes - 1.0 )
+    vj2_original.scaleFixedM( jes - 1.0 )
+    vmet -= vj1_original + vj2_original
+    # fix MET according to jet pt change
+    vlep_original.scaleFixedM( les - 1.0 )
+    vmet -= vlep_original
+    # Fix MET pz to 0 and update e accordingly
+    vmet.pz = 0.
+    vmet.e = vmet.eWithM(0.)
+
+    update_all(data, vj1, vj2, vlep, vmet, vtau, missing_value)
+
+
+def futur_syst_effect(data, tes=1.0, jes=1.0, les=1.0, sigma_met=3.0, missing_value=0.0):
     """
     Manipulate primaries input and recompute the others values accordingly.
 
@@ -713,18 +765,15 @@ def syst_effect(data, tes=1.0, jes=1.0, les=1.0, sigma_met=3.0, missing_value=0.
     vmet.pz = 0.
     vmet.e = vmet.eWithM(0.)
 
-    # TODO : reactivate soft term syst effect
-    # if sigma_met is not None:
-    if False:
-        # Compute the missing v4 vector
-        random_state = np.random.RandomState(seed=config.RANDOM_STATE)
-        SIZE = data.shape[0]
-        v4_soft_term = V4()
-        v4_soft_term.px = random_state.normal(0, sigma_met, size=SIZE)
-        v4_soft_term.py = random_state.normal(0, sigma_met, size=SIZE)
-        v4_soft_term.pz = np.zeros(SIZE)
-        v4_soft_term.e = v4_soft_term.eWithM(0.)
-        # fix MET according to soft term
-        vmet = vmet + v4_soft_term
+    # Compute the missing v4 vector
+    random_state = np.random.RandomState(seed=config.RANDOM_STATE)
+    SIZE = data.shape[0]
+    v4_soft_term = V4()
+    v4_soft_term.px = random_state.normal(0, sigma_met, size=SIZE)
+    v4_soft_term.py = random_state.normal(0, sigma_met, size=SIZE)
+    v4_soft_term.pz = np.zeros(SIZE)
+    v4_soft_term.e = v4_soft_term.eWithM(0.)
+    # fix MET according to soft term
+    vmet = vmet + v4_soft_term
 
     update_all(data, vj1, vj2, vlep, vmet, vtau, missing_value)

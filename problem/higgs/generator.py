@@ -59,6 +59,56 @@ class Generator():
     def _restart(self):
         self.random.shuffle(self.indexes)
         self.i = 0
+
+    def sample(self, n_samples):
+        assert n_samples > 0, 'n_samples must be > 0'
+        blocs = []
+        remains = self.size - self.i
+        while n_samples > remains:
+            excerpt = self.data.iloc[self.indexes[self.i:]]
+            blocs.append(excerpt)
+            n_samples -= remains
+            self._restart()
+            remains = self.size - self.i
+        if n_samples > 0:
+            excerpt = self.data.iloc[self.indexes[self.i:self.i+n_samples]]
+            blocs.append(excerpt)
+            self.i += n_samples
+        data_sample = blocs[0] if len(blocs) == 1 else pd.concat(blocs, axis=0)
+        return data_sample
+
+
+    def generate(self, tau_es, jet_es, lep_es, mu, n_samples=None):
+        if n_samples is None:
+            data = self.data.copy()
+        else:
+            data = self.sample(n_samples).copy()
+        syst_effect(data, tes=tau_es, jes=jet_es, les=lep_es, missing_value=0.0)
+        normalize_weight(data)
+        mu_reweighting(data, mu)
+        X, y, w = split_data_label_weights(data)
+        return X.values, y.values, w.values
+
+
+
+class FuturGenerator():
+    def __init__(self, data, seed=None):
+        self.data = data
+        self.seed = seed
+        self.random = np.random.RandomState(seed=seed)
+        self.size = data.shape[0]
+        self.indexes = np.arange(self.size)
+        self.random.shuffle(self.indexes)
+        self.i = 0
+
+    def reset(self):
+        self.random = np.random.RandomState(seed=self.seed)
+        self.indexes = np.arange(self.size)
+        self._restart()
+
+    def _restart(self):
+        self.random.shuffle(self.indexes)
+        self.i = 0
     
     def sample(self, n_samples):
         assert n_samples > 0, 'n_samples must be > 0'
