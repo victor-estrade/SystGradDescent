@@ -33,7 +33,7 @@ from problem.synthetic3D import param_generator
 
 from model.regressor import Regressor
 
-from archi.reducer import EA3ML3 as ARCHI
+from archi.reducer import A3ML3 as ARCHI
 # from archi.net import AR9R9 as ARCHI
 
 from ..my_argparser import REG_parse_args
