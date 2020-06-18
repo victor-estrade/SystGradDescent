@@ -49,6 +49,7 @@ class TrainGenerator:
         self.data_generator = data_generator
 
     def generate(self, n_samples):
+        n_samples = Config().N_TRAINING_SAMPLES if n_samples is None else n_samples
         r, lam, mu = self.param_generator()
         X, y, w = self.data_generator.generate(r, lam, mu, n_samples)
         return X, r, w, None
