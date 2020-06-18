@@ -117,7 +117,6 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     name = CALIB_PARAM_NAME
     result_row[name] = target
     result_row[name+_ERROR] = sigma
-    result_row[name+_TRUTH] = config.TRUE.lam
     return result_row.copy()
 
 
