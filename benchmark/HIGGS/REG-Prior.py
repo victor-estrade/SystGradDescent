@@ -34,7 +34,7 @@ from config import _TRUTH
 
 from visual.misc import plot_params
 
-from problem.higgs import HiggsConfig
+from problem.higgs import HiggsConfig as Config
 from problem.higgs import get_generators
 from problem.higgs import Generator
 from problem.higgs import param_generator
@@ -63,11 +63,12 @@ class TrainGenerator:
 
     def generate(self, n_samples):
         if n_samples is not None:
-            tes, jes, les, nasty_bkg, sigma_soft, mu = self.param_generator()
-            X, y, w = self.data_generator.generate(tes, jes, les, nasty_bkg, sigma_soft, mu, n_samples)
-            return X, mu, w, (tes, jes, les, nasty_bkg, sigma_soft)
+            params = self.param_generator()
+            X, y, w = self.data_generator.generate(*params, n_samples)
+            return X, params.interest_parameters, w, params.nuisance_parameters
         else:
-            X, y, w = self.data_generator.generate(1, 1, 1, 1, None, 1, n_samples=None)
+            config = Config()
+            X, y, w = self.data_generator.generate(*config.CALIBRATED, n_samples=config.N_TRAINING_SAMPLES)
             return X, y, w, 1
 
 
