@@ -34,7 +34,7 @@ from config import _TRUTH
 
 from visual.misc import plot_params
 
-from problem.higgs import HiggsConfig
+from problem.higgs import HiggsConfig as Config
 from problem.higgs import get_generators
 from problem.higgs import Generator
 from problem.higgs import param_generator
@@ -80,7 +80,7 @@ def main():
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(BENCHMARK_NAME, -1)
-    config = HiggsConfig()
+    config = Config()
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     results = pd.concat(results, ignore_index=True)
@@ -106,7 +106,7 @@ def run(args, i_cv):
 
     # LOAD/GENERATE DATA
     logger.info('Set up data generator')
-    config = HiggsConfig()
+    config = Config()
     seed = SEED + i_cv * 5
     train_generator, valid_generator, test_generator = get_generators(seed)
     train_generator = TrainGenerator(param_generator, train_generator)
