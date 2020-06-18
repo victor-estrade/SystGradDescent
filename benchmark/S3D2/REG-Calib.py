@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line : 
-# python -m benchmark.S3D2.REG
+# python -m benchmark.S3D2.REG-Calib
 
 import os
 import logging
@@ -47,11 +47,12 @@ from model.monte_carlo import save_monte_carlo
 
 from archi.reducer import EA3ML3 as ARCHI
 # from archi.reducer import EA1AR8MR8L1 as ARCHI
-from archi.net import AR5R5 as CALIB_ARCHI
+from archi.reducer import EA3ML3 as CALIB_ARCHI
+# from archi.net import AR5R5 as CALIB_ARCHI
 
 from ..my_argparser import REG_parse_args
 
-BENCHMARK_NAME = 'S3D2'
+BENCHMARK_NAME = 'S3D2-Calib'
 CALIB_R = "Calib_r"
 CALIB_LAM = "Calib_lam"
 N_ITER = 9

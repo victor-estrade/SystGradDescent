@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line : 
-# python -m benchmark.S3D2.CALIB-R
+# python -m benchmark.S3D2.CALIB-LAM
 
 import os
 import logging
@@ -21,11 +21,11 @@ from utils.log import flush
 from utils.log import print_line
 from utils.evaluation import evaluate_neural_net
 from utils.evaluation import evaluate_regressor
-from utils.plot import plot_params
 from utils.model import get_model
 from utils.model import get_optimizer
-from utils.model import save_model
 from utils.model import train_or_load_neural_net
+
+from visual.misc import plot_params
 
 from problem.synthetic3D import S3D2 as Generator
 from problem.synthetic3D import S3D2Config as Config
@@ -33,11 +33,12 @@ from problem.synthetic3D import param_generator
 
 from model.regressor import Regressor
 
-from archi.net import AR9R9 as ARCHI
+from archi.reducer import EA3ML3 as ARCHI
+# from archi.net import AR9R9 as ARCHI
 
 from ..my_argparser import REG_parse_args
 
-BENCHMARK_NAME = 'S3D2'
+BENCHMARK_NAME = 'S3D2-Calib'
 CALIB = "Calib_lam"
 CALIB_PARAM_NAME = "lam"
 
@@ -71,7 +72,7 @@ def main():
     # Setup data
     logger.info("Setup data")
     config = Config()
-    seed = config.SEED + 99999
+    seed = SEED + 99999
     train_generator = TrainGenerator(param_generator, Generator(seed))
     valid_generator = Generator(seed+1)
     test_generator  = Generator(seed+2)
