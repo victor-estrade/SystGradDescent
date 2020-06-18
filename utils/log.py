@@ -29,9 +29,9 @@ def print_line(symbol='='):
 
 def print_params(param, params_truth):
     logger = logging.getLogger()
-    logger.debug('[param_name] = [truth] vs  [value]  +/-  [error]')
+    logger.info('[param_name] = [truth] vs  [value]  +/-  [error]')
     for p, truth in zip(param, params_truth):
         name  = p['name']
         value = p['value']
         error = p['error']
-        logger.debug('{name:4} = {truth} vs {value} +/- {error}'.format(**locals()))
+        logger.info('{name:4} = {truth} vs {value} +/- {error}'.format(**locals()))
