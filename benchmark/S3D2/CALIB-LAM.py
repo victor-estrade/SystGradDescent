@@ -33,7 +33,8 @@ from problem.synthetic3D import param_generator
 
 from model.regressor import Regressor
 
-from archi.reducer import A3ML3 as ARCHI
+# from archi.reducer import A3ML3 as ARCHI
+from archi.reducer import A1AR8MR8L1 as ARCHI
 # from archi.net import AR9R9 as ARCHI
 
 from ..my_argparser import REG_parse_args
@@ -110,13 +111,13 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     logger.info(f'iter : {i_iter}')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     target, sigma = model.predict(X_test, w_test)
-    logger.info('{} =vs= {} +/- {}'.format(config.TRUE.r, target, sigma))
+    logger.info('{} =vs= {} +/- {}'.format(config.TRUE.lam, target, sigma))
 
     result_row.update(params_to_dict(config.TRUE, ext=_TRUTH ))
     name = CALIB_PARAM_NAME
     result_row[name] = target
     result_row[name+_ERROR] = sigma
-    result_row[name+_TRUTH] = config.TRUE.r
+    result_row[name+_TRUTH] = config.TRUE.lam
     return result_row.copy()
 
 
