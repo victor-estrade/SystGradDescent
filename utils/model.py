@@ -121,6 +121,26 @@ def train_or_load_neural_net(model, train_generator, retrain=True):
         save_model(model)
 
 
+def train_or_load_clf_regressor(model, train_generator, retrain=True):
+    logger = logging.getLogger()
+    if not retrain:
+        try:
+            logger.info('loading from {}'.format(model.path))
+            model.load(model.path)
+        except Exception as e:
+            logger.warning(e)
+            retrain = True
+    if retrain:
+        logger.info('Training {}'.format(model.get_name()))
+        X, y = train_generator.clf_generate()
+        model.fit_clf(X, y)
+        model.fit(train_generator)
+        logger.info('Training DONE')
+
+        # SAVE MODEL
+        save_model(model)
+
+
 def train_or_load_inferno(model, train_generator, retrain=True):
     logger = logging.getLogger()
     if not retrain:
