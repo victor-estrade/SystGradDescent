@@ -31,7 +31,7 @@ from visual.special.synthetic3D import plot_nll_around_min
 
 
 # SEED = None
-BENCHMARK_NAME = "S3D2"
+BENCHMARK_NAME = "S3D2-prior"
 DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "Likelihood")
 N_ITER = 9
 

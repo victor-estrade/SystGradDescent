@@ -40,7 +40,7 @@ from archi.reducer import A1AR8MR8L1 as ARCHI
 
 from ..my_argparser import REG_parse_args
 
-BENCHMARK_NAME = 'S3D2-Calib'
+BENCHMARK_NAME = 'S3D2-calib'
 CALIB = "Calib_r"
 CALIB_PARAM_NAME = "r"
 

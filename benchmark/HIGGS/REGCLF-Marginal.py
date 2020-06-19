@@ -47,7 +47,7 @@ from archi.reducer import A1AR8MR8L1 as ARCHI
 from ..my_argparser import REG_parse_args
 
 
-BENCHMARK_NAME = 'Higgs-marginal'
+BENCHMARK_NAME = 'HIGGS-marginal'
 N_ITER = 3
 NCALL = 1
 

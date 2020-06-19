@@ -39,7 +39,7 @@ from archi.reducer import A3ML3 as ARCHI
 
 from ..my_argparser import REG_parse_args
 
-BENCHMARK_NAME = 'GG-Calib'
+BENCHMARK_NAME = 'GG-calib'
 CALIB = "Calib_rescale"
 CALIB_PARAM_NAME = "rescale"
 

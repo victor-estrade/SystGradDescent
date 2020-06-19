@@ -52,7 +52,7 @@ from archi.reducer import EA1AR8MR8L1 as ARCHI
 from ..my_argparser import REG_parse_args
 
 
-BENCHMARK_NAME = 'Higgs-prior'
+BENCHMARK_NAME = 'HIGGS-prior'
 N_ITER = 3
 NCALL = 100
 

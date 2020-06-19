@@ -52,7 +52,7 @@ from archi.reducer import EA3ML3 as ARCHI
 from ..my_argparser import REG_parse_args
 
 
-BENCHMARK_NAME = 'Higgs-prior'
+BENCHMARK_NAME = 'HIGGS-Prior'
 N_ITER = 3
 NCALL = 10
 

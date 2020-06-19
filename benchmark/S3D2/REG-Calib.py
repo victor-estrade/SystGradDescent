@@ -52,7 +52,7 @@ from archi.reducer import A3ML3 as CALIB_ARCHI
 
 from ..my_argparser import REG_parse_args
 
-BENCHMARK_NAME = 'S3D2-Calib'
+BENCHMARK_NAME = 'S3D2-calib'
 CALIB_R = "Calib_r"
 CALIB_LAM = "Calib_lam"
 N_ITER = 9

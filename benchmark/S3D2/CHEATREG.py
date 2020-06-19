@@ -40,7 +40,7 @@ from archi.net import AR5R5E
 
 from ..my_argparser import REG_parse_args
 
-BENCHMARK_NAME = 'S3D2-CHEAT'
+BENCHMARK_NAME = 'S3D2-cheat'
 N_ITER = 9
 
 

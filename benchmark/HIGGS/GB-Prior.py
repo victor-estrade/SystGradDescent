@@ -43,7 +43,7 @@ from model.summaries import ClassifierSummaryComputer
 from ..my_argparser import GB_parse_args
 
 
-BENCHMARK_NAME = 'Higgs-prior'
+BENCHMARK_NAME = 'HIGGS-prior'
 N_ITER = 3
 
 

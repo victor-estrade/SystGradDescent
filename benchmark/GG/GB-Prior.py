@@ -42,7 +42,7 @@ from model.summaries import ClassifierSummaryComputer
 from ..my_argparser import GB_parse_args
 
 
-BENCHMARK_NAME = 'GG-Prior'
+BENCHMARK_NAME = 'GG-prior'
 N_ITER = 3
 
 
