@@ -34,7 +34,7 @@ from visual.special.higgs import plot_nll_around_min
 
 
 # SEED = None
-BENCHMARK_NAME = "Higgs-Prior"
+BENCHMARK_NAME = "HIGGS-Prior"
 DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "Likelihood_label")
 N_ITER = 3
 
