@@ -8,11 +8,13 @@ from __future__ import unicode_literals
 # python -m benchmark.HIGGS.explore
 
 import os
-
 import numpy as np
+import pandas as pd
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+from config import SAVING_DIR
 from visual import set_plot_config
 set_plot_config()
 
@@ -25,12 +27,13 @@ from problem.higgs import param_generator
 from problem.higgs import Parameter
 
 
+SEED = None
+BENCHMARK_NAME = "HIGGS"
+DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "explore")
 
 
-def mu_vs_y_w():
+def mu_vs_y_w(generator):
     print('comparing mu and labels and weights')
-    data = load_data()
-    generator = Generator(data, seed=2)
     N = 80
     N_SAMPLES = 20000
     mu_list = []
@@ -41,21 +44,21 @@ def mu_vs_y_w():
         mu_list.append(params.mu)
         y_w_list.append((y*w).sum() / w.sum())
 
-    plt.scatter(mu_list, y_w_list)
+    plt.scatter(mu_list, y_w_list, "S = f($\mu$)")
     plt.xlabel('mu')
-    plt.ylabel('mean(labels, w)')
-    plt.show()
+    plt.ylabel('S = mean(labels, w)')
+    # plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(DIRECTORY, 'mu_vs_y_w.png'))
+    plt.clf()
 
 
 
 
 
 
-
-def main():
-    print('Hello world')
-    data = load_data()
-    generator = Generator(data, seed=2)
+def noise_vs_mu_variance(generator):
+    data = generator.data
     N = 100
     param_list = [param_generator() for _ in range(N)]
     mu_list = [p.mu for p in param_list]
@@ -133,6 +136,14 @@ def main():
     print(np.std(lulu, axis=0))
 
 
+def main():
+    print('Hello world')
+    os.makedirs(DIRECTORY, exist_ok=True)
+    data = load_data()
+    generator = Generator(data, seed=2)
+    mu_vs_y_w(generator)
+    # noise_vs_mu_variance(generator)
+
+
 if __name__ == '__main__':
-    mu_vs_y_w()
-    # main()
+    main()
