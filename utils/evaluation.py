@@ -80,8 +80,9 @@ def evaluate_classifier(model, X, y, w=None, prefix='test', suffix=''):
     return results
 
 
-def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix=''):
+def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix='', directory=None):
     logger = logging.getLogger()
+    directory = model.path if directory is None else directory
 
     X_sig = X[y==1]
     w_sig = w[y==1]
@@ -95,7 +96,7 @@ def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix=''):
     logger.info('Plot summaries')
     fname = f'{prefix}summaries{suffix}.png'
     plot_summaries(b_histogram, s_histogram, n_histogram, 
-                    title=model.full_name, directory=model.path, fname=fname)
+                    title=model.full_name, directory=directory, fname=fname)
 
 
 def evaluate_minuit(minimizer, params_truth):

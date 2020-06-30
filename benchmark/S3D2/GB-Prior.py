@@ -130,8 +130,8 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     # PLOT SUMMARIES
-    evaluate_summary_computer(model, X_test, y_test, w_test, n_bins=n_bins, prefix='', suffix=suffix)
-
+    evaluate_summary_computer(model, X_test, y_test, w_test, n_bins=n_bins, prefix='', suffix=suffix, directory=iter_directory)
+    
     logger.info('Set up NLL computer')
     compute_summaries = ClassifierSummaryComputer(model, n_bins=n_bins)
     compute_nll = NLLComputer(compute_summaries, valid_generator, X_test, w_test)
