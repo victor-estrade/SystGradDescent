@@ -160,7 +160,7 @@ def explore_links(full_generator):
 
     config = Config()
     N_SAMPLES = 300_000
-    feature_names = list(generator.feature_names) + ['Label', 'classifier']
+    feature_names = list(generator.feature_names) + ['Label', 'classifier', 'bin']
     mu_range = np.linspace(min(config.RANGE.mu), max(config.RANGE.mu), num=18)
     all_params = {"min": config.MIN, "true":config.TRUE, "max":config.MAX}
     # all_params = {"true":config.TRUE}
@@ -177,8 +177,10 @@ def explore_links(full_generator):
             sum_weight = np.sum(weight)
             average_array = np.sum(data*weight.reshape(-1, 1), axis=0) / sum_weight
             average_label = np.sum(label*weight, axis=0) / sum_weight
-            average_clf = np.sum(clf.predict_proba(data)[:, 1]*weight, axis=0) / sum_weight
-            average_array = np.hstack([average_array, average_label, average_clf])
+            proba = clf.predict_proba(data)[:, 1]
+            average_clf = np.sum(proba*weight, axis=0) / sum_weight
+            average_bin = np.sum((proba > 0.9)*weight, axis=0) / sum_weight
+            average_array = np.hstack([average_array, average_label, average_clf, average_bin])
             average_list.append(average_array)
             target_list.append(mu)
         average_df = pd.DataFrame(np.array(average_list), columns=feature_names)
