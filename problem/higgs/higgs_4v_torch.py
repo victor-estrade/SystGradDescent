@@ -5,7 +5,7 @@ import numpy as np
 
 def asinh(x):
     """
-    $$ sinh(x) = ln(x + \sqrt{ x^2 +1 }) $$
+    $$ asinh(x) = ln(x + \sqrt{ x^2 +1 }) $$
     """
     return torch.log(x + torch.sqrt( (x*x) + torch.ones_like(x)))
 
