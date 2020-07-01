@@ -48,7 +48,7 @@ def clean_columns(data):
     Removes : EventId, KaggleSet, KaggleWeight
     Cast labels to float.
     """
-    data = data.drop(["EventId", "KaggleSet", "KaggleWeight",], axis=1)
+    data = data.drop(["DER_mass_MMC", "EventId", "KaggleSet", "KaggleWeight",], axis=1)
     label_to_float(data)  # Works inplace
     return data
 
