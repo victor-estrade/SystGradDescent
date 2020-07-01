@@ -44,6 +44,7 @@ def get_generators(seed, train_size=0.5, test_size=0.1):
 class Generator():
     def __init__(self, data, seed=None):
         self.data = data
+        self.feature_names = data.columns[:-2] if len(data.columns) == 31 else data.columns[:-3]
         self.seed = seed
         self.random = np.random.RandomState(seed=seed)
         self.size = data.shape[0]
