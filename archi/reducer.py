@@ -105,6 +105,46 @@ class EA3ML3(BaseArchi):
         self.fc_out.reset_parameters()
 
 
+class EA1AR2ML1(BaseArchi):
+    def __init__(self, n_in=1, n_out=1, n_extra=0, n_unit=80):
+        super().__init__(n_unit)
+        self.avg_in = layers.AverageExtra(n_in, n_unit, n_extra)
+        self.avg1   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+    def forward(self, x, w, p):
+        x = self.avg_in(x, w, p)
+        x = self.avg1(x, w)
+        x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
+        x = self.fc_out(x)
+        return x
+
+    def reset_parameters(self):
+        self.avg_in.reset_parameters()
+        self.avg1.reset_parameters()
+        self.fc_out.reset_parameters()
+
+
+class A1AR2ML1(BaseArchi):
+    def __init__(self, n_in=1, n_out=1, n_extra=0, n_unit=80):
+        super().__init__(n_unit)
+        self.avg_in = layers.Average(n_in, n_unit, n_extra)
+        self.avg1   = ResidualAverageBlock(n_unit, n_unit//2)
+        self.fc_out = nn.Linear(n_unit, n_out)
+
+    def forward(self, x, w, p):
+        x = self.avg_in(x, w, p)
+        x = self.avg1(x, w)
+        x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
+        x = self.fc_out(x)
+        return x
+
+    def reset_parameters(self):
+        self.avg_in.reset_parameters()
+        self.avg1.reset_parameters()
+        self.fc_out.reset_parameters()
+
+
 class EA1AR8MR8L1(BaseArchi):
     def __init__(self, n_in=1, n_out=1, n_extra=0, n_unit=80):
         super().__init__(n_unit)
@@ -131,7 +171,7 @@ class EA1AR8MR8L1(BaseArchi):
         x = self.res6(x)
         x = self.res7(x)
         x = self.res8(x)
-        x = layers.relu6_tanh(x)
+        # x = layers.relu6_tanh(x)
         x = self.fc_out(x)
         return x
 
@@ -173,7 +213,7 @@ class A1AR8MR8L1(BaseArchi):
         x = self.res6(x)
         x = self.res7(x)
         x = self.res8(x)
-        x = layers.relu6_tanh(x)
+        # x = layers.relu6_tanh(x)
         x = self.fc_out(x)
         return x
 
@@ -222,7 +262,7 @@ class EA1AR18MR4L1(BaseArchi):
         x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
         x = self.res10(x)
         x = self.res11(x)
-        x = layers.relu6_tanh(x)
+        # x = layers.relu6_tanh(x)
         x = self.fc_out(x)
         return x
 
@@ -274,7 +314,7 @@ class A1AR18MR4L1(BaseArchi):
         x = layers.torch_weighted_mean(x, w, 0, keepdim=False)
         x = self.res10(x)
         x = self.res11(x)
-        x = layers.relu6_tanh(x)
+        # x = layers.relu6_tanh(x)
         x = self.fc_out(x)
         return x
 
