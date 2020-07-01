@@ -15,10 +15,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from config import SAVING_DIR
+from config import SEED
 from visual import set_plot_config
 set_plot_config()
 
 from problem.higgs import Generator
+from problem.higgs import get_generators
 
 from problem.higgs.higgs_geant import load_data
 from problem.higgs.higgs_geant import split_data_label_weights
@@ -26,10 +28,23 @@ from problem.higgs import HiggsConfig as Config
 from problem.higgs import param_generator
 from problem.higgs import Parameter
 
+from model.gradient_boost import GradientBoostingModel
 
-SEED = None
+
 BENCHMARK_NAME = "HIGGS"
 DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "explore")
+
+
+def main():
+    print('Hello world')
+    os.makedirs(DIRECTORY, exist_ok=True)
+    data = load_data()
+    generator = Generator(data, seed=2)
+    explore_links(generator)
+    # mu_vs_y_w(generator)
+    # noise_vs_mu_variance(generator)
+
+
 
 
 def mu_vs_y_w(generator):
@@ -136,13 +151,56 @@ def noise_vs_mu_variance(generator):
     print(np.std(lulu, axis=0))
 
 
-def main():
-    print('Hello world')
-    os.makedirs(DIRECTORY, exist_ok=True)
-    data = load_data()
-    generator = Generator(data, seed=2)
-    mu_vs_y_w(generator)
-    # noise_vs_mu_variance(generator)
+
+
+def explore_links(full_generator):
+    train_generator, valid_generator, test_generator = get_generators(SEED)
+    generator = valid_generator
+    # generator = full_generator
+
+    config = Config()
+    N_SAMPLES = 300_000
+    feature_names = list(generator.feature_names) + ['Label', 'classifier']
+    mu_range = np.linspace(min(config.RANGE.mu), max(config.RANGE.mu), num=18)
+    all_params = {"min": config.MIN, "true":config.TRUE, "max":config.MAX}
+    # all_params = {"true":config.TRUE}
+
+    clf = load_some_clf()
+    all_average_df = {}
+    for params_name, orig_params in all_params.items():
+        print(f"computing link between X and mu using {params_name}...")
+        average_list = []
+        target_list = []
+        for mu in mu_range:
+            params = Parameter(*orig_params.nuisance_parameters, mu)
+            data, label, weight = generator.generate(*params, n_samples=N_SAMPLES)
+            sum_weight = np.sum(weight)
+            average_array = np.sum(data*weight.reshape(-1, 1), axis=0) / sum_weight
+            average_label = np.sum(label*weight, axis=0) / sum_weight
+            average_clf = np.sum(clf.predict_proba(data)[:, 1]*weight, axis=0) / sum_weight
+            average_array = np.hstack([average_array, average_label, average_clf])
+            average_list.append(average_array)
+            target_list.append(mu)
+        average_df = pd.DataFrame(np.array(average_list), columns=feature_names)
+        all_average_df[params_name] = average_df
+
+    for name in feature_names:
+        for params_name, average_df in all_average_df.items(): 
+            plt.scatter(average_df[name], target_list, label=params_name)
+        plt.title(f'Link between weighted mean({name}) and mu')
+        plt.ylabel('mu')
+        plt.xlabel(f'weighted mean({name})')
+        plt.legend()
+        plt.savefig(os.path.join(DIRECTORY, f'link_{name}.png'))
+        plt.clf()
+
+
+def load_some_clf():
+    model = GradientBoostingModel(learning_rate=0.1, n_estimators=300, max_depth=3)
+    model.set_info("HIGGS-prior", 0)
+    print(f"loading {model.path}")
+    model.load(model.path)
+    return model
 
 
 if __name__ == '__main__':
