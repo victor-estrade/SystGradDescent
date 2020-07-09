@@ -105,6 +105,7 @@ def run(args, i_cv):
     train_or_load_classifier(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
 
     # CHECK TRAINING
+    os.makedirs(model.results_path, exist_ok=True)
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
     
