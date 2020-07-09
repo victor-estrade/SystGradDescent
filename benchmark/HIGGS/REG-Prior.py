@@ -52,7 +52,8 @@ from archi.reducer import EA1AR8MR8L1 as ARCHI
 from ..my_argparser import REG_parse_args
 
 
-BENCHMARK_NAME = 'HIGGS-prior'
+DATA_NAME = 'HIGGS'
+BENCHMARK_NAME = DATA_NAME+'-prior'
 N_ITER = 3
 NCALL = 100
 
@@ -85,12 +86,12 @@ def main():
     args.net = ARCHI(n_in=30, n_out=2, n_extra=5, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
-    model.set_info(BENCHMARK_NAME, -1)
-    config = HiggsConfig()
+    model.set_info(DATA_NAME, BENCHMARK_NAME, -1)
+    config = Config()
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     results = pd.concat(results, ignore_index=True)
-    results.to_csv(os.path.join(model.directory, 'results.csv'))
+    results.to_csv(os.path.join(model.results_directory, 'results.csv'))
     # EVALUATION
     eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, results)
     print_line()
@@ -98,8 +99,8 @@ def main():
     print(eval_table)
     print_line()
     print_line()
-    eval_table.to_csv(os.path.join(model.directory, 'evaluation.csv'))
-    gather_images(model.directory)
+    eval_table.to_csv(os.path.join(model.results_directory, 'evaluation.csv'))
+    gather_images(model.results_directory)
 
 
 def run(args, i_cv):
@@ -112,7 +113,7 @@ def run(args, i_cv):
 
     # LOAD/GENERATE DATA
     logger.info('Set up data generator')
-    config = HiggsConfig()
+    config = Config()
     seed = SEED + i_cv * 5
     train_generator, valid_generator, test_generator = get_generators(seed)
     train_generator = TrainGenerator(param_generator, train_generator)
@@ -122,7 +123,7 @@ def run(args, i_cv):
     args.net = ARCHI(n_in=30, n_out=2, n_extra=5, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
-    model.set_info(BENCHMARK_NAME, i_cv)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     flush(logger)
     
     # TRAINING / LOADING
@@ -140,11 +141,11 @@ def run(args, i_cv):
     result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator)
                     for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
-    result_table.to_csv(os.path.join(model.path, 'results.csv'))
+    result_table.to_csv(os.path.join(model.results_path, 'results.csv'))
     logger.info('Plot params')
     param_names = config.PARAM_NAMES
     for name in param_names:
-        plot_params(name, result_table, title=model.full_name, directory=model.path)
+        plot_params(name, result_table, title=model.full_name, directory=model.results_path)
 
     logger.info('DONE')
     return result_table
@@ -154,7 +155,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
-    iter_directory = os.path.join(model.path, f'iter_{i_iter}')
+    iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
     suffix = f'-mu={config.TRUE.mu:1.2f}_tes={config.TRUE.tes}_jes={config.TRUE.jes}_les={config.TRUE.les}'

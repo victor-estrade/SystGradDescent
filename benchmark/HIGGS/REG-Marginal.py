@@ -47,7 +47,8 @@ from archi.reducer import EA1AR8MR8L1 as ARCHI
 from ..my_argparser import REG_parse_args
 
 
-BENCHMARK_NAME = 'HIGGS-marginal'
+DATA_NAME = 'HIGGS'
+BENCHMARK_NAME = DATA_NAME+'-marginal'
 N_ITER = 3
 NCALL = 1
 
@@ -81,12 +82,12 @@ def main():
     args.net = ARCHI(n_in=30, n_out=2, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
-    model.set_info(BENCHMARK_NAME, -1)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, -1)
     config = Config()
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     results = pd.concat(results, ignore_index=True)
-    results.to_csv(os.path.join(model.directory, 'results.csv'))
+    results.to_csv(os.path.join(model.results_directory, 'results.csv'))
     # EVALUATION
     eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, results)
     print_line()
@@ -94,8 +95,8 @@ def main():
     print(eval_table)
     print_line()
     print_line()
-    eval_table.to_csv(os.path.join(model.directory, 'evaluation.csv'))
-    gather_images(model.directory)
+    eval_table.to_csv(os.path.join(model.results_directory, 'evaluation.csv'))
+    gather_images(model.results_directory)
 
 
 def run(args, i_cv):
@@ -118,7 +119,7 @@ def run(args, i_cv):
     args.net = ARCHI(n_in=30, n_out=2, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
-    model.set_info(BENCHMARK_NAME, i_cv)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     flush(logger)
     
     # TRAINING / LOADING

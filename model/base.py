@@ -35,6 +35,10 @@ class ModelInfo(object):
     def get_name(self):
         raise NotImplementedError("Should be implemented in child class")
 
+    @property
+    def name(self):
+        return self.get_name()
+
     def save(self, save_directory):
         info = dict(path=self.path,
                     directory=self.directory,
@@ -62,17 +66,25 @@ class ModelInfo(object):
     def _set_full_name(self, i_cv):
         self.full_name = '{}{}{}'.format(self.get_name(), os.sep, i_cv)
 
-    def _set_path(self, benchmark_name, i_cv):
+    def _set_results_path(self, benchmark_name, i_cv):
         name = self.get_name()
         cv_id = "cv_{:d}".format(i_cv)
-        self.directory = os.path.join(config.SAVING_DIR, benchmark_name, 
+        self.results_directory = os.path.join(config.SAVING_DIR, benchmark_name, 
                                         self.base_name, name)
-        self.path = os.path.join(self.directory, cv_id)
+        self.results_path = os.path.join(self.results_directory, cv_id)
 
-    def set_info(self, benchmark_name, i_cv):
+    def _set_model_path(self, data_name, i_cv):
+        name = self.get_name()
+        cv_id = "cv_{:d}".format(i_cv)
+        self.model_directory = os.path.join(config.MODEL_SAVING_DIR, data_name, 
+                                        self.base_name, name)
+        self.model_path = os.path.join(self.model_directory, cv_id)
+
+    def set_info(self, data_name, benchmark_name, i_cv):
         self.benchmark_name = benchmark_name
         self.i_cv = i_cv
-        self._set_path(benchmark_name, i_cv)
+        self._set_results_path(benchmark_name, i_cv)
+        self._set_model_path(data_name, i_cv)
         self._set_full_name(i_cv)
 
 

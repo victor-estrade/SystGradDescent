@@ -40,7 +40,8 @@ from archi.reducer import A1AR8MR8L1 as ARCHI
 
 from ..my_argparser import REG_parse_args
 
-BENCHMARK_NAME = 'S3D2-calib'
+DATA_NAME = 'S3D2'
+BENCHMARK_NAME = DATA_NAME+'-calib'
 CALIB = "Calib_r"
 CALIB_PARAM_NAME = "r"
 
@@ -70,7 +71,7 @@ def main():
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.base_name = CALIB
-    model.set_info(BENCHMARK_NAME, 0)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
 
     # Setup data
     logger.info("Setup data")
@@ -94,12 +95,12 @@ def main():
     result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator)
                     for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
-    result_table.to_csv(os.path.join(model.path, 'results.csv'))
+    result_table.to_csv(os.path.join(model.results_path, 'results.csv'))
 
     logger.info('Plot params')
     param_names = [CALIB_PARAM_NAME]
     for name in param_names:
-        plot_params(name, result_table, title=model.full_name, directory=model.path)
+        plot_params(name, result_table, title=model.full_name, directory=model.results_path)
 
     logger.info('DONE')
 

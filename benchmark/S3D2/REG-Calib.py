@@ -52,7 +52,9 @@ from archi.reducer import A3ML3 as CALIB_ARCHI
 
 from ..my_argparser import REG_parse_args
 
-BENCHMARK_NAME = 'S3D2-calib'
+
+DATA_NAME = 'S3D2'
+BENCHMARK_NAME = DATA_NAME+'-calib'
 CALIB_R = "Calib_r"
 CALIB_LAM = "Calib_lam"
 N_ITER = 9
@@ -73,8 +75,8 @@ def load_calib_r():
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.base_name = CALIB_R
-    model.set_info(BENCHMARK_NAME, 0)
-    model.load(model.path)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
+    model.load(model.model_path)
     return model
 
 def load_calib_lam():
@@ -92,8 +94,8 @@ def load_calib_lam():
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.base_name = CALIB_LAM
-    model.set_info(BENCHMARK_NAME, 0)
-    model.load(model.path)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
+    model.load(model.model_path)
     return model
 
 def calib_param_sampler(r_mean, r_sigma, lam_mean, lam_sigma):
@@ -137,7 +139,7 @@ def main():
     args.net = ARCHI(n_in=3, n_out=2, n_extra=2, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
-    model.set_info(BENCHMARK_NAME, -1)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, -1)
     config = Config()
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
@@ -176,7 +178,7 @@ def run(args, i_cv):
     args.net = ARCHI(n_in=3, n_out=2, n_extra=2, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
-    model.set_info(BENCHMARK_NAME, i_cv)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     flush(logger)
     
     # TRAINING / LOADING

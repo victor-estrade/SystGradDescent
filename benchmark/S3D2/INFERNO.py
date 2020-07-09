@@ -48,7 +48,8 @@ from archi.net import F6
 
 from ..my_argparser import INFERNO_parse_args
 
-BENCHMARK_NAME = 'S3D2-prior'
+DATA_NAME = 'S3D2'
+BENCHMARK_NAME = DATA_NAME+'-prior'
 N_ITER = 3
 
 def build_model(args, i_cv):
@@ -58,7 +59,7 @@ def build_model(args, i_cv):
     args.optimizer = get_optimizer(args)
     args.criterion = S3DLoss()
     model = get_model(args, Inferno)
-    model.set_info(BENCHMARK_NAME, i_cv)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     return model
 
 

@@ -10,6 +10,7 @@ RANDOM_STATE = 42
 SEED = 42
 SAVING_DIR = 'savings'
 DEFAULT_DIR = os.path.join(SAVING_DIR, "Default")
+MODEL_SAVING_DIR = os.path.join(SAVING_DIR, "MODELS")
 
 PRECISION = 1e-3
 N_CV = 6

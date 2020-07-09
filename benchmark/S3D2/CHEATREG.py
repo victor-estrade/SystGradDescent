@@ -40,7 +40,8 @@ from archi.net import AR5R5E
 
 from ..my_argparser import REG_parse_args
 
-BENCHMARK_NAME = 'S3D2-cheat'
+DATA_NAME = 'S3D2'
+BENCHMARK_NAME = DATA_NAME+'-cheat'
 N_ITER = 9
 
 
@@ -74,13 +75,13 @@ def main():
     args.net = AR5R5E(n_in=3, n_out=2, n_extra=2)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
-    model.set_info(BENCHMARK_NAME, -1)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, -1)
     pb_config = S3D2Config()
 
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     results = pd.concat(results, ignore_index=True)
-    results.to_csv(os.path.join(model.directory, 'results.csv'))
+    results.to_csv(os.path.join(model.results_directory, 'results.csv'))
     # EVALUATION
     eval_table = evaluate_estimator(pb_config.INTEREST_PARAM_NAME, results)
     print_line()
@@ -88,8 +89,8 @@ def main():
     print(eval_table)
     print_line()
     print_line()
-    eval_table.to_csv(os.path.join(model.directory, 'evaluation.csv'))
-    gather_images(model.directory)
+    eval_table.to_csv(os.path.join(model.results_directory, 'evaluation.csv'))
+    gather_images(model.results_directory)
 
 
 def run(args, i_cv):
@@ -121,8 +122,8 @@ def run(args, i_cv):
     # TRAINING / LOADING
     if not args.retrain:
         try:
-            logger.info('loading from {}'.format(model.path))
-            model.load(model.path)
+            logger.info('loading from {}'.format(model.model_path))
+            model.load(model.model_path)
         except Exception as e:
             logger.warning(e)
             args.retrain = True
@@ -166,7 +167,7 @@ def run(args, i_cv):
 
     logger.info('Plot params')
     name = pb_config.INTEREST_PARAM_NAME 
-    plot_params(name, result_table, title=model.full_name, directory=model.path)
+    plot_params(name, result_table, title=model.full_name, directory=model.results_path)
 
 
     logger.info('DONE')

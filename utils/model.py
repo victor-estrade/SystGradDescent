@@ -25,7 +25,7 @@ def get_model_id(model, i_cv):
 def get_model_path(benchmark_name, model, i_cv=None):
     warnings.warn("Model info are now attributes of the model itself."
     "Initialize the info with model.set_info(bench_name, i_cv) "
-    "and use model.path or model.directory attributes instead", DeprecationWarning)
+    "and use model.model_path or model.model_directory attributes instead", DeprecationWarning)
     import config
     model_name = model.get_name()
     model_class = get_class_name(model)
@@ -37,13 +37,13 @@ def get_model_path(benchmark_name, model, i_cv=None):
 
 
 def save_model(model):
-    if model.path is None:
+    if model.model_path is None:
         raise ValueError("model's info should be initialized first." 
             "Use model.set_info(bench_name, i_cv)")
     logger = logging.getLogger()
-    logger.info("Saving in {}".format(model.path))
-    os.makedirs(model.path, exist_ok=True)
-    model.save(model.path)
+    logger.info("Saving in {}".format(model.model_path))
+    os.makedirs(model.model_path, exist_ok=True)
+    model.save(model.model_path)
 
 def extract_class_args(args, model_class):
     sig = inspect.signature(model_class)
@@ -87,8 +87,8 @@ def train_or_load_classifier(model, train_generator, parameters, n_samples, retr
     logger = logging.getLogger()
     if not retrain:
         try:
-            logger.info('loading from {}'.format(model.path))
-            model.load(model.path)
+            logger.info('loading from {}'.format(model.model_path))
+            model.load(model.model_path)
         except Exception as e:
             logger.warning(e)
             retrain = True
@@ -107,8 +107,8 @@ def train_or_load_neural_net(model, train_generator, retrain=True):
     logger = logging.getLogger()
     if not retrain:
         try:
-            logger.info('loading from {}'.format(model.path))
-            model.load(model.path)
+            logger.info('loading from {}'.format(model.model_path))
+            model.load(model.model_path)
         except Exception as e:
             logger.warning(e)
             retrain = True
@@ -125,8 +125,8 @@ def train_or_load_clf_regressor(model, train_generator, retrain=True):
     logger = logging.getLogger()
     if not retrain:
         try:
-            logger.info('loading from {}'.format(model.path))
-            model.load(model.path)
+            logger.info('loading from {}'.format(model.model_path))
+            model.load(model.model_path)
         except Exception as e:
             logger.warning(e)
             retrain = True
@@ -145,8 +145,8 @@ def train_or_load_inferno(model, train_generator, retrain=True):
     logger = logging.getLogger()
     if not retrain:
         try:
-            logger.info('loading from {}'.format(model.path))
-            model.load(model.path)
+            logger.info('loading from {}'.format(model.model_path))
+            model.load(model.model_path)
         except Exception as e:
             logger.warning(e)
             retrain = True
