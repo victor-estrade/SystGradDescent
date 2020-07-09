@@ -67,6 +67,14 @@ class TrainGenerator:
         X, y, w = self.data_generator.generate(*params, n_samples)
         return X, params.interest_parameters, w, None
 
+
+def build_model(args, i_cv):
+    args.net = ARCHI(n_in=32, n_out=2, n_unit=args.n_unit)
+    args.optimizer = get_optimizer(args)
+    model = get_model(args, Model)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
+    return model
+
 # =====================================================================
 # MAIN
 # =====================================================================
@@ -77,10 +85,7 @@ def main():
     logger.info(args)
     flush(logger)
     # INFO
-    args.net = ARCHI(n_in=32, n_out=2, n_unit=args.n_unit)
-    args.optimizer = get_optimizer(args)
-    model = get_model(args, Model)
-    model.set_info(DATA_NAME, BENCHMARK_NAME, -1)
+    model = build_model(args, -1)
     config = Config()
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
@@ -114,10 +119,7 @@ def run(args, i_cv):
 
     # SET MODEL
     logger.info('Set up rergessor')
-    args.net = ARCHI(n_in=32, n_out=2, n_unit=args.n_unit)
-    args.optimizer = get_optimizer(args)
-    model = get_model(args, Model)
-    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
+    model = build_model(args, i_cv)
     flush(logger)
     
     # TRAINING / LOADING

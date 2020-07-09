@@ -44,7 +44,7 @@ from visual.special.synthetic3D import plot_nll_around_min
 
 from model.inferno import Inferno
 # from archi.net import RegNetExtra
-from archi.net import F6
+from archi.net import F6 as ARCHI
 
 from ..my_argparser import INFERNO_parse_args
 
@@ -52,10 +52,9 @@ DATA_NAME = 'S3D2'
 BENCHMARK_NAME = DATA_NAME+'-prior'
 N_ITER = 3
 
+
 def build_model(args, i_cv):
-    logger = logging.getLogger()
-    logger.info('Set up rergessor')
-    args.net = F6(n_in=3, n_out=args.n_bins)
+    args.net = ARCHI(n_in=3, n_out=args.n_bins)
     args.optimizer = get_optimizer(args)
     args.criterion = S3DLoss()
     model = get_model(args, Inferno)
@@ -72,7 +71,6 @@ def main():
     # INFO
     model = build_model(args, -1)
     pb_config = Config()
-
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     results = pd.concat(results, ignore_index=True)
@@ -106,6 +104,7 @@ def run(args, i_cv):
     test_generator  = S3D2(seed+2)
 
     # SET MODEL
+    logger.info('Set up inferno')
     model = build_model(args, i_cv)
     flush(logger)
 

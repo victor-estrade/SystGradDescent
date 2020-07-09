@@ -47,6 +47,11 @@ DATA_NAME = 'HIGGS'
 BENCHMARK_NAME = DATA_NAME+'-prior'
 N_ITER = 3
 
+def build_model(args, i_cv):
+    model = get_model(args, GradientBoostingModel)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
+    return model
+
 
 # =====================================================================
 # MAIN
@@ -58,8 +63,7 @@ def main():
     logger.info(args)
     flush(logger)
     # INFO
-    model = get_model(args, GradientBoostingModel)
-    model.set_info(DATA_NAME, BENCHMARK_NAME, -1)
+    model = build_model(args, -1)
     config = Config()
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
@@ -92,8 +96,7 @@ def run(args, i_cv):
 
     # SET MODEL
     logger.info('Set up classifier')
-    model = get_model(args, GradientBoostingModel)
-    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
+    model = build_model(args, i_cv)
     flush(logger)
     
     # TRAINING / LOADING

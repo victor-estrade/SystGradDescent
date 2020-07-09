@@ -126,6 +126,14 @@ class TrainGenerator:
             return X, y, w, 1
 
 
+def build_model(args, i_cv):
+    args.net = ARCHI(n_in=3, n_out=2, n_extra=2, n_unit=args.n_unit)
+    args.optimizer = get_optimizer(args)
+    model = get_model(args, Regressor)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
+    return model
+
+
 # =====================================================================
 # MAIN
 # =====================================================================
@@ -136,10 +144,7 @@ def main():
     logger.info(args)
     flush(logger)
     # INFO
-    args.net = ARCHI(n_in=3, n_out=2, n_extra=2, n_unit=args.n_unit)
-    args.optimizer = get_optimizer(args)
-    model = get_model(args, Regressor)
-    model.set_info(DATA_NAME, BENCHMARK_NAME, -1)
+    model = build_model(args, -1)
     config = Config()
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
@@ -174,11 +179,8 @@ def run(args, i_cv):
     test_generator  = Generator(seed+2)
 
     # SET MODEL
-    logger.info('Set up rergessor')
-    args.net = ARCHI(n_in=3, n_out=2, n_extra=2, n_unit=args.n_unit)
-    args.optimizer = get_optimizer(args)
-    model = get_model(args, Regressor)
-    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
+    logger.info('Set up regressor')
+    model = build_model(args, i_cv)
     flush(logger)
     
     # TRAINING / LOADING
