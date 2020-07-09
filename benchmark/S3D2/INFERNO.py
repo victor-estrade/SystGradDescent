@@ -36,7 +36,7 @@ from problem.synthetic3D.torch import Synthetic3DGeneratorTorch
 from problem.synthetic3D.torch import S3DLoss
 from problem.synthetic3D import S3D2
 from problem.synthetic3D import get_minimizer
-from problem.synthetic3D import S3D2Config
+from problem.synthetic3D import S3D2Config as Config
 from problem.synthetic3D import S3D2NLL
 from problem.synthetic3D import Parameter
 
@@ -71,7 +71,7 @@ def main():
     flush(logger)
     # INFO
     model = build_model(args, -1)
-    pb_config = S3D2Config()
+    pb_config = Config()
 
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
@@ -99,7 +99,7 @@ def run(args, i_cv):
 
     # LOAD/GENERATE DATA
     logger.info('Set up data generator')
-    pb_config = S3D2Config()
+    pb_config = Config()
     seed = config.SEED + i_cv * 5
     train_generator = Synthetic3DGeneratorTorch(seed)
     valid_generator = S3D2(seed+1)
