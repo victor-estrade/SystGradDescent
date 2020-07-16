@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 
 import os
 import logging
+import json
 from config import SEED
 
 import iminuit
@@ -29,7 +30,7 @@ from utils.model import train_or_load_classifier
 from utils.evaluation import evaluate_classifier
 from utils.evaluation import evaluate_summary_computer
 from utils.evaluation import evaluate_minuit
-from utils.evaluation import evaluate_estimator
+from utils.evaluation import register_params
 from utils.images import gather_images
 
 from visual.misc import plot_params
@@ -66,6 +67,9 @@ def get_minimizer(compute_nll):
                           )
     return minimizer
 
+def params_to_dict(params, suffix=''):
+    return {name+suffix: value for name, value in zip(params.parameter_names, params)}
+
 
 # =====================================================================
 # MAIN
@@ -88,6 +92,7 @@ def main():
     nuisance_param_sample = [param_generator().nuisance_parameters for _ in range(25)]
     average_list = []
     variance_list = []
+    result_table = []
     for nuisance_params in nuisance_param_sample:
         logger.info(f"nuisance_params = {nuisance_params}")
         estimator_values = []
@@ -98,18 +103,25 @@ def main():
             n_samples = config.N_TRAINING_SAMPLES
             X_train, y_train, w_train = train_generator.generate(*parameters, n_samples=n_samples)
             logger.info(f"Training {clf.full_name}")
-            # TODO : is it OK to provide w_train to the classifier or useless ?
             clf.fit(X_train, y_train, w_train)
             compute_summaries = ClassifierSummaryComputer(clf, n_bins=10)
             nll_computer = NLLComputer(compute_summaries, valid_generator, X_test, w_test, config=config)
             compute_nll = lambda mix : nll_computer(*nuisance_params, mix)
             minimizer = get_minimizer(compute_nll)
             results = evaluate_minuit(minimizer, [config.TRUE.interest_parameters])
-            print(results)
             estimator_values.append(results['mix'])
+            results['i_cv'] = i_cv
+            results.update(params_to_dict(parameters, suffix='true'))
+            result_table.append(results.copy())
         average_list.append(np.mean(estimator_values))
         variance_list.append(np.var(estimator_values))
 
+    model = build_model(args, 0)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
+    save_directory = model.results_path
+    os.makedirs(save_directory, exist_ok=True)
+    result_table = pd.DataFrame(result_table)
+    result_table.to_csv(os.path.join(save_directory, 'results.csv'))
     logger.info(f"average_list {average_list}")
     logger.info(f"variance_list {variance_list}")
     v_stat = np.mean(variance_list)
@@ -118,6 +130,16 @@ def main():
     logger.info(f"V_stat = {v_stat}")
     logger.info(f"V_syst = {v_syst}")
     logger.info(f"V_total = {v_total}")
+    eval_dict = {"V_stat": v_stat
+                ,"V_syst": v_syst
+                ,"V_total": v_total
+                     }
+    eval_path = os.path.join(save_directory, 'info.json')
+    with open(eval_path, 'w') as f:
+        json.dump(eval_dict, f)
+
+
+
 
 
 if __name__ == '__main__':
