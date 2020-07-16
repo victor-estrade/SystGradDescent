@@ -15,6 +15,7 @@ class S3D2():
         self.seed = seed
         self.random = np.random.RandomState(seed=seed)
         self.sig_rate =  2
+        self.feature_names = ["x1", "x2", "x3"]
 
     def reset(self):
         self.random = np.random.RandomState(seed=self.seed)

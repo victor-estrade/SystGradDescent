@@ -19,6 +19,9 @@ class S3D2Config():
 
     TRUE = Parameter(r=0.1, lam=2.7, mu=150/1050)
 
+    MIN = Parameter(r=-0.5, lam=2, mu=0.1)
+    MAX = Parameter(r=0.5, lam=4, mu=0.9)
+
     RANGE = Parameter(r=np.linspace(-0.5, 0.5, 3),
                     lam=np.linspace(2, 4, 3),
                     mu=np.linspace(0.1, 0.99, 4),)
