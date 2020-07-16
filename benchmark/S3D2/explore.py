@@ -16,18 +16,74 @@ from config import SAVING_DIR
 from visual import set_plot_config
 set_plot_config()
 
-from problem.synthetic3D import S3D2
-from problem.synthetic3D import S3D2Config
+from problem.synthetic3D import Generator
+from problem.synthetic3D import Parameter
+from problem.synthetic3D import S3D2Config as Config
+
+from model.gradient_boost import GradientBoostingModel
 
 SEED = None
-BENCHMARK_NAME = "S3D2"
+DATA_NAME = "S3D2"
+BENCHMARK_NAME = DATA_NAME
 DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "explore")
 
-def main():
-    print("Hello master !")
-    os.makedirs(DIRECTORY, exist_ok=True)
-    set_plot_config()
-    config = S3D2Config()
+
+def load_some_clf():
+    model = GradientBoostingModel(learning_rate=0.1, n_estimators=300, max_depth=3)
+    model.set_info("S3D2", "S3D2-prior", 0)
+    print(f"loading {model.model_path}")
+    model.load(model.model_path)
+    return model
+
+
+def explore_links():
+    generator = Generator(SEED)
+
+    config = Config()
+    N_SAMPLES = 30_000
+    feature_names = list(generator.feature_names) + ['Label', 'classifier', 'bin', 'log_p']
+    mu_range = np.linspace(min(config.RANGE.mu), max(config.RANGE.mu), num=18)
+    all_params = {"min": config.MIN, "true":config.TRUE, "max":config.MAX}
+    # all_params = {"true":config.TRUE}
+
+    clf = load_some_clf()
+    all_average_df = {}
+    for params_name, orig_params in all_params.items():
+        print(f"computing link between X and mu using {params_name}...")
+        average_list = []
+        target_list = []
+        for mu in mu_range:
+            params = Parameter(*orig_params.nuisance_parameters, mu)
+            data, label, weight = generator.generate(*params, n_samples=N_SAMPLES)
+            sum_weight = np.sum(weight)
+            average_array = np.sum(data*weight.reshape(-1, 1), axis=0) / sum_weight
+            average_label = np.sum(label*weight, axis=0) / sum_weight
+            proba = clf.predict_proba(data)
+            decision = proba[:, 1]
+            log_p = np.log(decision / (1 - decision))
+            average_log_p = np.sum(log_p*weight, axis=0) / sum_weight
+            average_clf = np.sum(decision*weight, axis=0) / sum_weight
+            average_bin = np.sum((decision > 0.9)*weight, axis=0) / sum_weight
+            average_array = np.hstack([average_array, average_label, average_clf, average_bin, average_log_p])
+            average_list.append(average_array)
+            target_list.append(mu)
+        average_df = pd.DataFrame(np.array(average_list), columns=feature_names)
+        all_average_df[params_name] = average_df
+
+    for name in feature_names:
+        for params_name, average_df in all_average_df.items(): 
+            plt.scatter(average_df[name], target_list, label=params_name)
+        plt.title(f'Link between weighted mean({name}) and mu')
+        plt.ylabel('mu')
+        plt.xlabel(f'weighted mean({name})')
+        plt.legend()
+        plt.savefig(os.path.join(DIRECTORY, f'link_{name}.png'))
+        plt.clf()
+
+
+
+def features():
+    config = Config()
     N_SAMPLES = 10_000
     R_MIN   = -0.3
     R_MAX   = 0.3 
@@ -36,7 +92,7 @@ def main():
     MU_MIN  = 0.0
     MU_MAX  = 1.0 
 
-    generator = S3D2(SEED)
+    generator = Generator(SEED)
     X, label = generator.sample_event(config.TRUE.r, config.TRUE.lam, config.TRUE.mu, size=N_SAMPLES)
     n_sig = np.sum(label==1)
     n_bkg = np.sum(label==0)
@@ -101,6 +157,16 @@ def main():
     plt.tight_layout()
     plt.savefig(os.path.join(DIRECTORY, 'NLL_mu.png'))
     plt.clf()
+
+
+def main():
+    print("Hello master !")
+    os.makedirs(DIRECTORY, exist_ok=True)
+    set_plot_config()
+
+    # features()
+
+    explore_links()
 
 
 if __name__ == '__main__':
