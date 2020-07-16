@@ -203,8 +203,8 @@ def explore_links(full_generator):
 def load_some_clf():
     model = GradientBoostingModel(learning_rate=0.1, n_estimators=300, max_depth=3)
     model.set_info("HIGGS-prior", 0)
-    print(f"loading {model.path}")
-    model.load(model.path)
+    print(f"loading {model.model_path}")
+    model.load(model.model_path)
     return model
 
 
