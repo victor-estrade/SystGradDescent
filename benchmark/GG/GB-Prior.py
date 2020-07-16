@@ -98,6 +98,7 @@ def run(args, i_cv):
     # SET MODEL
     logger.info('Set up classifier')
     model = build_model(args, i_cv)
+    os.makedirs(model.results_path, exist_ok=True)
     flush(logger)
     
     # TRAINING / LOADING
@@ -119,7 +120,7 @@ def run(args, i_cv):
     logger.info('Plot params')
     param_names = config.PARAM_NAMES
     for name in param_names:
-        plot_params(name, result_table, title=model.full_name, directory=model.path)
+        plot_params(name, result_table, title=model.full_name, directory=model.results_path)
 
     logger.info('DONE')
     return result_table
