@@ -142,7 +142,7 @@ def run(args, i_cv):
     logger.info('Plot params')
     param_names = config.PARAM_NAMES
     for name in param_names:
-        plot_params(name, result_table, title=model.full_name, directory=model.path)
+        plot_params(name, result_table, title=model.full_name, directory=model.results_path)
 
     logger.info('DONE')
     return result_table
@@ -153,7 +153,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
 
-    iter_directory = os.path.join(model.path, f'iter_{i_iter}')
+    iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
 
