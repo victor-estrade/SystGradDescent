@@ -51,6 +51,9 @@ def main():
     dirname = os.path.join(DIRECTORY, 'link_easy')
     os.makedirs(dirname, exist_ok=True)
     explore_links(generator,  background_luminosity=95, signal_luminosity=5, dirname=dirname)
+    dirname = os.path.join(DIRECTORY, 'link_medium')
+    os.makedirs(dirname, exist_ok=True)
+    explore_links(generator,  background_luminosity=98, signal_luminosity=2, dirname=dirname)
     
     # mu_vs_y_w(generator)
     # noise_vs_mu_variance(generator)
