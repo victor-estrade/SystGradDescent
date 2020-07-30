@@ -41,12 +41,17 @@ def main():
     os.makedirs(DIRECTORY, exist_ok=True)
     data = load_data()
     generator = Generator(data, seed=2)
+
     dirname = os.path.join(DIRECTORY, 'link_standard')
     os.makedirs(dirname, exist_ok=True)
     explore_links(generator, dirname=dirname)
     dirname = os.path.join(DIRECTORY, 'link_balanced')
     os.makedirs(dirname, exist_ok=True)
     explore_links(generator,  background_luminosity=1, signal_luminosity=1, dirname=dirname)
+    dirname = os.path.join(DIRECTORY, 'link_easy')
+    os.makedirs(dirname, exist_ok=True)
+    explore_links(generator,  background_luminosity=95, signal_luminosity=5, dirname=dirname)
+    
     # mu_vs_y_w(generator)
     # noise_vs_mu_variance(generator)
 
