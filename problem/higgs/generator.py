@@ -39,10 +39,24 @@ def get_generators(seed, train_size=0.5, test_size=0.1):
 
     return train_generator, valid_generator, test_generator
 
+def get_balanced_generators(seed, train_size=0.5, test_size=0.1):
+    train_generator, valid_generator, test_generator = get_generators(seed, train_size=train_size, test_size=test_size)
+    train_generator.background_luminosity = 1
+    train_generator.signal_luminosity = 1
+
+    valid_generator.background_luminosity = 1
+    valid_generator.signal_luminosity = 1
+
+    test_generator.background_luminosity = 1
+    test_generator.signal_luminosity = 1
+
+    return train_generator, valid_generator, test_generator
+
 
 
 class Generator():
-    def __init__(self, data, seed=None):
+    def __init__(self, data, seed=None, background_luminosity=410999.84732187376, 
+                              signal_luminosity=691.9886077135781):
         self.data = data
         self.feature_names = data.columns[:-2] if len(data.columns) == 31 else data.columns[:-3]
         self.seed = seed
@@ -51,6 +65,8 @@ class Generator():
         self.indexes = np.arange(self.size)
         self.random.shuffle(self.indexes)
         self.i = 0
+        self.background_luminosity = background_luminosity
+        self.signal_luminosity = signal_luminosity
 
     def reset(self):
         self.random = np.random.RandomState(seed=self.seed)
@@ -85,7 +101,7 @@ class Generator():
         else:
             data = self.sample(n_samples).copy()
         syst_effect(data, tes=tau_es, jes=jet_es, les=lep_es, missing_value=0.0)
-        normalize_weight(data)
+        normalize_weight(data, background_luminosity=self.background_luminosity, signal_luminosity=self.signal_luminosity)
         mu_reweighting(data, mu)
         X, y, w = split_data_label_weights(data)
         return X.values, y.values, w.values

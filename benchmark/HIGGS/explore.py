@@ -31,7 +31,8 @@ from problem.higgs import Parameter
 from model.gradient_boost import GradientBoostingModel
 
 
-BENCHMARK_NAME = "HIGGS"
+DATA_NAME = 'HIGGS'
+BENCHMARK_NAME = DATA_NAME
 DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "explore")
 
 
@@ -40,7 +41,12 @@ def main():
     os.makedirs(DIRECTORY, exist_ok=True)
     data = load_data()
     generator = Generator(data, seed=2)
-    explore_links(generator)
+    dirname = os.path.join(DIRECTORY, 'link_standard')
+    os.makedirs(dirname, exist_ok=True)
+    explore_links(generator, dirname=dirname)
+    dirname = os.path.join(DIRECTORY, 'link_balanced')
+    os.makedirs(dirname, exist_ok=True)
+    explore_links(generator,  background_luminosity=1, signal_luminosity=1, dirname=dirname)
     # mu_vs_y_w(generator)
     # noise_vs_mu_variance(generator)
 
@@ -153,10 +159,12 @@ def noise_vs_mu_variance(generator):
 
 
 
-def explore_links(full_generator):
+def explore_links(full_generator, background_luminosity=410999.84732187376, signal_luminosity=691.9886077135781, dirname=DIRECTORY):
     train_generator, valid_generator, test_generator = get_generators(SEED)
     generator = valid_generator
     # generator = full_generator
+    generator.background_luminosity = background_luminosity
+    generator.signal_luminosity = signal_luminosity
 
     config = Config()
     N_SAMPLES = 300_000
@@ -196,13 +204,13 @@ def explore_links(full_generator):
         plt.ylabel('mu')
         plt.xlabel(f'weighted mean({name})')
         plt.legend()
-        plt.savefig(os.path.join(DIRECTORY, f'link_{name}.png'))
+        plt.savefig(os.path.join(dirname, f'link_{name}.png'))
         plt.clf()
 
 
 def load_some_clf():
     model = GradientBoostingModel(learning_rate=0.1, n_estimators=300, max_depth=3)
-    model.set_info("HIGGS-prior", 0)
+    model.set_info(DATA_NAME, "HIGGS-prior", 0)
     print(f"loading {model.model_path}")
     model.load(model.model_path)
     return model

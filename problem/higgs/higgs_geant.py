@@ -73,11 +73,12 @@ def label_to_float(data):
         pass
 
 
-def normalize_weight(data):
+def normalize_weight(data, background_luminosity=410999.84732187376, 
+                              signal_luminosity=691.9886077135781):
     """Normalizes weight inplace"""
     w = data['Weight'].values
     y = data['Label'].values
-    data['Weight'] = compute_normalized_weight(w, y)
+    data['Weight'] = compute_normalized_weight(w, y, background_luminosity=background_luminosity, signal_luminosity=signal_luminosity)
 
 
 def compute_normalized_weight(w, y, 

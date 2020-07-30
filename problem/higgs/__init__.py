@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 from .generator import Generator
 from .generator import get_generators
+from .generator import get_balanced_generators
 from .parameter import Parameter
 from .nll import HiggsNLL
 from .config import HiggsConfig
