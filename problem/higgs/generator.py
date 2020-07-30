@@ -53,6 +53,20 @@ def get_balanced_generators(seed, train_size=0.5, test_size=0.1):
     return train_generator, valid_generator, test_generator
 
 
+def get_easy_generators(seed, train_size=0.5, test_size=0.1):
+    train_generator, valid_generator, test_generator = get_generators(seed, train_size=train_size, test_size=test_size)
+    train_generator.background_luminosity = 95
+    train_generator.signal_luminosity = 5
+
+    valid_generator.background_luminosity = 95
+    valid_generator.signal_luminosity = 5
+
+    test_generator.background_luminosity = 95
+    test_generator.signal_luminosity = 5
+
+    return train_generator, valid_generator, test_generator
+
+
 
 class Generator():
     def __init__(self, data, seed=None, background_luminosity=410999.84732187376, 
