@@ -22,7 +22,8 @@ class S3D2NLL():
         config = self.config
         self.valid_generator.reset()
         X, y, w = self.valid_generator.generate(r, lam, mu, n_samples=config.N_VALIDATION_SAMPLES)
-        valid_summaries = self.compute_summaries(X, w)
+        EPSILON = 1e-5  # avoid log(0)
+        valid_summaries = self.compute_summaries(X, w) + EPSILON
         test_summaries = self.compute_summaries(self.X_test, self.w_test)
 
         # Compute NLL
