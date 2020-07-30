@@ -23,8 +23,8 @@ class ModelInfo(object):
     like the number of cross validation or the path where to save the model.
     """
     old_path = None
-    path = None
-    directory = None
+    model_path = None
+    model_directory = None
     full_name = None
     i_cv = None
     benchmark_name = None
@@ -40,8 +40,8 @@ class ModelInfo(object):
         return self.get_name()
 
     def save(self, save_directory):
-        info = dict(path=self.path,
-                    directory=self.directory,
+        info = dict(path=self.model_path,
+                    model_directory=self.model_directory,
                     full_name=self.full_name,
                     i_cv=self.i_cv,
                     benchmark_name=self.benchmark_name
@@ -57,7 +57,7 @@ class ModelInfo(object):
             info = json.load(f)
         self.path = save_directory
         self.old_path = info['path']
-        self.directory = info['directory']
+        self.model_directory = info['model_directory']
         self.full_name = info['full_name']
         self.i_cv = info['i_cv']
         self.benchmark_name = info['benchmark_name']

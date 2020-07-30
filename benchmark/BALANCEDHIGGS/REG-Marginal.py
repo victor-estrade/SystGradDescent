@@ -138,7 +138,7 @@ def run(args, i_cv):
     result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator)
                     for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
-    result_table.to_csv(os.path.join(model.path, 'results.csv'))
+    result_table.to_csv(os.path.join(model.results_path, 'results.csv'))
     logger.info('Plot params')
     param_names = config.PARAM_NAMES
     for name in param_names:

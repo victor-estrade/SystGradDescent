@@ -149,7 +149,7 @@ def main():
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     results = pd.concat(results, ignore_index=True)
-    results.to_csv(os.path.join(model.directory, 'results.csv'))
+    results.to_csv(os.path.join(model.results_directory, 'results.csv'))
     # EVALUATION
     eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, results)
     print_line()
@@ -157,8 +157,8 @@ def main():
     print(eval_table)
     print_line()
     print_line()
-    eval_table.to_csv(os.path.join(model.directory, 'evaluation.csv'))
-    gather_images(model.directory)
+    eval_table.to_csv(os.path.join(model.results_directory, 'evaluation.csv'))
+    gather_images(model.results_directory)
 
 
 def run(args, i_cv):
@@ -200,11 +200,11 @@ def run(args, i_cv):
     result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_r, calib_lam)
                     for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
-    result_table.to_csv(os.path.join(model.path, 'results.csv'))
+    result_table.to_csv(os.path.join(model.results_path, 'results.csv'))
     logger.info('Plot params')
     param_names = config.PARAM_NAMES
     for name in param_names:
-        plot_params(name, result_table, title=model.full_name, directory=model.path)
+        plot_params(name, result_table, title=model.full_name, directory=model.results_path)
 
     logger.info('DONE')
     return result_table
@@ -214,7 +214,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
-    iter_directory = os.path.join(model.path, f'iter_{i_iter}')
+    iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
     suffix = f'-mu={config.TRUE.mu:1.2f}_r={config.TRUE.r}_lambda={config.TRUE.lam}'
