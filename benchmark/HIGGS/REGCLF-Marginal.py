@@ -69,7 +69,7 @@ class TrainGenerator:
 
 
 def build_model(args, i_cv):
-    args.net = ARCHI(n_in=32, n_out=2, n_unit=args.n_unit)
+    args.net = ARCHI(n_in=31, n_out=2, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Model)
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
