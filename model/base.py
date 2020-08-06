@@ -40,7 +40,7 @@ class ModelInfo(object):
         return self.get_name()
 
     def save(self, save_directory):
-        info = dict(path=self.model_path,
+        info = dict(model_path=self.model_path,
                     model_directory=self.model_directory,
                     full_name=self.full_name,
                     i_cv=self.i_cv,
@@ -55,9 +55,12 @@ class ModelInfo(object):
         info_path = os.path.join(save_directory, 'info.json')
         with open(info_path, 'r') as f:
             info = json.load(f)
-        self.path = save_directory
-        self.old_path = info['path']
-        self.model_directory = info['model_directory']
+        self.model_path = save_directory
+        try:
+            self.old_path = info['path']
+            self.model_directory = info['model_directory']
+        except KeyError:
+            pass
         self.full_name = info['full_name']
         self.i_cv = info['i_cv']
         self.benchmark_name = info['benchmark_name']
