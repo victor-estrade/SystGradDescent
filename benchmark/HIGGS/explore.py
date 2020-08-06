@@ -45,12 +45,15 @@ def main():
     dirname = os.path.join(DIRECTORY, 'link_standard')
     os.makedirs(dirname, exist_ok=True)
     explore_links(generator, dirname=dirname)
+
     dirname = os.path.join(DIRECTORY, 'link_balanced')
     os.makedirs(dirname, exist_ok=True)
     explore_links(generator,  background_luminosity=1, signal_luminosity=1, dirname=dirname)
+    
     dirname = os.path.join(DIRECTORY, 'link_easy')
     os.makedirs(dirname, exist_ok=True)
     explore_links(generator,  background_luminosity=95, signal_luminosity=5, dirname=dirname)
+    
     dirname = os.path.join(DIRECTORY, 'link_medium')
     os.makedirs(dirname, exist_ok=True)
     explore_links(generator,  background_luminosity=98, signal_luminosity=2, dirname=dirname)
@@ -176,7 +179,9 @@ def explore_links(full_generator, background_luminosity=410999.84732187376, sign
 
     config = Config()
     N_SAMPLES = 300_000
-    feature_names = list(generator.feature_names) + ['Label', 'classifier', 'bin', 'log_p']
+    feature_names = list(generator.feature_names) 
+    threshold = 0.97
+    feature_names += [f"{threshold:.2f}_cut_"+e for e in list(generator.feature_names)] + ['Label', 'classifier', 'bin', 'log_p']
     mu_range = np.linspace(min(config.RANGE.mu), max(config.RANGE.mu), num=18)
     all_params = {"min": config.MIN, "true":config.TRUE, "max":config.MAX}
     # all_params = {"true":config.TRUE}
@@ -195,11 +200,15 @@ def explore_links(full_generator, background_luminosity=410999.84732187376, sign
             average_label = np.sum(label*weight, axis=0) / sum_weight
             proba = clf.predict_proba(data)
             decision = proba[:, 1]
+            data_cut = data[decision > threshold]
+            weight_cut = weight[decision > threshold]
+            sum_weight_cut = np.sum(weight_cut)
+            average_array_cut = np.sum(data_cut*weight_cut.reshape(-1, 1), axis=0) / sum_weight_cut
             log_p = np.log(decision / (1 - decision))
             average_log_p = np.sum(log_p*weight, axis=0) / sum_weight
             average_clf = np.sum(decision*weight, axis=0) / sum_weight
             average_bin = np.sum((decision > 0.9)*weight, axis=0) / sum_weight
-            average_array = np.hstack([average_array, average_label, average_clf, average_bin, average_log_p])
+            average_array = np.hstack([average_array, average_array_cut, average_label, average_clf, average_bin, average_log_p])
             average_list.append(average_array)
             target_list.append(mu)
         average_df = pd.DataFrame(np.array(average_list), columns=feature_names)
