@@ -27,7 +27,7 @@ def print_line(symbol='='):
     logger.info(symbol*105)
 
 
-def print_params(param, params_truth):
+def old_print_params(param, params_truth):
     logger = logging.getLogger()
     logger.info('[param_name] = [truth] vs  [value]  +/-  [error]')
     for p, truth in zip(param, params_truth):
@@ -35,3 +35,15 @@ def print_params(param, params_truth):
         value = p['value']
         error = p['error']
         logger.info('{name:4} = {truth} vs {value} +/- {error}'.format(**locals()))
+
+
+
+def print_params(param, params_truth):
+    logger = logging.getLogger()
+    logger.info('[param_name] = [truth] vs  [value]  +/-  [error]')
+    for p in param:
+        name  = p['name']
+        value = p['value']
+        error = p['error']
+        true_value = params_truth[name]
+        logger.info('{name:4} = {true_value} vs {value} +/- {error}'.format(**locals()))
