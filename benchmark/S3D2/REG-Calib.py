@@ -238,8 +238,6 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     result_row['cheat_mu'] = cheat_target
     result_row['cheat_sigma_mu'] = cheat_sigma
 
-    param_sampler = param_generator
-
     # MONTE CARLO
     logger.info('Making {} predictions'.format(NCALL))
     all_pred, all_params = many_predict(model, X_test, w_test, param_sampler, ncall=NCALL)
