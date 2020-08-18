@@ -26,7 +26,7 @@ class S3D2Config():
                     lam=np.linspace(2, 4, 3),
                     mu=np.linspace(0.1, 0.99, 4),)
 
-    PARAM_NAMES = ['mu', 'r', 'lam']
+    PARAM_NAMES = TRUE.parameter_names
     INTEREST_PARAM_NAME = TRUE.interest_parameters_names
 
     CALIBRATED_MU = CALIBRATED.mu

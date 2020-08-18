@@ -14,7 +14,7 @@ class GGConfig():
     RANGE = Parameter(rescale=np.linspace(0.8, 2, 5), 
                         mix=np.linspace(0.1, 0.9, 4))
 
-    PARAM_NAMES = TRUE._fields
+    PARAM_NAMES = TRUE.parameter_names
     INTEREST_PARAM_NAME = 'mix'
 
     N_TRAINING_SAMPLES = 2000

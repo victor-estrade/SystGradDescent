@@ -20,7 +20,7 @@ class HiggsConfig():
 
     MIN = Parameter(tes=0.9, jes=0.95, les=0.98, mu=0.1)
     MAX = Parameter(tes=1.1, jes=1.05, les=1.02, mu=2.2)
-    PARAM_NAMES = TRUE._fields
+    PARAM_NAMES = TRUE.parameter_names
     INTEREST_PARAM_NAME = 'mu'
 
     N_TRAINING_SAMPLES = None
