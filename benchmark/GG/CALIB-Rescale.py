@@ -56,6 +56,15 @@ class TainGenerator:
         return X, params.rescale, w, None
 
 
+def build_model(args, i_cv):
+    args.net = ARCHI(n_in=1, n_out=2, n_unit=args.n_unit)
+    args.optimizer = get_optimizer(args)
+    model = get_model(args, Regressor)
+    model.base_name = CALIB
+    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
+    return model
+
+
 def main():
     # BASIC SETUP
     logger = set_logger()
@@ -65,11 +74,9 @@ def main():
 
     # Setup model
     logger.info("Setup model")
-    args.net = ARCHI(n_in=1, n_out=2, n_unit=args.n_unit)
-    args.optimizer = get_optimizer(args)
-    model = get_model(args, Regressor)
-    model.base_name = CALIB
-    model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
+    model = build_model(args, 0)
+    os.makedirs(model.results_path, exist_ok=True)
+
 
     # Setup data
     logger.info("Setup data")
@@ -108,6 +115,10 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
+    iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
+    os.makedirs(iter_directory, exist_ok=True)
+    result_row['i'] = i_iter
+
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     target, sigma = model.predict(X_test, w_test)
     logger.info('{} =vs= {} +/- {}'.format(config.TRUE.rescale, target, sigma))
