@@ -197,8 +197,10 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     df.to_csv(fname)
     mix_mean = df.mix.mean()
     mix_std = df.mix.std()
+    mix_var = df.mix.var()
     result_row['mix_mean'] = mix_mean
     result_row['mix_std'] = mix_std
+    result_row['mix_var'] = mix_var
 
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
