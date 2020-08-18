@@ -18,3 +18,13 @@ def get_minimizer(compute_nll, calibrated_param, calibrated_param_error):
                            limit_mix=(0, 1),
                           )
     return minimizer
+
+
+def get_minimizer_no_nuisance(compute_nll, calibrated_param, calibrated_param_error):
+    minimizer = iminuit.Minuit(compute_nll,
+                           errordef=ERRORDEF_NLL,
+                           mix=calibrated_param.mix,
+                           error_mix=calibrated_param_error.mix,
+                           limit_mix=(0, 1),
+                          )
+    return minimizer
