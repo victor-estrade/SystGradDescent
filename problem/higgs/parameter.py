@@ -96,3 +96,49 @@ class Parameter:
     def __getitem__(self, key): 
         return asdict(self)[key]
 
+
+@dataclass(frozen=True)
+class FuturParameter:
+    tes : float
+    jes : float
+    les : float
+    nasty_bkg : float
+    sigma_soft : float
+    mu : float
+    
+    @property
+    def nuisance_parameters(self):
+        return (self.tes, self.jes, self.les, self.nasty_bkg, self.sigma_soft)
+
+    @property
+    def interest_parameters(self):
+        return self.mu
+
+    @property
+    def parameter_names(self):
+        return ('tes', 'jes', 'les', 'nasty_bkg', 'sigma_soft', 'mu')
+
+    @property
+    def nuisance_parameters_names(self):
+        return ('tes', 'jes', 'les', 'nasty_bkg', 'sigma_soft')
+
+    @property
+    def interest_parameters_names(self):
+        return "mu"
+
+    def __iter__(self):
+        return iter(astuple(self))
+
+    def clone_with(self, tes=None, jes=None, les=None, nasty_bkg=None, sigma_soft=None, mu=None):
+        tes = self.tes if tes is None else tes
+        jes = self.jes if jes is None else jes
+        les = self.les if les is None else les
+        nasty_bkg = self.nasty_bkg if nasty_bkg is None else nasty_bkg
+        sigma_soft = self.sigma_soft if sigma_soft is None else sigma_soft
+        mu  = self.mu if mu is None else mu
+        new_parameter = Parameter(tes, jes, les, nasty_bkg, sigma_soft, mu)
+        return new_parameter
+
+    def __getitem__(self, key): 
+        return asdict(self)[key]
+
