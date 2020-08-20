@@ -18,7 +18,7 @@ def parse_args():
     parser.add_argument('--xp-name', help='name of the experiment',
                         default='debug')
     parser.add_argument('--docker-image', help='the docker image',
-                        default='estradevictorantoine/systml:1.2', type=str)
+                        default='estradevictorantoine/systml:1.3', type=str)
 
     # max runtime days-hours:min:sec
     ressources = parser.add_argument_group('ressources', 'ressources taken by every job')
