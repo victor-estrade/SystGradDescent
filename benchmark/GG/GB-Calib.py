@@ -207,9 +207,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
 
     # MEASURE STAT/SYST VARIANCE
     logger.info('MEASURE STAT/SYST VARIANCE')
-    # param_sampler = calib_param_sampler(rescale_mean, rescale_sigma)
-    # conditional_results = sampling_hat_mu_wr_alpha(param_sampler, compute_nll, config)
-    conditional_results = sampling_hat_mu_wr_alpha(compute_nll, config)
+    conditional_results = make_conditional_estimation(compute_nll, config)
     fname = os.path.join(iter_directory, "no_nuisance.csv")
     conditional_estimate = pd.DataFrame(conditional_results)
     conditional_estimate['i'] = i_iter
@@ -223,17 +221,16 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
 
 
 
-def sampling_hat_mu_wr_alpha(compute_nll, config):
+def make_conditional_estimation(compute_nll, config):
     results = []
     for j, nuisance_parameters in enumerate(config.iter_nuisance()):
-        # sampled_param = param_generator(random_state=SEED+j)
-        # nuisance_parameters = sampled_param.nuisance_parameters
         compute_nll_no_nuisance = lambda mix : compute_nll(*nuisance_parameters, mix)
         minimizer = get_minimizer_no_nuisance(compute_nll_no_nuisance, config.CALIBRATED, config.CALIBRATED_ERROR)
         results_row = evaluate_minuit(minimizer, config.TRUE)
         results_row['j'] = j
-        results_row['rescale'] = nuisance_parameters[0]
-        results_row['rescale'+_TRUTH] = config.TRUE.rescale
+        for name, value in zip(config.CALIBRATED.nuisance_parameters_names, nuisance_parameters):
+            results_row[name] = value
+            results_row[name+_TRUTH] = config.TRUE[name]
         results.append(results_row)
     return results
 
