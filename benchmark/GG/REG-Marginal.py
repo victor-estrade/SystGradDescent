@@ -48,7 +48,7 @@ from ..my_argparser import REG_parse_args
 
 DATA_NAME = 'GG'
 BENCHMARK_NAME = DATA_NAME+'-marginal'
-N_ITER = 3
+N_ITER = 30
 NCALL = 1
 
 class TrainGenerator:
