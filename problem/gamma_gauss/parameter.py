@@ -58,6 +58,11 @@ class Parameter:
     def __iter__(self):
         return iter(astuple(self))
 
+    def __add__(self, other):
+        rescale = self.rescale + other.rescale
+        mix = self.mix + other.mix
+        return Parameter(rescale, mix)
+
     def clone_with(self, rescale=None, mix=None):
         rescale = self.rescale if rescale is None else rescale
         mix = self.mix if mix is None else mix
@@ -67,3 +72,5 @@ class Parameter:
     def __getitem__(self, key): 
         return asdict(self)[key]
 
+    def items(self):
+        return asdict(self).items()
