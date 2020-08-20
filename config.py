@@ -8,7 +8,7 @@ import os
 
 RANDOM_STATE = 42
 SEED = 42
-SAVING_DIR = 'savings'
+SAVING_DIR = 'OUTPUT'
 DEFAULT_DIR = os.path.join(SAVING_DIR, "Default")
 MODEL_SAVING_DIR = os.path.join(SAVING_DIR, "MODELS")
 
