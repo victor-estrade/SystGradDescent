@@ -13,7 +13,7 @@ import torch.nn.functional as F
 from .base import BaseClassifierModel
 from .base import BaseNeuralNet
 from sklearn.preprocessing import StandardScaler
-from sklearn.externals import joblib
+import joblib
 
 from .criterion import WeightedCrossEntropyLoss
 from .monitor import LightLossMonitorHook

@@ -21,7 +21,7 @@ from .utils import to_torch
 from .criterion import GaussNLLLoss
 
 from sklearn.preprocessing import StandardScaler
-from sklearn.externals import joblib
+import joblib
 from sklearn.ensemble import GradientBoostingClassifier
 
 class Regressor(BaseModel, BaseNeuralNet):
