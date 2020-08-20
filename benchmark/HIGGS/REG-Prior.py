@@ -156,13 +156,17 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
+    logger.flush()
+
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
     suffix = f'-mu={config.TRUE.mu:1.2f}_tes={config.TRUE.tes}_jes={config.TRUE.jes}_les={config.TRUE.les}'
     # suffix += f'_nasty_bkg={config.TRUE.nasty_bkg}_sigma_soft={config.TRUE.sigma_soft}'
+    
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=None)
+    
     # CALIBRATION
     # logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) ) 
     # logger.info('lam = {} =vs= {} +/- {}'.format(config.TRUE_LAMBDA, lam_mean, lam_sigma) )
@@ -172,7 +176,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     result_row['cheat_mu'] = cheat_target
     result_row['cheat_sigma_mu'] = cheat_sigma
 
-    param_sampler = param_generator
+    param_sampler = param_generator  # Prior distribution
 
     # MONTE CARLO
     logger.info('Making {} predictions'.format(NCALL))

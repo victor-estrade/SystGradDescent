@@ -214,24 +214,23 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
+    logger.flush()
+
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
     suffix = f'-mu={config.TRUE.mu:1.2f}_r={config.TRUE.r}_lambda={config.TRUE.lam}'
+    
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=None)
+    
     # CALIBRATION
     r_mean, r_sigma = calib_r.predict(X_test, w_test)
     lam_mean, lam_sigma = calib_lam.predict(X_test, w_test)
-    param_sampler = calib_param_sampler(r_mean, r_sigma, lam_mean, lam_sigma)
     logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) ) 
     logger.info('lam = {} =vs= {} +/- {}'.format(config.TRUE_LAMBDA, lam_mean, lam_sigma) )
-    result_row['r'] = r_mean
-    result_row['r'+_ERROR] = r_sigma
-    result_row['r'+_TRUTH] = config.TRUE_R
-    result_row['lam'] = lam_mean
-    result_row['lam'+_ERROR] = lam_sigma
-    result_row['lam'+_TRUTH] = config.TRUE_LAMBDA
+    config.CALIBRATED = Parameter(r_mean, lam_mean, config.CALIBRATED.interest_parameters)
+    config.CALIBRATED_ERROR = Parameter(r_sigma, lam_sigma, config.CALIBRATED_ERROR.interest_parameters)
 
     # CHEATER :
     cheat_target, cheat_sigma = model.predict(X_test, w_test, np.array(config.TRUE.nuisance_parameters))
@@ -240,6 +239,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
 
     # MONTE CARLO
     logger.info('Making {} predictions'.format(NCALL))
+    param_sampler = calib_param_sampler(r_mean, r_sigma, lam_mean, lam_sigma)
     all_pred, all_params = many_predict(model, X_test, w_test, param_sampler, ncall=NCALL)
     logger.info('Gathering it all')
     mc_data = monte_carlo_data(all_pred, all_params)

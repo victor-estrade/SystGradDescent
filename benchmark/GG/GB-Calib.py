@@ -177,6 +177,9 @@ def run(args, i_cv):
 
 def run_iter(model, result_row, i_iter, config, valid_generator, test_generator, calib_rescale, n_bins=10):
     logger = logging.getLogger()
+    logger.info('-'*45)
+    logger.info(f'iter : {i_iter}')
+    logger.flush()
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
