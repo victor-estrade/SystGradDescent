@@ -14,8 +14,8 @@ class GGConfig():
     RANGE = Parameter(rescale=np.linspace(0.8, 1.2, 3), 
                         mix=np.linspace(0.1, 0.9, 3))
 
-    FINE_RANGE = Parameter(rescale=np.linspace(0.5, 1.5, 11), 
-                        mix=np.linspace(0.1, 0.9, 11))
+    FINE_RANGE = Parameter(rescale=np.linspace(0.5, 1.5, 31), 
+                        mix=np.linspace(0.1, 0.9, 31))
 
 
     PARAM_NAMES = TRUE.parameter_names
