@@ -30,6 +30,7 @@ from utils.evaluation import evaluate_classifier
 from utils.evaluation import evaluate_summary_computer
 from utils.evaluation import evaluate_minuit
 from utils.evaluation import evaluate_estimator
+from utils.evaluation import evaluate_conditional_estimation
 from utils.images import gather_images
 
 from visual.misc import plot_params
@@ -39,6 +40,7 @@ from problem.gamma_gauss import get_minimizer
 from problem.gamma_gauss import get_minimizer_no_nuisance
 from problem.gamma_gauss import Generator
 from problem.gamma_gauss import Parameter
+from problem.gamma_gauss import param_generator
 from problem.gamma_gauss import GGNLL as NLLComputer
 
 from visual.special.gamma_gauss import plot_nll_around_min
@@ -104,10 +106,16 @@ def main():
     config = Config()
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
-    results = pd.concat(results, ignore_index=True)
-    results.to_csv(os.path.join(model.results_directory, 'results.csv'))
+    estimations = [e0 for e0, e1 in results]
+    estimations = pd.concat(estimations, ignore_index=True)
+    estimations.to_csv(os.path.join(model.results_directory, 'estimations.csv'))
+    conditional_estimations = [e1 for e0, e1 in results]
+    conditional_estimations = pd.concat(conditional_estimations)
+    conditional_estimations.to_csv(os.path.join(model.results_directory, 'conditional_estimations.csv'))
     # EVALUATION
-    eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, results)
+    eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, estimations)
+    eval_conditional = evaluate_conditional_estimation(conditional_estimations)
+    eval_table = pd.concat([eval_table, eval_conditional], axis=1)
     print_line()
     print_line()
     print(eval_table)
@@ -152,17 +160,20 @@ def run(args, i_cv):
     calib_rescale = load_calib_rescale()
     N_BINS = 10
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
-    result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_rescale, n_bins=N_BINS)
+    iter_results = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_rescale, n_bins=N_BINS)
                     for i, test_config in enumerate(config.iter_test_config())]
+    result_table = [e0 for e0, e1 in iter_results]
     result_table = pd.DataFrame(result_table)
-    result_table.to_csv(os.path.join(model.results_path, 'results.csv'))
+    result_table.to_csv(os.path.join(model.results_path, 'estimations.csv'))
     logger.info('Plot params')
     param_names = config.PARAM_NAMES
     for name in param_names:
         plot_params(name, result_table, title=model.full_name, directory=model.results_path)
 
+    conditional_estimate = pd.concat([e1 for e0, e1 in iter_results])
+    conditional_estimate['i_cv'] = i_cv
     logger.info('DONE')
-    return result_table
+    return result_table, conditional_estimate
 
 
 def run_iter(model, result_row, i_iter, config, valid_generator, test_generator, calib_rescale, n_bins=10):
@@ -181,6 +192,11 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     logger.info('rescale  = {} =vs= {} +/- {}'.format(config.TRUE.rescale, rescale_mean, rescale_sigma) ) 
     config.CALIBRATED = Parameter(rescale_mean, config.CALIBRATED.interest_parameters)
     config.CALIBRATED_ERROR = Parameter(rescale_sigma, config.CALIBRATED_ERROR.interest_parameters)
+    for name, value in config.CALIBRATED.items():
+        result_row[name+"_calib"] = value
+    for name, value in config.CALIBRATED_ERROR.items():
+        result_row[name+"_calib_error"] = value
+
 
     logger.info('Set up NLL computer')
     compute_summaries = ClassifierSummaryComputer(model, n_bins=n_bins)
@@ -190,43 +206,36 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
 
 
     # MEASURE STAT/SYST VARIANCE
-    param_sampler = calib_param_sampler(rescale_mean, rescale_sigma)
-    some_results = sampling_hat_mu_wr_alpha(param_sampler, compute_nll, config)
+    logger.info('MEASURE STAT/SYST VARIANCE')
+    # param_sampler = calib_param_sampler(rescale_mean, rescale_sigma)
+    # conditional_results = sampling_hat_mu_wr_alpha(param_sampler, compute_nll, config)
+    conditional_results = sampling_hat_mu_wr_alpha(compute_nll, config)
     fname = os.path.join(iter_directory, "no_nuisance.csv")
-    df = pd.DataFrame(some_results)
-    df.to_csv(fname)
-    mix_mean = df.mix.mean()
-    mix_std = df.mix.std()
-    mix_var = df.mix.var()
-    result_row['mix_mean'] = mix_mean
-    result_row['mix_std'] = mix_std
-    result_row['mix_var'] = mix_var
+    conditional_estimate = pd.DataFrame(conditional_results)
+    conditional_estimate['i'] = i_iter
+    conditional_estimate.to_csv(fname)
 
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
     minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
     result_row.update(evaluate_minuit(minimizer, config.TRUE))
-    return result_row.copy()
+    return result_row.copy(), conditional_estimate
 
 
 
-def sampling_hat_mu_wr_alpha(param_sampler, compute_nll, config):
+def sampling_hat_mu_wr_alpha(compute_nll, config):
     results = []
-    for j in range(20):
-        sampled_param = param_sampler()
-        nuisance_parameters = sampled_param.nuisance_parameters
+    for j, nuisance_parameters in enumerate(config.iter_nuisance()):
+        # sampled_param = param_generator(random_state=SEED+j)
+        # nuisance_parameters = sampled_param.nuisance_parameters
         compute_nll_no_nuisance = lambda mix : compute_nll(*nuisance_parameters, mix)
         minimizer = get_minimizer_no_nuisance(compute_nll_no_nuisance, config.CALIBRATED, config.CALIBRATED_ERROR)
         results_row = evaluate_minuit(minimizer, config.TRUE)
         results_row['j'] = j
-        results_row['rescale'] = sampled_param.rescale
+        results_row['rescale'] = nuisance_parameters[0]
         results_row['rescale'+_TRUTH] = config.TRUE.rescale
         results.append(results_row)
     return results
-
-
-
-
 
 
 if __name__ == '__main__':
