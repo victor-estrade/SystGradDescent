@@ -11,6 +11,8 @@ from __future__ import unicode_literals
 import os
 import logging
 from config import SEED
+from config import _ERROR
+from config import _TRUTH
 
 import pandas as pd
 
@@ -32,6 +34,7 @@ from visual.misc import plot_params
 
 from problem.gamma_gauss import GGConfig as Config
 from problem.gamma_gauss import get_minimizer
+from problem.gamma_gauss import get_minimizer_no_nuisance
 from problem.gamma_gauss import Generator
 from problem.gamma_gauss import GGNLL as NLLComputer
 
@@ -143,11 +146,34 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     # NLL PLOTS
     plot_nll_around_min(compute_nll, config.TRUE, iter_directory, suffix)
 
+    # MEASURE STAT/SYST VARIANCE
+    logger.info('MEASURE STAT/SYST VARIANCE')
+    conditional_results = make_conditional_estimation(compute_nll, config)
+    fname = os.path.join(iter_directory, "no_nuisance.csv")
+    conditional_estimate = pd.DataFrame(conditional_results)
+    conditional_estimate['i'] = i_iter
+    conditional_estimate.to_csv(fname)
+
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
     minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
     result_row.update(evaluate_minuit(minimizer, config.TRUE))
     return result_row.copy()
+
+
+
+def make_conditional_estimation(compute_nll, config):
+    results = []
+    for j, nuisance_parameters in enumerate(config.iter_nuisance()):
+        compute_nll_no_nuisance = lambda mix : compute_nll(*nuisance_parameters, mix)
+        minimizer = get_minimizer_no_nuisance(compute_nll_no_nuisance, config.CALIBRATED, config.CALIBRATED_ERROR)
+        results_row = evaluate_minuit(minimizer, config.TRUE)
+        results_row['j'] = j
+        for name, value in zip(config.CALIBRATED.nuisance_parameters_names, nuisance_parameters):
+            results_row[name] = value
+            results_row[name+_TRUTH] = config.TRUE[name]
+        results.append(results_row)
+    return results
 
 if __name__ == '__main__':
     main()
