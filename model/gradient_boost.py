@@ -8,7 +8,7 @@ import os
 import numpy as np
 
 from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.externals import joblib
+import joblib
 
 from .base import BaseClassifierModel
 from .base import BaseModel
