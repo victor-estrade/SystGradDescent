@@ -26,5 +26,6 @@ def get_minimizer_no_nuisance(compute_nll, calibrated_param, calibrated_param_er
                            mix=calibrated_param.mix,
                            error_mix=calibrated_param_error.mix,
                            limit_mix=(0, 1),
+                           print_level=0,
                           )
     return minimizer
