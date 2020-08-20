@@ -56,7 +56,7 @@ from archi.reducer import A3ML3 as CALIB_ARCHI
 DATA_NAME = 'GG'
 BENCHMARK_NAME = DATA_NAME+'-calib'
 CALIB_RESCALE = "Calib_rescale"
-N_ITER = 3
+N_ITER = 30
 
 def build_model(args, i_cv):
     model = get_model(args, GradientBoostingModel)
