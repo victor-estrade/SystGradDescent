@@ -57,14 +57,12 @@ def explore_links():
 
 
 def explore_distribs():
-    MIX_MIN = 0.1
-    MIX_MAX = 0.2
     config = Config()
     generator = Generator()
     data, label = generator.sample_event(*config.TRUE, size=config.N_TESTING_SAMPLES)
     
-    prior_rescale = stats.normal(loc=config.CALIBRATED.rescale, scale=config.CALIBRATED_ERROR.rescale)
-    prior_mix   = stats.uniform(loc=MIX_MIN, scale=MIX_MAX-MIX_MIN)
+    prior_rescale = stats.norm(loc=config.CALIBRATED.rescale, scale=config.CALIBRATED_ERROR.rescale)
+    prior_mix   = stats.uniform(loc=0, scale=1)
 
     plot_data_distrib(generator, config)
     plot_prior(prior_rescale, "rescale")
