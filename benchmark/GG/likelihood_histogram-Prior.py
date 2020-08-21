@@ -35,7 +35,8 @@ from model.summaries import HistogramSummaryComputer
 
 
 # SEED = None
-BENCHMARK_NAME = "GG-prior"
+DATA_NAME = 'GG'
+BENCHMARK_NAME = DATA_NAME
 DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "Likelihood_histogram")
 N_ITER = 3
 

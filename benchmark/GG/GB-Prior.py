@@ -47,7 +47,7 @@ from ..my_argparser import GB_parse_args
 
 DATA_NAME = 'GG'
 BENCHMARK_NAME = DATA_NAME+'-prior'
-N_ITER = 3
+N_ITER = 30
 
 def build_model(args, i_cv):
     model = get_model(args, GradientBoostingModel)

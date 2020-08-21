@@ -32,7 +32,8 @@ from visual.special.gamma_gauss import plot_nll_around_min
 
 
 # SEED = None
-BENCHMARK_NAME = "GG-prior"
+DATA_NAME = 'GG'
+BENCHMARK_NAME = DATA_NAME
 DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "Likelihood")
 N_ITER = 30
 
