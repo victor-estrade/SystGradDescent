@@ -58,6 +58,16 @@ def estimate(minimizer):
 
 
 
+def evaluate_config(config):
+    table = []
+    for i, test_config in enumerate(config.iter_test_config()):
+        row = {"i" : i, "n_test_samples" : test_config.N_TESTING_SAMPLES }
+        row.update({ 'true_'+k : v for k, v in test_config.TRUE.items()})
+        table.append(row)
+    table = pd.DataFrame(table)
+    return table
+
+
 def evaluate_classifier(model, X, y, w=None, prefix='test', suffix=''):
     logger = logging.getLogger()
     results = {}

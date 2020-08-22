@@ -27,6 +27,7 @@ from utils.model import get_model
 from utils.model import get_optimizer
 from utils.model import train_or_load_classifier
 from utils.evaluation import evaluate_classifier
+from utils.evaluation import evaluate_config
 from utils.evaluation import evaluate_summary_computer
 from utils.evaluation import evaluate_minuit
 from utils.evaluation import evaluate_estimator
@@ -103,6 +104,9 @@ def main():
     # INFO
     model = build_model(args, -1)
     config = Config()
+    config_table = evaluate_config(config)
+    os.makedirs(model.results_path, exist_ok=True)
+    config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     estimations = [e0 for e0, e1 in results]
@@ -122,6 +126,7 @@ def main():
     print_line()
     eval_table.to_csv(os.path.join(model.results_directory, 'evaluation.csv'))
     gather_images(model.results_directory)
+    # TODO un code pour changer iter_test_config() en tableau de référence pour correspondre i et les params
 
 
 def run(args, i_cv):
@@ -184,6 +189,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
+    result_row['n_test_samples'] = config.N_TESTING_SAMPLES
     suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
 
     logger.info('Generate testing data')

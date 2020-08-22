@@ -24,11 +24,15 @@ class GGConfig():
     N_TRAINING_SAMPLES = 2000
     N_VALIDATION_SAMPLES = 2000
     N_TESTING_SAMPLES = 2000
+    RANGE_N_TEST = [50, 500, 2000]
 
     def iter_test_config(self):
-        for true_rescale, true_mix in itertools.product(*self.RANGE):
+        param_lists = [*self.RANGE ] + [ GGConfig.RANGE_N_TEST ]
+        print(param_lists)
+        for true_rescale, true_mix, n_test_samples in itertools.product(*param_lists):
             new_config = GGConfig()
             new_config.TRUE = Parameter(true_rescale, true_mix)
+            new_config.N_TESTING_SAMPLES = n_test_samples
             yield new_config
 
     def iter_nuisance(self):
