@@ -21,6 +21,7 @@ from utils.log import set_logger
 from utils.log import flush
 from utils.log import print_line
 from utils.evaluation import evaluate_neural_net
+from utils.evaluation import evaluate_config
 from utils.evaluation import evaluate_regressor
 from utils.model import get_model
 from utils.model import get_optimizer
@@ -81,6 +82,8 @@ def main():
     # Setup data
     logger.info("Setup data")
     config = Config()
+    config_table = evaluate_config(config)
+    config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
     seed = SEED + 99999
     train_generator = TainGenerator(param_generator, Generator(seed))
     valid_generator = Generator(seed+1)
