@@ -123,15 +123,12 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     target, sigma = model.predict(X_test, w_test)
     logger.info('{} =vs= {} +/- {}'.format(config.TRUE.rescale, target, sigma))
 
-    result_row.update(params_to_dict(config.TRUE, ext=_TRUTH ))
+    result_row.update(config.TRUE.to_dict(suffix=_TRUTH ))
     name = CALIB_PARAM_NAME
     result_row[name] = target
     result_row[name+_ERROR] = sigma
     return result_row.copy()
 
-
-def params_to_dict(params, ext=""):
-    return {name+ext: value for name, value in zip(params._fields, params)}
 
 
 if __name__ == '__main__':

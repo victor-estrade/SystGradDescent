@@ -182,9 +182,9 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     save_monte_carlo(mc_data, iter_directory, ext=suffix)
     target, sigma = monte_carlo_infer(mc_data)
 
-    result_row.update(params_to_dict(config.CALIBRATED))
-    result_row.update(params_to_dict(config.CALIBRATED_ERROR, ext=_ERROR ))
-    result_row.update(params_to_dict(config.TRUE, ext=_TRUTH ))
+    result_row.update(config.CALIBRATED.to_dict())
+    result_row.update(config.CALIBRATED_ERROR.to_dict( suffix=_ERROR) )
+    result_row.update(config.TRUE.to_dict(suffix=_TRUTH) )
     name = config.INTEREST_PARAM_NAME 
     result_row[name] = target
     result_row[name+_ERROR] = sigma
@@ -192,9 +192,6 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     logger.info('mix  = {} =vs= {} +/- {}'.format(config.TRUE.interest_parameters, target, sigma) ) 
     return result_row.copy()
 
-
-def params_to_dict(params, ext=""):
-    return {name+ext: value for name, value in zip(params._fields, params)}
 
 if __name__ == '__main__':
     main()
