@@ -24,12 +24,12 @@ def many_predict(model, X, w, param_generator, ncall=100):
 
 
 def monte_carlo_data(all_pred, all_params):
-    all_target = [target for target, sigma in all_pred] 
-    all_sigma  = [sigma for target, sigma in all_pred] 
+    all_target = [target for target, sigma in all_pred]
+    all_sigma  = [sigma for target, sigma in all_pred]
     data = dict(target=all_target, sigma=all_sigma)
     nuisance_params_names = all_params[0].nuisance_parameters_names
-    data.update({name: [p[i] for p in all_params] 
-                    for i, name in enumerate(nuisance_params_names)})
+    data.update({name: [p[name] for p in all_params]
+                    for name in nuisance_params_names})
     data = pd.DataFrame(data)
     return data
 
