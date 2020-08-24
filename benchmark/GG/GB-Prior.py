@@ -140,7 +140,7 @@ def run(args, i_cv):
     conditional_estimate = pd.concat([e1 for e0, e1 in iter_results])
     conditional_estimate['i_cv'] = i_cv
     logger.info('DONE')
-    return result_table
+    return result_table, conditional_estimate
 
 
 def run_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=10):
