@@ -167,7 +167,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=None)
     target, sigma = model.predict(X_test, w_test)
 
-    logger.info(f"s = {w_test[y_test==1].sum()}   b = {w_test[y_test==0].sum()}   ")
+    # logger.info(f"s = {w_test[y_test==1].sum()}   b = {w_test[y_test==0].sum()}   ")
 
     result_row.update(config.CALIBRATED.to_dict())
     result_row.update(config.CALIBRATED_ERROR.to_dict( suffix=_ERROR) )
