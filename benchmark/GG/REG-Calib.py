@@ -170,6 +170,7 @@ def run(args, i_cv):
     # SET MODEL
     logger.info('Set up regressor')
     model = build_model(args, i_cv)
+    os.makedirs(model.results_path, exist_ok=True)
     flush(logger)
     
     # TRAINING / LOADING
