@@ -25,8 +25,10 @@ from utils.model import get_model
 from utils.model import get_optimizer
 from utils.model import train_or_load_neural_net
 from utils.evaluation import evaluate_neural_net
+from utils.evaluation import evaluate_config
 from utils.evaluation import evaluate_regressor
 from utils.evaluation import evaluate_estimator
+from utils.evaluation import evaluate_conditional_estimation
 from utils.images import gather_images
 
 from config import _ERROR
@@ -125,12 +127,20 @@ def main():
     model = build_model(args, -1)
     os.makedirs(model.results_directory, exist_ok=True)
     config = Config()
+    config_table = evaluate_config(config)
+    config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
-    results = pd.concat(results, ignore_index=True)
-    results.to_csv(os.path.join(model.results_directory, 'results.csv'))
+    estimations = [e0 for e0, e1 in results]
+    estimations = pd.concat(estimations, ignore_index=True)
+    estimations.to_csv(os.path.join(model.results_directory, 'estimations.csv'))
+    conditional_estimations = [e1 for e0, e1 in results]
+    conditional_estimations = pd.concat(conditional_estimations)
+    conditional_estimations.to_csv(os.path.join(model.results_directory, 'conditional_estimations.csv'))
     # EVALUATION
-    eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, results)
+    eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, estimations)
+    eval_conditional = evaluate_conditional_estimation(conditional_estimations)
+    eval_table = pd.concat([eval_table, eval_conditional], axis=1)
     print_line()
     print_line()
     print(eval_table)
@@ -175,17 +185,20 @@ def run(args, i_cv):
     # MEASUREMENT
     calib_rescale = load_calib_rescale()
     result_row['nfcn'] = NCALL
-    result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_rescale)
+    iter_results = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_rescale)
                     for i, test_config in enumerate(config.iter_test_config())]
+    result_table = [e0 for e0, e1 in iter_results]
     result_table = pd.DataFrame(result_table)
-    result_table.to_csv(os.path.join(model.results_path, 'results.csv'))
+    result_table.to_csv(os.path.join(model.results_path, 'estimations.csv'))
     logger.info('Plot params')
     param_names = config.PARAM_NAMES
     for name in param_names:
         plot_params(name, result_table, title=model.full_name, directory=model.results_path)
 
+    conditional_estimate = pd.concat([e1 for e0, e1 in iter_results])
+    conditional_estimate['i_cv'] = i_cv
     logger.info('DONE')
-    return result_table
+    return result_table, conditional_estimate
 
 
 def run_iter(model, result_row, i_iter, config, valid_generator, test_generator, calib_rescale):
@@ -197,6 +210,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
+    result_row['n_test_samples'] = config.N_TESTING_SAMPLES
     suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
 
     logger.info('Generate testing data')
@@ -213,6 +227,13 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     result_row['cheat_mu'] = cheat_target
     result_row['cheat_sigma_mu'] = cheat_sigma
 
+    # MEASURE STAT/SYST VARIANCE
+    logger.info('MEASURE STAT/SYST VARIANCE')
+    conditional_results = make_conditional_estimation(model, X_test, w_test, config)
+    fname = os.path.join(iter_directory, "no_nuisance.csv")
+    conditional_estimate = pd.DataFrame(conditional_results)
+    conditional_estimate['i'] = i_iter
+    conditional_estimate.to_csv(fname)
 
     # MONTE CARLO
     logger.info('Making {} predictions'.format(NCALL))
@@ -231,7 +252,24 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     result_row[name+_ERROR] = sigma
     result_row[name+_TRUTH] = config.TRUE.interest_parameters
     logger.info('mix  = {} =vs= {} +/- {}'.format(config.TRUE.interest_parameters, target, sigma) ) 
-    return result_row.copy()
+    return result_row.copy(), conditional_estimate
+
+
+def make_conditional_estimation(model, X_test, w_test, config):
+    results = []
+    name = config.INTEREST_PARAM_NAME 
+    for j, nuisance_parameters in enumerate(config.iter_nuisance()):
+        result_row = {}
+        target, sigma = model.predict(X_test, w_test, np.array(nuisance_parameters) )
+        result_row[name] = target
+        result_row[name+_ERROR] = sigma
+        result_row[name+_TRUTH] = config.TRUE.interest_parameters
+        result_row['j'] = j
+        for name, value in zip(config.CALIBRATED.nuisance_parameters_names, nuisance_parameters):
+            result_row[name] = value
+            result_row[name+_TRUTH] = config.TRUE[name]
+        results.append(result_row)
+    return results
 
 
 if __name__ == '__main__':
