@@ -19,3 +19,13 @@ def param_generator():
     return Parameter(r, lam, mu)
 
 
+def calib_param_sampler(r_mean, r_sigma, lam_mean, lam_sigma):
+    def param_sampler():
+        r = np.random.normal(r_mean, r_sigma)
+        lam = -1
+        while lam <= 0:
+            lam = np.random.normal(lam_mean, lam_sigma)
+        
+        mu = np.random.uniform(0, 1)
+        return Parameter(r, lam, mu)
+    return param_sampler

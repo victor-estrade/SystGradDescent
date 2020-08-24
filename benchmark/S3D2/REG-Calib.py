@@ -38,6 +38,7 @@ from problem.synthetic3D import S3D2 as Generator
 from problem.synthetic3D import S3D2Config as Config
 from problem.synthetic3D import Parameter
 from problem.synthetic3D import param_generator
+from problem.synthetic3D import calib_param_sampler
 
 from model.regressor import Regressor
 from model.monte_carlo import many_predict
@@ -97,17 +98,6 @@ def load_calib_lam():
     model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
     model.load(model.model_path)
     return model
-
-def calib_param_sampler(r_mean, r_sigma, lam_mean, lam_sigma):
-    def param_sampler():
-        r = np.random.normal(r_mean, r_sigma)
-        lam = -1
-        while lam <= 0:
-            lam = np.random.normal(lam_mean, lam_sigma)
-        
-        mu = np.random.uniform(0, 1)
-        return Parameter(r, lam, mu)
-    return param_sampler
 
 
 class TrainGenerator:
