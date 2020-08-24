@@ -126,7 +126,6 @@ def main():
     print_line()
     eval_table.to_csv(os.path.join(model.results_directory, 'evaluation.csv'))
     gather_images(model.results_directory)
-    # TODO un code pour changer iter_test_config() en tableau de référence pour correspondre i et les params
 
 
 def run(args, i_cv):
