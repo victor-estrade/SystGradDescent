@@ -28,7 +28,7 @@ from .utils import classwise_balance_weight
 
 
 class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
-    def __init__(self, net, optimizer, n_steps=5000, batch_size=20, learning_rate=1e-3, cuda=False, verbose=0):
+    def __init__(self, net, optimizer, n_steps=5000, batch_size=20, cuda=False, verbose=0):
         super().__init__()
         self.n_steps    = n_steps
         self.batch_size = batch_size
@@ -38,7 +38,6 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
         self.scaler        = StandardScaler()
         self.net           = net
         self.archi_name    = net.__class__.__name__
-        self.learning_rate = learning_rate
         self.optimizer     = optimizer
         self.set_optimizer_name()
         self.criterion     = WeightedCrossEntropyLoss()
@@ -150,13 +149,12 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
         self.loss_hook.load_state(path)
         return self
 
-    def describe(self):
-        return dict(name=self.basic_name, learning_rate=self.learning_rate,
-                    n_steps=self.n_steps, batch_size=self.batch_size)
 
     def get_name(self):
         name = "{basic_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}".format(**self.__dict__)
         return name
+
+
 
 
 class AugmentedNeuralNetModel(NeuralNetClassifier):
@@ -174,13 +172,12 @@ class AugmentedNeuralNetModel(NeuralNetClassifier):
         super().fit(X, y, sample_weight)
         return self
 
-    def describe(self):
-        return dict(name='augmented_neural_net', learning_rate=self.learning_rate,
-                    n_steps=self.n_steps, batch_size=self.batch_size, width=self.width, n_augment=self.n_augment)
-
     def get_name(self):
-        name = "{basic_name}-{n_steps}-{batch_size}-{learning_rate}-{width}-{n_augment}".format(**self.__dict__)
+        name = "{basic_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{width}-{n_augment}".format(**self.__dict__)
         return name
+
+
+
 
 
 class BlindNeuralNetModel(NeuralNetClassifier):
@@ -210,7 +207,3 @@ class BlindNeuralNetModel(NeuralNetClassifier):
         X = self.scaler.transform(X)
         proba = self._predict_proba(X)
         return proba
-
-    def describe(self):
-        return dict(name='blind_neural_net', learning_rate=self.learning_rate,
-                    n_steps=self.n_steps, batch_size=self.batch_size)
