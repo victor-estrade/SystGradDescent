@@ -28,7 +28,6 @@ class GGConfig():
 
     def iter_test_config(self):
         param_lists = [*self.RANGE ] + [ GGConfig.RANGE_N_TEST ]
-        print(param_lists)
         for true_rescale, true_mix, n_test_samples in itertools.product(*param_lists):
             new_config = GGConfig()
             new_config.TRUE = Parameter(true_rescale, true_mix)
