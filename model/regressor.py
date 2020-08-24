@@ -43,9 +43,8 @@ class Regressor(BaseModel, BaseNeuralNet):
 
         # self.loss_hook = LightLossMonitorHook()
         # self.criterion.register_forward_hook(self.loss_hook)
-        self.losses = []
-        self.mse_losses = []
-        self.msre_sigma_losses = []
+        self.scaler = None
+        self._reset_losses()
         if cuda:
             self.cuda()
 
@@ -60,6 +59,16 @@ class Regressor(BaseModel, BaseNeuralNet):
     def get_losses(self):
         losses = dict(loss=self.losses, mse_loss=self.mse_losses, msre_sigma=self.msre_sigma_losses)
         return losses
+
+    def reset(self):
+        self._reset_losses()
+        if self.scaler:
+            self.scaler = StandardScaler()
+
+    def _reset_losses(self):
+        self.losses = []
+        self.mse_losses = []
+        self.msre_sigma_losses = []
 
     def fit(self, generator):
         X, _, _, _ = generator.generate(n_samples=None)

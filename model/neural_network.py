@@ -16,7 +16,6 @@ from sklearn.preprocessing import StandardScaler
 import joblib
 
 from .criterion import WeightedCrossEntropyLoss
-from .monitor import LightLossMonitorHook
 
 from itertools import islice
 from .minibatch import EpochShuffle
@@ -42,8 +41,7 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
         self.set_optimizer_name()
         self.criterion     = WeightedCrossEntropyLoss()
 
-        self.loss_hook = LightLossMonitorHook()
-        self.criterion.register_forward_hook(self.loss_hook)
+        self._reset_losses()
         if cuda:
             self.cuda()
 
@@ -56,8 +54,16 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
         self.criterion = self.criterion.cpu()
 
     def get_losses(self):
-        losses = dict(loss=self.loss_hook.losses)
+        losses = dict(loss=self.losses)
         return losses
+
+    def reset(self):
+        self._reset_losses()
+        if self.scaler:
+            self.scaler = StandardScaler()
+
+    def _reset_losses(self):
+        self.losses = []
 
     def fit(self, X, y, sample_weight=None):
         # To numpy arrays
@@ -75,7 +81,7 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
         w = w.astype(np.float32)
         y = y.astype(np.int64)
         # Reset model
-        self.loss_hook.reset()
+        self._reset_losses()
         self.net.reset_parameters()
         # Train
         self._fit(X, y, w)
@@ -94,6 +100,7 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
             y_pred = self.net.forward(X_batch)
             loss = self.criterion(y_pred, y_batch, w_batch)
+            self.losses.append(loss.item())
             loss.backward()  # compute gradients
             self.optimizer.step()  # update params
         return self
@@ -158,10 +165,9 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
 
 
 class AugmentedNeuralNetModel(NeuralNetClassifier):
-    def __init__(self, net, augmenter, n_steps=5000, batch_size=20, learning_rate=1e-3, width=1, n_augment=2,
+    def __init__(self, net, optimizer, augmenter, n_steps=5000, batch_size=20, width=1, n_augment=2,
                  cuda=False, verbose=0):
-        super().__init__(net, n_steps=n_steps, batch_size=batch_size, 
-                        learning_rate=learning_rate, cuda=cuda, verbose=verbose)
+        super().__init__(net, optimizer, n_steps=n_steps, batch_size=batch_size, cuda=cuda, verbose=verbose)
         self.basic_name = "AugmentedNeuralNetClf"
         self.width = width
         self.n_augment = n_augment
@@ -181,9 +187,8 @@ class AugmentedNeuralNetModel(NeuralNetClassifier):
 
 
 class BlindNeuralNetModel(NeuralNetClassifier):
-    def __init__(self, net, n_steps=5000, batch_size=20, learning_rate=1e-3, cuda=False, verbose=0):
-        super().__init__(net, n_steps=n_steps, batch_size=batch_size, 
-                        learning_rate=learning_rate, cuda=cuda, verbose=verbose)
+    def __init__(self, net, optimizer, n_steps=5000, batch_size=20, learning_rate=1e-3, cuda=False, verbose=0):
+        super().__init__(net, n_steps=n_steps, batch_size=batch_size, cuda=cuda, verbose=verbose)
         self.basic_name = "BlindNeuralNetClf"
         self.skewed_idx = [0, 1, 8, 9, 10, 12, 18, 19]
         # ['DER_mass_transverse_met_lep', 'DER_mass_vis', 'DER_sum_pt',

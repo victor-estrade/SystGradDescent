@@ -76,8 +76,8 @@ class Pivot():
 
     def reset(self):
         self._reset_losses()
-        if self.rescale:
-            self.rescale = StandardScaler()
+        if self.scaler:
+            self.scaler = StandardScaler()
 
     def _reset_losses(self):
         self.net_loss = []
