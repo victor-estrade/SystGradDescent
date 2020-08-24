@@ -38,7 +38,7 @@ from model.summaries import HistogramSummaryComputer
 DATA_NAME = 'GG'
 BENCHMARK_NAME = DATA_NAME
 DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "Likelihood_histogram")
-N_ITER = 3
+N_ITER = 30
 
 def main():
     logger = set_logger()

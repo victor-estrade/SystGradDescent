@@ -40,7 +40,7 @@ from model.bayes import get_iter_prod
 
 BENCHMARK_NAME = "GG"
 DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "Bayes")
-N_ITER = 6
+N_ITER = 30
 
 from config import _ERROR
 from config import _TRUTH
