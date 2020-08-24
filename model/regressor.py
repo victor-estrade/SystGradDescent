@@ -70,6 +70,7 @@ class Regressor(BaseModel, BaseNeuralNet):
             return self._fit(generator)
 
     def _fit(self, generator):
+        self.net.train()  # train mode
         for i in range(self.n_steps):
             loss, mse = self._forward(generator)
 
@@ -83,6 +84,7 @@ class Regressor(BaseModel, BaseNeuralNet):
         return self
 
     def _fit_batch(self, generator):
+        self.net.train()  # train mode
         self.hasnan = False
         self.optimizer.zero_grad()
         for i in range(self.n_steps):
@@ -111,6 +113,7 @@ class Regressor(BaseModel, BaseNeuralNet):
                 print("="*50)
                 print('/!\\ NaN detected at iter /!\\ ', i)
                 print("="*50)
+                self.hasnan = True
                 break
             else:
                 grad_rescale = 1.0/self.batch_size
@@ -152,6 +155,7 @@ class Regressor(BaseModel, BaseNeuralNet):
         w = w.astype(np.float32).reshape(-1, 1)
         p = p.astype(np.float32).reshape(1, -1) if p is not None else None
 
+        self.net.eval()  # evaluation mode
         with torch.no_grad():
             X_torch = to_torch(X, cuda=self.cuda_flag)
             w_torch = to_torch(w, cuda=self.cuda_flag)
@@ -193,10 +197,6 @@ class Regressor(BaseModel, BaseNeuralNet):
         self.losses = losses_to_load['losses']
         self.mse_losses = losses_to_load['mse_losses']
         return self
-
-    def describe(self):
-        return dict(name=self.basic_name, learning_rate=self.learning_rate,
-                    n_steps=self.n_steps, batch_size=self.batch_size)
 
     def get_name(self):
         name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{sample_size}".format(**self.__dict__)
