@@ -105,5 +105,7 @@ venv.bak/
 
 logs/
 savings/
+old_savings/
+OUTPUT/
 # Jupyter notebooks too !
 *.ipynb
