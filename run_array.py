@@ -58,6 +58,21 @@ def parse_args():
                         help='learning rate',
                         type=float)
 
+    grid_args.add_argument('--beta1',
+                        nargs='+',
+                        help='beta 1 for Adam',
+                        type=float)
+
+    grid_args.add_argument('--beta2',
+                        nargs='+',
+                        help='beta 2 for Adam',
+                        type=float)
+
+    grid_args.add_argument('--weight-decay',
+                        nargs='+',
+                        help='weight decay for SGD',
+                        type=float)
+
     grid_args.add_argument('--trade-off',
                         nargs='+',
                         help='trade-off for multi-objective models',
