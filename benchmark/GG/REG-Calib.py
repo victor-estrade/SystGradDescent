@@ -40,6 +40,7 @@ from problem.gamma_gauss import GGConfig as Config
 from problem.gamma_gauss import Generator
 from problem.gamma_gauss import Parameter
 from problem.gamma_gauss import param_generator
+from problem.gamma_gauss import calib_param_sampler
 
 from model.regressor import Regressor
 from model.monte_carlo import many_predict
@@ -79,16 +80,6 @@ def load_calib_rescale():
     model.load(model.model_path)
     return model
 
-def calib_param_sampler(r_mean, r_sigma, lam_mean, lam_sigma):
-    def param_sampler():
-        r = np.random.normal(r_mean, r_sigma)
-        lam = -1
-        while lam <= 0:
-            lam = np.random.normal(lam_mean, lam_sigma)
-        
-        mu = np.random.uniform(0, 1)
-        return Parameter(r, lam, mu)
-    return param_sampler
 
 class TrainGenerator:
     def __init__(self, param_generator, data_generator):

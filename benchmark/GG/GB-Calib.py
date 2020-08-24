@@ -41,6 +41,7 @@ from problem.gamma_gauss import get_minimizer
 from problem.gamma_gauss import get_minimizer_no_nuisance
 from problem.gamma_gauss import Generator
 from problem.gamma_gauss import Parameter
+from problem.gamma_gauss import calib_param_sampler
 from problem.gamma_gauss import GGNLL as NLLComputer
 
 from visual.special.gamma_gauss import plot_nll_around_min
@@ -84,13 +85,6 @@ def load_calib_rescale():
     return model
 
 
-
-def calib_param_sampler(r_mean, r_sigma):
-    def param_sampler():
-        r = np.random.normal(r_mean, r_sigma)        
-        mu = np.random.uniform(0, 1)
-        return Parameter(r, mu)
-    return param_sampler
 
 # =====================================================================
 # MAIN

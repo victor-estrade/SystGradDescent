@@ -19,3 +19,13 @@ def param_generator(random_state=None):
     mix   = prior_mix.rvs(random_state=random_state)
     return Parameter(rescale, mix)
 
+
+def calib_param_sampler(rescale_mean, rescale_sigma, random_state=42):
+    def param_sampler():
+        offset = - rescale_mean / rescale_sigma
+        prior_rescale = stats.truncnorm(offset, 5, loc=rescale_mean, scale=rescale_sigma)
+        prior_mix   = stats.uniform(loc=0, scale=1)
+        rescale = prior_rescale.rvs(random_state=random_state)
+        mix   = prior_mix.rvs(random_state=random_state)
+        return Parameter(rescale, mix)
+    return param_sampler
