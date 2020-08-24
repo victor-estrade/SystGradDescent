@@ -75,8 +75,8 @@ def main():
 
     # Setup model
     logger.info("Setup model")
-    model = build_model(args, 0)
-    os.makedirs(model.results_path, exist_ok=True)
+    model = build_model(args, 99999)
+    os.makedirs(model.results_directory, exist_ok=True)
 
 
     # Setup data
@@ -89,7 +89,7 @@ def main():
     valid_generator = Generator(seed+1)
     test_generator  = Generator(seed+2)
 
-    i_cv = -1
+    i_cv = 99999
     result_row = {'i_cv': i_cv}
 
     # TRAINING / LOADING
@@ -104,12 +104,12 @@ def main():
     result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator)
                     for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
-    result_table.to_csv(os.path.join(model.results_path, 'results.csv'))
+    result_table.to_csv(os.path.join(model.results_directory, 'results.csv'))
 
     logger.info('Plot params')
     param_names = [CALIB_PARAM_NAME]
     for name in param_names:
-        plot_params(name, result_table, title=model.full_name, directory=model.results_path)
+        plot_params(name, result_table, title=model.full_name, directory=model.results_directory)
 
     logger.info('DONE')
 

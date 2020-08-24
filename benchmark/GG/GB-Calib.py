@@ -103,9 +103,9 @@ def main():
     flush(logger)
     # INFO
     model = build_model(args, -1)
+    os.makedirs(model.results_directory, exist_ok=True)
     config = Config()
     config_table = evaluate_config(config)
-    os.makedirs(model.results_path, exist_ok=True)
     config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]

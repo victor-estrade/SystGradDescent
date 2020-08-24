@@ -86,6 +86,7 @@ def main():
     flush(logger)
     # INFO
     model = build_model(args, -1)
+    os.makedirs(model.results_directory, exist_ok=True)
     config = Config()
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
