@@ -91,7 +91,7 @@ def main():
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     results = pd.concat(results, ignore_index=True)
-    results.to_csv(os.path.join(model.results_directory, 'results.csv'))
+    results.to_csv(os.path.join(model.results_directory, 'estimations.csv'))
     # EVALUATION
     eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, results)
     print_line()
@@ -123,6 +123,7 @@ def run(args, i_cv):
     # SET MODEL
     logger.info('Set up regressor')
     model = build_model(args, i_cv)
+    os.makedirs(model.results_path, exist_ok=True)
     flush(logger)
     
     # TRAINING / LOADING
