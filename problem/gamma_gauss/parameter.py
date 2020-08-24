@@ -75,8 +75,8 @@ class Parameter:
     def items(self):
         return asdict(self).items()
 
-    def to_dict(self, prefix=None, suffix=None):
-        if prefix is None and suffix is None:
+    def to_dict(self, prefix='', suffix=''):
+        if not prefix and not suffix:
             return asdict(self)
         else:
             return {prefix+key+suffix : value for key, value in self.items()}
