@@ -70,5 +70,6 @@ def plot_params(param_name, result_table, title='no title', directory=DEFAULT_DI
         plt.savefig(os.path.join(directory, 'estimate_{}.png'.format(param_name)))
         plt.clf()
     except Exception as e:
+        plt.clf()
         logger.warning('Plot params failed')
         logger.warning(str(e))

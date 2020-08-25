@@ -29,6 +29,7 @@ def plot_losses(losses, log=False, title='no title', directory=DEFAULT_DIR, fnam
         plt.savefig(os.path.join(directory, fname))
         plt.clf()
     except Exception as e:
+        plt.clf()
         logger.warning('Plot REG losses failed')
         logger.warning(str(e))
 
@@ -45,6 +46,7 @@ def plot_REG_log_mse(mse_losses, title='no title', directory=DEFAULT_DIR, fname=
         plt.savefig(os.path.join(directory, fname))
         plt.clf()
     except Exception as e:
+        plt.clf()
         logger.warning('Plot REG log losses failed')
         logger.warning(str(e))
 

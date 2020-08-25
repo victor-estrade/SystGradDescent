@@ -33,5 +33,6 @@ def plot_infer(values, probas, expected_value=None, true_value=None, std=None,
         plt.savefig(os.path.join(directory, fname))
         plt.clf()
     except Exception as e:
+        plt.clf()
         logger.warning(f'Plot infer {name} failed')
         logger.warning(str(e))
