@@ -26,6 +26,7 @@ from utils.model import get_model
 from utils.model import get_optimizer
 from utils.model import train_or_load_classifier
 from utils.evaluation import evaluate_classifier
+from utils.evaluation import evaluate_neural_net
 from utils.evaluation import evaluate_config
 from utils.evaluation import evaluate_summary_computer
 from utils.evaluation import evaluate_minuit
@@ -127,6 +128,7 @@ def run(args, i_cv):
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
     
+    result_row.update(evaluate_neural_net(model, prefix='valid'))
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
     # MEASUREMENT
