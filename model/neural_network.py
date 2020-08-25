@@ -135,7 +135,7 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
         path = os.path.join(save_directory, 'weights.pth')
         torch.save(self.net.state_dict(), path)
 
-        path = os.path.join(save_directory, 'Scaler.pkl')
+        path = os.path.join(save_directory, 'Scaler.joblib')
         joblib.dump(self.scaler, path)
 
         path = os.path.join(save_directory, 'losses.json')
@@ -151,15 +151,14 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
         else:
             self.net.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage))
 
-        path = os.path.join(save_directory, 'Scaler.pkl')
+        path = os.path.join(save_directory, 'Scaler.joblib')
         self.scaler = joblib.load(path)
 
         path = os.path.join(save_directory, 'losses.json')
         with open(path, 'r') as f:
             losses_to_load = json.load(f)
-        self.losses = losses_to_load['losses']
+        self.losses = losses_to_load['loss']
         return self
-
 
     def get_name(self):
         name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}".format(**self.__dict__)

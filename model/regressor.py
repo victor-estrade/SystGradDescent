@@ -180,7 +180,7 @@ class Regressor(BaseModel, BaseNeuralNet):
         path = os.path.join(save_directory, 'weights.pth')
         torch.save(self.net.state_dict(), path)
 
-        path = os.path.join(save_directory, 'Scaler.pkl')
+        path = os.path.join(save_directory, 'Scaler.joblib')
         joblib.dump(self.scaler, path)
 
         path = os.path.join(save_directory, 'losses.json')
@@ -196,14 +196,15 @@ class Regressor(BaseModel, BaseNeuralNet):
         else:
             self.net.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage))
 
-        path = os.path.join(save_directory, 'Scaler.pkl')
+        path = os.path.join(save_directory, 'Scaler.joblib')
         self.scaler = joblib.load(path)
 
         path = os.path.join(save_directory, 'losses.json')
         with open(path, 'r') as f:
             losses_to_load = json.load(f)
-        self.losses = losses_to_load['losses']
-        self.mse_losses = losses_to_load['mse_losses']
+        self.losses = losses_to_load['loss']
+        self.mse_losses = losses_to_load['mse_loss']
+        self.msre_sigma_losses = losses_to_load['msre_sigma']
         return self
 
     def get_name(self):
@@ -281,13 +282,13 @@ class ClfRegressor(Regressor):
     def save(self, save_directory):
         """Save the model in the given directory"""
         super().save(save_directory)
-        path = os.path.join(save_directory, 'GradientBoosting.pkl')
+        path = os.path.join(save_directory, 'GradientBoosting.joblib')
         joblib.dump(self.clf, path)
         return self
 
     def load(self, save_directory):
         """Load the model of the i-th CV from the given directory"""
         super().load(save_directory)
-        path = os.path.join(save_directory, 'GradientBoosting.pkl')
+        path = os.path.join(save_directory, 'GradientBoosting.joblib')
         self.clf = joblib.load(path)
         return self

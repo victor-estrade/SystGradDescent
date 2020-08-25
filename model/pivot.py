@@ -188,7 +188,7 @@ class Pivot():
         path = os.path.join(dir_path, 'adv_net_weights.pth')
         torch.save(self.adv_net.state_dict(), path)
 
-        path = os.path.join(dir_path, 'Scaler.pkl')
+        path = os.path.join(dir_path, 'Scaler.joblib')
         joblib.dump(self.scaler, path)
 
         path = os.path.join(dir_path, 'losses.json')
@@ -209,7 +209,7 @@ class Pivot():
         else:
             self.rnet.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage))
 
-        path = os.path.join(dir_path, 'Scaler.pkl')
+        path = os.path.join(dir_path, 'Scaler.joblib')
         self.scaler = joblib.load(path)
         return self
 

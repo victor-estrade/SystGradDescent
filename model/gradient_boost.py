@@ -47,14 +47,14 @@ class GradientBoostingModel(BaseClassifierModel):
     def save(self, save_directory):
         """Save the model in the given directory"""
         super().save(save_directory)
-        path = os.path.join(save_directory, 'GradientBoosting.pkl')
+        path = os.path.join(save_directory, 'GradientBoosting.joblib')
         joblib.dump(self.clf, path)
         return self
 
     def load(self, save_directory):
         """Load the model of the i-th CV from the given directory"""
         super().load(save_directory)
-        path = os.path.join(save_directory, 'GradientBoosting.pkl')
+        path = os.path.join(save_directory, 'GradientBoosting.joblib')
         self.clf = joblib.load(path)
         return self
 
@@ -103,13 +103,13 @@ class BlindGradientBoostingModel(GradientBoostingModel):
     def save(self, save_directory):
         """Save the model in the given directory"""
         super(BaseModel, self).save(save_directory)
-        path = os.path.join(save_directory, 'GradientBoosting.pkl')
+        path = os.path.join(save_directory, 'GradientBoosting.joblib')
         joblib.dump(self.clf, path)
         return self
 
     def load(self, save_directory):
         """Load the model of the i-th CV from the given directory"""
         super(BaseModel, self).load(save_directory)
-        path = os.path.join(save_directory, 'GradientBoosting.pkl')
+        path = os.path.join(save_directory, 'GradientBoosting.joblib')
         self.clf = joblib.load(path)
         return self
