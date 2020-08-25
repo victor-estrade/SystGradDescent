@@ -152,6 +152,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
+    result_row['n_test_samples'] = config.N_TESTING_SAMPLES
     suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
     
     logger.info('Generate testing data')
