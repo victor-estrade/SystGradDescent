@@ -249,17 +249,17 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
 
 def make_conditional_estimation(model, X_test, w_test, config):
     results = []
-    name = config.INTEREST_PARAM_NAME 
+    interest_name = config.INTEREST_PARAM_NAME 
     for j, nuisance_parameters in enumerate(config.iter_nuisance()):
         result_row = {}
         target, sigma = model.predict(X_test, w_test, np.array(nuisance_parameters) )
-        result_row[name] = target
-        result_row[name+_ERROR] = sigma
-        result_row[name+_TRUTH] = config.TRUE.interest_parameters
+        result_row[interest_name] = target
+        result_row[interest_name+_ERROR] = sigma
+        result_row[interest_name+_TRUTH] = config.TRUE.interest_parameters
         result_row['j'] = j
-        for name, value in zip(config.CALIBRATED.nuisance_parameters_names, nuisance_parameters):
-            result_row[name] = value
-            result_row[name+_TRUTH] = config.TRUE[name]
+        for nuisance_name, value in zip(config.CALIBRATED.nuisance_parameters_names, nuisance_parameters):
+            result_row[nuisance_name] = value
+            result_row[nuisance_name+_TRUTH] = config.TRUE[nuisance_name]
         results.append(result_row)
     return results
 
