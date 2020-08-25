@@ -122,6 +122,8 @@ def INFERNO_parse_args(main_description="Training launcher"):
     args = parser.parse_args()
     return args
 
+
+
 def NET_parse_args(main_description="Training launcher"):
     parser = argparse.ArgumentParser(description=main_description)
 
