@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import os
+import json
 import numpy as np
 
 import torch
@@ -138,7 +139,8 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
         joblib.dump(self.scaler, path)
 
         path = os.path.join(save_directory, 'losses.json')
-        self.loss_hook.save_state(path)
+        with open(path, 'w') as f:
+            json.dump(self.get_losses(), f)
         return self
 
     def load(self, save_directory):
@@ -158,7 +160,7 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
 
 
     def get_name(self):
-        name = "{basic_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}".format(**self.__dict__)
+        name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}".format(**self.__dict__)
         return name
 
 
@@ -168,7 +170,7 @@ class AugmentedNeuralNetModel(NeuralNetClassifier):
     def __init__(self, net, optimizer, augmenter, n_steps=5000, batch_size=20, width=1, n_augment=2,
                  cuda=False, verbose=0):
         super().__init__(net, optimizer, n_steps=n_steps, batch_size=batch_size, cuda=cuda, verbose=verbose)
-        self.basic_name = "AugmentedNeuralNetClf"
+        # self.base_name = "AugmentedNeuralNetClf"
         self.width = width
         self.n_augment = n_augment
         self.augmenter = augmenter
@@ -179,7 +181,7 @@ class AugmentedNeuralNetModel(NeuralNetClassifier):
         return self
 
     def get_name(self):
-        name = "{basic_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{width}-{n_augment}".format(**self.__dict__)
+        name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{width}-{n_augment}".format(**self.__dict__)
         return name
 
 
@@ -189,7 +191,7 @@ class AugmentedNeuralNetModel(NeuralNetClassifier):
 class BlindNeuralNetModel(NeuralNetClassifier):
     def __init__(self, net, optimizer, n_steps=5000, batch_size=20, learning_rate=1e-3, cuda=False, verbose=0):
         super().__init__(net, n_steps=n_steps, batch_size=batch_size, cuda=cuda, verbose=verbose)
-        self.basic_name = "BlindNeuralNetClf"
+        # self.base_name = "BlindNeuralNetClf"
         self.skewed_idx = [0, 1, 8, 9, 10, 12, 18, 19]
         # ['DER_mass_transverse_met_lep', 'DER_mass_vis', 'DER_sum_pt',
         #  'DER_pt_ratio_lep_tau', 'DER_met_phi_centrality', 'PRI_tau_pt',

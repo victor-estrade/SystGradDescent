@@ -184,9 +184,8 @@ class Regressor(BaseModel, BaseNeuralNet):
         joblib.dump(self.scaler, path)
 
         path = os.path.join(save_directory, 'losses.json')
-        losses_to_save = dict(losses=self.losses, mse_losses=self.mse_losses)
         with open(path, 'w') as f:
-            json.dump(losses_to_save, f)
+            json.dump(self.get_losses(), f)
         return self
 
     def load(self, save_directory):
