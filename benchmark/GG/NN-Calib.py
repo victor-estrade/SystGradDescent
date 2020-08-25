@@ -55,7 +55,7 @@ from archi.classic import L4 as ARCHI
 from archi.reducer import A3ML3 as CALIB_ARCHI
 # from archi.reducer import EA1AR8MR8L1 as CALIB_ARCHI
 
-DATA_NAME = 'NN'
+DATA_NAME = 'GG'
 BENCHMARK_NAME = DATA_NAME+'-calib'
 CALIB_RESCALE = "Calib_rescale"
 N_ITER = 30

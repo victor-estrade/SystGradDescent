@@ -51,7 +51,7 @@ from ..my_argparser import NET_parse_args
 from archi.classic import L4 as ARCHI
 
 
-DATA_NAME = 'NN'
+DATA_NAME = 'GG'
 BENCHMARK_NAME = DATA_NAME+'-prior'
 N_ITER = 30
 
