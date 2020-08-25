@@ -155,7 +155,9 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
         self.scaler = joblib.load(path)
 
         path = os.path.join(save_directory, 'losses.json')
-        self.loss_hook.load_state(path)
+        with open(path, 'r') as f:
+            losses_to_load = json.load(f)
+        self.losses = losses_to_load['losses']
         return self
 
 
