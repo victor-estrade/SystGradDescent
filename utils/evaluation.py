@@ -183,7 +183,7 @@ def evaluate_conditional_estimation(conditional_estimations):
     var_syst = mix_mean.groupby('i').var()
     var_total = var_stat + var_syst
     evaluation = pd.concat([var_stat.to_frame(name='var_stat')
-                            , var_syst.to_frame(name='var_stat')
+                            , var_syst.to_frame(name='var_syst')
                             , var_total.to_frame(name='var_total')]
                             , axis=1)
     return evaluation
