@@ -25,7 +25,7 @@ from utils.log import flush
 from utils.log import print_line
 from utils.model import get_model
 from utils.model import get_optimizer
-from utils.model import train_or_load_classifier
+from utils.model import train_or_load_data_augmentation
 from utils.evaluation import evaluate_classifier
 from utils.evaluation import evaluate_neural_net
 from utils.evaluation import evaluate_config
@@ -76,9 +76,9 @@ class TrainGenerator:
     def generate(self, n_samples):
         n_bunch_samples = n_samples // self.n_bunch
         data = [self.data_generator.generate(*self.param_generator(), n_bunch_samples) for i in range(self.n_bunch)]
-        X = np.concat([X for X, y, w in data], axis=0)
-        y = np.concat([y for X, y, w in data], axis=0)
-        w = np.concat([w for X, y, w in data], axis=0)
+        X = np.concatenate([X for X, y, w in data], axis=0)
+        y = np.concatenate([y for X, y, w in data], axis=0)
+        w = np.concatenate([w for X, y, w in data], axis=0)
         return X, y, w
 
 
@@ -142,7 +142,7 @@ def run(args, i_cv):
     flush(logger)
     
     # TRAINING / LOADING
-    train_or_load_classifier(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES*N_AUGMENT, retrain=args.retrain)
+    train_or_load_data_augmentation(model, train_generator, config.N_TRAINING_SAMPLES*N_AUGMENT, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
