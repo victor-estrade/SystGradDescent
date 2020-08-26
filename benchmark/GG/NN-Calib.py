@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line : 
-# python -m benchmark.GG.GB-Prior
+# python -m benchmark.GG.NN-Calib
 
 import os
 import logging
