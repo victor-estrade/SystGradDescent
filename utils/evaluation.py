@@ -79,6 +79,7 @@ def evaluate_classifier(model, X, y, w=None, prefix='test', suffix=''):
     results[f'{prefix}_accuracy{suffix}'] = accuracy
     logger.info('Plot distribution of the decision')
     fname = f'{prefix}_distrib{suffix}.png'
+    os.makedirs(model.results_path, exist_ok=True)
     plot_test_distrib(y_proba, y, title=model.full_name, directory=model.results_path, fname=fname)
 
     logger.info('Plot ROC curve')
@@ -93,6 +94,7 @@ def evaluate_classifier(model, X, y, w=None, prefix='test', suffix=''):
 def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix='', directory=None):
     logger = logging.getLogger()
     directory = model.results_path if directory is None else directory
+    os.makedirs(directory, exist_ok=True)
 
     X_sig = X[y==1]
     w_sig = w[y==1]
@@ -124,6 +126,7 @@ def evaluate_neural_net(model, prefix='', suffix=''):
     logger = logging.getLogger()
     logger.info('Plot losses')
     directory = model.results_path
+    os.makedirs(directory, exist_ok=True)
 
     losses = model.get_losses()
     plot_losses(losses, title=model.full_name, directory=directory)
@@ -137,6 +140,7 @@ def evaluate_neural_net(model, prefix='', suffix=''):
 
 
 def evaluate_regressor(model, prefix='', suffix=''):
+    os.makedirs(model.results_path, exist_ok=True)
     plot_REG_log_mse(model.mse_losses, title=model.full_name, directory=model.results_path)
 
 
