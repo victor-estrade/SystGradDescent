@@ -75,7 +75,7 @@ def main():
 
     # Setup model
     logger.info("Setup model")
-    model = build_model(args, 99999)
+    model = build_model(args, 0)
     os.makedirs(model.results_directory, exist_ok=True)
 
 
@@ -89,7 +89,7 @@ def main():
     valid_generator = Generator(seed+1)
     test_generator  = Generator(seed+2)
 
-    i_cv = 99999
+    i_cv = 0
     result_row = {'i_cv': i_cv}
 
     # TRAINING / LOADING
