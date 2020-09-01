@@ -41,6 +41,7 @@ from problem.gamma_gauss import GGConfig as Config
 from problem.gamma_gauss import get_minimizer
 from problem.gamma_gauss import get_minimizer_no_nuisance
 from problem.gamma_gauss import Generator
+from problem.gamma_gauss import Parameter
 from problem.gamma_gauss import param_generator
 from problem.gamma_gauss import GGNLL as NLLComputer
 
@@ -49,20 +50,21 @@ from visual.special.gamma_gauss import plot_nll_around_min
 from model.pivot import PivotClassifier
 from model.criterion.weighted_criterion import WeightedCrossEntropyLoss
 from model.criterion.weighted_criterion import WeightedMSELoss
+from model.regressor import Regressor
 from model.summaries import ClassifierSummaryComputer
 from ..my_argparser import PIVOT_parse_args
 
 from archi.classic import L4 as ARCHI
 
+from archi.reducer import A3ML3 as CALIB_ARCHI
+# from archi.reducer import EA1AR8MR8L1 as CALIB_ARCHI
 
 DATA_NAME = 'GG'
-BENCHMARK_NAME = DATA_NAME+'-prior'
+BENCHMARK_NAME = DATA_NAME+'-calib'
+CALIB_RESCALE = "Calib_rescale"
 N_ITER = 30
 N_AUGMENT = 5
 
-
-# net_criterion, adv_criterion, trade_off, net_optimizer, adv_optimizer,
-                
 def build_model(args, i_cv):
     args.net = ARCHI(n_in=1, n_out=2, n_unit=args.n_unit)
     args.adv_net = ARCHI(n_in=2, n_out=1, n_unit=args.n_unit)
@@ -92,6 +94,26 @@ class TrainGenerator:
         z = np.repeat(z, n_bunch_samples)
         return X, y, z, w
 
+
+
+def load_calib_rescale():
+    args = lambda : None
+    args.n_unit     = 80
+    args.optimizer_name  = "adam"
+    args.beta1      = 0.5
+    args.beta2      = 0.9
+    args.learning_rate = 1e-4
+    args.n_samples  = 1000
+    args.n_steps    = 1000
+    args.batch_size = 20
+
+    args.net = CALIB_ARCHI(n_in=1, n_out=2, n_unit=args.n_unit)
+    args.optimizer = get_optimizer(args)
+    model = get_model(args, Regressor)
+    model.base_name = CALIB_RESCALE
+    model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
+    model.load(model.model_path)
+    return model
 
 # =====================================================================
 # MAIN
@@ -163,9 +185,10 @@ def run(args, i_cv):
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
     # MEASUREMENT
+    calib_rescale = load_calib_rescale()
     N_BINS = 10
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
-    iter_results = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=N_BINS)
+    iter_results = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_rescale, n_bins=N_BINS)
                     for i, test_config in enumerate(config.iter_test_config())]
     result_table = [e0 for e0, e1 in iter_results]
     result_table = pd.DataFrame(result_table)
@@ -181,7 +204,7 @@ def run(args, i_cv):
     return result_table, conditional_estimate
 
 
-def run_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=10):
+def run_iter(model, result_row, i_iter, config, valid_generator, test_generator, calib_rescale, n_bins=10):
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
@@ -197,6 +220,16 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     # PLOT SUMMARIES
     evaluate_summary_computer(model, X_test, y_test, w_test, n_bins=n_bins, prefix='', suffix=suffix, directory=iter_directory)
+
+    # CALIBRATION
+    rescale_mean, rescale_sigma = calib_rescale.predict(X_test, w_test)
+    logger.info('rescale  = {} =vs= {} +/- {}'.format(config.TRUE.rescale, rescale_mean, rescale_sigma) ) 
+    config.CALIBRATED = Parameter(rescale_mean, config.CALIBRATED.interest_parameters)
+    config.CALIBRATED_ERROR = Parameter(rescale_sigma, config.CALIBRATED_ERROR.interest_parameters)
+    for name, value in config.CALIBRATED.items():
+        result_row[name+"_calib"] = value
+    for name, value in config.CALIBRATED_ERROR.items():
+        result_row[name+"_calib_error"] = value
 
     logger.info('Set up NLL computer')
     compute_summaries = ClassifierSummaryComputer(model, n_bins=n_bins)
