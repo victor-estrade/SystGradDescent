@@ -1,5 +1,5 @@
 import torch
-import torch.nn as nn
+# import torch.nn as nn
 
 import os
 import numpy as np
@@ -10,7 +10,7 @@ from .base import BaseNeuralNet
 from .utils import to_torch
 from .monitor import LightLossMonitorHook
 
-from hessian import hessian
+# from hessian import hessian
 
 
 class Inferno(BaseModel, BaseNeuralNet):
