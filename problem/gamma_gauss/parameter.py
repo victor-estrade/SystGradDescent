@@ -80,3 +80,6 @@ class Parameter:
             return asdict(self)
         else:
             return {prefix+key+suffix : value for key, value in self.items()}
+
+    def to_tuple(self):
+        return astuple(self)
