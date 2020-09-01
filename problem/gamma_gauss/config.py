@@ -8,7 +8,7 @@ import numpy as np
 from .parameter import Parameter
 
 class GGConfig():
-    CALIBRATED = Parameter(rescale=1, mix=0.5)
+    CALIBRATED = Parameter(rescale=1.0, mix=0.5)
     CALIBRATED_ERROR = Parameter(rescale=0.5, mix=0.5)
     TRUE = Parameter(rescale=1.2, mix=0.2)
     RANGE = Parameter(rescale=np.linspace(0.8, 1.2, 3), 

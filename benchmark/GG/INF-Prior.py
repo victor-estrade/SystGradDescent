@@ -11,6 +11,8 @@ from __future__ import unicode_literals
 import os
 import logging
 from config import SEED
+from config import _ERROR
+from config import _TRUTH
 
 import numpy as np
 import pandas as pd
@@ -29,7 +31,6 @@ from utils.evaluation import evaluate_inferno
 from utils.evaluation import evaluate_summary_computer
 from utils.evaluation import evaluate_config
 from utils.evaluation import evaluate_minuit
-from utils.evaluation import estimate
 from utils.evaluation import evaluate_estimator
 from utils.evaluation import evaluate_conditional_estimation
 from utils.images import gather_images
@@ -42,7 +43,6 @@ from problem.gamma_gauss import GGConfig as Config
 from problem.gamma_gauss import get_minimizer
 from problem.gamma_gauss import get_minimizer_no_nuisance
 from problem.gamma_gauss import Generator
-from problem.gamma_gauss import param_generator
 from problem.gamma_gauss import GGNLL as NLLComputer
 
 from visual.special.gamma_gauss import plot_nll_around_min
@@ -58,7 +58,7 @@ N_ITER = 30
 
 
 def build_model(args, i_cv):
-    args.net = ARCHI(n_in=1, n_out=args.n_bins)
+    args.net = ARCHI(n_in=1, n_out=args.n_bins, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     args.criterion = GGLoss()
     model = get_model(args, Inferno)

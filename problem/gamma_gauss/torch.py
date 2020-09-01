@@ -10,15 +10,19 @@ import torch.nn as nn
 
 from collections import OrderedDict
 from hessian import hessian
-from torch.distribution import Gamma
-from torch.distribution import Normal
+from torch.distributions import Gamma
+from torch.distributions import Normal
 
 from .config import GGConfig
 
 
 class GeneratorTorch():
-    def __init__(self, seed=None, gamma_k=2, gamma_loc=0, normal_mean=5, normal_sigma=0.5, cuda=False):
+    def __init__(self, seed=None, gamma_k=2.0, gamma_loc=0.0, normal_mean=5.0, normal_sigma=0.5, cuda=False):
         self.seed = seed
+        if cuda:
+            self.cuda()
+        else:
+            self.cpu()
         config = GGConfig()
         self.rescale = self.tensor(config.CALIBRATED.rescale, requires_grad=True)
         self.mix = self.tensor(config.CALIBRATED.mix, requires_grad=True)
@@ -37,10 +41,6 @@ class GeneratorTorch():
         self.norm  = Normal(self.normal_mean, self.normal_sigma)
 
         self.n_expected_events = 2000
-        if cuda:
-            self.cuda()
-        else:
-            self.cpu()
 
     def cpu(self):
         self.device = 'cpu'
@@ -51,7 +51,6 @@ class GeneratorTorch():
     def tensor(self, data, requires_grad=False, dtype=None):
         return torch.tensor(data, requires_grad=requires_grad, device=self.device, dtype=None)
 
-
     def sample_event(self, rescale, mix, size=1):
         n_sig = int(mix * size)
         n_bkg = size - n_sig
@@ -61,25 +60,27 @@ class GeneratorTorch():
         labels = self._generate_labels(n_bkg, n_sig)
         return x, labels
 
+    def __call__(self, n_samples):
+        return self.generate(n_samples)
+
     def generate(self, n_samples=1000):
         n_bkg = n_samples // 2
         n_sig = n_samples // 2
-        X, y, w = self._generate(n_bkg=n_bkg, n_sig=n_sig)
-        return X, y, w
+        x_s, w_s, x_b, w_b = self._generate(n_bkg=n_bkg, n_sig=n_sig)
+        return x_s, w_s, x_b, w_b
 
     def _generate(self, n_bkg=1000, n_sig=50):
         """
         """
-        X = self._generate_vars(n_bkg, n_sig)
-        y = self._generate_labels(n_bkg, n_sig)
-        w = self._generate_weights(n_bkg, n_sig, self.n_expected_events)
-        return X, y, w
+        x_s, x_b = self._generate_vars(n_bkg, n_sig)
+        # y = self._generate_labels(n_bkg, n_sig)
+        w_s, w_b = self._generate_weights(n_bkg, n_sig, self.n_expected_events)
+        return x_s, w_s, x_b, w_b
 
     def _generate_vars(self, n_bkg, n_sig):
-        x_b = self.gamma.rsample((n_bkg,)) + self.gamma_loc
-        x_s = self.norm.rsample((n_sig,))
-        x = torch.cat([x_b, x_s], axis=0)
-        return x
+        x_s = self.norm.rsample((n_sig, 1))
+        x_b = self.gamma.rsample((n_bkg, 1)) + self.gamma_loc
+        return x_s, x_b
 
     def _generate_labels(self, n_bkg, n_sig):
         y_b = torch.zeros(n_bkg)
@@ -90,8 +91,7 @@ class GeneratorTorch():
     def _generate_weights(self, n_bkg, n_sig, n_expected_events):
         w_b = torch.ones(n_bkg) * (1-self.mix) * n_expected_events/n_bkg
         w_s = torch.ones(n_sig) * self.mix * n_expected_events/n_sig
-        w = torch.cat([w_b, w_s], axis=0)
-        return w
+        return w_s.view(-1, 1), w_b.view(-1, 1)
 
     def proba_density(self, x, rescale, mix):
         """

@@ -52,14 +52,14 @@ class Inferno(BaseModel, BaseNeuralNet):
         params.update(generator.nuisance_params)
 
         for i in range(self.n_steps):
-            s, b = generator(self.sample_size)
+            s, w_s, b, w_b = generator.generate(self.sample_size)
             s_prime, b_prime = s.detach(), b.detach()
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
 
-            s_counts = self.forward(s)
-            b_counts = self.forward(b)
-            s_prime_counts = self.forward(s_prime)
-            b_prime_counts = self.forward(b_prime)
+            s_counts = self.forward(s, w_s)
+            b_counts = self.forward(b, w_b)
+            s_prime_counts = self.forward(s_prime, w_s.detach())
+            b_prime_counts = self.forward(b_prime, w_b.detach())
 
             total_count = mu * s_counts + b_counts # should be mu s + b + epsilon
             asimov = mu_prime * s_prime_counts + b_prime_counts # should be mu s + b + epsilon
@@ -71,7 +71,8 @@ class Inferno(BaseModel, BaseNeuralNet):
                 print('loss', loss)
                 break
             else:
-                loss.backward()
+                loss.backward(retain_graph=True)
+                # loss.backward()
                 self.optimizer.step()  # update params                
 
     def predict(self, X):
@@ -88,10 +89,10 @@ class Inferno(BaseModel, BaseNeuralNet):
         y_proba = np.array(probas)
         return y_proba
     
-    def forward(self, x):
+    def forward(self, x, w):
         logits = self.net(x)
         probas = torch.softmax(logits / self.temperature, 1)
-        counts = torch.sum(probas, 0, keepdim=False)
+        counts = torch.sum(probas * w, 0, keepdim=False)
         return counts
 
     def compute_summaries(self, X, W, n_bins=None):
