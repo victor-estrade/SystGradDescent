@@ -73,7 +73,7 @@ class Inferno(BaseModel, BaseNeuralNet):
             else:
                 loss.backward(retain_graph=True)
                 # loss.backward()
-                self.optimizer.step()  # update params                
+                self.optimizer.step()  # update params
 
     def predict(self, X):
         proba = self.predict_proba(X)

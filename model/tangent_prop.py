@@ -8,7 +8,6 @@ from collections import OrderedDict
 from .base import BaseModel
 from .base import BaseNeuralNet
 from .utils import to_torch
-from .monitor import LightLossMonitorHook
 
 # from hessian import hessian
 
@@ -28,8 +27,6 @@ class TangentPropClassifier(BaseModel, BaseNeuralNet):
         self.optimizer     = optimizer
         self.set_optimizer_name()
         self.criterion     = criterion
-        self.loss_hook = LightLossMonitorHook()
-        self.criterion.register_forward_hook(self.loss_hook)
         if cuda:
             self.cuda()
 
@@ -42,8 +39,8 @@ class TangentPropClassifier(BaseModel, BaseNeuralNet):
         self.criterion = self.criterion.cpu()
 
     def get_losses(self):
-        losses = dict(loss=self.loss_hook.losses)
-        return losses
+        loss = dict(loss=self.loss)
+        return loss
         
     def fit(self, generator):
         mu = torch.tensor(1.0, requires_grad=True)
@@ -73,7 +70,7 @@ class TangentPropClassifier(BaseModel, BaseNeuralNet):
             else:
                 loss.backward(retain_graph=True)
                 # loss.backward()
-                self.optimizer.step()  # update params                
+                self.optimizer.step()  # update params
 
     def predict(self, X):
         proba = self.predict_proba(X)
