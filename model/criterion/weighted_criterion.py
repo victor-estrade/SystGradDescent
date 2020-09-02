@@ -8,6 +8,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from hessian.gradient import jacobian
 
 __doc__ = """
 Sample wise weighted criterions.
@@ -52,4 +53,17 @@ class WeightedL1Loss(nn.Module):
     def forward(self, input, weight):
         loss = torch.sum( torch.abs(input), 1) * weight / input.size(1)
         loss = torch.mean(loss)
+        return loss
+
+
+class WeightedTPLoss(nn.Module):
+    def forward(self, logits, weight, nuisance_params):
+        # weight = torch.sqrt(weight)
+        w_sum = torch.sum(weight)
+        # jac = jacobian(torch.sum(logits * weight / w_sum, 0), nuisance_params.values())
+        jac = jacobian(logits, nuisance_params.values())
+        loss = torch.sum( jac * jac, 1) / jac.size(1)
+        loss = torch.sum(loss * weight) / w_sum
+        loss = torch.mean(loss)
+        # print(loss)
         return loss

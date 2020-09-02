@@ -32,10 +32,10 @@ class GeneratorTorch():
         # Define distributions
         self.gamma_k      = self.tensor(gamma_k)
         self.gamma_loc    = self.tensor(gamma_loc)
-        self.gamma_rate   = self.tensor(1.0) / self.rescale
+        self.gamma_rate   = self.tensor(1.0)
 
-        self.normal_mean  = self.tensor(normal_mean) * self.rescale
-        self.normal_sigma = self.tensor(normal_sigma) * self.rescale
+        self.normal_mean  = self.tensor(normal_mean)
+        self.normal_sigma = self.tensor(normal_sigma)
         
         self.gamma = Gamma(self.gamma_k, self.gamma_rate)
         self.norm  = Normal(self.normal_mean, self.normal_sigma)
@@ -66,25 +66,26 @@ class GeneratorTorch():
     def generate(self, n_samples=1000):
         n_bkg = n_samples // 2
         n_sig = n_samples // 2
-        x_s, w_s, x_b, w_b = self._generate(n_bkg=n_bkg, n_sig=n_sig)
-        return x_s, w_s, x_b, w_b
+        x_s, w_s, x_b, w_b, y = self._generate(n_bkg=n_bkg, n_sig=n_sig)
+        return x_s, w_s, x_b, w_b, y
 
     def _generate(self, n_bkg=1000, n_sig=50):
         """
         """
         x_s, x_b = self._generate_vars(n_bkg, n_sig)
-        # y = self._generate_labels(n_bkg, n_sig)
+        y = self._generate_labels(n_bkg, n_sig)
         w_s, w_b = self._generate_weights(n_bkg, n_sig, self.n_expected_events)
-        return x_s, w_s, x_b, w_b
+        return x_s, w_s, x_b, w_b, y
 
     def _generate_vars(self, n_bkg, n_sig):
-        x_s = self.norm.rsample((n_sig, 1))
+        x_s = self.norm.rsample((n_sig, 1)) * self.rescale
         x_b = self.gamma.rsample((n_bkg, 1)) + self.gamma_loc
+        x_b = x_b * self.rescale
         return x_s, x_b
 
     def _generate_labels(self, n_bkg, n_sig):
-        y_b = torch.zeros(n_bkg)
-        y_s = torch.ones(n_sig)
+        y_b = torch.zeros(n_bkg, dtype=int)
+        y_s = torch.ones(n_sig, dtype=int)
         y = torch.cat([y_b, y_s], axis=0)
         return y
 

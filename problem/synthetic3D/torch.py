@@ -47,10 +47,14 @@ class Synthetic3DGeneratorTorch():
         if self.reset_every is not None and self.reset_every < self.n_generated:
             self.reset()
             self.n_generated = 0
-        s = self.gen_sig(int(n_samples*self.s_b_ratio))
-        b = self.gen_bkg(int(n_samples*(1-self.s_b_ratio)))
+        n_signals = int(n_samples*self.s_b_ratio)
+        n_backgrounds = int(n_samples*(1-self.s_b_ratio))
+        s = self.gen_sig(n_signals)
+        b = self.gen_bkg(n_backgrounds)
         self.n_generated += n_samples
-        return s, b
+        w_s = torch.ones(n_signals).view(-1, 1)
+        w_b = torch.ones(n_backgrounds).view(-1, 1)
+        return s, w_s, b, w_b, 0
 
     def reset(self):
         torch.manual_seed(self.seed)

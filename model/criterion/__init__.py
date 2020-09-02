@@ -5,4 +5,5 @@ from __future__ import absolute_import
 
 
 from .weighted_criterion import WeightedCrossEntropyLoss
+from .weighted_criterion import WeightedTPLoss
 from .losses import GaussNLLLoss

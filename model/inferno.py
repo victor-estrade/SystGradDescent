@@ -52,7 +52,7 @@ class Inferno(BaseModel, BaseNeuralNet):
         params.update(generator.nuisance_params)
 
         for i in range(self.n_steps):
-            s, w_s, b, w_b = generator.generate(self.sample_size)
+            s, w_s, b, w_b, y = generator.generate(self.sample_size)
             s_prime, b_prime = s.detach(), b.detach()
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
 
@@ -71,8 +71,8 @@ class Inferno(BaseModel, BaseNeuralNet):
                 print('loss', loss)
                 break
             else:
-                loss.backward(retain_graph=True)
-                # loss.backward()
+                # loss.backward(retain_graph=True)
+                loss.backward()
                 self.optimizer.step()  # update params
 
     def predict(self, X):
