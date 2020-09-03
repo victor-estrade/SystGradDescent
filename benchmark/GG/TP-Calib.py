@@ -140,7 +140,7 @@ def run(args, i_cv):
     logger.info('Set up data generator')
     config = Config()
     seed = SEED + i_cv * 5
-    train_generator = GeneratorTorch(seed, args.cuda)
+    train_generator = GeneratorTorch(seed, cuda=args.cuda)
     valid_generator = Generator(seed+1)
     test_generator  = Generator(seed+2)
 
