@@ -133,8 +133,8 @@ class GGLoss(nn.Module):
     def __init__(self):
         super().__init__()
         config = GGConfig()
-        rescale_loc = torch.tensor(config.CALIBRATED.rescale)
-        rescale_std = torch.tensor(config.CALIBRATED_ERROR.rescale)
+        rescale_loc = torch.tensor(config.CALIBRATED.rescale, device="cuda")
+        rescale_std = torch.tensor(config.CALIBRATED_ERROR.rescale, device="cuda")
         self.rescale_constraints = torch.distributions.Normal(rescale_loc, rescale_std)
 
         self.constraints_distrib = {'rescale': self.rescale_constraints,
