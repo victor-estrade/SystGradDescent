@@ -85,12 +85,24 @@ class GBLoader(Loader):
 
 
 class NNLoader(Loader):
-    """docstring for GBLoader"""
-    def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100, batch_size=20, learning_rate=1e-3, beta1=0.9, beta2=0.999):
+    """docstring for NNLoader"""
+    def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
+                batch_size=20, learning_rate=1e-3, beta1=0.9, beta2=0.999):
         optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
         base_name = "NeuralNetClassifier"
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}"
+        super().__init__(benchmark_name, base_name, model_full_name)
+
+
+class REGLoader(Loader):
+    """docstring for REGLoader"""
+    def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
+                batch_size=20, n_samples=1000, learning_rate=1e-4, beta1=0.5, beta2=0.9):
+        optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
+        base_name = "Regressor"
+        archi_name = archi_name+f"x{n_units:d}"
+        model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{n_samples}"
         super().__init__(benchmark_name, base_name, model_full_name)
         
 

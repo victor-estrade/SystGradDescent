@@ -16,11 +16,14 @@ set_plot_config()
 
 from .loader import GBLoader
 from .loader import NNLoader
+from .loader import REGLoader
+
 
 def main():
     print("hello !")
     my_loader = GBLoader('GG', 'GG-prior')
     my_loader = NNLoader('GG', 'GG-prior', "L4")
+    my_loader = REGLoader('GG', 'GG-prior', "EA3ML3")
     evaluation = my_loader.load_evaluation()
     print(evaluation)
 
