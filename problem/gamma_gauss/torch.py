@@ -43,9 +43,11 @@ class GeneratorTorch():
         self.n_expected_events = 2000
 
     def cpu(self):
+        self.cuda_flag = False
         self.device = 'cpu'
 
     def cuda(self):
+        self.cuda_flag = True
         self.device = 'cuda'
 
     def tensor(self, data, requires_grad=False, dtype=None):
@@ -87,11 +89,16 @@ class GeneratorTorch():
         y_b = torch.zeros(n_bkg, dtype=int)
         y_s = torch.ones(n_sig, dtype=int)
         y = torch.cat([y_b, y_s], axis=0)
+        if self.cuda_flag:
+            y = y.cuda()
         return y
 
     def _generate_weights(self, n_bkg, n_sig, n_expected_events):
         w_b = torch.ones(n_bkg) * (1-self.mix) * n_expected_events/n_bkg
         w_s = torch.ones(n_sig) * self.mix * n_expected_events/n_sig
+        if self.cuda_flag:
+            w_b = w_b.cuda()
+            w_s = w_s.cuda()
         return w_s.view(-1, 1), w_b.view(-1, 1)
 
     def proba_density(self, x, rescale, mix):
