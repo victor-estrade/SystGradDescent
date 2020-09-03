@@ -48,7 +48,6 @@ class Pivot(BaseClassifierModel, BaseNeuralNet):
         self.n_steps = n_steps
         self.n_recovery_steps = n_recovery_steps
         self.batch_size = batch_size
-        self.cuda = cuda
         self.verbose = verbose
         if rescale:
             self.scaler = StandardScaler()
