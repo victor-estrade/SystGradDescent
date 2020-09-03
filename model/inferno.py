@@ -46,7 +46,7 @@ class Inferno(BaseModel, BaseNeuralNet):
         return losses
         
     def fit(self, generator):
-        mu = torch.tensor(1.0, requires_grad=True)
+        mu = torch.tensor(1.0, requires_grad=True, device="cuda" if self.cuda_flag else 'cpu')
         mu_prime = mu.detach()
         params = OrderedDict([('mu', mu)])
         params.update(generator.nuisance_params)
