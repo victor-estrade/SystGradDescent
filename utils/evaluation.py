@@ -169,6 +169,7 @@ def evaluate_estimator(name, results, valid_only=False):
               ,sigma_mean = np.mean(errors)
               ,sigma_std = np.std(errors)
               ,sigma_variance = np.var(errors)
+              , i = i
               )
         row['target_bias'] = row['target_mean'] - truth
         row['sigma_bias'] = row['sigma_mean'] - row['target_std']

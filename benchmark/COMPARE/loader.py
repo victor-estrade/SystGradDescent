@@ -17,6 +17,13 @@ from visual.misc import set_plot_config
 set_plot_config()
 
 
+from model.gradient_boost import GradientBoostingModel
+from model.neural_network import NeuralNetClassifier
+from model.tangent_prop import TangentPropClassifier
+from model.pivot import PivotClassifier
+from model.inferno import Inferno
+from model.regressor import Regressor
+
 
 
 class Loader(object):
@@ -67,7 +74,25 @@ class Loader(object):
         return df
 
 
+class GBLoader(Loader):
+    """docstring for GBLoader"""
+    def __init__(self, data_name, benchmark_name, n_estimators=100, max_depth=3, learning_rate=0.1):
+        model = GradientBoostingModel(n_estimators=n_estimators, max_depth=max_depth, learning_rate=learning_rate)
+        model.set_info(data_name, benchmark_name, 0)
+        model_full_name = model.get_name()
+        base_name = model.base_name
+        super().__init__(benchmark_name, base_name, model_full_name)
 
+
+class NNLoader(Loader):
+    """docstring for GBLoader"""
+    def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100, batch_size=20, learning_rate=1e-3, beta1=0.9, beta2=0.999):
+        optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
+        base_name = "NeuralNetClassifier"
+        archi_name = archi_name+f"x{n_units:d}"
+        model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}"
+        super().__init__(benchmark_name, base_name, model_full_name)
+        
 
 
 
