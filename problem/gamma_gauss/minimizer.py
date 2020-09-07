@@ -12,7 +12,7 @@ def get_minimizer(compute_nll, calibrated_param, calibrated_param_error):
                            errordef=ERRORDEF_NLL,
                            rescale=calibrated_param.rescale,
                            error_rescale=calibrated_param_error.rescale,
-                           limit_rescale=(0, None),
+                           limit_rescale=(0, 100),
                            mix=calibrated_param.mix,
                            error_mix=calibrated_param_error.mix,
                            limit_mix=(0, 1),
