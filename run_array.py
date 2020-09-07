@@ -23,7 +23,7 @@ def parse_args():
     # max runtime days-hours:min:sec
     ressources = parser.add_argument_group('ressources', 'ressources taken by every job')
     ressources.add_argument('--max-time', help='maximum job time',
-                        default='2-00:00:00')
+                        default='12-00:00:00')
     ressources.add_argument('--cpu', help='number of allocated CPUs',
                         default=6, type=int)
     ressources.add_argument('--mem', help='allocated RAM',
