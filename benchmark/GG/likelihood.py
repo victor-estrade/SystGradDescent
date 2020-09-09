@@ -20,6 +20,7 @@ from visual.misc import plot_params
 
 from utils.log import set_logger
 from utils.log import print_line
+from utils.evaluation import evaluate_config
 from utils.evaluation import evaluate_minuit
 from utils.evaluation import evaluate_estimator
 from utils.images import gather_images
@@ -45,6 +46,8 @@ def main():
     args = None
 
     config = GGConfig()
+    config_table = evaluate_config(config)
+    config_table.to_csv(os.path.join(DIRECTORY, 'config_table.csv'))
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     results = pd.concat(results, ignore_index=True)
     results.to_csv(os.path.join(DIRECTORY, 'results.csv'))
