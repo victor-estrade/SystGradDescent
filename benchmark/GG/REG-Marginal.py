@@ -25,6 +25,7 @@ from utils.model import get_model
 from utils.model import get_optimizer
 from utils.model import train_or_load_neural_net
 from utils.evaluation import evaluate_neural_net
+from utils.evaluation import evaluate_config
 from utils.evaluation import evaluate_regressor
 from utils.evaluation import evaluate_estimator
 from utils.images import gather_images
@@ -88,6 +89,8 @@ def main():
     model = build_model(args, -1)
     os.makedirs(model.results_directory, exist_ok=True)
     config = Config()
+    config_table = evaluate_config(config)
+    config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     results = pd.concat(results, ignore_index=True)
