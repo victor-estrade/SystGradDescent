@@ -32,7 +32,7 @@ def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
             plt.plot(x, y, 'o-', label=label, color=color_cycle[i%len(unique_alphas)])
 
     plt.xlabel('#samples')
-    plt.ylabel("V_stat")
+    plt.ylabel("MSE")
     plt.title(title)
     plt.legend([f"$\\alpha$={a}" for a in unique_alphas ])
     plt.savefig(os.path.join(directory, f'profusion_n_samples_mse.png'))
@@ -78,7 +78,7 @@ def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
             plt.plot(x, y, 'o-', label=label, color=color_cycle[i%len(unique_alphas)])
 
     plt.xlabel('#samples')
-    plt.ylabel("V_stat")
+    plt.ylabel("V_syst")
     plt.title(title)
     plt.legend([f"$\\alpha$={a}" for a in unique_alphas ])
     plt.savefig(os.path.join(directory, f'profusion_n_samples_v_syst.png'))
