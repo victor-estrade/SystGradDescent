@@ -33,7 +33,7 @@ def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('#samples')
     plt.ylabel("V_stat")
-    plt.title("many GB")
+    plt.title(title)
     plt.legend([f"$\\alpha$={a}" for a in unique_alphas ])
     plt.savefig(os.path.join(directory, f'profusion_n_samples_mse.png'))
     plt.clf()
@@ -56,7 +56,7 @@ def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('#samples')
     plt.ylabel("V_stat")
-    plt.title("many GB")
+    plt.title(title)
     plt.legend([f"$\\alpha$={a}" for a in unique_alphas ])
     plt.savefig(os.path.join(directory, f'profusion_n_samples_v_stat.png'))
     plt.clf()
@@ -79,7 +79,7 @@ def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('#samples')
     plt.ylabel("V_stat")
-    plt.title("many GB")
+    plt.title(title)
     plt.legend([f"$\\alpha$={a}" for a in unique_alphas ])
     plt.savefig(os.path.join(directory, f'profusion_n_samples_v_syst.png'))
     plt.clf()
@@ -106,7 +106,7 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average estimated $\\mu$")
-    plt.title("many GB")
+    plt.title(title)
     plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ])
     plt.savefig(os.path.join(directory, f'many_eval_mu.png'))
     plt.clf()
