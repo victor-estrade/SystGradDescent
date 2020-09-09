@@ -237,7 +237,7 @@ class Pivot(BaseClassifierModel, BaseNeuralNet):
         return self
 
     def get_name(self):
-        name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}".format(**self.__dict__)
+        name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{trade_off}".format(**self.__dict__)
         return name
 
 
