@@ -85,7 +85,7 @@ class TangentPropClassifier(BaseModel, BaseNeuralNet):
         with torch.no_grad():
             X_torch = to_torch(X, cuda=self.cuda_flag)
             logits = self.net(X_torch)
-            probas = torch.softmax(logits / self.temperature, 1)
+            probas = torch.softmax(logits, 1)
         y_proba = np.array(probas.cpu())
         return y_proba
     
