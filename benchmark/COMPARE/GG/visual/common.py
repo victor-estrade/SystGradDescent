@@ -26,12 +26,14 @@ def make_individual_plots(evaluation, loader):
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name, loader.model_full_name)
     os.makedirs(directory, exist_ok=True)
 
-    individual.plot_eval_mse(evaluation, title=loader.model_full_name, directory=directory)
-    individual.plot_eval_mu(evaluation, title=loader.model_full_name, directory=directory)
-    individual.plot_eval_v_stat(evaluation, title=loader.model_full_name, directory=directory)
-    individual.plot_eval_v_syst(evaluation, title=loader.model_full_name, directory=directory)
-    individual.plot_n_samples_v_stat(evaluation, title=loader.model_full_name, directory=directory)
-    individual.plot_n_samples_v_syst(evaluation, title=loader.model_full_name, directory=directory)
+    individual.true_mu_mse(evaluation, title=loader.model_full_name, directory=directory)
+    individual.true_mu_v_stat(evaluation, title=loader.model_full_name, directory=directory)
+    individual.true_mu_v_syst(evaluation, title=loader.model_full_name, directory=directory)
+    individual.true_mu_target_mean(evaluation, title=loader.model_full_name, directory=directory)
+    individual.n_samples_mse(evaluation, title=loader.model_full_name, directory=directory)
+    individual.n_samples_sigma_mean(evaluation, title=loader.model_full_name, directory=directory)
+    individual.n_samples_v_stat(evaluation, title=loader.model_full_name, directory=directory)
+    individual.n_samples_v_syst(evaluation, title=loader.model_full_name, directory=directory)
 
 
 def make_profusion_plots(all_evaluations, loader):
@@ -43,6 +45,8 @@ def make_profusion_plots(all_evaluations, loader):
     profusion.n_samples_v_syst(all_evaluations, title=title, directory=directory)
     profusion.n_samples_mse(all_evaluations, title=title, directory=directory)
     profusion.true_mu_estimator(all_evaluations, title=title, directory=directory)
+    profusion.true_mu_target_mean(all_evaluations, title=title, directory=directory)
+    
     
 
 

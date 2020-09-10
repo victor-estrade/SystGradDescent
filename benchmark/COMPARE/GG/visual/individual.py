@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from config import DEFAULT_DIR
 
 
-def plot_eval_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
+def true_mu_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
     max_n_test_samples = evaluation.n_test_samples.max()
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
@@ -27,15 +27,15 @@ def plot_eval_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
         label = f"$\\alpha$ = {true_rescale}"
         plt.plot(x, y, 'o-', label=label)
 
-    plt.xlabel('$\\mu$')
-    plt.ylabel("average MSE")
+    plt.xlabel('true $\\mu$')
+    plt.ylabel("MSE $\\hat \\mu$")
     plt.title(title)
     plt.legend()
-    plt.savefig(os.path.join(directory, f'eval_mse.png'))
+    plt.savefig(os.path.join(directory, f'true_mu_mse.png'))
     plt.clf()
 
 
-def plot_eval_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
+def true_mu_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
     max_n_test_samples = evaluation.n_test_samples.max()
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
@@ -45,15 +45,15 @@ def plot_eval_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
         label = f"$\\alpha$ = {true_rescale}"
         plt.plot(x, y, 'o-', label=label)
 
-    plt.xlabel('$\\mu$')
+    plt.xlabel('true $\\mu$')
     plt.ylabel("V_stat")
     plt.title(title)
     plt.legend()
-    plt.savefig(os.path.join(directory, f'eval_v_stat.png'))
+    plt.savefig(os.path.join(directory, f'true_mu_v_stat.png'))
     plt.clf()
 
 
-def plot_eval_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
+def true_mu_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
     max_n_test_samples = evaluation.n_test_samples.max()
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
@@ -63,15 +63,15 @@ def plot_eval_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
         label = f"$\\alpha$ = {true_rescale}"
         plt.plot(x, y, 'o-', label=label)
 
-    plt.xlabel('$\\mu$')
+    plt.xlabel('true $\\mu$')
     plt.ylabel("V_syst")
     plt.title(title)
     plt.legend()
-    plt.savefig(os.path.join(directory, f'eval_v_syst.png'))
+    plt.savefig(os.path.join(directory, f'true_mu_v_syst.png'))
     plt.clf()
 
 
-def plot_eval_mu(evaluation, title="No Title", directory=DEFAULT_DIR):
+def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
     max_n_test_samples = evaluation.n_test_samples.max()
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
@@ -88,21 +88,57 @@ def plot_eval_mu(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.ylabel("average estimated $\\mu$")
     plt.title(title)
     plt.legend()
-    plt.savefig(os.path.join(directory, f'eval_mu.png'))
+    plt.savefig(os.path.join(directory, f'true_mu_target_mean.png'))
     plt.clf()
 
 
-def plot_n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
-    true_mix = evaluation.true_mix.median()
+def n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
+    chosen_true_mix = evaluation.true_mix.median()
 
-    data = evaluation[ (evaluation.true_mix == true_mix)]
+    data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+    for true_rescale, df in data.groupby("true_rescale"):
+        x = df.n_test_samples
+        y = df.target_mse
+        label = f"$\\alpha$ = {true_rescale}"
+        plt.plot(x, y, 'o-', label=label)
+
+    plt.xlabel('# test samples')
+    plt.ylabel("MSE $\\hat \\mu$")
+    plt.title(title)
+    plt.legend()
+    plt.savefig(os.path.join(directory, f'n_samples_mse.png'))
+    plt.clf()
+
+
+def n_samples_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
+    chosen_true_mix = evaluation.true_mix.median()
+
+    data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+    for true_rescale, df in data.groupby("true_rescale"):
+        x = df.n_test_samples
+        y = df.sigma_mean
+        label = f"$\\alpha$ = {true_rescale}"
+        plt.plot(x, y, 'o-', label=label)
+
+    plt.xlabel('# test samples')
+    plt.ylabel("avegrage $\\hat \\sigma_{\\hat \\mu$}")
+    plt.title(title)
+    plt.legend()
+    plt.savefig(os.path.join(directory, f'n_samples_sigma_mean.png'))
+    plt.clf()
+
+
+def n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
+    chosen_true_mix = evaluation.true_mix.median()
+
+    data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
     for true_rescale, df in data.groupby("true_rescale"):
         x = df.n_test_samples
         y = df.var_stat
         label = f"$\\alpha$ = {true_rescale}"
         plt.plot(x, y, 'o-', label=label)
 
-    plt.xlabel('#samples')
+    plt.xlabel('# test samples')
     plt.ylabel("V_stat")
     plt.title(title)
     plt.legend()
@@ -111,17 +147,17 @@ def plot_n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 
-def plot_n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
-    true_mix = evaluation.true_mix.median()
+def n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
+    chosen_true_mix = evaluation.true_mix.median()
 
-    data = evaluation[ (evaluation.true_mix == true_mix)]
+    data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
     for true_rescale, df in data.groupby("true_rescale"):
         x = df.n_test_samples
         y = df.var_syst
         label = f"$\\alpha$ = {true_rescale}"
         plt.plot(x, y, 'o-', label=label)
 
-    plt.xlabel('#samples')
+    plt.xlabel('# test samples')
     plt.ylabel("V_syst")
     plt.title(title)
     plt.legend()
