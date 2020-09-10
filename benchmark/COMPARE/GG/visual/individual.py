@@ -121,7 +121,7 @@ def n_samples_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('# test samples')
-    plt.ylabel("avegrage $\\hat \\sigma_{\\hat \\mu$}")
+    plt.ylabel("avegrage $\\hat \\sigma_{\\hat \mu}$")
     plt.title(title)
     plt.legend()
     plt.savefig(os.path.join(directory, f'n_samples_sigma_mean.png'))

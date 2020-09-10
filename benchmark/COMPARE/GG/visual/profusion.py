@@ -86,6 +86,30 @@ def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
 
 
+def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR):
+    prop_cycle = plt.rcParams['axes.prop_cycle']
+    color_cycle = prop_cycle.by_key()['color']
+    unique_alphas = all_evaluations[0].true_rescale.unique()
+
+    for evaluation in all_evaluations:
+        true_mix = evaluation.true_mix.median()
+
+        data = evaluation[ (evaluation.true_mix == true_mix)]
+        for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
+            x = df.n_test_samples
+            y = df.sigma_mean
+            label = f"$\\alpha$ = {true_rescale}"
+            plt.plot(x, y, 'o-', label=label, color=color_cycle[i%len(unique_alphas)])
+
+    plt.xlabel('# test samples')
+    plt.ylabel("average $\\hat \\sigma_{\\hat \\mu}$")
+    plt.title(title)
+    plt.legend([f"$\\alpha$={a}" for a in unique_alphas ])
+    plt.savefig(os.path.join(directory, f'profusion_n_samples_sigma_mean.png'))
+    plt.clf()
+
+
+
 def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     prop_cycle = plt.rcParams['axes.prop_cycle']
     color_cycle = prop_cycle.by_key()['color']
