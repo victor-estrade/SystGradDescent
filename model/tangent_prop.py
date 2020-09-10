@@ -6,7 +6,7 @@ import json
 import numpy as np
 
 from collections import OrderedDict
-from .base import BaseModel
+from .base import BaseClassifierModel
 from .base import BaseNeuralNet
 from .utils import to_torch
 from .criterion import WeightedCrossEntropyLoss
@@ -15,7 +15,7 @@ from .criterion import WeightedTPLoss
 # from hessian import hessian
 
 
-class TangentPropClassifier(BaseModel, BaseNeuralNet):
+class TangentPropClassifier(BaseClassifierModel, BaseNeuralNet):
     def __init__(self, net, trade_off, optimizer, n_steps=5000, sample_size=1500,
                 cuda=False, verbose=0):
         super().__init__()
@@ -89,11 +89,6 @@ class TangentPropClassifier(BaseModel, BaseNeuralNet):
         y_proba = np.array(probas.cpu())
         return y_proba
     
-    def compute_summaries(self, X, W, n_bins=None):
-        proba = self.predict_proba(X)
-        weighted_counts = np.sum(proba*W.reshape(-1,1), 0)
-        return weighted_counts
-
     def save(self, save_directory):
         super().save(save_directory)
         path = os.path.join(save_directory, 'weights.pth')
