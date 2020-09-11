@@ -22,9 +22,8 @@ def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
     for evaluation in all_evaluations:
-        true_mix = evaluation.true_mix.median()
-
-        data = evaluation[ (evaluation.true_mix == true_mix)]
+        chosen_true_mix = evaluation.true_mix.median()
+        data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
             x = df.n_test_samples
             y = df.target_mse
@@ -39,15 +38,32 @@ def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     plt.clf()
 
 
+
+def nominal_n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
+    for evaluation in all_evaluations:
+        chosen_true_mix = evaluation.true_mix.median()
+        chosen_true_rescale = evaluation.true_rescale.median()
+        df = evaluation[ (evaluation.true_mix == chosen_true_mix) & (evaluation.true_rescale == chosen_true_rescale)]
+        x = df.n_test_samples
+        y = df.target_mse
+        label = f"$\\alpha$ = {chosen_true_rescale}"
+        plt.plot(x, y, 'o-', label=label)
+
+    plt.xlabel('# test samples')
+    plt.ylabel("MSE $\\hat \\mu$")
+    plt.title(title)
+    plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_mse.png'))
+    plt.clf()
+
+
 def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     prop_cycle = plt.rcParams['axes.prop_cycle']
     color_cycle = prop_cycle.by_key()['color']
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
     for evaluation in all_evaluations:
-        true_mix = evaluation.true_mix.median()
-
-        data = evaluation[ (evaluation.true_mix == true_mix)]
+        chosen_true_mix = evaluation.true_mix.median()
+        data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
             x = df.n_test_samples
             y = df.var_stat
@@ -62,15 +78,32 @@ def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     plt.clf()
 
 
+def nominal_n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
+    for evaluation in all_evaluations:
+        chosen_true_mix = evaluation.true_mix.median()
+        chosen_true_rescale = evaluation.true_rescale.median()
+        df = evaluation[ (evaluation.true_mix == chosen_true_mix) & (evaluation.true_rescale == chosen_true_rescale)]
+        x = df.n_test_samples
+        y = df.var_stat
+        label = f"$\\alpha$ = {chosen_true_rescale}"
+        plt.plot(x, y, 'o-', label=label)
+
+    plt.xlabel('# test samples')
+    plt.ylabel("V_stat")
+    plt.title(title)
+    plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_v_stat.png'))
+    plt.clf()
+
+
+
 def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     prop_cycle = plt.rcParams['axes.prop_cycle']
     color_cycle = prop_cycle.by_key()['color']
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
     for evaluation in all_evaluations:
-        true_mix = evaluation.true_mix.median()
-
-        data = evaluation[ (evaluation.true_mix == true_mix)]
+        chosen_true_mix = evaluation.true_mix.median()
+        data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
             x = df.n_test_samples
             y = df.var_syst
@@ -85,6 +118,23 @@ def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     plt.clf()
 
 
+def nominal_n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
+    for evaluation in all_evaluations:
+        chosen_true_mix = evaluation.true_mix.median()
+        chosen_true_rescale = evaluation.true_rescale.median()
+        df = evaluation[ (evaluation.true_mix == chosen_true_mix) & (evaluation.true_rescale == chosen_true_rescale)]
+        x = df.n_test_samples
+        y = df.var_syst
+        label = f"$\\alpha$ = {chosen_true_rescale}"
+        plt.plot(x, y, 'o-', label=label)
+
+    plt.xlabel('# test samples')
+    plt.ylabel("V_syst")
+    plt.title(title)
+    plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_v_syst.png'))
+    plt.clf()
+
+
 
 def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     prop_cycle = plt.rcParams['axes.prop_cycle']
@@ -92,9 +142,8 @@ def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DI
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
     for evaluation in all_evaluations:
-        true_mix = evaluation.true_mix.median()
-
-        data = evaluation[ (evaluation.true_mix == true_mix)]
+        chosen_true_mix = evaluation.true_mix.median()
+        data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
             x = df.n_test_samples
             y = df.sigma_mean
@@ -109,6 +158,23 @@ def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DI
     plt.clf()
 
 
+def nominal_n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR):
+    for evaluation in all_evaluations:
+        chosen_true_mix = evaluation.true_mix.median()
+        chosen_true_rescale = evaluation.true_rescale.median()
+        df = evaluation[ (evaluation.true_mix == chosen_true_mix) & (evaluation.true_rescale == chosen_true_rescale)]
+        x = df.n_test_samples
+        y = df.sigma_mean
+        label = f"$\\alpha$ = {chosen_true_rescale}"
+        plt.plot(x, y, 'o-', label=label)
+
+    plt.xlabel('# test samples')
+    plt.ylabel("average $\\hat \\sigma_{\\hat \\mu}$")
+    plt.title(title)
+    plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_sigma_mean.png'))
+    plt.clf()
+
+
 
 def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     prop_cycle = plt.rcParams['axes.prop_cycle']
@@ -117,7 +183,6 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
-
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
             x = df.true_mix
@@ -136,6 +201,7 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     plt.clf()
 
 
+
 def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     prop_cycle = plt.rcParams['axes.prop_cycle']
     color_cycle = prop_cycle.by_key()['color']
@@ -143,7 +209,6 @@ def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR
 
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
-
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
             x = df.true_mix
