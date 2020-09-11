@@ -12,7 +12,7 @@ class GGConfig():
     CALIBRATED_ERROR = Parameter(rescale=0.5, mix=0.5)
     TRUE = Parameter(rescale=1.2, mix=0.2)
     RANGE = Parameter(rescale=np.linspace(0.8, 1.2, 3), 
-                        mix=np.linspace(0.1, 0.9, 3))
+                        mix=np.linspace(0.1, 0.9, 5))
 
     FINE_RANGE = Parameter(rescale=np.linspace(0.5, 1.5, 31), 
                         mix=np.linspace(0.1, 0.9, 31))
@@ -21,10 +21,10 @@ class GGConfig():
     PARAM_NAMES = TRUE.parameter_names
     INTEREST_PARAM_NAME = 'mix'
 
-    N_TRAINING_SAMPLES = 2000
-    N_VALIDATION_SAMPLES = 2000
-    N_TESTING_SAMPLES = 2000
-    RANGE_N_TEST = [50, 500, 2000]
+    N_TRAINING_SAMPLES = 10000
+    N_VALIDATION_SAMPLES = 5000
+    N_TESTING_SAMPLES = 5000
+    RANGE_N_TEST = [50, 100, 300, 500, 2000]
 
     def iter_test_config(self):
         param_lists = [*self.RANGE ] + [ GGConfig.RANGE_N_TEST ]
