@@ -88,6 +88,7 @@ class GBLoader(Loader):
         model_full_name = model.get_name()
         base_name = model.base_name
         super().__init__(benchmark_name, base_name, model_full_name)
+        self.args = dict(n_estimators=n_estimators, max_depth=max_depth, learning_rate=learning_rate)
 
 
 class NNLoader(Loader):
@@ -102,6 +103,9 @@ class NNLoader(Loader):
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}"
         super().__init__(benchmark_name, base_name, model_full_name)
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
+                learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name)
+
 
 
 class DALoader(Loader):
@@ -116,6 +120,8 @@ class DALoader(Loader):
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}"
         super().__init__(benchmark_name, base_name, model_full_name)
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
+                learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name)
 
 
 class TPLoader(Loader):
@@ -130,6 +136,8 @@ class TPLoader(Loader):
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{trade_off}"
         super().__init__(benchmark_name, base_name, model_full_name)
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
+                learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name, trade_off=trade_off)
 
 
 class PIVOTLoader(Loader):
@@ -144,6 +152,8 @@ class PIVOTLoader(Loader):
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{trade_off}"
         super().__init__(benchmark_name, base_name, model_full_name)
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
+                learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name, trade_off=trade_off)
 
 
 
@@ -160,6 +170,8 @@ class INFLoader(Loader):
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{temperature}"
         super().__init__(benchmark_name, base_name, model_full_name)
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
+                learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name, temperature=temperature)
 
 
 class REGLoader(Loader):
@@ -174,6 +186,8 @@ class REGLoader(Loader):
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{n_samples}"
         super().__init__(benchmark_name, base_name, model_full_name)
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
+                learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name)
         
 
 
