@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 
 from .visual.common import make_common_plots
 from ..loader import DALoader
-from.hyper_parameters import DA_HP
+from .hyper_parameters import DA_HP
 
 
 def main():
