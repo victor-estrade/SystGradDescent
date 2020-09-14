@@ -9,19 +9,13 @@ from __future__ import unicode_literals
 
 from .visual.common import make_common_plots
 from ..loader import REGLoader
-
+from .hyper_parameters import REG_HP
 
 def main():
     print("hello")
-
-    args = dict(
-                archi_name=["EA3ML3"]
-                , n_steps=[2000, 5000]
-                , n_units=[50, 100, 200, 500]
-                )
     data_name = 'GG'
     benchmark_name = 'GG-calib'
-    make_common_plots(data_name, benchmark_name, args, REGLoader)
+    make_common_plots(data_name, benchmark_name, REG_HP, REGLoader)
 
 
 

@@ -9,20 +9,13 @@ from __future__ import unicode_literals
 
 from .visual.common import make_common_plots
 from ..loader import PIVOTLoader
-
+from .hyper_parameters import PIVOT_HP
 
 def main():
     print("hello")
-
-    args = dict(
-                archi_name=["L4"]
-                , n_steps=[2000, 5000]
-                , n_units=[50, 100, 200, 500]
-                , trade_off=[1, 0.1, 1e-2, 1e-3]
-                )
     data_name = 'GG'
     benchmark_name = 'GG-calib'
-    make_common_plots(data_name, benchmark_name, args, PIVOTLoader)
+    make_common_plots(data_name, benchmark_name, PIVOT_HP, PIVOTLoader)
 
 
 

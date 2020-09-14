@@ -9,19 +9,13 @@ from __future__ import unicode_literals
 
 from .visual.common import make_common_plots
 from ..loader import NNLoader
-
+from .hyper_parameters import NN_HP
 
 def main():
     print("hello")
-
-    args = dict(
-                archi_name=["L4"]
-                , n_steps=[2000, 5000]
-                , n_units=[50, 100, 200, 500]
-                )
     data_name = 'GG'
     benchmark_name = 'GG-prior'
-    make_common_plots(data_name, benchmark_name, args, NNLoader)
+    make_common_plots(data_name, benchmark_name, NN_HP, NNLoader)
 
 
 

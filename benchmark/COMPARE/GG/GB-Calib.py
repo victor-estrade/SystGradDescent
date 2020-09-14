@@ -9,19 +9,13 @@ from __future__ import unicode_literals
 
 from .visual.common import make_common_plots
 from ..loader import GBLoader
-
+from .hyper_parameters import GB_HP
 
 def main():
     print("hello")
-
-    args = dict(
-                max_depth=[3, 5, 10]
-                , n_estimators=[100, 300, 1000]
-                , learning_rate=[0.1, 0.05, 0.01]
-                )
     data_name = 'GG'
     benchmark_name = 'GG-calib'
-    make_common_plots(data_name, benchmark_name, args, GBLoader)
+    make_common_plots(data_name, benchmark_name, GB_HP, GBLoader)
 
 
 
