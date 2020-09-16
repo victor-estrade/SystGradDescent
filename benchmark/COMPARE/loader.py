@@ -77,6 +77,9 @@ class Loader(object):
         config_table = self.load_config_table()
         evaluation = self.load_evaluation()
         evaluation = evaluation.join(config_table, rsuffix='_')
+        evaluation['model_full_name'] = self.model_full_name
+        evaluation['benchmark_name'] = self.benchmark_name
+        evaluation['base_name'] = self.base_name
         return evaluation
 
 

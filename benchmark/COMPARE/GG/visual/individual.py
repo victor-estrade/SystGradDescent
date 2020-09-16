@@ -110,6 +110,22 @@ def n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.clf()
 
 
+def box_n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
+    data = []
+    x = []
+    for i, (n_test_samples, df) in enumerate(evaluation.groupby("n_test_samples")):
+        data.append(df.target_mse)
+        x.append(n_test_samples)
+
+    plt.boxplot(data, labels=x)
+    plt.xlabel('# test samples')
+    plt.ylabel("MSE $\\hat \\mu$")
+    plt.title(title)
+    # plt.legend()
+    plt.savefig(os.path.join(directory, f'box_n_samples_mse.png'))
+    plt.clf()
+
+
 def n_samples_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
     chosen_true_mix = evaluation.true_mix.median()
 

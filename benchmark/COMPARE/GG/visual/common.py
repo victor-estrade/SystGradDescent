@@ -34,6 +34,7 @@ def make_individual_plots(evaluation, loader):
     individual.n_samples_sigma_mean(evaluation, title=loader.model_full_name, directory=directory)
     individual.n_samples_v_stat(evaluation, title=loader.model_full_name, directory=directory)
     individual.n_samples_v_syst(evaluation, title=loader.model_full_name, directory=directory)
+    individual.box_n_samples_mse(evaluation, title=loader.model_full_name, directory=directory)
 
 
 def make_profusion_plots(all_evaluations, loader):
@@ -51,6 +52,9 @@ def make_profusion_plots(all_evaluations, loader):
     profusion.nominal_n_samples_v_stat(all_evaluations, title=f"Nominal {title}", directory=directory)
     profusion.nominal_n_samples_v_syst(all_evaluations, title=f"Nominal {title}", directory=directory)
     profusion.nominal_n_samples_sigma_mean(all_evaluations, title=f"Nominal {title}", directory=directory)
+    profusion.mse_box_plot(all_evaluations, title=title, directory=directory)
+    profusion.v_stat_box_plot(all_evaluations, title=title, directory=directory)
+    profusion.v_syst_box_plot(all_evaluations, title=title, directory=directory)
     
     
 
