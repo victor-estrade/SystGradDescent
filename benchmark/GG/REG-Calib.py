@@ -206,7 +206,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
 
     logger.info('Generate testing data')
-    X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=None)
+    X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
 
     # CALIBRATION
     rescale_mean, rescale_sigma = calib_rescale.predict(X_test, w_test)
