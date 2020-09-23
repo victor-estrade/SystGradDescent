@@ -84,6 +84,7 @@ class Inferno(BaseModel, BaseNeuralNet):
                     if not param.grad.isfinite().all():
                         print("i = ", i, "found non finite gradients in", name)
                         is_all_finite_grad = False
+                        break
                 if is_all_finite_grad : 
                     self.optimizer.step()  # update params
 
