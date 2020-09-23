@@ -63,8 +63,6 @@ class Inferno(BaseModel, BaseNeuralNet):
         for i in range(self.n_steps):
             if (i % 100) == 0:
                 checkpoint = copy.deepcopy(self.net.state_dict())
-            # h_list = []
-            # for j in range(10):
             s, w_s, b, w_b, y = generator.generate(self.sample_size)
             s_prime, b_prime = s.detach(), b.detach()
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
@@ -77,11 +75,6 @@ class Inferno(BaseModel, BaseNeuralNet):
             total_count = mu * s_counts + b_counts # should be mu s + b + epsilon
             asimov = mu_prime * s_prime_counts + b_prime_counts # should be mu s + b + epsilon
             loss = self.criterion(total_count, asimov, params)
-            # hessian = self.criterion(total_count, asimov, params)
-            # h_list.append(hessian)
-            # h_mean =  torch.mean(torch.stack(h_list), axis=0)
-            # h_inverse = torch.inverse(h_mean)
-            # loss = h_inverse[0,0]
             self.losses.append(loss.item())
             
             if self._is_bad_training(i, total_count, loss):
