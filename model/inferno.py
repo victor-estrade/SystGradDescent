@@ -79,9 +79,10 @@ class Inferno(BaseModel, BaseNeuralNet):
             else:
                 # loss.backward(retain_graph=True)
                 loss.backward()
-                for param in self.net.parameters():
+                for name, param in self.net.named_parameters():
                     if not param.grad.isfinite().all():
-                        print("found non finite gradients in", param)
+                        print("found non finite gradients in", name)
+                        continue
                 self.optimizer.step()  # update params
 
     def _is_bad_training(self, i, total_count, loss):
