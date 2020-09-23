@@ -65,15 +65,20 @@ class Inferno(BaseModel, BaseNeuralNet):
             asimov = mu_prime * s_prime_counts + b_prime_counts # should be mu s + b + epsilon
             loss = self.criterion(total_count, asimov, params)
             
-            if np.isnan(loss.item()):
-                print('NaN detected at ', i)
-                print('output', total_count)
-                print('loss', loss)
-                break
+            if self._is_bad_training(i, total_count, loss):
+                continue
             else:
                 # loss.backward(retain_graph=True)
                 loss.backward()
                 self.optimizer.step()  # update params
+
+    def _is_bad_training(self, i, total_count, loss):
+        flag = torch.isnan(loss).byte().any() or torch.isnan(total_count).byte().any()
+
+        print('NaN detected at ', i)
+        print('output', total_count)
+        print('loss', loss)
+        return flag
 
     def predict(self, X):
         proba = self.predict_proba(X)
