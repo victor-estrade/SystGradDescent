@@ -150,6 +150,7 @@ SBATCH_TEMPLATE = \
 #SBATCH --mem={memory}
 #SBATCH --partition={partition}
 #SBATCH --gres=gpu:{gpu}
+#SBATCH --exclude=baltic-1
 
 hostname
 
