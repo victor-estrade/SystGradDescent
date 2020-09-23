@@ -89,9 +89,9 @@ def INFERNO_parse_args(main_description="Training launcher"):
                         default=1.0, type=float)
 
     parser.add_argument('--beta1', help='beta 1 for Adam',
-                        default=0.9, type=float)
+                        default=0.5, type=float)
     parser.add_argument('--beta2', help='beta 2 for Adam',
-                        default=0.999, type=float)
+                        default=0.9, type=float)
     parser.add_argument('--weight-decay', help='weight decay for SGD',
                         default=0.0, type=float)
 
