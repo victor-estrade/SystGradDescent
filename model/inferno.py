@@ -46,12 +46,15 @@ class Inferno(BaseModel, BaseNeuralNet):
         return losses
         
     def fit(self, generator):
+        checkpoint = self.net.state_dict()
         mu = torch.tensor(1.0, requires_grad=True, device="cuda" if self.cuda_flag else 'cpu')
         mu_prime = mu.detach()
         params = OrderedDict([('mu', mu)])
         params.update(generator.nuisance_params)
 
         for i in range(self.n_steps):
+            if (i % 100) == 0:
+                checkpoint = self.net.state_dict()
             s, w_s, b, w_b, y = generator.generate(self.sample_size)
             s_prime, b_prime = s.detach(), b.detach()
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
@@ -66,6 +69,11 @@ class Inferno(BaseModel, BaseNeuralNet):
             loss = self.criterion(total_count, asimov, params)
             
             if self._is_bad_training(i, total_count, loss):
+                print('NaN detected at ', i)
+                print('output', total_count)
+                print('loss', loss)
+                print('-'*40)
+                self.net.load_state_dict(checkpoint)
                 continue
             else:
                 # loss.backward(retain_graph=True)
@@ -73,11 +81,9 @@ class Inferno(BaseModel, BaseNeuralNet):
                 self.optimizer.step()  # update params
 
     def _is_bad_training(self, i, total_count, loss):
-        flag = torch.isnan(loss).byte().any() or torch.isnan(total_count).byte().any()
-
-        print('NaN detected at ', i)
-        print('output', total_count)
-        print('loss', loss)
+        loss_flag = torch.isnan(loss).byte().any() 
+        output_flag = torch.isnan(total_count).byte().any()
+        flag = loss_flag or output_flag
         return flag
 
     def predict(self, X):
