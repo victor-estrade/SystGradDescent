@@ -140,7 +140,7 @@ class GGLoss(nn.Module):
         self.constraints_distrib = {'rescale': self.rescale_constraints,
                                    }
         EPSILON = 1e-6
-        self.epsilon_eye = EPSILON * torch.eye(2)
+        self.epsilon_eye = EPSILON * torch.eye(2, device='cuda')
         self.i =  0
 
     def constraints_nll(self, params):
