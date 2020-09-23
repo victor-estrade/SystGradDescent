@@ -158,7 +158,8 @@ class GGLoss(nn.Module):
         nll = - torch.sum(poisson.log_prob(target)) + self.constraints_nll(params)
         param_list = params.values()
         h = hessian(nll, param_list, create_graph=True)
-        h_inverse = torch.inverse(h)  # FIXME : may break, handle exception
+        EPSILON = 1e-6
+        h_inverse = torch.inverse(h + EPSILON * torch.eye(2))  # FIXME : may break, handle exception
         loss = h_inverse[0,0]
         return loss
 
