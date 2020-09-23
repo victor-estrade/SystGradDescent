@@ -3,13 +3,14 @@ import torch
 
 import os
 import copy
+import json
 import numpy as np
 
 from collections import OrderedDict
 from .base import BaseModel
 from .base import BaseNeuralNet
 from .utils import to_torch
-from .monitor import LightLossMonitorHook
+# from .monitor import LightLossMonitorHook
 
 # from hessian import hessian
 
@@ -29,8 +30,8 @@ class Inferno(BaseModel, BaseNeuralNet):
         self.optimizer     = optimizer
         self.set_optimizer_name()
         self.criterion     = criterion
-        self.loss_hook = LightLossMonitorHook()
-        self.criterion.register_forward_hook(self.loss_hook)
+
+        self._reset_losses()
         if cuda:
             self.cuda()
 
@@ -43,9 +44,15 @@ class Inferno(BaseModel, BaseNeuralNet):
         self.criterion = self.criterion.cpu()
 
     def get_losses(self):
-        losses = dict(loss=self.loss_hook.losses)
+        losses = dict(loss=self.losses)
         return losses
         
+    def reset(self):
+        self._reset_losses()
+
+    def _reset_losses(self):
+        self.losses = []
+
     def fit(self, generator):
         checkpoint = copy.deepcopy(self.net.state_dict())
         mu = torch.tensor(1.0, requires_grad=True, device="cuda" if self.cuda_flag else 'cpu')
@@ -74,6 +81,7 @@ class Inferno(BaseModel, BaseNeuralNet):
             h_mean =  torch.mean(torch.stack(h_list), axis=0)
             h_inverse = torch.inverse(h_mean)
             loss = h_inverse[0,0]
+            self.losses.append(loss.item())
             
             if self._is_bad_training(i, total_count, loss):
                 print('NaN detected at ', i)
@@ -131,7 +139,8 @@ class Inferno(BaseModel, BaseNeuralNet):
         torch.save(self.net.state_dict(), path)
 
         path = os.path.join(save_directory, 'losses.json')
-        self.loss_hook.save_state(path)
+        with open(path, 'w') as f:
+            json.dump(self.get_losses(), f)
         return self
 
     def load(self, save_directory):
@@ -143,7 +152,9 @@ class Inferno(BaseModel, BaseNeuralNet):
             self.net.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage))
 
         path = os.path.join(save_directory, 'losses.json')
-        self.loss_hook.load_state(path)
+        with open(path, 'r') as f:
+            losses_to_load = json.load(f)
+        self.losses = losses_to_load['loss']
         return self
 
 
