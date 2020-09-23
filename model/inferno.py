@@ -47,15 +47,15 @@ class Inferno(BaseModel, BaseNeuralNet):
         return losses
         
     def fit(self, generator):
-        checkpoint = copy.deepcopy(self.net.state_dict())
+        # checkpoint = copy.deepcopy(self.net.state_dict())
         mu = torch.tensor(1.0, requires_grad=True, device="cuda" if self.cuda_flag else 'cpu')
         mu_prime = mu.detach()
         params = OrderedDict([('mu', mu)])
         params.update(generator.nuisance_params)
 
         for i in range(self.n_steps):
-            if (i % 100) == 0:
-                checkpoint = copy.deepcopy(self.net.state_dict())
+            # if (i % 100) == 0:
+            #     checkpoint = copy.deepcopy(self.net.state_dict())
             s, w_s, b, w_b, y = generator.generate(self.sample_size)
             s_prime, b_prime = s.detach(), b.detach()
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
@@ -74,11 +74,14 @@ class Inferno(BaseModel, BaseNeuralNet):
                 print('output', total_count)
                 print('loss', loss)
                 print('-'*40)
-                self.net.load_state_dict(checkpoint)
+                # self.net.load_state_dict(checkpoint)
                 continue
             else:
                 # loss.backward(retain_graph=True)
                 loss.backward()
+                for param in self.net.parameters():
+                    if not param.grad.isfinite().all():
+                        print("found non finite gradients in", param)
                 self.optimizer.step()  # update params
 
     def _is_bad_training(self, i, total_count, loss):
