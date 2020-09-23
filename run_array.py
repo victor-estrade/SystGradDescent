@@ -141,7 +141,7 @@ def extract_group_args(parser, args, group_title):
 SBATCH_TEMPLATE = \
 """#!/bin/bash
 #SBATCH --account=tau
-#SBATCH --array={array}%4
+#SBATCH --array={array}%10
 #SBATCH --job-name={xp_name}
 #SBATCH --output={log_stdout}
 #SBATCH --error={log_stderr}
