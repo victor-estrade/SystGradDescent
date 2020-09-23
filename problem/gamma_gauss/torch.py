@@ -139,6 +139,8 @@ class GGLoss(nn.Module):
 
         self.constraints_distrib = {'rescale': self.rescale_constraints,
                                    }
+        EPSILON = 1e-6
+        self.epsilon_eye = EPSILON * torch.eye(2)
         self.i =  0
 
     def constraints_nll(self, params):
@@ -158,8 +160,7 @@ class GGLoss(nn.Module):
         nll = - torch.sum(poisson.log_prob(target)) + self.constraints_nll(params)
         param_list = params.values()
         h = hessian(nll, param_list, create_graph=True)
-        EPSILON = 1e-6
-        h_inverse = torch.inverse(h + EPSILON * torch.eye(2))  # FIXME : may break, handle exception
+        h_inverse = torch.inverse(h + self.epsilon_eye)  # FIXME : may break, handle exception
         loss = h_inverse[0,0]
         return loss
 
