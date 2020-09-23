@@ -39,6 +39,7 @@ from visual.misc import plot_params
 
 from problem.gamma_gauss.torch import GeneratorTorch
 from problem.gamma_gauss.torch import GGLoss
+from problem.gamma_gauss.torch import GGHessian
 from problem.gamma_gauss import GGConfig as Config
 from problem.gamma_gauss import get_minimizer
 from problem.gamma_gauss import get_minimizer_no_nuisance
@@ -60,7 +61,7 @@ N_ITER = 30
 def build_model(args, i_cv):
     args.net = ARCHI(n_in=1, n_out=args.n_bins, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
-    args.criterion = GGLoss()
+    args.criterion = GGHessian()
     model = get_model(args, Inferno)
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     return model

@@ -162,3 +162,35 @@ class GGLoss(nn.Module):
         loss = h_inverse[0,0]
         return loss
 
+
+class GGHessian(nn.Module):
+    def __init__(self):
+        super().__init__()
+        config = GGConfig()
+        rescale_loc = torch.tensor(config.CALIBRATED.rescale)
+        rescale_std = torch.tensor(config.CALIBRATED_ERROR.rescale)
+        self.rescale_constraints = torch.distributions.Normal(rescale_loc, rescale_std)
+
+        self.constraints_distrib = {'rescale': self.rescale_constraints,
+                                   }
+        self.i =  0
+
+    def constraints_nll(self, params):
+        nll = 0.0
+        for param_name, distrib in self.constraints_distrib.items():
+            if param_name in params:
+                nll = nll - distrib.log_prob(params[param_name])
+        return nll
+
+    def forward(self, input, target, params):
+        """
+        input is the total count, the summaries, 
+        target is the asimov, the expected
+        param_list is the OrderedDict of tensor containing the parameters
+        """
+        poisson = torch.distributions.Poisson(input)
+        nll = - torch.sum(poisson.log_prob(target)) + self.constraints_nll(params)
+        param_list = params.values()
+        h = hessian(nll, param_list, create_graph=True)
+        return h
+
