@@ -2,6 +2,7 @@ import torch
 # import torch.nn as nn
 
 import os
+import copy
 import numpy as np
 
 from collections import OrderedDict
@@ -46,7 +47,7 @@ class Inferno(BaseModel, BaseNeuralNet):
         return losses
         
     def fit(self, generator):
-        checkpoint = self.net.state_dict()
+        checkpoint = copy.deepcopy(self.net.state_dict())
         mu = torch.tensor(1.0, requires_grad=True, device="cuda" if self.cuda_flag else 'cpu')
         mu_prime = mu.detach()
         params = OrderedDict([('mu', mu)])
@@ -54,7 +55,7 @@ class Inferno(BaseModel, BaseNeuralNet):
 
         for i in range(self.n_steps):
             if (i % 100) == 0:
-                checkpoint = self.net.state_dict()
+                checkpoint = copy.deepcopy(self.net.state_dict())
             s, w_s, b, w_b, y = generator.generate(self.sample_size)
             s_prime, b_prime = s.detach(), b.detach()
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
