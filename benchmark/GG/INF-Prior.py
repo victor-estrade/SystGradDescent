@@ -39,7 +39,6 @@ from visual.misc import plot_params
 
 from problem.gamma_gauss.torch import GeneratorTorch
 from problem.gamma_gauss.torch import GGLoss
-# from problem.gamma_gauss.torch import GGHessian
 from problem.gamma_gauss import GGConfig as Config
 from problem.gamma_gauss import get_minimizer
 from problem.gamma_gauss import get_minimizer_no_nuisance
