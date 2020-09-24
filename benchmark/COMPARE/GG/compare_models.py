@@ -288,7 +288,8 @@ def main():
     print("hello")
     os.makedirs(DEFAULT_DIR, exist_ok=True)
 
-    ALL_HP = [DA_HP
+    ALL_HP = [
+                DA_HP
                 , GB_HP
                 # , INF_HP
                 , NN_HP
@@ -296,7 +297,8 @@ def main():
                 , REG_HP
                 # , TP_HP
                 ]
-    ALL_LOADER = [DALoader
+    ALL_LOADER = [
+                DALoader
                 , GBLoader
                 # , INFLoader
                 , NNLoader
@@ -304,7 +306,8 @@ def main():
                 , REGLoader
                 # , TPLoader
                 ]
-    ALL_NAME = ["DA"
+    ALL_NAME = [
+                "DA"
                 , "GB"
                 # , "INF"
                 , "NN"
@@ -341,6 +344,35 @@ def main():
     best_median_v_stat_err_plot(data, title=benchmark_name, directory=directory)
     best_median_v_syst_err_plot(data, title=benchmark_name, directory=directory)
 
+
+
+    ALL_HP = [
+                DA_HP
+                , GB_HP
+                # , INF_HP
+                , NN_HP
+                # , PIVOT_HP
+                , REG_HP
+                # , TP_HP
+                ]
+    ALL_LOADER = [
+                DALoader
+                , GBLoader
+                # , INFLoader
+                , NNLoader
+                # , PIVOTLoader
+                , REGLoader
+                # , TPLoader
+                ]
+    ALL_NAME = [
+                "DA"
+                , "GB"
+                # , "INF"
+                , "NN"
+                # , "PIVOT"
+                , "REG"
+                # , "TP"
+                ]
 
     benchmark_name = 'GG-prior'
     all_data = []
