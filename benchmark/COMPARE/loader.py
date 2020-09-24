@@ -163,7 +163,7 @@ class PIVOTLoader(Loader):
 class INFLoader(Loader):
     """docstring for INFLoader"""
     def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
-                batch_size=20, learning_rate=1e-3, beta1=0.5, beta2=0.9, optimizer_name="Adam",
+                sample_size=1000, learning_rate=1e-3, beta1=0.5, beta2=0.9, optimizer_name="Adam",
                 temperature=1.0):
         if optimizer_name == "Adam":
             optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
@@ -171,9 +171,9 @@ class INFLoader(Loader):
             optimizer_name = f"SGD-{learning_rate}"
         base_name = "Inferno"
         archi_name = archi_name+f"x{n_units:d}"
-        model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{temperature}"
+        model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{sample_size}-{temperature}"
         super().__init__(benchmark_name, base_name, model_full_name)
-        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, sample_size=sample_size, 
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name, temperature=temperature)
 
 
