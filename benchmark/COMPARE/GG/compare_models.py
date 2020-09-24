@@ -290,27 +290,27 @@ def main():
 
     ALL_HP = [
                 DA_HP
-                , GB_HP
+                # , GB_HP
                 # , INF_HP
-                , NN_HP
+                # , NN_HP
                 # , PIVOT_HP
                 , REG_HP
                 # , TP_HP
                 ]
     ALL_LOADER = [
                 DALoader
-                , GBLoader
+                # , GBLoader
                 # , INFLoader
-                , NNLoader
+                # , NNLoader
                 # , PIVOTLoader
                 , REGLoader
                 # , TPLoader
                 ]
     ALL_NAME = [
                 "DA"
-                , "GB"
+                # , "GB"
                 # , "INF"
-                , "NN"
+                # , "NN"
                 # , "PIVOT"
                 , "REG"
                 # , "TP"
@@ -349,7 +349,7 @@ def main():
     ALL_HP = [
                 DA_HP
                 , GB_HP
-                # , INF_HP
+                , INF_HP
                 , NN_HP
                 # , PIVOT_HP
                 , REG_HP
@@ -358,7 +358,7 @@ def main():
     ALL_LOADER = [
                 DALoader
                 , GBLoader
-                # , INFLoader
+                , INFLoader
                 , NNLoader
                 # , PIVOTLoader
                 , REGLoader
@@ -367,7 +367,7 @@ def main():
     ALL_NAME = [
                 "DA"
                 , "GB"
-                # , "INF"
+                , "INF"
                 , "NN"
                 # , "PIVOT"
                 , "REG"
