@@ -316,7 +316,8 @@ def main():
                 # , "TP"
                 ]
     data_name = 'GG'
-    marginal_eval = REGLoader(data_name, 'GG-marginal', **REG_HP).load_evaluation_config()
+    marginal_eval = pd.concat([REGLoader(data_name, 'GG-marginal', **kwargs).load_evaluation_config() 
+                    for kwargs in hp_kwargs_generator(REG_M_HP)])
     marginal_eval['base_name'] = "Marginal"
     
     benchmark_name = 'GG-calib'
