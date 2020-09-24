@@ -51,6 +51,7 @@ def best_average_mse_box_plot(data, title="No Title", directory=DEFAULT_DIR):
             mse.append(best_mse_evaluation.target_mse)
             methods.append(base_name)
         plt.boxplot(mse, labels=methods)
+        plt.xticks(rotation=90)
         plt.xlabel('method')
         plt.ylabel("MSE $\\hat \\mu$")
         plt.title(plot_title)
@@ -72,7 +73,7 @@ def best_average_mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         y = [v.mean() for v in mse]
         y_err = [v.std() for v in mse]
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2)
-        plt.xticks( ticks=x, labels=methods)
+        plt.xticks( ticks=x, labels=methods, rotation='vertical')
         plt.xlabel('method')
         plt.ylabel("Average MSE $\\hat \\mu \pm std $")
         plt.title(plot_title)
@@ -91,6 +92,7 @@ def best_average_v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
             v_stat.append(best_mse_evaluation.var_stat)
             methods.append(base_name)
         plt.boxplot(v_stat, labels=methods)
+        plt.xticks(rotation=90)
         plt.xlabel('method')
         plt.ylabel("V_stat")
         plt.title(plot_title)
@@ -112,7 +114,7 @@ def best_average_v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         y = [v.mean() for v in v_stat]
         y_err = [v.std() for v in v_stat]
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2)
-        plt.xticks( ticks=x, labels=methods)
+        plt.xticks( ticks=x, labels=methods, rotation='vertical')
         plt.xlabel('method')
         plt.ylabel("Average V_stat $\pm std$")
         plt.title(plot_title)
@@ -131,6 +133,7 @@ def best_average_v_syst_box_plot(data, title="No Title", directory=DEFAULT_DIR):
             v_syst.append(best_mse_evaluation.var_syst)
             methods.append(base_name)
         plt.boxplot(v_syst, labels=methods)
+        plt.xticks(rotation=90)
         plt.xlabel('method')
         plt.ylabel("V_syst")
         plt.title(plot_title)
@@ -153,7 +156,7 @@ def best_average_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         y = [v.mean() for v in v_syst]
         y_err = [v.std() for v in v_syst]
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2)
-        plt.xticks( ticks=x, labels=methods)
+        plt.xticks( ticks=x, labels=methods, rotation='vertical')
         plt.xlabel('method')
         plt.ylabel("Average V_syst $\pm std$")
         plt.title(plot_title)
@@ -172,6 +175,7 @@ def best_median_mse_box_plot(data, title="No Title", directory=DEFAULT_DIR):
             mse.append(best_mse_evaluation.target_mse)
             methods.append(base_name)
         plt.boxplot(mse, labels=methods)
+        plt.xticks(rotation=90)
         plt.xlabel('method')
         plt.ylabel("MSE $\\hat \\mu$")
         plt.title(plot_title)
@@ -193,7 +197,7 @@ def best_median_mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         y = [v.mean() for v in mse]
         y_err = [v.std() for v in mse]
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2)
-        plt.xticks( ticks=x, labels=methods)
+        plt.xticks( ticks=x, labels=methods, rotation='vertical')
         plt.xlabel('method')
         plt.ylabel("Average MSE $\\hat \\mu \pm std $")
         plt.title(plot_title)
@@ -212,6 +216,7 @@ def best_median_v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
             v_stat.append(best_mse_evaluation.var_stat)
             methods.append(base_name)
         plt.boxplot(v_stat, labels=methods)
+        plt.xticks(rotation=90)
         plt.xlabel('method')
         plt.ylabel("V_stat")
         plt.title(plot_title)
@@ -233,7 +238,7 @@ def best_median_v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         y = [v.mean() for v in v_stat]
         y_err = [v.std() for v in v_stat]
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2)
-        plt.xticks( ticks=x, labels=methods)
+        plt.xticks( ticks=x, labels=methods, rotation='vertical')
         plt.xlabel('method')
         plt.ylabel("Average V_stat $\pm std$")
         plt.xlabel('method')
@@ -254,6 +259,7 @@ def best_median_v_syst_box_plot(data, title="No Title", directory=DEFAULT_DIR):
             v_syst.append(best_mse_evaluation.var_syst)
             methods.append(base_name)
         plt.boxplot(v_syst, labels=methods)
+        plt.xticks(rotation=90)
         plt.xlabel('method')
         plt.ylabel("V_syst")
         plt.title(plot_title)
@@ -275,7 +281,7 @@ def best_median_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         y = [v.mean() for v in v_syst]
         y_err = [v.std() for v in v_syst]
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2)
-        plt.xticks( ticks=x, labels=methods)
+        plt.xticks( ticks=x, labels=methods, rotation='vertical')
         plt.xlabel('method')
         plt.ylabel("Average V_syst $\pm std$")
         plt.title(plot_title)
