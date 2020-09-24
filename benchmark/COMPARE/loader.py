@@ -163,7 +163,7 @@ class PIVOTLoader(Loader):
 class INFLoader(Loader):
     """docstring for INFLoader"""
     def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
-                batch_size=20, learning_rate=1e-3, beta1=0.9, beta2=0.999, optimizer_name="Adam",
+                batch_size=20, learning_rate=1e-3, beta1=0.5, beta2=0.9, optimizer_name="Adam",
                 temperature=1.0):
         if optimizer_name == "Adam":
             optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
