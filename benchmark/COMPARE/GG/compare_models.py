@@ -316,9 +316,11 @@ def main():
                 # , "TP"
                 ]
     data_name = 'GG'
+    marginal_eval = REGLoader(data_name, 'GG-marginal', REG_HP).load_evaluation_config()
+    marginal_eval['base_name'] = "Marginal"
     
     benchmark_name = 'GG-calib'
-    all_data = []
+    all_data = [marginal_eval]
     for hp_args, TheLoader, name in zip(ALL_HP, ALL_LOADER, ALL_NAME):
         all_loader = [TheLoader(data_name, benchmark_name, **kwargs) for kwargs in hp_kwargs_generator(hp_args)]
         all_evaluation = [loader.load_evaluation_config() for loader in all_loader]
@@ -375,7 +377,7 @@ def main():
                 ]
 
     benchmark_name = 'GG-prior'
-    all_data = []
+    all_data = [marginal_eval]
     for hp_args, TheLoader, name in zip(ALL_HP, ALL_LOADER, ALL_NAME):
         all_loader = [TheLoader(data_name, benchmark_name, **kwargs) for kwargs in hp_kwargs_generator(hp_args)]
         all_evaluation = [loader.load_evaluation_config() for loader in all_loader]

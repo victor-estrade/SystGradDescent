@@ -39,6 +39,8 @@ def main():
         individual.box_n_samples_mse(evaluation, title=loader.model_full_name, directory=directory)
         
     title = f"{loader.benchmark_name}-{loader.base_name}"
+    directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name, "PROFUSION")
+    os.makedirs(directory, exist_ok=True)
     profusion.n_samples_mse(all_evaluations, title=title, directory=directory)
     profusion.n_samples_sigma_mean(all_evaluations, title=title, directory=directory)
     profusion.true_mu_estimator(all_evaluations, title=title, directory=directory)
