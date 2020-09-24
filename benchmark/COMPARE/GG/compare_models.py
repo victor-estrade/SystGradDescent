@@ -56,7 +56,7 @@ def best_average_mse_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.ylabel("MSE $\\hat \\mu$")
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_mse.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_mse.png'), bbox_inches="tight")
         plt.clf()
 
 
@@ -78,7 +78,7 @@ def best_average_mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.ylabel("Average MSE $\\hat \\mu \pm std $")
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-errplot_mse.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-errplot_mse.png'), bbox_inches="tight")
         plt.clf()
 
 
@@ -97,7 +97,7 @@ def best_average_v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.ylabel("V_stat")
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_stat.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_stat.png'), bbox_inches="tight")
         plt.clf()
 
 
@@ -119,7 +119,7 @@ def best_average_v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.ylabel("Average V_stat $\pm std$")
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-errplot_v_stat.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-errplot_v_stat.png'), bbox_inches="tight")
         plt.clf()
 
 
@@ -138,7 +138,7 @@ def best_average_v_syst_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.ylabel("V_syst")
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_syst.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_syst.png'), bbox_inches="tight")
         plt.clf()
 
 
@@ -161,7 +161,7 @@ def best_average_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.ylabel("Average V_syst $\pm std$")
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-errplot_v_syst.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-errplot_v_syst.png'), bbox_inches="tight")
         plt.clf()
 
 
@@ -180,7 +180,7 @@ def best_median_mse_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.ylabel("MSE $\\hat \\mu$")
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_mse.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_mse.png'), bbox_inches="tight")
         plt.clf()
 
 
@@ -202,7 +202,7 @@ def best_median_mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.ylabel("Average MSE $\\hat \\mu \pm std $")
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-errplot_mse.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-errplot_mse.png'), bbox_inches="tight")
         plt.clf()
 
 
@@ -221,7 +221,7 @@ def best_median_v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.ylabel("V_stat")
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_stat.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_stat.png'), bbox_inches="tight")
         plt.clf()
 
 
@@ -245,7 +245,7 @@ def best_median_v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.ylabel("V_stat")
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-errplot_v_stat.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-errplot_v_stat.png'), bbox_inches="tight")
         plt.clf()
 
 
@@ -264,7 +264,7 @@ def best_median_v_syst_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.ylabel("V_syst")
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_syst.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_syst.png'), bbox_inches="tight")
         plt.clf()
 
 
@@ -286,7 +286,7 @@ def best_median_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.ylabel("Average V_syst $\pm std$")
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-errplot_v_syst.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-errplot_v_syst.png'), bbox_inches="tight")
         plt.clf()
 
 
@@ -327,29 +327,30 @@ def main():
     marginal_eval['base_name'] = "Marginal"
     
     benchmark_name = 'GG-calib'
-    all_data = [marginal_eval]
+    all_data = []
     for hp_args, TheLoader, name in zip(ALL_HP, ALL_LOADER, ALL_NAME):
         all_loader = [TheLoader(data_name, benchmark_name, **kwargs) for kwargs in hp_kwargs_generator(hp_args)]
         all_evaluation = [loader.load_evaluation_config() for loader in all_loader]
         all_data.append(pd.concat(all_evaluation))
 
     data = pd.concat(all_data, sort=False)
+    data_and_marginal = pd.concat(all_data+[marginal_eval], sort=False)
 
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MSE")
     os.makedirs(directory, exist_ok=True)
-    best_average_mse_box_plot(data, title=benchmark_name, directory=directory)
+    best_average_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
     best_average_v_stat_box_plot(data, title=benchmark_name, directory=directory)
     best_average_v_syst_box_plot(data, title=benchmark_name, directory=directory)
-    best_average_mse_err_plot(data, title=benchmark_name, directory=directory)
+    best_average_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
     best_average_v_stat_err_plot(data, title=benchmark_name, directory=directory)
     best_average_v_syst_err_plot(data, title=benchmark_name, directory=directory)
 
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MEDIAN")
     os.makedirs(directory, exist_ok=True)
-    best_median_mse_box_plot(data, title=benchmark_name, directory=directory)
+    best_median_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
     best_median_v_stat_box_plot(data, title=benchmark_name, directory=directory)
     best_median_v_syst_box_plot(data, title=benchmark_name, directory=directory)
-    best_median_mse_err_plot(data, title=benchmark_name, directory=directory)
+    best_median_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
     best_median_v_stat_err_plot(data, title=benchmark_name, directory=directory)
     best_median_v_syst_err_plot(data, title=benchmark_name, directory=directory)
 
@@ -384,29 +385,30 @@ def main():
                 ]
 
     benchmark_name = 'GG-prior'
-    all_data = [marginal_eval]
+    all_data = []
     for hp_args, TheLoader, name in zip(ALL_HP, ALL_LOADER, ALL_NAME):
         all_loader = [TheLoader(data_name, benchmark_name, **kwargs) for kwargs in hp_kwargs_generator(hp_args)]
         all_evaluation = [loader.load_evaluation_config() for loader in all_loader]
         all_data.append(pd.concat(all_evaluation))
 
     data = pd.concat(all_data, sort=False)
+    data_and_marginal = pd.concat(all_data+[marginal_eval], sort=False)
 
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MSE")
     os.makedirs(directory, exist_ok=True)
-    best_average_mse_box_plot(data, title=benchmark_name, directory=directory)
+    best_average_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
     best_average_v_stat_box_plot(data, title=benchmark_name, directory=directory)
     best_average_v_syst_box_plot(data, title=benchmark_name, directory=directory)
-    best_average_mse_err_plot(data, title=benchmark_name, directory=directory)
+    best_average_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
     best_average_v_stat_err_plot(data, title=benchmark_name, directory=directory)
     best_average_v_syst_err_plot(data, title=benchmark_name, directory=directory)
 
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MEDIAN")
     os.makedirs(directory, exist_ok=True)
-    best_median_mse_box_plot(data, title=benchmark_name, directory=directory)
+    best_median_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
     best_median_v_stat_box_plot(data, title=benchmark_name, directory=directory)
     best_median_v_syst_box_plot(data, title=benchmark_name, directory=directory)
-    best_median_mse_err_plot(data, title=benchmark_name, directory=directory)
+    best_median_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
     best_median_v_stat_err_plot(data, title=benchmark_name, directory=directory)
     best_median_v_syst_err_plot(data, title=benchmark_name, directory=directory)
 
