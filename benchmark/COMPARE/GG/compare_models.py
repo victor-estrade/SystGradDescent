@@ -316,7 +316,7 @@ def main():
                 # , "TP"
                 ]
     data_name = 'GG'
-    marginal_eval = REGLoader(data_name, 'GG-marginal', REG_HP).load_evaluation_config()
+    marginal_eval = REGLoader(data_name, 'GG-marginal', **REG_HP).load_evaluation_config()
     marginal_eval['base_name'] = "Marginal"
     
     benchmark_name = 'GG-calib'
