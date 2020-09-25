@@ -85,7 +85,7 @@ def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
 
     plt.xlabel('true $\\mu$')
-    plt.ylabel("average estimated $\\mu$")
+    plt.ylabel("average estimated $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
     plt.title(title)
     plt.legend()
     plt.savefig(os.path.join(directory, f'true_mu_target_mean.png'))

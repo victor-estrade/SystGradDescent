@@ -196,7 +196,7 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
 
     plt.xlabel('true $\\mu$')
-    plt.ylabel("average estimated $\\mu \\pm \\sigma$")
+    plt.ylabel("average estimated $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
     plt.title(title)
     plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ])
     plt.savefig(os.path.join(directory, f'profusion_true_mu_estimator.png'))
