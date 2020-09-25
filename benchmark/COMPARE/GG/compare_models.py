@@ -242,7 +242,7 @@ def best_median_v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.xlabel('method')
         plt.ylabel("Average V_stat $\pm std$")
         plt.xlabel('method')
-        plt.ylabel("V_stat")
+        plt.ylabel("Average V_stat $\pm std$")
         plt.title(plot_title)
         # plt.legend()
         plt.savefig(os.path.join(directory, f'{plot_title}-errplot_v_stat.png'), bbox_inches="tight")
