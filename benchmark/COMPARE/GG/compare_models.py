@@ -46,10 +46,10 @@ def best_average_mse_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_best_average_N={n_test_samples}"
         mse = []
         methods = []
-        for base_name, all_evaluation in df.groupby("base_name"):
+        for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.mean())
             mse.append(best_mse_evaluation.target_mse)
-            methods.append(base_name)
+            methods.append(code_name)
         plt.boxplot(mse, labels=methods)
         plt.xticks(rotation=90)
         plt.xlabel('method')
@@ -65,10 +65,10 @@ def best_average_mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_best_average_N={n_test_samples}"
         mse = []
         methods = []
-        for base_name, all_evaluation in df.groupby("base_name"):
+        for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.mean())
             mse.append(best_mse_evaluation.target_mse)
-            methods.append(base_name)
+            methods.append(code_name)
         x = list( range(len(methods)) )
         y = [v.mean() for v in mse]
         y_err = [v.std() for v in mse]
@@ -87,10 +87,10 @@ def best_average_v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_best_average_N={n_test_samples}"
         v_stat = []
         methods = []
-        for base_name, all_evaluation in df.groupby("base_name"):
+        for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.mean())
             v_stat.append(best_mse_evaluation.var_stat)
-            methods.append(base_name)
+            methods.append(code_name)
         plt.boxplot(v_stat, labels=methods)
         plt.xticks(rotation=90)
         plt.xlabel('method')
@@ -106,10 +106,10 @@ def best_average_v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_best_average_N={n_test_samples}"
         v_stat = []
         methods = []
-        for base_name, all_evaluation in df.groupby("base_name"):
+        for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.mean())
             v_stat.append(best_mse_evaluation.var_stat)
-            methods.append(base_name)
+            methods.append(code_name)
         x = list( range(len(methods)) )
         y = [v.mean() for v in v_stat]
         y_err = [v.std() for v in v_stat]
@@ -128,10 +128,10 @@ def best_average_v_syst_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_best_average_N={n_test_samples}"
         v_syst = []
         methods = []
-        for base_name, all_evaluation in df.groupby("base_name"):
+        for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.mean())
             v_syst.append(best_mse_evaluation.var_syst)
-            methods.append(base_name)
+            methods.append(code_name)
         plt.boxplot(v_syst, labels=methods)
         plt.xticks(rotation=90)
         plt.xlabel('method')
@@ -148,10 +148,10 @@ def best_average_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_best_average_N={n_test_samples}"
         v_syst = []
         methods = []
-        for base_name, all_evaluation in df.groupby("base_name"):
+        for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.mean())
             v_syst.append(best_mse_evaluation.var_syst)
-            methods.append(base_name)
+            methods.append(code_name)
         x = list( range(len(methods)) )
         y = [v.mean() for v in v_syst]
         y_err = [v.std() for v in v_syst]
@@ -170,10 +170,10 @@ def best_median_mse_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_best_median_N={n_test_samples}"
         mse = []
         methods = []
-        for base_name, all_evaluation in df.groupby("base_name"):
+        for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.median())
             mse.append(best_mse_evaluation.target_mse)
-            methods.append(base_name)
+            methods.append(code_name)
         plt.boxplot(mse, labels=methods)
         plt.xticks(rotation=90)
         plt.xlabel('method')
@@ -189,10 +189,10 @@ def best_median_mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_best_median_N={n_test_samples}"
         mse = []
         methods = []
-        for base_name, all_evaluation in df.groupby("base_name"):
+        for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.median())
             mse.append(best_mse_evaluation.target_mse)
-            methods.append(base_name)
+            methods.append(code_name)
         x = list( range(len(methods)) )
         y = [v.mean() for v in mse]
         y_err = [v.std() for v in mse]
@@ -211,10 +211,10 @@ def best_median_v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_best_median_N={n_test_samples}"
         v_stat = []
         methods = []
-        for base_name, all_evaluation in df.groupby("base_name"):
+        for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.median())
             v_stat.append(best_mse_evaluation.var_stat)
-            methods.append(base_name)
+            methods.append(code_name)
         plt.boxplot(v_stat, labels=methods)
         plt.xticks(rotation=90)
         plt.xlabel('method')
@@ -230,10 +230,10 @@ def best_median_v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_best_median_N={n_test_samples}"
         v_stat = []
         methods = []
-        for base_name, all_evaluation in df.groupby("base_name"):
+        for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.median())
             v_stat.append(best_mse_evaluation.var_stat)
-            methods.append(base_name)
+            methods.append(code_name)
         x = list( range(len(methods)) )
         y = [v.mean() for v in v_stat]
         y_err = [v.std() for v in v_stat]
@@ -254,10 +254,10 @@ def best_median_v_syst_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_best_median_N={n_test_samples}"
         v_syst = []
         methods = []
-        for base_name, all_evaluation in df.groupby("base_name"):
+        for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.median())
             v_syst.append(best_mse_evaluation.var_syst)
-            methods.append(base_name)
+            methods.append(code_name)
         plt.boxplot(v_syst, labels=methods)
         plt.xticks(rotation=90)
         plt.xlabel('method')
@@ -273,10 +273,10 @@ def best_median_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_best_median_N={n_test_samples}"
         v_syst = []
         methods = []
-        for base_name, all_evaluation in df.groupby("base_name"):
+        for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.median())
             v_syst.append(best_mse_evaluation.var_syst)
-            methods.append(base_name)
+            methods.append(code_name)
         x = list( range(len(methods)) )
         y = [v.mean() for v in v_syst]
         y_err = [v.std() for v in v_syst]
@@ -297,7 +297,7 @@ def main():
     ALL_HP = [
                 DA_HP
                 # , GB_HP
-                # , INF_HP
+                , INF_HP
                 # , NN_HP
                 # , PIVOT_HP
                 , REG_HP
@@ -306,7 +306,7 @@ def main():
     ALL_LOADER = [
                 DALoader
                 # , GBLoader
-                # , INFLoader
+                , INFLoader
                 # , NNLoader
                 # , PIVOTLoader
                 , REGLoader
@@ -315,7 +315,7 @@ def main():
     ALL_NAME = [
                 "DA"
                 # , "GB"
-                # , "INF"
+                , "INF"
                 # , "NN"
                 # , "PIVOT"
                 , "REG"
@@ -325,13 +325,16 @@ def main():
     marginal_eval = pd.concat([REGLoader(data_name, 'GG-marginal', **kwargs).load_evaluation_config() 
                     for kwargs in hp_kwargs_generator(REG_M_HP)])
     marginal_eval['base_name'] = "Marginal"
+    marginal_eval['code_name'] = "REG-Marg"
     
     benchmark_name = 'GG-calib'
     all_data = []
     for hp_args, TheLoader, name in zip(ALL_HP, ALL_LOADER, ALL_NAME):
         all_loader = [TheLoader(data_name, benchmark_name, **kwargs) for kwargs in hp_kwargs_generator(hp_args)]
         all_evaluation = [loader.load_evaluation_config() for loader in all_loader]
-        all_data.append(pd.concat(all_evaluation))
+        all_evaluation = pd.concat(all_evaluation)
+        all_evaluation['code_name'] = name
+        all_data.append(all_evaluation)
 
     data = pd.concat(all_data, sort=False)
     data_and_marginal = pd.concat(all_data+[marginal_eval], sort=False)
@@ -389,7 +392,9 @@ def main():
     for hp_args, TheLoader, name in zip(ALL_HP, ALL_LOADER, ALL_NAME):
         all_loader = [TheLoader(data_name, benchmark_name, **kwargs) for kwargs in hp_kwargs_generator(hp_args)]
         all_evaluation = [loader.load_evaluation_config() for loader in all_loader]
-        all_data.append(pd.concat(all_evaluation))
+        all_evaluation = pd.concat(all_evaluation)
+        all_evaluation['code_name'] = name
+        all_data.append(all_evaluation)
 
     data = pd.concat(all_data, sort=False)
     data_and_marginal = pd.concat(all_data+[marginal_eval], sort=False)
