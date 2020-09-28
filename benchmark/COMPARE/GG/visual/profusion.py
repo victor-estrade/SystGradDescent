@@ -224,8 +224,8 @@ def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR
     plt.xlabel('true $\\mu$')
     plt.ylabel("average estimated $\\mu$")
     plt.title(title)
-    legend_elements = [Line2D([0], [0], marker='+', color='red', label='true',)]
-    legend_elements += [Line2D([0], [0], marker='o', color=color_cycle[i%len(unique_alphas)], label='true',)
+    legend_elements = [Line2D([0], [0], marker='+', color='red', label='true', markersize=15)]
+    legend_elements += [Line2D([0], [0], marker='o', color=color_cycle[i%len(unique_alphas)], label=f"$\\alpha$={a}")
                         for i, a in enumerate(unique_alphas)]
     plt.legend(handles=legend_elements)
     # plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ])
