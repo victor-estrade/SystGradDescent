@@ -309,7 +309,7 @@ def load_all_data(all_hp, all_loader_classes, all_code_names, data_name='GG', be
     all_data = []
     for hp_args, TheLoader, name in zip(all_hp, all_loader_classes, all_code_names):
         all_evaluation = load_all_evaluation(TheLoader, hp_args, benchmark_name=benchmark_name)
-        print(f" found {len(all_evaluation)} completed runs for {name}")
+        print(f" found {len(all_evaluation)} completed runs for {name} in {benchmark_name}")
         if all_evaluation :
             all_evaluation = pd.concat(all_evaluation)
             all_evaluation['code_name'] = name
