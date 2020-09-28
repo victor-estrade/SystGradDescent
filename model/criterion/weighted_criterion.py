@@ -42,6 +42,17 @@ class WeightedMSELoss(nn.Module):
         return loss
 
 
+class WeightedGaussEntropyLoss(nn.Module):
+    def forward(self, input, target, weight):
+        prediction, logsigma = torch.split(input, 1, dim=1)
+        error = (prediction - target)
+        error_sigma = error / torch.exp(logsigma)
+        loss = logsigma + 0.5 * (error_sigma * error_sigma)
+        element_loss = loss * weight
+        loss = torch.mean(element_loss)
+        return loss
+
+
 class WeightedL2Loss(nn.Module):
     def forward(self, input, weight):
         loss = torch.sum( input * input, 1) * weight / input.size(1)
