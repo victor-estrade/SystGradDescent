@@ -16,12 +16,12 @@ from .criterion import WeightedTPLoss
 
 
 class TangentPropClassifier(BaseClassifierModel, BaseNeuralNet):
-    def __init__(self, net, trade_off, optimizer, n_steps=5000, sample_size=1500,
+    def __init__(self, net, trade_off, optimizer, n_steps=5000, batch_size=1500,
                 cuda=False, verbose=0):
         super().__init__()
         self.n_steps    = n_steps
         self.trade_off = trade_off
-        self.sample_size = sample_size
+        self.batch_size = batch_size
         self.cuda_flag  = cuda
         self.verbose    = verbose
 
@@ -59,7 +59,7 @@ class TangentPropClassifier(BaseClassifierModel, BaseNeuralNet):
         
     def fit(self, generator):
         for i in range(self.n_steps):
-            s, w_s, b, w_b, y_batch = generator.generate(self.sample_size)
+            s, w_s, b, w_b, y_batch = generator.generate(self.batch_size)
             X_batch = torch.cat([s, b], axis=0)
             w_batch = torch.cat([w_s, w_b], axis=0)
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
@@ -117,7 +117,7 @@ class TangentPropClassifier(BaseClassifierModel, BaseNeuralNet):
 
 
     def get_name(self):
-        name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{sample_size}-{trade_off}".format(**self.__dict__)
+        name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{trade_off}".format(**self.__dict__)
         return name
 
 

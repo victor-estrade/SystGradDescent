@@ -130,7 +130,7 @@ class DALoader(Loader):
 class TPLoader(Loader):
     """docstring for TPLoader"""
     def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
-                batch_size=20, learning_rate=1e-3, beta1=0.9, beta2=0.999, optimizer_name="Adam", trade_off=0):
+                batch_size=1000, learning_rate=1e-3, beta1=0.9, beta2=0.999, optimizer_name="Adam", trade_off=0):
         if optimizer_name == "Adam":
             optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
         else:
@@ -146,7 +146,7 @@ class TPLoader(Loader):
 class PIVOTLoader(Loader):
     """docstring for PIVOTLoader"""
     def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
-                batch_size=20, learning_rate=1e-3, beta1=0.9, beta2=0.999, optimizer_name="Adam", trade_off=0):
+                batch_size=1000, learning_rate=1e-3, beta1=0.9, beta2=0.999, optimizer_name="Adam", trade_off=0):
         if optimizer_name == "Adam":
             optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
         else:
