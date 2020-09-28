@@ -309,6 +309,7 @@ def load_all_data(all_hp, all_loader_classes, all_code_names, data_name='GG', be
     all_data = []
     for hp_args, TheLoader, name in zip(all_hp, all_loader_classes, all_code_names):
         all_evaluation = load_all_evaluation(TheLoader, hp_args)
+        print(f" found {len(all_evaluation)} completed runs for {name}")
         if all_evaluation :
             all_evaluation = pd.concat(all_evaluation)
             all_evaluation['code_name'] = name
@@ -356,7 +357,7 @@ def main():
 
     marginal_eval = load_all_evaluation(REGLoader, REG_M_HP, benchmark_name='GG-marginal')
     if marginal_eval :
-        marginal_eval = pd.concat(marginal_eval)
+        marginal_eval = pd.concat(marginal_eval, sort=False)
         marginal_eval['base_name'] = "Marginal"
         marginal_eval['code_name'] = "REG-Marg"
     
