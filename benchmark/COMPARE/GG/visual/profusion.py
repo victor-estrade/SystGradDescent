@@ -227,7 +227,7 @@ def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR
     legend_elements = [Line2D([0], [0], marker='+', color='red', label='true',)]
     legend_elements += [Line2D([0], [0], marker='o', color=color_cycle[i%len(unique_alphas)], label='true',)
                         for i, a in enumerate(unique_alphas)]
-    plt.legend(legend_elements)
+    plt.legend(handles=legend_elements)
     # plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ])
     plt.savefig(os.path.join(directory, f'profusion_true_mu_target_mean.png'))
     plt.clf()
