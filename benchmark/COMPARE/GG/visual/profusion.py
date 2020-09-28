@@ -205,6 +205,7 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
 
 def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR):
+    from matplotlib.lines import Line2D
     prop_cycle = plt.rcParams['axes.prop_cycle']
     color_cycle = prop_cycle.by_key()['color']
     unique_alphas = all_evaluations[0].true_rescale.unique()
@@ -218,11 +219,14 @@ def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR
             true = df.true_mix
             label = f"$\\alpha$ = {true_rescale}"
             plt.scatter(x, y, marker='o', label=label, color=color_cycle[i%len(unique_alphas)])
-    plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
+    plt.scatter(x, true, marker='+', c='red', label='truth', s=500)
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average estimated $\\mu$")
     plt.title(title)
+    legend_elements = [Line2D([0], [0], marker='+', color='red', label='true',)]
+    legend_elements += [Line2D([0], [0], marker='o', color=color_cycle[i%len(unique_alphas)], label='true',)
+                        for i, a in enumerate(unique_alphas)]
     plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ])
     plt.savefig(os.path.join(directory, f'profusion_true_mu_target_mean.png'))
     plt.clf()
