@@ -18,6 +18,8 @@ python run_array.py benchmark.GG.GB-Prior --gpu 1 --n-estimators 100 300 1000  -
 python run_array.py benchmark.GG.NN-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name GG-NN-Prior --partition besteffort
 python run_array.py benchmark.GG.DA-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name GG-DA-Prior --partition besteffort
 
+python run_array.py benchmark.GG.PIVOT2-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --n-recovery-steps 1 --xp-name GG-PIVOT2-Prior --partition besteffort
+
 python run_array.py benchmark.GG.PIVOT-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name GG-PIVOT-Prior --partition besteffort
 python run_array.py benchmark.GG.TP-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name GG-TP-Prior --partition besteffort
 
@@ -81,3 +83,4 @@ python run_array.py benchmark.COMPARE.GG.compare_models --gpu 1 --xp-name COMPAR
 
 
 
+python run_array.py benchmark.GG.PIVOT2-Prior --gpu 1 --n-steps 2000 --n-unit 50 --trade-off 1 --n-recovery-steps 1 --xp-name GG-PIVOT2-Prior --partition besteffort

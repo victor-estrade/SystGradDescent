@@ -64,7 +64,7 @@ class OneEpoch(Generator):
         assert_arrays_have_same_shape(*arrays)
 
         size = arrays[0].shape[0]
-        assert size > batch_size, 'batch_size should be smaller than the number of samples in the given arrays'
+        batch_size = min(size, batch_size)
 
         self.arrays = arrays
         self.start_idx = 0
