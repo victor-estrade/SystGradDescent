@@ -298,7 +298,7 @@ def load_all_evaluation(TheLoader, hp_args, data_name='GG', benchmark_name='GG-m
         try:
             evaluation = loader.load_evaluation_config()
         except FileNotFoundError:
-            print(f"Missing results for {loader.full_name}")
+            print(f"Missing results for {loader.model_full_name}")
         else:
             all_evaluation.append(evaluation)
     return all_evaluation

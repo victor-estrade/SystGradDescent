@@ -70,7 +70,7 @@ def make_common_plots(data_name, benchmark_name, args, TheLoader):
         try:
             evaluation = loader.load_evaluation_config()
         except FileNotFoundError:
-            print(f"Missing results for {loader.full_name}")
+            print(f"Missing results for {loader.model_full_name}")
         else:
             all_evaluations.append(evaluation)
             all_loaders.append(loader)
