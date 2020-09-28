@@ -316,7 +316,7 @@ def load_all_data(all_hp, all_loader_classes, all_code_names, data_name='GG', be
             all_data.append(all_evaluation)
     return all_data
 
-    
+
 
 
 def main():
@@ -328,7 +328,7 @@ def main():
                 , GB_HP
                 , INF_HP
                 , NN_HP
-                , PIVOT_HP
+                # , PIVOT_HP
                 , REG_HP
                 , TP_HP
                 ]
@@ -337,7 +337,7 @@ def main():
                 , GBLoader
                 , INFLoader
                 , NNLoader
-                , PIVOTLoader
+                # , PIVOTLoader
                 , REGLoader
                 , TPLoader
                 ]
@@ -346,7 +346,7 @@ def main():
                 , "GB"
                 , "INF"
                 , "NN"
-                , "PIVOT"
+                # , "PIVOT"
                 , "REG"
                 , "TP"
                 ]
