@@ -67,10 +67,14 @@ def make_common_plots(data_name, benchmark_name, args, TheLoader):
     all_loaders = []
     for kwargs in hp_kwargs_generator(args):
         loader = TheLoader(data_name, benchmark_name, **kwargs)
-        evaluation = loader.load_evaluation_config()
-        all_evaluations.append(evaluation)
-        all_loaders.append(loader)
-        make_individual_plots(evaluation, loader)
+        try:
+            evaluation = loader.load_evaluation_config()
+        except FileNotFoundError:
+            print(f"Missing results for {loader.full_name}")
+        else:
+            all_evaluations.append(evaluation)
+            all_loaders.append(loader)
+            make_individual_plots(evaluation, loader)
     make_profusion_plots(all_evaluations, loader)
 
 

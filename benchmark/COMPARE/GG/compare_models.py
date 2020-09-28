@@ -290,52 +290,78 @@ def best_median_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.clf()
 
 
+
+def load_all_evaluation(TheLoader, hp_args, data_name='GG', benchmark_name='GG-marginal'):
+    all_evaluation = []
+    for kwargs in hp_kwargs_generator(hp_args):
+        loader = TheLoader(data_name, benchmark_name, **kwargs)
+        try:
+            evaluation = loader.load_evaluation_config()
+        except FileNotFoundError:
+            print(f"Missing results for {loader.full_name}")
+        else:
+            all_evaluation.append(evaluation)
+    return all_evaluation
+
+
+
+def load_all_data(all_hp, all_loader_classes, all_code_names, data_name='GG', benchmark_name='GG-calib'):
+    all_data = []
+    for hp_args, TheLoader, name in zip(all_hp, all_loader_classes, all_code_names):
+        all_evaluation = load_all_evaluation()
+        if all_evaluation :
+            all_evaluation = pd.concat(all_evaluation)
+            all_evaluation['code_name'] = name
+            all_data.append(all_evaluation)
+    return all_data
+
+    
+
+
 def main():
     print("hello")
     os.makedirs(DEFAULT_DIR, exist_ok=True)
 
     ALL_HP = [
                 DA_HP
-                # , GB_HP
+                , GB_HP
                 , INF_HP
-                # , NN_HP
-                # , PIVOT_HP
+                , NN_HP
+                , PIVOT_HP
                 , REG_HP
-                # , TP_HP
+                , TP_HP
                 ]
     ALL_LOADER = [
                 DALoader
-                # , GBLoader
+                , GBLoader
                 , INFLoader
-                # , NNLoader
-                # , PIVOTLoader
+                , NNLoader
+                , PIVOTLoader
                 , REGLoader
-                # , TPLoader
+                , TPLoader
                 ]
     ALL_NAME = [
                 "DA"
-                # , "GB"
+                , "GB"
                 , "INF"
-                # , "NN"
-                # , "PIVOT"
+                , "NN"
+                , "PIVOT"
                 , "REG"
-                # , "TP"
+                , "TP"
                 ]
+
     data_name = 'GG'
-    marginal_eval = pd.concat([REGLoader(data_name, 'GG-marginal', **kwargs).load_evaluation_config() 
-                    for kwargs in hp_kwargs_generator(REG_M_HP)])
-    marginal_eval['base_name'] = "Marginal"
-    marginal_eval['code_name'] = "REG-Marg"
+
+    # CALIB PLOTS
+
+    marginal_eval = load_all_evaluation(REGLoader, REG_M_HP, benchmark_name='GG-marginal')
+    if marginal_eval :
+        marginal_eval = pd.concat(marginal_eval)
+        marginal_eval['base_name'] = "Marginal"
+        marginal_eval['code_name'] = "REG-Marg"
     
     benchmark_name = 'GG-calib'
-    all_data = []
-    for hp_args, TheLoader, name in zip(ALL_HP, ALL_LOADER, ALL_NAME):
-        all_loader = [TheLoader(data_name, benchmark_name, **kwargs) for kwargs in hp_kwargs_generator(hp_args)]
-        all_evaluation = [loader.load_evaluation_config() for loader in all_loader]
-        all_evaluation = pd.concat(all_evaluation)
-        all_evaluation['code_name'] = name
-        all_data.append(all_evaluation)
-
+    all_data = load_all_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     data = pd.concat(all_data, sort=False)
     data_and_marginal = pd.concat(all_data+[marginal_eval], sort=False)
 
@@ -357,45 +383,10 @@ def main():
     best_median_v_stat_err_plot(data, title=benchmark_name, directory=directory)
     best_median_v_syst_err_plot(data, title=benchmark_name, directory=directory)
 
-
-
-    ALL_HP = [
-                DA_HP
-                , GB_HP
-                , INF_HP
-                , NN_HP
-                # , PIVOT_HP
-                , REG_HP
-                # , TP_HP
-                ]
-    ALL_LOADER = [
-                DALoader
-                , GBLoader
-                , INFLoader
-                , NNLoader
-                # , PIVOTLoader
-                , REGLoader
-                # , TPLoader
-                ]
-    ALL_NAME = [
-                "DA"
-                , "GB"
-                , "INF"
-                , "NN"
-                # , "PIVOT"
-                , "REG"
-                # , "TP"
-                ]
+    # PRIOR PLOTS
 
     benchmark_name = 'GG-prior'
-    all_data = []
-    for hp_args, TheLoader, name in zip(ALL_HP, ALL_LOADER, ALL_NAME):
-        all_loader = [TheLoader(data_name, benchmark_name, **kwargs) for kwargs in hp_kwargs_generator(hp_args)]
-        all_evaluation = [loader.load_evaluation_config() for loader in all_loader]
-        all_evaluation = pd.concat(all_evaluation)
-        all_evaluation['code_name'] = name
-        all_data.append(all_evaluation)
-
+    all_data = load_all_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     data = pd.concat(all_data, sort=False)
     data_and_marginal = pd.concat(all_data+[marginal_eval], sort=False)
 
