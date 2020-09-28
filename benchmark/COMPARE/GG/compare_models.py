@@ -355,7 +355,7 @@ def main():
 
     # CALIB PLOTS
 
-    marginal_eval = load_all_evaluation(REGLoader, REG_M_HP, benchmark_name='GG-marginal')
+    marginal_eval = load_all_evaluation(REGLoader, REG_M_HP, data_name=data_name, benchmark_name='GG-marginal')
     if marginal_eval :
         marginal_eval = pd.concat(marginal_eval, sort=False)
         marginal_eval['base_name'] = "Marginal"
@@ -387,7 +387,7 @@ def main():
     # PRIOR PLOTS
 
     benchmark_name = 'GG-prior'
-    all_data = load_all_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
+    all_data = load_all_data(ALL_HP, ALL_LOADER, ALL_NAME, data_name=data_name, benchmark_name=benchmark_name)
     data = pd.concat(all_data, sort=False)
     data_and_marginal = pd.concat(all_data+[marginal_eval], sort=False)
 
