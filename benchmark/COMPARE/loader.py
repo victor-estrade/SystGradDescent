@@ -153,7 +153,7 @@ class PIVOTLoader(Loader):
             optimizer_name = f"SGD-{learning_rate}"
         base_name = "PivotClassifier"
         archi_name = archi_name+f"x{n_units:d}"
-        model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{trade_off}"
+        model_full_name = f"{base_name}-{archi_name}_{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{trade_off}"
         super().__init__(benchmark_name, base_name, model_full_name)
         self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name, trade_off=trade_off)
