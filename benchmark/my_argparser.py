@@ -248,7 +248,7 @@ def PIVOT_parse_args(main_description="Training launcher"):
     parser.add_argument('--n-adv-pre-training-steps', help='number of update steps for pretraining the adversarial',
                         default=1000, type=int)
     parser.add_argument('--n-recovery-steps', help='number of update steps for adversarial recovery',
-                        default=5, type=int)
+                        default=1, type=int)
 
     # OTHER
     parser.add_argument('--no-cuda', '--no-gpu', help='flag to use or not the gpu',

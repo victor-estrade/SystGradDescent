@@ -49,7 +49,7 @@ from visual.special.gamma_gauss import plot_nll_around_min
 
 from model.pivot import PivotClassifier
 from model.criterion.weighted_criterion import WeightedCrossEntropyLoss
-from model.criterion.weighted_criterion import WeightedMSELoss
+from model.criterion.weighted_criterion import WeightedGaussEntropyLoss
 from model.regressor import Regressor
 from model.summaries import ClassifierSummaryComputer
 from ..my_argparser import PIVOT_parse_args
@@ -67,11 +67,11 @@ N_AUGMENT = 5
 
 def build_model(args, i_cv):
     args.net = ARCHI(n_in=1, n_out=2, n_unit=args.n_unit)
-    args.adv_net = ARCHI(n_in=2, n_out=1, n_unit=args.n_unit)
+    args.adv_net = ARCHI(n_in=2, n_out=2, n_unit=args.n_unit)
     args.net_optimizer = get_optimizer(args)
     args.adv_optimizer = get_optimizer(args)
     args.net_criterion = WeightedCrossEntropyLoss()
-    args.adv_criterion = WeightedMSELoss()
+    args.adv_criterion = WeightedGaussEntropyLoss()
     model = get_model(args, PivotClassifier)
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     return model
