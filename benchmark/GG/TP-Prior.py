@@ -197,7 +197,7 @@ def make_conditional_estimation(compute_nll, config):
     for j, nuisance_parameters in enumerate(config.iter_nuisance()):
         compute_nll_no_nuisance = lambda mix : compute_nll(*nuisance_parameters, mix)
         minimizer = get_minimizer_no_nuisance(compute_nll_no_nuisance, config.CALIBRATED, config.CALIBRATED_ERROR)
-        results_row = evaluate_minuit(minimizer, config.TRUE)
+        results_row = evaluate_minuit(minimizer, config.TRUE, do_hesse=False)
         results_row['j'] = j
         for name, value in zip(config.CALIBRATED.nuisance_parameters_names, nuisance_parameters):
             results_row[name] = value
