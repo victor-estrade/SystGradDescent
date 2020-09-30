@@ -252,7 +252,6 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     return result_row.copy(), conditional_estimate
 
 
-
 def make_conditional_estimation(compute_nll, config):
     results = []
     for j, nuisance_parameters in enumerate(config.iter_nuisance()):
@@ -265,6 +264,7 @@ def make_conditional_estimation(compute_nll, config):
             results_row[name+_TRUTH] = config.TRUE[name]
         results.append(results_row)
     return results
+
 
 if __name__ == '__main__':
     main()
