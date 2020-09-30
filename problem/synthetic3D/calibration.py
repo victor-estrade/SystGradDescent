@@ -15,7 +15,7 @@ def param_generator():
     while lam <= 0:
         lam = np.random.normal(pb_config.CALIBRATED.lam, pb_config.CALIBRATED_ERROR.lam)
     
-    mu = np.random.uniform(0, 1)
+    mu = np.random.uniform(0.3, 2.1)
     return Parameter(r, lam, mu)
 
 
@@ -26,6 +26,6 @@ def calib_param_sampler(r_mean, r_sigma, lam_mean, lam_sigma):
         while lam <= 0:
             lam = np.random.normal(lam_mean, lam_sigma)
         
-        mu = np.random.uniform(0, 1)
+        mu = np.random.uniform(0.3, 2.1)
         return Parameter(r, lam, mu)
     return param_sampler

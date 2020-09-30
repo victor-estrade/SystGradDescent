@@ -12,7 +12,7 @@ MINUIT_DEFAULT_ERROR = 1.0
 class S3D2Config():
     CALIBRATED = Parameter(r=0.0,
                         lam=3.0,
-                        mu=50/1050)
+                        mu=1.0)
     CALIBRATED_ERROR = Parameter(r=0.4,
                         lam=1.0,
                         mu=MINUIT_DEFAULT_ERROR)
