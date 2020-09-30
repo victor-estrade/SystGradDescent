@@ -14,7 +14,6 @@ from config import SEED
 from config import _ERROR
 from config import _TRUTH
 
-
 import pandas as pd
 
 from utils.log import set_logger
@@ -46,7 +45,7 @@ CALIB = "Calib_rescale"
 CALIB_PARAM_NAME = "rescale"
 
 
-class TainGenerator:
+class TrainGenerator:
     def __init__(self, param_generator, data_generator):
         self.param_generator = param_generator
         self.data_generator = data_generator
@@ -78,14 +77,13 @@ def main():
     model = build_model(args, 0)
     os.makedirs(model.results_directory, exist_ok=True)
 
-
     # Setup data
     logger.info("Setup data")
     config = Config()
     config_table = evaluate_config(config)
     config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
     seed = SEED + 99999
-    train_generator = TainGenerator(param_generator, Generator(seed))
+    train_generator = TrainGenerator(param_generator, Generator(seed))
     valid_generator = Generator(seed+1)
     test_generator  = Generator(seed+2)
 
@@ -99,7 +97,6 @@ def main():
     result_row.update(evaluate_neural_net(model, prefix='valid'))
     evaluate_regressor(model, prefix='valid')
     print_line()
-
 
     result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator)
                     for i, test_config in enumerate(config.iter_test_config())]
@@ -131,7 +128,6 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     result_row[name] = target
     result_row[name+_ERROR] = sigma
     return result_row.copy()
-
 
 
 if __name__ == '__main__':
