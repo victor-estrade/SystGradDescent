@@ -123,7 +123,6 @@ class Regressor(BaseModel, BaseNeuralNet):
                 print('/!\\ NaN detected at iter /!\\ ', i)
                 print("mse = ", mse.item())
                 print("msre_sigma = ", msre_sigma.item())
-                print("X_out = ", self.last_X_out)
                 print("="*50)
                 self.hasnan = True
                 break
@@ -152,9 +151,11 @@ class Regressor(BaseModel, BaseNeuralNet):
         p_torch = to_torch(p, cuda=self.cuda_flag) if p is not None else None
 
         X_out = self.net.forward(X_torch, w_torch, p_torch)
-        self.last_X_out = X_out
         target, logsigma = torch.split(X_out, 1, dim=0)
         loss, mse, msre_sigma = self.criterion(target, y_torch, logsigma)
+        print("X.isnan().any() = ", torch.isnan(X_torch).byte().any() )
+        print("X.isnan().any() = ", X.mean(), X.std() )
+        print("X_out = ", X_out)
         if self.verbose and (self.verbose > 1 or np.abs(target.item()) > 5) :
             print(f"logsigma={logsigma.item()}  loss={loss.item()} ")
             print(f"target={y.item()}  predict={target.item()}   mse={mse.item()}")
