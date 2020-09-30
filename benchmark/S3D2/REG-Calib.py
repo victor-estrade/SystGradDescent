@@ -25,8 +25,10 @@ from utils.model import get_model
 from utils.model import get_optimizer
 from utils.model import train_or_load_neural_net
 from utils.evaluation import evaluate_neural_net
+from utils.evaluation import evaluate_config
 from utils.evaluation import evaluate_regressor
 from utils.evaluation import evaluate_estimator
+from utils.evaluation import evaluate_conditional_estimation
 from utils.images import gather_images
 
 from config import _ERROR
@@ -48,8 +50,8 @@ from model.monte_carlo import save_monte_carlo
 
 from archi.reducer import EA3ML3 as ARCHI
 # from archi.reducer import EA1AR8MR8L1 as ARCHI
-from archi.reducer import A3ML3 as CALIB_ARCHI
-# from archi.reducer import EA1AR8MR8L1 as CALIB_ARCHI
+# from archi.reducer import A3ML3 as CALIB_ARCHI
+from archi.reducer import A1AR8MR8L1 as CALIB_ARCHI
 
 from ..my_argparser import REG_parse_args
 
@@ -58,16 +60,16 @@ DATA_NAME = 'S3D2'
 BENCHMARK_NAME = DATA_NAME+'-calib'
 CALIB_R = "Calib_r"
 CALIB_LAM = "Calib_lam"
-N_ITER = 9
+N_ITER = 30
 NCALL = 100
 
 def load_calib_r():
     args = lambda : None
-    args.n_unit     = 80
+    args.n_unit     = 200
     args.optimizer_name  = "adam"
     args.beta1      = 0.5
     args.beta2      = 0.9
-    args.learning_rate = 5e-4
+    args.learning_rate = 1e-4
     args.n_samples  = 1000
     args.n_steps    = 5000
     args.batch_size = 20
@@ -82,11 +84,11 @@ def load_calib_r():
 
 def load_calib_lam():
     args = lambda : None
-    args.n_unit     = 80
+    args.n_unit     = 200
     args.optimizer_name  = "adam"
     args.beta1      = 0.5
     args.beta2      = 0.9
-    args.learning_rate = 5e-4
+    args.learning_rate = 1e-4
     args.n_samples  = 1000
     args.n_steps    = 5000
     args.batch_size = 20
@@ -130,18 +132,27 @@ def build_model(args, i_cv):
 def main():
     # BASIC SETUP
     logger = set_logger()
-    args = REG_parse_args(main_description="Training launcher for Gradient boosting on S3D2 benchmark")
+    args = REG_parse_args(main_description="Training launcher for Gradient boosting on GG benchmark")
     logger.info(args)
     flush(logger)
     # INFO
     model = build_model(args, -1)
+    os.makedirs(model.results_directory, exist_ok=True)
     config = Config()
+    config_table = evaluate_config(config)
+    config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
     # RUN
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
-    results = pd.concat(results, ignore_index=True)
-    results.to_csv(os.path.join(model.results_directory, 'results.csv'))
+    estimations = [e0 for e0, e1 in results]
+    estimations = pd.concat(estimations, ignore_index=True)
+    estimations.to_csv(os.path.join(model.results_directory, 'estimations.csv'))
+    conditional_estimations = [e1 for e0, e1 in results]
+    conditional_estimations = pd.concat(conditional_estimations)
+    conditional_estimations.to_csv(os.path.join(model.results_directory, 'conditional_estimations.csv'))
     # EVALUATION
-    eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, results)
+    eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, estimations)
+    eval_conditional = evaluate_conditional_estimation(conditional_estimations)
+    eval_table = pd.concat([eval_table, eval_conditional], axis=1)
     print_line()
     print_line()
     print(eval_table)
@@ -171,6 +182,7 @@ def run(args, i_cv):
     # SET MODEL
     logger.info('Set up regressor')
     model = build_model(args, i_cv)
+    os.makedirs(model.results_path, exist_ok=True)
     flush(logger)
     
     # TRAINING / LOADING
@@ -187,17 +199,20 @@ def run(args, i_cv):
     calib_r = load_calib_r()
     calib_lam = load_calib_lam()
     result_row['nfcn'] = NCALL
-    result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_r, calib_lam)
+    iter_results = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_r, calib_lam)
                     for i, test_config in enumerate(config.iter_test_config())]
+    result_table = [e0 for e0, e1 in iter_results]
     result_table = pd.DataFrame(result_table)
-    result_table.to_csv(os.path.join(model.results_path, 'results.csv'))
+    result_table.to_csv(os.path.join(model.results_path, 'estimations.csv'))
     logger.info('Plot params')
     param_names = config.PARAM_NAMES
     for name in param_names:
         plot_params(name, result_table, title=model.full_name, directory=model.results_path)
 
+    conditional_estimate = pd.concat([e1 for e0, e1 in iter_results])
+    conditional_estimate['i_cv'] = i_cv
     logger.info('DONE')
-    return result_table
+    return result_table, conditional_estimate
 
 
 def run_iter(model, result_row, i_iter, config, valid_generator, test_generator, calib_r, calib_lam):
@@ -209,10 +224,11 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
+    result_row['n_test_samples'] = config.N_TESTING_SAMPLES
     suffix = f'-mu={config.TRUE.mu:1.2f}_r={config.TRUE.r}_lambda={config.TRUE.lam}'
     
     logger.info('Generate testing data')
-    X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=None)
+    X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     
     # CALIBRATION
     r_mean, r_sigma = calib_r.predict(X_test, w_test)
@@ -227,6 +243,14 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     result_row['cheat_mu'] = cheat_target
     result_row['cheat_sigma_mu'] = cheat_sigma
 
+    # MEASURE STAT/SYST VARIANCE
+    logger.info('MEASURE STAT/SYST VARIANCE')
+    conditional_results = make_conditional_estimation(model, X_test, w_test, config)
+    fname = os.path.join(iter_directory, "no_nuisance.csv")
+    conditional_estimate = pd.DataFrame(conditional_results)
+    conditional_estimate['i'] = i_iter
+    conditional_estimate.to_csv(fname)
+
     # MONTE CARLO
     logger.info('Making {} predictions'.format(NCALL))
     param_sampler = calib_param_sampler(r_mean, r_sigma, lam_mean, lam_sigma)
@@ -236,20 +260,33 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     save_monte_carlo(mc_data, iter_directory, ext=suffix)
     target, sigma = monte_carlo_infer(mc_data)
 
-
-    result_row.update(params_to_dict(config.CALIBRATED))
-    result_row.update(params_to_dict(config.CALIBRATED_ERROR, ext=_ERROR ))
-    result_row.update(params_to_dict(config.TRUE, ext=_TRUTH ))
+    result_row.update(config.CALIBRATED.to_dict())
+    result_row.update(config.CALIBRATED_ERROR.to_dict( suffix=_ERROR) )
+    result_row.update(config.TRUE.to_dict(suffix=_TRUTH) )
     name = config.INTEREST_PARAM_NAME 
     result_row[name] = target
     result_row[name+_ERROR] = sigma
     result_row[name+_TRUTH] = config.TRUE.interest_parameters
     logger.info('mu  = {} =vs= {} +/- {}'.format(config.TRUE.interest_parameters, target, sigma) ) 
-    return result_row.copy()
+    return result_row.copy(), conditional_estimate
 
 
-def params_to_dict(params, ext=""):
-    return {name+ext: value for name, value in zip(params._fields, params)}
+def make_conditional_estimation(model, X_test, w_test, config):
+    results = []
+    interest_name = config.INTEREST_PARAM_NAME 
+    for j, nuisance_parameters in enumerate(config.iter_nuisance()):
+        result_row = {}
+        target, sigma = model.predict(X_test, w_test, np.array(nuisance_parameters) )
+        result_row[interest_name] = target
+        result_row[interest_name+_ERROR] = sigma
+        result_row[interest_name+_TRUTH] = config.TRUE.interest_parameters
+        result_row['j'] = j
+        for nuisance_name, value in zip(config.CALIBRATED.nuisance_parameters_names, nuisance_parameters):
+            result_row[nuisance_name] = value
+            result_row[nuisance_name+_TRUTH] = config.TRUE[nuisance_name]
+        results.append(result_row)
+    return results
+
 
 if __name__ == '__main__':
     main()
