@@ -12,3 +12,4 @@ from .config import S3D2Config
 from .calibration import param_generator
 from .calibration import calib_param_sampler
 from .minimizer import get_minimizer
+from .minimizer import get_minimizer_no_nuisance
