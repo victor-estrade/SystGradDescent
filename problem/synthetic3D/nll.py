@@ -15,6 +15,7 @@ class S3D2NLL():
         self.valid_generator = valid_generator
         self.X_test = X_test
         self.w_test = w_test
+        self.test_summaries = self.compute_summaries(self.X_test, self.w_test)
         self.config = S3D2Config() if config is None else config
         
     def __call__(self, r, lam, mu):
@@ -23,14 +24,14 @@ class S3D2NLL():
         self.valid_generator.reset()
         X, y, w = self.valid_generator.generate(r, lam, mu, n_samples=config.N_VALIDATION_SAMPLES)
         EPSILON = 1e-5  # avoid log(0)
-        valid_summaries = self.compute_summaries(X, w) + EPSILON
-        test_summaries = self.compute_summaries(self.X_test, self.w_test)
+        valid_summaries = self.compute_summaries(X, w)
+        # test_summaries = self.compute_summaries(self.X_test, self.w_test)
 
         # Compute NLL
-        rate = valid_summaries
-        data_nll = np.sum(poisson_nll(test_summaries, rate))
-        r_constraint = gauss_nll(r, config.CALIBRATED_R, config.CALIBRATED_R_ERROR)
-        lam_constraint = gauss_nll(lam, config.CALIBRATED_LAMBDA, config.CALIBRATED_LAMBDA_ERROR)
+        rate = valid_summaries + EPSILON
+        data_nll = np.sum(poisson_nll(self.test_summaries, rate))
+        r_constraint = gauss_nll(r, config.CALIBRATED.r, config.CALIBRATED_ERROR.r)
+        lam_constraint = gauss_nll(lam, config.CALIBRATED.lam, config.CALIBRATED_ERROR.lam)
         total_nll = data_nll + r_constraint + lam_constraint
         return total_nll
 

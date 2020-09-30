@@ -49,6 +49,8 @@ class HiggsNLL():
         self.valid_generator = valid_generator
         self.X_test = X_test
         self.w_test = w_test
+        self.xp_histogram = self.compute_summaries(self.X_test, self.w_test)
+
         self.config = HiggsConfig() if config is None else config
 
     # DEPRECATED : no need to separate s and b. In the end it is summed again.
@@ -68,11 +70,11 @@ class HiggsNLL():
         X, y, w = self.valid_generator.generate(tes, jes, les, mu, n_samples=None)
         EPSILON = 1e-5  # avoid log(0)
         rate_histogram = self.compute_summaries(X, w) + EPSILON
-        xp_histogram = self.compute_summaries(self.X_test, self.w_test)
+        # xp_histogram = self.compute_summaries(self.X_test, self.w_test)
 
         # Compute NLL
         config = self.config
-        mu_nll = np.sum(poisson_nll(xp_histogram, rate_histogram))
+        mu_nll = np.sum(poisson_nll(self.xp_histogram, rate_histogram))
         tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
         jes_constraint = gauss_nll(jes, config.CALIBRATED.jes, config.CALIBRATED_ERROR.jes)
         les_constraint = gauss_nll(les, config.CALIBRATED.les, config.CALIBRATED_ERROR.les)

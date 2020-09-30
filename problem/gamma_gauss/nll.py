@@ -17,6 +17,7 @@ class GGNLL():
         self.valid_generator = valid_generator
         self.X_test = X_test
         self.w_test = w_test
+        self.test_summaries = self.compute_summaries(self.X_test, self.w_test)
         self.config = GGConfig() if config is None else config
         
     def __call__(self, rescale, mix):
@@ -27,12 +28,12 @@ class GGNLL():
         self.valid_generator.reset()
         X, y, w = self.valid_generator.generate(rescale, mix, n_samples=config.N_VALIDATION_SAMPLES)
         valid_summaries = self.compute_summaries(X, w)
-        test_summaries = self.compute_summaries(self.X_test, self.w_test)
+        # test_summaries = self.compute_summaries(self.X_test, self.w_test)
 
         # Compute NLL
         EPSILON = 1e-5  # avoid log(0)
         rate = valid_summaries + EPSILON
-        data_nll = np.sum(poisson_nll(test_summaries, rate))
+        data_nll = np.sum(poisson_nll(self.test_summaries, rate))
         rescale_constraint = gauss_nll(rescale, config.CALIBRATED.rescale, config.CALIBRATED_ERROR.rescale)
         total_nll = data_nll + rescale_constraint
         return total_nll
