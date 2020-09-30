@@ -81,10 +81,11 @@ class Regressor(BaseModel, BaseNeuralNet):
     def _fit(self, generator):
         self.net.train()  # train mode
         for i in range(self.n_steps):
-            loss, mse = self._forward(generator)
+            loss, mse, msre_sigma = self._forward(generator)
 
             self.losses.append(loss.item())
             self.mse_losses.append(mse.item())
+            self.msre_sigma_losses.append(msre_sigma.item())
 
             self.optimizer.zero_grad()
             loss.backward()
@@ -153,8 +154,8 @@ class Regressor(BaseModel, BaseNeuralNet):
         X_out = self.net.forward(X_torch, w_torch, p_torch)
         target, logsigma = torch.split(X_out, 1, dim=0)
         loss, mse, msre_sigma = self.criterion(target, y_torch, logsigma)
-        print("X.isnan().any() = ", torch.isnan(X_torch).byte().any() )
-        print("X.isnan().any() = ", X.mean(), X.std() )
+        print("X.isnan().any() = ", torch.isnan(X_torch).byte().any() == 1 )
+        print("X.mean(), X.std() = ", X.mean(), X.std() )
         print("X_out = ", X_out)
         if self.verbose and (self.verbose > 1 or np.abs(target.item()) > 5) :
             print(f"logsigma={logsigma.item()}  loss={loss.item()} ")
