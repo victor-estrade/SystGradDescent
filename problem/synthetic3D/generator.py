@@ -10,12 +10,14 @@ SEED = 42
 
 
 class S3D2():
-    def __init__(self, seed, n_expected_events=1050):
-        self.n_expected_events = n_expected_events
+    def __init__(self, seed, background_luminosity=1000, 
+                              signal_luminosity=50):
         self.seed = seed
         self.random = np.random.RandomState(seed=seed)
         self.sig_rate =  2
         self.feature_names = ["x1", "x2", "x3"]
+        self.background_luminosity = background_luminosity
+        self.signal_luminosity = signal_luminosity
 
     def reset(self):
         self.random = np.random.RandomState(seed=self.seed)
@@ -45,7 +47,7 @@ class S3D2():
         """
         X = self._generate_vars(r, lam, mu, n_bkg, n_sig)
         y = self._generate_labels(n_bkg, n_sig)
-        w = self._generate_weights(mu, n_bkg, n_sig, self.n_expected_events)
+        w = self._generate_weights(mu, n_bkg, n_sig)
         return X, y, w
     
     def _generate_vars(self, r, lam, mu, n_bkg, n_sig):
@@ -69,9 +71,9 @@ class S3D2():
         y = np.concatenate([y_b, y_s], axis=0)
         return y
 
-    def _generate_weights(self, mu, n_bkg, n_sig, n_expected_events):
-        w_b = np.ones(n_bkg) * (1-mu) * n_expected_events/n_bkg
-        w_s = np.ones(n_sig) * mu * n_expected_events/n_sig
+    def _generate_weights(self, mu, n_bkg, n_sig):
+        w_b = np.ones(n_bkg) * self.background_luminosity / n_bkg
+        w_s = np.ones(n_sig) * mu * self.signal_luminosity / n_sig
         w = np.concatenate([w_b, w_s], axis=0)
         return w
 
@@ -88,7 +90,7 @@ class S3D2():
         return np.eye(2)
 
     def sample_event(self, r, lam, mu, size=1):
-        assert 0 < mu and mu < 1, 'mu should be in ]0, 1[ : {} found'.format(mu)
+        assert mu > 0, 'mu should be in ]0, +inf[ : {} found'.format(mu)
         n_sig = int(mu * size)
         n_bkg = size - n_sig
         X = self._generate_vars(r, lam, mu, n_bkg, n_sig)
