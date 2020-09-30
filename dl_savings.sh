@@ -13,4 +13,7 @@ rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/CO
 # rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/S3D2-calib/Calib_r/ ./OUTPUT/S3D2-calib/Calib_r/
 # rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/MODELS/S3D2/Calib_lam ./OUTPUT/MODELS/S3D2/Calib_lam/
 
+# rsync -rtv --include='valid_roc_concat.png' --include='*/' --exclude='*' titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-prior/PivotClassifier/ ./OUTPUT/GG-prior/PivotClassifier
+
+
 # rsync -rtv ./hessian titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/hessian/
