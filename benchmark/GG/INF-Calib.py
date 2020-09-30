@@ -145,7 +145,7 @@ def run(args, i_cv):
     test_generator  = Generator(seed+2)
 
     # SET MODEL
-    logger.info('Set up regressor')
+    logger.info('Set up inferno model')
     model = build_model(args, i_cv)
     os.makedirs(model.results_path, exist_ok=True)
     flush(logger)
