@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line : 
-# python -m benchmark.S3D2.NN-Calib
+# python -m benchmark.S3D2.PIVOT-Calib
 
 import os
 import logging
