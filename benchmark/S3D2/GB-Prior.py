@@ -185,7 +185,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
 def make_conditional_estimation(compute_nll, config):
     results = []
     for j, nuisance_parameters in enumerate(config.iter_nuisance()):
-        compute_nll_no_nuisance = lambda mix : compute_nll(*nuisance_parameters, mix)
+        compute_nll_no_nuisance = lambda mu : compute_nll(*nuisance_parameters, mu)
         minimizer = get_minimizer_no_nuisance(compute_nll_no_nuisance, config.CALIBRATED, config.CALIBRATED_ERROR)
         results_row = evaluate_minuit(minimizer, config.TRUE)
         results_row['j'] = j
