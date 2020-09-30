@@ -108,6 +108,7 @@ class Regressor(BaseModel, BaseNeuralNet):
                 msre_sigma_losses.append(msre_sigma.item())
                 loss.backward()
                 # mse.backward()
+            print("END MINI-BATCH")
 
             loss = np.mean( losses )
             mse  = np.mean( mse_losses )
@@ -157,6 +158,7 @@ class Regressor(BaseModel, BaseNeuralNet):
         print("X.isnan().any() = ", torch.isnan(X_torch).byte().any() == 1 )
         print("X.mean(), X.std() = ", X.mean(), X.std() )
         print("X_out = ", X_out, "=?=", "target = ", y)
+        print("")
         if self.verbose and (self.verbose > 1 or np.abs(target.item()) > 5) :
             print(f"logsigma={logsigma.item()}  loss={loss.item()} ")
             print(f"target={y.item()}  predict={target.item()}   mse={mse.item()}")
