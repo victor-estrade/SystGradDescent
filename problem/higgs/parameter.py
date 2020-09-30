@@ -95,6 +95,18 @@ class Parameter:
 
     def __getitem__(self, key): 
         return asdict(self)[key]
+        
+    def items(self):
+        return asdict(self).items()
+
+    def to_dict(self, prefix='', suffix=''):
+        if not prefix and not suffix:
+            return asdict(self)
+        else:
+            return {prefix+key+suffix : value for key, value in self.items()}
+
+    def to_tuple(self):
+        return astuple(self)
 
 
 @dataclass(frozen=True)
@@ -142,3 +154,14 @@ class FuturParameter:
     def __getitem__(self, key): 
         return asdict(self)[key]
 
+    def items(self):
+        return asdict(self).items()
+
+    def to_dict(self, prefix='', suffix=''):
+        if not prefix and not suffix:
+            return asdict(self)
+        else:
+            return {prefix+key+suffix : value for key, value in self.items()}
+
+    def to_tuple(self):
+        return astuple(self)
