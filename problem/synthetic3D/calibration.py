@@ -10,10 +10,10 @@ from .config import S3D2Config
 def param_generator():
     pb_config = S3D2Config()
 
-    r = np.random.normal(pb_config.CALIBRATED_R, pb_config.CALIBRATED_R_ERROR)
+    r = np.random.normal(pb_config.CALIBRATED.r, pb_config.CALIBRATED_ERROR.r)
     lam = -1
     while lam <= 0:
-        lam = np.random.normal(pb_config.CALIBRATED_LAMBDA, pb_config.CALIBRATED_LAMBDA_ERROR)
+        lam = np.random.normal(pb_config.CALIBRATED.lam, pb_config.CALIBRATED_ERROR.lam)
     
     mu = np.random.uniform(0, 1)
     return Parameter(r, lam, mu)
