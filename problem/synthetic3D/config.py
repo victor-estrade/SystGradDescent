@@ -26,9 +26,9 @@ class S3D2Config():
                     lam=np.linspace(2, 4, 3),
                     mu=np.linspace(0.5, 2, 3),)
 
-    FINE_RANGE = Parameter(r=np.linspace(-1, 1, 31),
-                    lam=np.linspace(1, 5, 31),
-                    mu=np.linspace(0.5, 2, 31),)
+    FINE_RANGE = Parameter(r=np.linspace(-1, 1, 7),
+                    lam=np.linspace(1, 5, 7),
+                    mu=np.linspace(0.5, 2, 7),)
 
     PARAM_NAMES = TRUE.parameter_names
     INTEREST_PARAM_NAME = TRUE.interest_parameters_names
