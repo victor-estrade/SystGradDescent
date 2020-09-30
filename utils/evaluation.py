@@ -34,7 +34,7 @@ def register_params(param, params_truth, measure_dict):
         measure_dict[name+_TRUTH] = params_truth[name]
 
 
-def estimate(minimizer):
+def estimate(minimizer, do_hesse=True):
     import logging
     logger = logging.getLogger()
 
@@ -46,12 +46,13 @@ def estimate(minimizer):
 
     if minimizer.migrad_ok():
         logger.info('Mingrad is VALID !')
-        logger.info('Hesse()')
-        try:
-            params = minimizer.hesse()
-            logger.info('Hesse DONE')
-        except Exception as e:
-            logger.error('Exception during Hesse computation : {}'.format(e))
+        if do_hesse :
+            logger.info('Hesse()')
+            try:
+                params = minimizer.hesse()
+                logger.info('Hesse DONE')
+            except Exception as e:
+                logger.error('Exception during Hesse computation : {}'.format(e))
     else:
         logger.warning('Mingrad IS NOT VALID !')
     return fmin, params
@@ -111,9 +112,9 @@ def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix='', d
                     title=model.full_name, directory=directory, fname=fname)
 
 
-def evaluate_minuit(minimizer, params_truth):
+def evaluate_minuit(minimizer, params_truth, do_hesse=True):
     results = {}
-    fmin, params = estimate(minimizer)
+    fmin, params = estimate(minimizer, do_hesse=True)
     print_params(params, params_truth)
     register_params(params, params_truth, results)
     results['is_mingrad_valid'] = minimizer.migrad_ok()
