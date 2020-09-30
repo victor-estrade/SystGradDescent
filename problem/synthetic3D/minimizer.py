@@ -16,7 +16,7 @@ def get_minimizer(compute_nll, calibrated_param, calibrated_param_error):
                            #limit_r=(0, None),
                            lam=calibrated_param.lam,
                            error_lam=calibrated_param_error.lam,
-                           limit_lam=(0, None),
+                           limit_lam=(MIN_VALUE, None),
                            mu=calibrated_param.mu,
                            error_mu=calibrated_param_error.mu,
                            limit_mu=(MIN_VALUE, MAX_VALUE),
