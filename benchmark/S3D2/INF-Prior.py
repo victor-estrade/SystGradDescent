@@ -49,7 +49,6 @@ from problem.synthetic3D import S3D2NLL as NLLComputer
 from visual.special.synthetic3D import plot_nll_around_min
 
 from model.inferno import Inferno
-from model.regressor import Regressor
 from ..my_argparser import INFERNO_parse_args
 
 from archi.classic import L4 as ARCHI
