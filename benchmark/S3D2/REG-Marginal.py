@@ -47,7 +47,7 @@ from archi.reducer import A1AR8MR8L1 as ARCHI
 from ..my_argparser import REG_parse_args
 
 
-DATA_NAME = 'GG'
+DATA_NAME = 'S3D2'
 BENCHMARK_NAME = DATA_NAME+'-marginal'
 N_ITER = 30
 NCALL = 1
