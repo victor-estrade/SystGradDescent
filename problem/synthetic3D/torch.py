@@ -34,8 +34,11 @@ class GeneratorTorch():
         self.b_2 = torch.distributions.Exponential(self.B_RATE)
         
         self.S_RATE = self.tensor(s_rate)
-        self.s_loc =  self.tensor(torch.zeros(2))
-        self.s_cov = self.tensor(torch.eye(2))
+        self.s_loc =  torch.zeros(2)
+        self.s_cov = torch.eye(2)
+        if self.cuda_flag:
+            self.s_loc = self.s_loc.cuda()
+            self.s_cov = self.s_cov.cuda()
         self.s_01 = torch.distributions.MultivariateNormal(loc=self.s_loc, covariance_matrix=self.s_cov)
         self.s_2 = torch.distributions.Exponential(self.S_RATE)
         
