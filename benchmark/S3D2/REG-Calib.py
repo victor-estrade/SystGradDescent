@@ -219,7 +219,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
-    logger.flush()
+    flush(logger)
 
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
