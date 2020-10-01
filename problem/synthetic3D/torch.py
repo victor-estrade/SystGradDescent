@@ -69,6 +69,9 @@ class GeneratorTorch():
         self.n_generated += n_samples
         w_s = torch.ones(n_signals).view(-1, 1)
         w_b = torch.ones(n_backgrounds).view(-1, 1)
+        if self.cuda_flag:
+            w_b = w_b.cuda()
+            w_s = w_s.cuda()
         return s, w_s, b, w_b, 0
 
     def reset(self):
