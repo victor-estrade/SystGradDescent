@@ -61,7 +61,7 @@ N_ITER = 30
 
 
 def build_model(args, i_cv):
-    args.net = ARCHI(n_in=1, n_out=args.n_bins, n_unit=args.n_unit)
+    args.net = ARCHI(n_in=3, n_out=args.n_bins, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     args.criterion = S3D2Loss()
     model = get_model(args, Inferno)
