@@ -36,7 +36,7 @@ PIVOT_HP = dict(
                 , n_steps=[2000, 5000]
                 , n_units=[50, 100, 200, 500]
                 , trade_off=[1.0, 0.1, 1e-2, 1e-3]
-                , batch_size=[20]
+                , batch_size=[1000]
                 )
 
 REG_HP   = dict(
