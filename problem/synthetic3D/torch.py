@@ -23,8 +23,13 @@ class GeneratorTorch():
                                 ('r_dist', self.R_DIST), 
                                 ('b_rate', self.B_RATE), 
                                 ])
-        self.b_loc = torch.cat([self.R_DIST.view(-1), self.tensor(torch.zeros(1))])
-        self.b_cov = self.tensor(torch.from_numpy(np.array([[5., 0.], [0., 9.]], dtype=np.float32)))
+        zero = torch.zeros(1)
+        if self.cuda_flag:
+            zero = zero.cuda()
+        self.b_loc = torch.cat([self.R_DIST.view(-1), zero])
+        self.b_cov = torch.from_numpy(np.array([[5., 0.], [0., 9.]], dtype=np.float32))
+        if self.cuda_flag:
+            self.b_cov = self.b_cov.cuda()
         self.b_01 = torch.distributions.MultivariateNormal(loc=self.b_loc, covariance_matrix=self.b_cov)
         self.b_2 = torch.distributions.Exponential(self.B_RATE)
         
