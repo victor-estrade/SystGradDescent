@@ -10,28 +10,43 @@ SEED = 42
 
 class GeneratorTorch():
     def __init__(self, seed=SEED, r_dist=2.0, b_rate=3.0, s_rate=2.0, ratio=50/(1000+50),
-                        reset_every=None):
+                        reset_every=None, cuda=False):
         self.seed = seed
-        self.R_DIST = torch.tensor(r_dist, requires_grad=True)
-        self.B_RATE = torch.tensor(b_rate, requires_grad=True)
-        self.s_b_ratio = torch.tensor(ratio, requires_grad=True)
+        if cuda:
+            self.cuda()
+        else:
+            self.cpu()
+        self.R_DIST = self.tensor(r_dist, requires_grad=True)
+        self.B_RATE = self.tensor(b_rate, requires_grad=True)
+        self.s_b_ratio = self.tensor(ratio, requires_grad=True)
         self.nuisance_params = OrderedDict([
                                 ('r_dist', self.R_DIST), 
                                 ('b_rate', self.B_RATE), 
                                 ])
-        self.b_loc = torch.cat([self.R_DIST.view(-1), torch.zeros(1)])
-        self.b_cov = torch.from_numpy(np.array([[5., 0.], [0., 9.]], dtype=np.float32))
+        self.b_loc = self.tensor(torch.cat([self.R_DIST.view(-1), torch.zeros(1)]))
+        self.b_cov = self.tensor(torch.from_numpy(np.array([[5., 0.], [0., 9.]], dtype=np.float32)))
         self.b_01 = torch.distributions.MultivariateNormal(loc=self.b_loc, covariance_matrix=self.b_cov)
         self.b_2 = torch.distributions.Exponential(self.B_RATE)
         
-        self.S_RATE = s_rate
-        self.s_loc =  torch.zeros(2)
-        self.s_cov = torch.eye(2)
+        self.S_RATE = self.tensor(s_rate)
+        self.s_loc =  self.tensor(torch.zeros(2))
+        self.s_cov = self.tensor(torch.eye(2))
         self.s_01 = torch.distributions.MultivariateNormal(loc=self.s_loc, covariance_matrix=self.s_cov)
         self.s_2 = torch.distributions.Exponential(self.S_RATE)
         
         self.n_generated = 0
         self.reset_every = reset_every
+
+    def cpu(self):
+        self.cuda_flag = False
+        self.device = 'cpu'
+
+    def cuda(self):
+        self.cuda_flag = True
+        self.device = 'cuda'
+
+    def tensor(self, data, requires_grad=False, dtype=None):
+        return torch.tensor(data, requires_grad=requires_grad, device=self.device, dtype=None)
 
     def gen_bkg(self, n_samples):
         a = self.b_01.rsample((n_samples,))
