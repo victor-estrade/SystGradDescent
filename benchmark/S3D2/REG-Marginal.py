@@ -40,10 +40,6 @@ from problem.synthetic3D import S3D2Config as Config
 from problem.synthetic3D import param_generator
 
 from model.regressor import Regressor
-from model.monte_carlo import many_predict
-from model.monte_carlo import monte_carlo_data
-from model.monte_carlo import monte_carlo_infer
-from model.monte_carlo import save_monte_carlo
 
 # from archi.reducer import A3ML3 as ARCHI
 from archi.reducer import A1AR8MR8L1 as ARCHI
@@ -68,7 +64,7 @@ class TrainGenerator:
             return X, params.interest_parameters, w, None
         else:
             config = Config()
-            X, y, w = self.data_generator.generate(*config.CALIBRATED, n_samples=None)
+            X, y, w = self.data_generator.generate(*config.CALIBRATED, n_samples=Config.N_TRAINING_SAMPLES)
             return X, y, w, 1
 
 
