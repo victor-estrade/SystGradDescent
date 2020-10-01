@@ -15,7 +15,7 @@ python run_array.py benchmark.GG.REG-Marginal --gpu 1 --n-steps 2000 --n-unit 20
 
 # PRIOR RUN
 python run_array.py benchmark.GG.GB-Prior --gpu 1 --n-estimators 100 300 1000  --max-depth 3 5 10 --learning-rate 0.1 0.05 0.01 --xp-name GG-GB-Prior --partition besteffort
-python run_array.py benchmark.GG.NN-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name GG-NN-Prior --partition besteffort
+python run_array.py benchmark.GG.NN-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --batch-size 1000 --xp-name GG-NN-Prior --partition besteffort
 python run_array.py benchmark.GG.DA-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name GG-DA-Prior --partition besteffort
 
 python run_array.py benchmark.GG.PIVOT-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name GG-PIVOT-Prior --partition besteffort
@@ -29,7 +29,7 @@ python run_array.py benchmark.GG.REG-Prior --gpu 1 --n-steps 2000 --n-unit 200 -
 
 # CALIB RUN
 python run_array.py benchmark.GG.GB-Calib --gpu 1 --n-estimators 100 300 1000  --max-depth 3 5 10 --learning-rate 0.1 0.05 0.01 --xp-name GG-GB-Calib --partition besteffort
-python run_array.py benchmark.GG.NN-Calib --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name GG-NN-Calib --partition besteffort
+python run_array.py benchmark.GG.NN-Calib --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --batch-size 1000 --xp-name GG-NN-Calib --partition besteffort
 python run_array.py benchmark.GG.DA-Calib --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name GG-DA-Calib --partition besteffort
 
 python run_array.py benchmark.GG.PIVOT-Calib --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name GG-PIVOT-Calib --partition besteffort
@@ -106,7 +106,7 @@ python run_array.py benchmark.S3D2.REG-Marginal --gpu 1 --n-steps 2000 --n-unit 
 
 # PRIOR RUN
 python run_array.py benchmark.S3D2.GB-Prior --gpu 1 --n-estimators 300 1000  --max-depth 3 5 --learning-rate 0.1 0.05 0.01 --xp-name S3D2-GB-Prior --partition besteffort
-python run_array.py benchmark.S3D2.NN-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --xp-name S3D2-NN-Prior --partition besteffort
+python run_array.py benchmark.S3D2.NN-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 1000 --xp-name S3D2-NN-Prior --partition besteffort
 python run_array.py benchmark.S3D2.DA-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --xp-name S3D2-DA-Prior --partition besteffort
 
 python run_array.py benchmark.S3D2.PIVOT-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name S3D2-PIVOT-Prior --partition besteffort
@@ -120,7 +120,7 @@ python run_array.py benchmark.S3D2.REG-Prior --gpu 1 --n-steps 2000 --n-unit 200
 
 # CALIB RUN
 python run_array.py benchmark.S3D2.GB-Calib --gpu 1 --n-estimators 300 1000  --max-depth 3 5 --learning-rate 0.1 0.05 0.01 --xp-name S3D2-GB-Calib --partition besteffort
-python run_array.py benchmark.S3D2.NN-Calib --gpu 1 --n-steps 5000 --n-unit 200 500 --xp-name S3D2-NN-Calib --partition besteffort
+python run_array.py benchmark.S3D2.NN-Calib --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 1000 --xp-name S3D2-NN-Calib --partition besteffort
 python run_array.py benchmark.S3D2.DA-Calib --gpu 1 --n-steps 5000 --n-unit 200 500 --xp-name S3D2-DA-Calib --partition besteffort
 
 python run_array.py benchmark.S3D2.PIVOT-Calib --gpu 1 --n-steps 5000 --n-unit 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name S3D2-PIVOT-Calib --partition besteffort

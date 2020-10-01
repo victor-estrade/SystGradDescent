@@ -29,6 +29,7 @@ NN_HP    = dict(
                 archi_name=["L4"]
                 , n_steps=[2000, 5000]
                 , n_units=[50, 100, 200, 500]
+                , batch_size=[20, 1000]
                 )
 
 PIVOT_HP = dict(
