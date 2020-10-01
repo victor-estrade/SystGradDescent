@@ -8,7 +8,7 @@ from hessian import hessian
 
 SEED = 42
 
-class Synthetic3DGeneratorTorch():
+class GeneratorTorch():
     def __init__(self, seed=SEED, r_dist=2.0, b_rate=3.0, s_rate=2.0, ratio=50/(1000+50),
                         reset_every=None):
         self.seed = seed
@@ -63,7 +63,7 @@ class Synthetic3DGeneratorTorch():
         return self.generate(n_samples)
 
 
-class S3DLoss(nn.Module):
+class S3D2Loss(nn.Module):
     def __init__(self):
         super().__init__()
         r_loc, r_std = 0.0, 0.4
