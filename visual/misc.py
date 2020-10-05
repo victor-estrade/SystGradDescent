@@ -28,11 +28,11 @@ def set_plot_config():
     mpl.rcParams['figure.dpi'] = 80
     mpl.rcParams['savefig.dpi'] = 100
 
-    mpl.rcParams['font.size'] = 10
-    mpl.rcParams['axes.labelsize'] = 10
+    mpl.rcParams['font.size'] = 12
+    mpl.rcParams['axes.labelsize'] = 12
     mpl.rcParams['axes.titlesize'] = 17
-    mpl.rcParams['ytick.labelsize'] = 10
-    mpl.rcParams['xtick.labelsize'] = 10
+    mpl.rcParams['ytick.labelsize'] = 12
+    mpl.rcParams['xtick.labelsize'] = 12
     mpl.rcParams['legend.fontsize'] = 'large'
     mpl.rcParams['figure.titlesize'] = 'medium'
     mpl.rcParams['lines.markersize'] = np.sqrt(30)
