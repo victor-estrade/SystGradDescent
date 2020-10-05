@@ -3,6 +3,11 @@
 # TOY 1D
 #========
 
+#  LEANRING CURVE
+python run_array.py benchmark.GG.GB_learning_curve --gpu 1 --n-estimators 300  --max-depth 3 --learning-rate 0.1 --xp-name GG-GB_learning_curve --partition besteffort
+python run_array.py benchmark.GG.NN_learning_curve --gpu 1 --n-steps 5000 --n-unit 200 --batch-size 1000 --xp-name GG-NN_learning_curve --partition besteffort
+
+
 # CALIBRATION / MARGINAL
 python run_array.py benchmark.GG.CALIB-Rescale --gpu 1  --n-steps 1000 2000 5000 --n-unit 80 200 --xp-name GG-CALIB-Rescale --partition besteffort
 
