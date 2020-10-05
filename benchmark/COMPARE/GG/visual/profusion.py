@@ -221,7 +221,7 @@ def true_mu_target_mean_std(all_evaluations, title="No Title", directory=DEFAULT
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
 
     plt.xlabel('true $\\mu$')
-    plt.ylabel("average $\\hat \\mu \\pm std \\hat \\mu$")
+    plt.ylabel("average $\\hat \\mu \\pm std(\\hat \\mu)$")
     plt.title(title)
     plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ])
     plt.savefig(os.path.join(directory, f'profusion_true_mu_target_mean_std.png'))
