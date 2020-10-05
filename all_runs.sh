@@ -56,7 +56,7 @@ python run_array.py benchmark.S3D2.CALIB-R --gpu 1  --n-steps 1000 2000 5000 --n
 python run_array.py benchmark.S3D2.likelihood --gpu 1 --xp-name S3D2-likelihood --partition besteffort
 python run_array.py benchmark.S3D2.bayes --gpu 1 --xp-name S3D2-bayes --partition besteffort
 
-python run_array.py benchmark.S3D2.REG-Marginal --gpu 1 --n-steps 5000 --n-unit 200 500 --xp-name S3D2-REG-Marginal --partition besteffort
+python run_array.py benchmark.S3D2.REG-Marginal --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 5000 --xp-name S3D2-REG-Marginal --partition besteffort
 python run_array.py benchmark.S3D2.REG-Marginal --gpu 1 --n-steps 2000 --n-unit 200 --beta1 0.9 --beta2 0.999 --xp-name S3D2-REG-Marginal-bouncing --partition besteffort
 
 
