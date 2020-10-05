@@ -66,6 +66,26 @@ def plot_auc(evaluation, model_name="GB", directory=DIRECTORY):
     plt.savefig(os.path.join(directory, fname))
     plt.clf()
 
+
+def plot_accuracy(evaluation, model_name="GB", directory=DIRECTORY):
+    import matplotlib.pyplot as plt
+    title = f"{model_name} AUC"
+    x = []
+    y = []
+    y_err = []
+    for n_train_samples, table in evaluation.groupby('n_train_samples'):
+        x.append(n_train_samples)
+        y.append(table['valid_accuracy'].mean())
+        y_err.append(table['valid_accuracy'].std())
+    plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label='AUC')
+    fname = "auc.png"
+    plt.xlabel('auc $\\pm$ std')
+    plt.ylabel('# train samples')
+    plt.title(title)
+    plt.legend()
+    plt.savefig(os.path.join(directory, fname))
+    plt.clf()
+
 # =====================================================================
 # MAIN
 # =====================================================================
@@ -88,6 +108,7 @@ def main():
     evaluation = pd.concat(evaluation)
     evaluation.to_csv(os.path.join(model.results_directory, "evaluation.csv"))
     plot_auc(evaluation, model_name=model.base_name, directory=model.results_directory)
+    plot_accuracy(evaluation, model_name=model.base_name, directory=model.results_directory)
     if False : # Temporary removed
         gather_images(model.results_directory)
 
