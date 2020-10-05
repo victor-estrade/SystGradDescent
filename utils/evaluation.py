@@ -104,7 +104,6 @@ def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix='', d
 
     s_histogram = model.compute_summaries(X_sig, w_sig, n_bins)
     b_histogram = model.compute_summaries(X_bkg, w_bkg, n_bins)
-    n_histogram = model.compute_summaries(X, w, n_bins)
 
     logger.info('Plot summaries')
     fname = f'{prefix}summaries{suffix}.png'
