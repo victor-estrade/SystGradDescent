@@ -6,6 +6,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import os
+import pandas as pd
+
 from . import individual
 from . import profusion
 
@@ -79,6 +81,14 @@ def make_common_plots(data_name, benchmark_name, args, TheLoader):
             all_loaders.append(loader)
             make_individual_plots(evaluation, loader)
     make_profusion_plots(all_evaluations, loader)
+
+
+def make_hp_table(data_name, benchmark_name, args, TheLoader):
+    some_hp = next(hp_kwargs_generator(args))
+    loader = TheLoader(some_hp)
+    directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name)
+    path = os.path.join(directory, "hp_table.csv")
+    pd.DataFrame(hp_kwargs_generator(args)).to_csv(path)
 
 
 def _stuff(args):

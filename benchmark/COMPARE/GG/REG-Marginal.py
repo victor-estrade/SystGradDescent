@@ -11,6 +11,7 @@ import os
 from .visual import individual
 from .visual import profusion
 from .visual.common import hp_kwargs_generator
+from .visual.common import make_hp_table
 from ..loader import REGLoader
 from .hyper_parameters import REG_M_HP
 
@@ -21,6 +22,7 @@ def main():
     print("hello")
     data_name = 'GG'
     benchmark_name = 'GG-marginal'
+    make_hp_table(data_name, benchmark_name, REG_M_HP, REGLoader)
     all_evaluations = []
     all_loaders = []
     for kwargs in hp_kwargs_generator(REG_M_HP):
