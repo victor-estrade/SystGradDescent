@@ -108,7 +108,7 @@ def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix='', d
 
     logger.info('Plot summaries')
     fname = f'{prefix}summaries{suffix}.png'
-    plot_summaries(b_histogram, s_histogram, n_histogram, 
+    plot_summaries(b_histogram, s_histogram,
                     title=model.full_name, directory=directory, fname=fname)
 
 

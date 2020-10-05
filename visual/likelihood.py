@@ -14,16 +14,15 @@ import matplotlib.pyplot as plt
 from config import DEFAULT_DIR
 
 
-def plot_summaries(b_histogram, s_histogram, n_histogram, 
+def plot_summaries(b_histogram, s_histogram, 
                     title='no title', directory=DEFAULT_DIR, fname='summaries.png', 
-                    classes=('b', 's', 'n'),):
+                    classes=('b', 's'),):
     logger = logging.getLogger()
     n_bins = len(b_histogram)
     x_ticks = np.arange(n_bins)
     try:
-        plt.bar(x_ticks+0.1, b_histogram, width=0.3, label=classes[0])
-        plt.bar(x_ticks+0.4, s_histogram, width=0.3, label=classes[1])
-        plt.bar(x_ticks+0.7, n_histogram, width=0.3, label=classes[2])
+        plt.bar(x_ticks, b_histogram, label=classes[0])
+        plt.bar(x_ticks, s_histogram, bottom=b_histogram, label=classes[1])
         plt.xlabel("bins")
         plt.ylabel("summary_value")
         plt.xticks(x_ticks)
