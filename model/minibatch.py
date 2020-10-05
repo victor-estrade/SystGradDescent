@@ -12,32 +12,33 @@ def assert_arrays_have_same_shape(*arrays):
             " array {} length = {}  but expected length = {} ".format(i + 1, arr.shape[0], length)
 
 
-def uniform_sampling(*args, batch_size=None):
+def uniform_sampling(*arrays, batch_size=None):
     """
     Return a generator taking 'batch_size' random samples from given arrays.
     """
     if batch_size is None:
         raise ValueError('batch_size should not be None !')
-    if len(args) == 0:
+    if len(arrays) == 0:
         raise ValueError('minibatching must take at least one array')
-    assert_arrays_have_same_shape(*args)
+    assert_arrays_have_same_shape(*arrays)
 
+    length = arrays[0].shape[0]
     while(True):
         idx = np.random.choice(length, size=batch_size)
-        yield tuple(arr[idx] for arr in args)
+        yield tuple(arr[idx] for arr in arrays)
 
 
-def epoch_shuffle(*args, batch_size=None, shuffle=True):
+def epoch_shuffle(*arrays, batch_size=None, shuffle=True):
     """
     Return a generator taking 'batch_size' random samples from X and y.
     """
     if batch_size is None:
         raise ValueError('batch_size should not be None !')
-    if len(args) == 0:
+    if len(arrays) == 0:
         raise ValueError('minibatching must take at least one array')
-    assert_arrays_have_same_shape(*args)
+    assert_arrays_have_same_shape(*arrays)
 
-    size = args[0].shape[0]
+    size = arrays[0].shape[0]
     assert size > batch_size, 'batch_size should be smaller than the number of samples in the given arrays'
 
     while(True):
@@ -49,7 +50,7 @@ def epoch_shuffle(*args, batch_size=None, shuffle=True):
                 excerpt = indices[start_idx:start_idx + batch_size]
             else:
                 excerpt = slice(start_idx, start_idx + batch_size)
-            yield tuple(arr[excerpt] for arr in args)
+            yield tuple(arr[excerpt] for arr in arrays)
 
 
 class OneEpoch(Generator):
@@ -102,7 +103,8 @@ class Epoch(Generator):
         assert_arrays_have_same_shape(*arrays)
 
         size = arrays[0].shape[0]
-        assert size > batch_size, 'batch_size should be smaller than the number of samples in the given arrays'
+        batch_size = min(size, batch_size)
+        # assert size > batch_size, 'batch_size should be smaller than the number of samples in the given arrays'
 
         self.arrays = arrays
         self.start_idx = 0
@@ -142,7 +144,8 @@ class EpochShuffle(Generator):
         assert_arrays_have_same_shape(*arrays)
 
         size = arrays[0].shape[0]
-        assert size > batch_size, 'batch_size should be smaller than the number of samples in the given arrays'
+        batch_size = min(size, batch_size)
+        # assert size > batch_size, 'batch_size should be smaller than the number of samples in the given arrays'
 
         self.arrays = arrays
         self.start_idx = 0
@@ -186,7 +189,8 @@ class OneEpochShuffle(Generator):
         assert_arrays_have_same_shape(*arrays)
 
         size = arrays[0].shape[0]
-        assert size > batch_size, 'batch_size should be smaller than the number of samples in the given arrays'
+        batch_size = min(size, batch_size)
+        # assert size > batch_size, 'batch_size should be smaller than the number of samples in the given arrays'
 
         self.arrays = arrays
         self.start_idx = 0
