@@ -42,50 +42,6 @@ python run_array.py benchmark.GG.REG-Calib --gpu 1 --n-steps 2000 --n-unit 200 -
 
 
 
-# === PLOT ===
-
-# CALIBRATION / MARGINAL
-python run_array.py benchmark.COMPARE.GG.REG-Marginal --gpu 1 --xp-name COMPARE-GG-REG-Marginal --partition besteffort
-
-
-# PRIOR RUN
-python run_array.py benchmark.COMPARE.GG.GB-Prior --gpu 1 --xp-name COMPARE-GG-GB-Prior --partition besteffort
-python run_array.py benchmark.COMPARE.GG.NN-Prior --gpu 1 --xp-name COMPARE-GG-NN-Prior --partition besteffort
-python run_array.py benchmark.COMPARE.GG.DA-Prior --gpu 1 --xp-name COMPARE-GG-DA-Prior --partition besteffort
-
-python run_array.py benchmark.COMPARE.GG.PIVOT-Prior --gpu 1 --xp-name COMPARE-GG-PIVOT-Prior --partition besteffort
-python run_array.py benchmark.COMPARE.GG.TP-Prior --gpu 1 --xp-name COMPARE-GG-TP-Prior --partition besteffort
-
-python run_array.py benchmark.COMPARE.GG.INF-Prior --gpu 1 --xp-name COMPARE-GG-INF-Prior --partition besteffort
-
-python run_array.py benchmark.COMPARE.GG.REG-Prior --gpu 1 --xp-name COMPARE-GG-REG-Prior --partition besteffort
-
-
-# CALIB RUN
-
-python run_array.py benchmark.COMPARE.GG.GB-Calib --gpu 1 --xp-name COMPARE-GG-GB-Calib --partition besteffort
-python run_array.py benchmark.COMPARE.GG.NN-Calib --gpu 1 --xp-name COMPARE-GG-NN-Calib --partition besteffort
-python run_array.py benchmark.COMPARE.GG.DA-Calib --gpu 1 --xp-name COMPARE-GG-DA-Calib --partition besteffort
-
-python run_array.py benchmark.COMPARE.GG.PIVOT-Calib --gpu 1 --xp-name COMPARE-GG-PIVOT-Calib --partition besteffort
-python run_array.py benchmark.COMPARE.GG.TP-Calib --gpu 1 --xp-name COMPARE-GG-TP-Calib --partition besteffort
-
-python run_array.py benchmark.COMPARE.GG.INF-Calib --gpu 1 --xp-name COMPARE-GG-INF-Calib --partition besteffort
-
-python run_array.py benchmark.COMPARE.GG.REG-Calib --gpu 1 --xp-name COMPARE-GG-REG-Calib --partition besteffort
-
-# BEST METHODS
-python run_array.py benchmark.COMPARE.GG.compare_models --gpu 1 --xp-name COMPARE-GG-MODELS --partition besteffort
-
-
-
-
-
-
-
-
-
-
 
 
 
