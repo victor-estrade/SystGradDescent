@@ -88,7 +88,8 @@ def main():
     evaluation = pd.concat(evaluation)
     evaluation.to_csv(os.path.join(model.results_directory, "evaluation.csv"))
     plot_auc(evaluation, model_name=model.base_name, directory=model.results_directory)
-    gather_images(model.results_directory)
+    if False : # Temporary removed
+        gather_images(model.results_directory)
 
 
 def run(args, i_cv):
