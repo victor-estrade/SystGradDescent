@@ -182,11 +182,11 @@ def evaluate_estimator(name, results, valid_only=False):
     return eval_table
 
 
-def evaluate_conditional_estimation(conditional_estimations):
-    mix_mean = conditional_estimations.groupby(['i', 'j'])["mix"].mean()
-    mix_var  = conditional_estimations.groupby(['i', 'j'])["mix"].var()
-    var_stat = mix_var.groupby('i').mean()
-    var_syst = mix_mean.groupby('i').var()
+def evaluate_conditional_estimation(conditional_estimations, interest_param_name="mu"):
+    mu_mean = conditional_estimations.groupby(['i', 'j'])[interest_param_name].mean()
+    mu_var  = conditional_estimations.groupby(['i', 'j'])[interest_param_name].var()
+    var_stat = mu_var.groupby('i').mean()
+    var_syst = mu_mean.groupby('i').var()
     var_total = var_stat + var_syst
     evaluation = pd.concat([var_stat.to_frame(name='var_stat')
                             , var_syst.to_frame(name='var_syst')

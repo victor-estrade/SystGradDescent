@@ -88,7 +88,7 @@ def main():
     conditional_estimations.to_csv(os.path.join(model.results_directory, 'conditional_estimations.csv'))
     # EVALUATION
     eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, estimations)
-    eval_conditional = evaluate_conditional_estimation(conditional_estimations)
+    eval_conditional = evaluate_conditional_estimation(conditional_estimations, interest_param_name=config.INTEREST_PARAM_NAME)
     eval_table = pd.concat([eval_table, eval_conditional], axis=1)
     print_line()
     print_line()

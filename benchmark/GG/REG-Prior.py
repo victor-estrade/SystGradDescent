@@ -106,7 +106,7 @@ def main():
     conditional_estimations.to_csv(os.path.join(model.results_directory, 'conditional_estimations.csv'))
     # EVALUATION
     eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, estimations)
-    eval_conditional = evaluate_conditional_estimation(conditional_estimations)
+    eval_conditional = evaluate_conditional_estimation(conditional_estimations, interest_param_name=config.INTEREST_PARAM_NAME)
     eval_table = pd.concat([eval_table, eval_conditional], axis=1)
     print_line()
     print_line()
@@ -181,7 +181,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
 
     logger.info('Generate testing data')
-    X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=None)
+    X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
 
     # CHEATER :
     cheat_target, cheat_sigma = model.predict(X_test, w_test, np.array(config.TRUE.nuisance_parameters))
