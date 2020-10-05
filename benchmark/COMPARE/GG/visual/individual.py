@@ -71,7 +71,7 @@ def true_mu_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.clf()
 
 
-def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
+def true_mu_estimator(evaluation, title="No Title", directory=DEFAULT_DIR):
     max_n_test_samples = evaluation.n_test_samples.max()
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
@@ -82,6 +82,47 @@ def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
         true = df.true_mix
         label = f"$\\alpha$ = {true_rescale}"
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
+    plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
+
+    plt.xlabel('true $\\mu$')
+    plt.ylabel("average estimated $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
+    plt.title(title)
+    plt.legend()
+    plt.savefig(os.path.join(directory, f'true_mu_estimator.png'))
+    plt.clf()
+
+
+def true_mu_target_mean_std(evaluation, title="No Title", directory=DEFAULT_DIR):
+    max_n_test_samples = evaluation.n_test_samples.max()
+
+    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    for true_rescale, df in data.groupby("true_rescale"):
+        x = df.true_mix
+        y = df.target_mean
+        y_err = df.target_std
+        true = df.true_mix
+        label = f"$\\alpha$ = {true_rescale}"
+        plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
+    plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
+
+    plt.xlabel('true $\\mu$')
+    plt.ylabel("average $\\hat \\mu \\pm std \\hat \\mu$")
+    plt.title(title)
+    plt.legend()
+    plt.savefig(os.path.join(directory, f'true_mu_target_mean_std.png'))
+    plt.clf()
+
+
+def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
+    max_n_test_samples = evaluation.n_test_samples.max()
+
+    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    for true_rescale, df in data.groupby("true_rescale"):
+        x = df.true_mix
+        y = df.target_mean
+        true = df.true_mix
+        label = f"$\\alpha$ = {true_rescale}"
+        plt.scatter(x, y, marker='o', label=label)
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
 
     plt.xlabel('true $\\mu$')

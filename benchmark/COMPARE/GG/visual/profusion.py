@@ -196,10 +196,35 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
 
     plt.xlabel('true $\\mu$')
-    plt.ylabel("average estimated $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
+    plt.ylabel("average $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
     plt.title(title)
     plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ])
     plt.savefig(os.path.join(directory, f'profusion_true_mu_estimator.png'))
+    plt.clf()
+
+
+def true_mu_target_mean_std(all_evaluations, title="No Title", directory=DEFAULT_DIR):
+    prop_cycle = plt.rcParams['axes.prop_cycle']
+    color_cycle = prop_cycle.by_key()['color']
+    unique_alphas = all_evaluations[0].true_rescale.unique()
+
+    for evaluation in all_evaluations:
+        max_n_test_samples = evaluation.n_test_samples.max()
+        data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+        for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
+            x = df.true_mix
+            y = df.target_mean
+            y_err = df.target_std
+            true = df.true_mix
+            label = f"$\\alpha$ = {true_rescale}"
+            plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label, color=color_cycle[i%len(unique_alphas)])
+    plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
+
+    plt.xlabel('true $\\mu$')
+    plt.ylabel("average $\\hat \\mu \\pm std \\hat \\mu$")
+    plt.title(title)
+    plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ])
+    plt.savefig(os.path.join(directory, f'profusion_true_mu_target_mean_std.png'))
     plt.clf()
 
 
@@ -222,7 +247,7 @@ def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500)
 
     plt.xlabel('true $\\mu$')
-    plt.ylabel("average estimated $\\mu$")
+    plt.ylabel("average $\\hat \\mu$")
     plt.title(title)
     legend_elements = [Line2D([0], [0], marker='+', color='red', label='true', markersize=15, markeredgewidth=5)]
     legend_elements += [Line2D([0], [0], marker='o', color=color_cycle[i%len(unique_alphas)], label=f"$\\alpha$={a}")
