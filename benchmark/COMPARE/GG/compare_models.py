@@ -347,7 +347,7 @@ def main():
                 , "INF"
                 , "NN"
                 , "PIVOT"
-                , "REG"
+                , "Param-REG"
                 , "TP"
                 ]
 
@@ -359,7 +359,7 @@ def main():
     if marginal_eval :
         marginal_eval = pd.concat(marginal_eval, sort=False)
         marginal_eval['base_name'] = "Marginal"
-        marginal_eval['code_name'] = "REG-Marg"
+        marginal_eval['code_name'] = "Blind-REG"
     
     benchmark_name = 'GG-calib'
     all_data = load_all_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
