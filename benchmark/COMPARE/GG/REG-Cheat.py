@@ -21,6 +21,21 @@ from problem.gamma_gauss import GGConfig as Config
 from config import SAVING_DIR
 BENCHMARK_NAME =  "COMPARE"
 
+
+def load_cheat_evaluation_config(loader):
+    estimations = loader.load_estimations()
+    estimations["mix"] = estimations["cheat_mu"]
+    estimations["mix_error"] = estimations["cheat_sigma_mu"]
+    evaluation = evaluate_estimator(Config.INTEREST_PARAM_NAME, estimations)
+    config_table = loader.load_config_table()
+    evaluation = evaluation.join(config_table, rsuffix='_')
+    evaluation['model_full_name'] = loader.model_full_name
+    evaluation['benchmark_name'] = benchmark_name
+    evaluation['base_name'] = loader.base_name
+    return evaluation
+    
+
+
 def main():
     print("hello")
     data_name = 'GG'
@@ -33,10 +48,7 @@ def main():
     all_loaders = []
     for kwargs in hp_kwargs_generator(REG_HP):
         loader = REGLoader(data_name, orig_benchmark_name, **kwargs)
-        estimations = loader.load_estimations()
-        estimations["mix"] = estimations["cheat_mu"]
-        estimations["mix_error"] = estimations["cheat_sigma_mu"]
-        evaluation = evaluate_estimator(Config.INTEREST_PARAM_NAME, estimations)
+        evaluation = load_cheat_evaluation_config(loader)
         
         all_evaluations.append(evaluation)
         all_loaders.append(loader)
