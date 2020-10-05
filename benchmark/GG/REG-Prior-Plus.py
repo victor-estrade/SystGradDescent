@@ -53,7 +53,7 @@ from ..my_argparser import REG_parse_args
 
 
 DATA_NAME = 'GG'
-BENCHMARK_NAME = DATA_NAME+'-prior'
+BENCHMARK_NAME = DATA_NAME+'-prior-plus'
 N_ITER = 30
 NCALL = 100
 
