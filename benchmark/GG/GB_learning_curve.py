@@ -77,9 +77,9 @@ def plot_accuracy(evaluation, model_name="GB", directory=DIRECTORY):
         x.append(n_train_samples)
         y.append(table['valid_accuracy'].mean())
         y_err.append(table['valid_accuracy'].std())
-    plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label='AUC')
-    fname = "auc.png"
-    plt.xlabel('auc $\\pm$ std')
+    plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label='accuracy')
+    fname = "accuracy.png"
+    plt.xlabel('accuracy $\\pm$ std')
     plt.ylabel('# train samples')
     plt.title(title)
     plt.legend()
