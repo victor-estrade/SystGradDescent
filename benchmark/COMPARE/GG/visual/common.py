@@ -87,6 +87,7 @@ def make_hp_table(data_name, benchmark_name, args, TheLoader):
     some_hp = next(hp_kwargs_generator(args))
     loader = TheLoader(data_name, benchmark_name, **some_hp)
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name)
+    os.makedirs(directory, exist_ok=True)
     path = os.path.join(directory, "hp_table.csv")
     pd.DataFrame(hp_kwargs_generator(args)).to_csv(path)
 
