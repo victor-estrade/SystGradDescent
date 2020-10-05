@@ -8,6 +8,7 @@ from .generator import Generator
 from .parameter import Parameter
 from .nll import GGNLL
 from .config import GGConfig
+from .config import GGConfigPlus
 from .calibration import param_generator
 from .calibration import calib_param_sampler
 from .minimizer import get_minimizer
