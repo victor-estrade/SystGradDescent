@@ -36,6 +36,9 @@ python run_array.py benchmark.COMPARE.GG.REG-Calib --gpu 1 --xp-name COMPARE-GG-
 python run_array.py benchmark.COMPARE.GG.compare_models --gpu 1 --xp-name COMPARE-GG-MODELS --partition besteffort
 
 
+# CHEAT RUN
+python run_array.py benchmark.COMPARE.GG.REG-Cheat --gpu 1 --xp-name COMPARE-GG-REG-Cheat --partition besteffort
+
 
 
 
