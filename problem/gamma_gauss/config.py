@@ -42,4 +42,4 @@ class GGConfig():
 
 
 class GGConfigPlus(GGConfig):
-    RANGE_N_TEST = [1, 5, 10, 25, 50, 100, 200, 300, 500, 1000, 2000]
+    RANGE_N_TEST = [5, 10, 25, 50, 100, 200, 300, 500, 1000, 2000]
