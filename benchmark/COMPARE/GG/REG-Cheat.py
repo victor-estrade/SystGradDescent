@@ -35,7 +35,7 @@ def main():
         loader = REGLoader(data_name, orig_benchmark_name, **kwargs)
         estimations = loader.load_estimations()
         estimations["mix"] = estimations["cheat_mu"]
-        estimations["mix_error"] = estimations["cheat_mu_sigma_mu"]
+        estimations["mix_error"] = estimations["cheat_sigma_mu"]
         evaluation = evaluate_estimator(Config.INTEREST_PARAM_NAME, estimations)
         
         all_evaluations.append(evaluation)
