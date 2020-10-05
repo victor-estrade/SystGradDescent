@@ -22,7 +22,7 @@ from config import SAVING_DIR
 BENCHMARK_NAME =  "COMPARE"
 
 
-def load_cheat_evaluation_config(loader):
+def load_cheat_evaluation_config(loader, benchmark_name):
     estimations = loader.load_estimations()
     estimations["mix"] = estimations["cheat_mu"]
     estimations["mix_error"] = estimations["cheat_sigma_mu"]
@@ -48,7 +48,7 @@ def main():
     all_loaders = []
     for kwargs in hp_kwargs_generator(REG_HP):
         loader = REGLoader(data_name, orig_benchmark_name, **kwargs)
-        evaluation = load_cheat_evaluation_config(loader)
+        evaluation = load_cheat_evaluation_config(loader, benchmark_name)
         
         all_evaluations.append(evaluation)
         all_loaders.append(loader)
