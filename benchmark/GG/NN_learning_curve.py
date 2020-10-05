@@ -11,6 +11,7 @@ from __future__ import unicode_literals
 import os
 import logging
 from config import SAVING_DIR
+from config import DEFAULT_DIR
 from config import SEED
 
 import pandas as pd
@@ -40,7 +41,6 @@ from archi.classic import L4 as ARCHI
 
 DATA_NAME = 'GG'
 BENCHMARK_NAME = DATA_NAME
-DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "GB_learning_curve", "GradientBoostingModel")
 N_ITER = 30
 N_TRAIN_RANGE = [100, 500, 1000, 2500, 5000, 8000, 10000, 12000, 15000, 17000, 20000]
 
@@ -49,11 +49,11 @@ def build_model(args, i_cv):
     args.net = ARCHI(n_in=1, n_out=2, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, NeuralNetClassifier)
-    model.set_info(DATA_NAME, f"{BENCHMARK_NAME}/GB_learning_curve", i_cv)
+    model.set_info(DATA_NAME, f"{BENCHMARK_NAME}/learning_curve", i_cv)
     return model
 
 
-def plot_auc(evaluation, model_name="GB", directory=DIRECTORY):
+def plot_auc(evaluation, model_name="GB", directory=DEFAULT_DIR):
     import matplotlib.pyplot as plt
     title = f"{model_name} AUC"
     x = []
@@ -73,7 +73,7 @@ def plot_auc(evaluation, model_name="GB", directory=DIRECTORY):
     plt.clf()
 
 
-def plot_accuracy(evaluation, model_name="GB", directory=DIRECTORY):
+def plot_accuracy(evaluation, model_name="GB", directory=DEFAULT_DIR):
     import matplotlib.pyplot as plt
     title = f"{model_name} AUC"
     x = []
@@ -104,7 +104,6 @@ def main():
     # INFO
     model = build_model(args, -1)
     os.makedirs(model.results_directory, exist_ok=True)
-    os.makedirs(DIRECTORY, exist_ok=True)
     # config = Config()
     # config_table = evaluate_config(config)
     # config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
