@@ -10,6 +10,7 @@ rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/CO
 
 rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG/learning_curve/ ./OUTPUT/GG/learning_curve
 
+# rsync -rtv "titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-prior/DataAugmentation/DataAugmentation-L4x200-Adam-0.001-(0.9-0.999)-2000-20/" ./OUTPUT/GG-prior/DataAugmentation/DataAugmentation-L4x200-Adam-0.001-(0.9-0.999)-2000-20
 # rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-prior/PivotClassifier2/ ./OUTPUT/GG-prior/PivotClassifier2
 # rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/S3D2-calib/Calib_lam/ ./OUTPUT/S3D2-calib/Calib_lam/
 # rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/S3D2-calib/Calib_r/ ./OUTPUT/S3D2-calib/Calib_r/
