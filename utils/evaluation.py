@@ -113,7 +113,7 @@ def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix='', d
 
 def evaluate_minuit(minimizer, params_truth, do_hesse=True):
     results = {}
-    fmin, params = estimate(minimizer, do_hesse=True)
+    fmin, params = estimate(minimizer, do_hesse=do_hesse)
     print_params(params, params_truth)
     register_params(params, params_truth, results)
     results['is_mingrad_valid'] = minimizer.migrad_ok()
