@@ -42,6 +42,13 @@ def parse_args():
     main_args.add_argument('--skip-minuit', help='flag to skip minuit NLL minization',
                         action='store_true')
 
+    parser.add_argument("--start-cv", type=int,
+                        default=0, help="start of i_cv for range(start, end)")
+    parser.add_argument("--end-cv", type=int,
+                        default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument('--load-run', help='load saved runs. Do not run the models',
+                        action='store_true')
+
     grid_args = parser.add_argument_group('grid_args', 'arguments passed to the subjobs for grid search')
     grid_args.add_argument('--n-estimators',
                         nargs='+',
@@ -225,14 +232,23 @@ def main():
     parameter_dict = {k: to_list(v) for k, v in grid_args.items() if v is not None}
     grid = param_to_grid(parameter_dict)
     array = "1-{}".format(len(grid))
+
+    # Handle flag in main_args
     if main_args['--retrain'] :
         main_args['--retrain'] = ' '
     else:
         main_args.pop('--retrain')
+
+    if main_args['--load-run'] :
+        main_args['--load-run'] = ' '
+    else:
+        main_args.pop('--load-run')
+
     if not main_args['--no-cuda'] :
         main_args['--no-cuda'] = ' '
     else:
         main_args.pop('--no-cuda')
+        
     if main_args['--skip-minuit'] :
         main_args['--skip-minuit'] = ' '
     else:
