@@ -13,6 +13,13 @@ def GB_parse_args(main_description="Training launcher"):
     parser.add_argument("--verbose", "-v", type=int, choices=[0, 1, 2],
                         default=0, help="increase output verbosity")
 
+    parser.add_argument("--start-cv", type=int,
+                        default=0, help="start of i_cv for range(start, end)")
+    parser.add_argument("--end-cv", type=int,
+                        default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument('--load-run', help='load saved runs. Do not run the models',
+                        action='store_true')
+
     # MODEL HYPER PARAMETERS
     parser.add_argument('--n-estimators', help='number of estimators',
                         default=100, type=int)
@@ -38,6 +45,13 @@ def REG_parse_args(main_description="Training launcher"):
 
     parser.add_argument("--verbose", "-v", type=int, choices=[0, 1, 2],
                         default=0, help="increase output verbosity")
+
+    parser.add_argument("--start-cv", type=int,
+                        default=0, help="start of i_cv for range(start, end)")
+    parser.add_argument("--end-cv", type=int,
+                        default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument('--load-run', help='load saved runs. Do not run the models',
+                        action='store_true')
 
     # MODEL HYPER PARAMETERS
     parser.add_argument('--learning-rate', '--lr', help='learning rate',
@@ -81,6 +95,13 @@ def INFERNO_parse_args(main_description="Training launcher"):
 
     parser.add_argument("--verbose", "-v", type=int, choices=[0, 1, 2],
                         default=0, help="increase output verbosity")
+
+    parser.add_argument("--start-cv", type=int,
+                        default=0, help="start of i_cv for range(start, end)")
+    parser.add_argument("--end-cv", type=int,
+                        default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument('--load-run', help='load saved runs. Do not run the models',
+                        action='store_true')
 
     # MODEL HYPER PARAMETERS
     parser.add_argument('--learning-rate', '--lr', help='learning rate',
@@ -130,6 +151,13 @@ def NET_parse_args(main_description="Training launcher"):
     parser.add_argument("--verbose", "-v", type=int, choices=[0, 1, 2],
                         default=0, help="increase output verbosity")
 
+    parser.add_argument("--start-cv", type=int,
+                        default=0, help="start of i_cv for range(start, end)")
+    parser.add_argument("--end-cv", type=int,
+                        default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument('--load-run', help='load saved runs. Do not run the models',
+                        action='store_true')
+
     # MODEL HYPER PARAMETERS
     parser.add_argument('--learning-rate', '--lr', help='learning rate',
                         default=1e-3, type=float)
@@ -170,6 +198,13 @@ def TP_parse_args(main_description="Training launcher"):
 
     parser.add_argument("--verbose", "-v", type=int, choices=[0, 1, 2],
                         default=0, help="increase output verbosity")
+
+    parser.add_argument("--start-cv", type=int,
+                        default=0, help="start of i_cv for range(start, end)")
+    parser.add_argument("--end-cv", type=int,
+                        default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument('--load-run', help='load saved runs. Do not run the models',
+                        action='store_true')
 
     # MODEL HYPER PARAMETERS
     parser.add_argument('--learning-rate', '--lr', help='learning rate',
@@ -215,6 +250,13 @@ def PIVOT_parse_args(main_description="Training launcher"):
 
     parser.add_argument("--verbose", "-v", type=int, choices=[0, 1, 2],
                         default=0, help="increase output verbosity")
+
+    parser.add_argument("--start-cv", type=int,
+                        default=0, help="start of i_cv for range(start, end)")
+    parser.add_argument("--end-cv", type=int,
+                        default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument('--load-run', help='load saved runs. Do not run the models',
+                        action='store_true')
 
     # MODEL HYPER PARAMETERS
     parser.add_argument('--learning-rate', '--lr', help='learning rate',
