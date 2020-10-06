@@ -42,11 +42,11 @@ def parse_args():
     main_args.add_argument('--skip-minuit', help='flag to skip minuit NLL minization',
                         action='store_true')
 
-    parser.add_argument("--start-cv", type=int,
+    main_args.add_argument("--start-cv", type=int,
                         default=0, help="start of i_cv for range(start, end)")
-    parser.add_argument("--end-cv", type=int,
+    main_args.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
-    parser.add_argument('--load-run', help='load saved runs. Do not run the models',
+    main_args.add_argument('--load-run', help='load saved runs. Do not run the models',
                         action='store_true')
 
     grid_args = parser.add_argument_group('grid_args', 'arguments passed to the subjobs for grid search')
