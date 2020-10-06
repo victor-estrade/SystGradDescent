@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line : 
-# python -m benchmark.S3D2.REG
+# python -m benchmark.S3D2.TP-Prior
 
 import os
 import logging
@@ -20,6 +20,8 @@ import pandas as pd
 from visual.misc import set_plot_config
 set_plot_config()
 
+from ..common import load_estimations
+from ..common import load_conditional_estimations
 from utils.log import set_logger
 from utils.log import flush
 from utils.log import print_line
@@ -80,12 +82,19 @@ def main():
     config_table = evaluate_config(config)
     config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
     # RUN
-    results = [run(args, i_cv) for i_cv in range(N_ITER)]
-    estimations = [e0 for e0, e1 in results]
-    estimations = pd.concat(estimations, ignore_index=True)
+    if args.load_run:
+        logger.info(f'Loading previous runs [{args.start_cv},{args.end_cv}[')
+        directory = model.results_directory
+        estimations = load_estimations(directory, start_cv=args.start_cv, end_cv=args.end_cv)
+        conditional_estimations = load_conditional_estimations(directory, start_cv=args.start_cv, end_cv=args.end_cv)
+    else:
+        logger.info(f'Running runs [{args.start_cv},{args.end_cv}[')
+        results = [run(args, i_cv) for i_cv in range(args.start_cv, args.end_cv)]
+        estimations = [e0 for e0, e1 in results]
+        estimations = pd.concat(estimations, ignore_index=True)
+        conditional_estimations = [e1 for e0, e1 in results]
+        conditional_estimations = pd.concat(conditional_estimations)
     estimations.to_csv(os.path.join(model.results_directory, 'estimations.csv'))
-    conditional_estimations = [e1 for e0, e1 in results]
-    conditional_estimations = pd.concat(conditional_estimations)
     conditional_estimations.to_csv(os.path.join(model.results_directory, 'conditional_estimations.csv'))
     # EVALUATION
     eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, estimations)
@@ -149,6 +158,8 @@ def run(args, i_cv):
 
     conditional_estimate = pd.concat([e1 for e0, e1 in iter_results])
     conditional_estimate['i_cv'] = i_cv
+    fname = os.path.join(model.results_path, "conditional_estimations.csv")
+    conditional_estimate.to_csv(fname)
     logger.info('DONE')
     return result_table, conditional_estimate
 
