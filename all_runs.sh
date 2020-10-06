@@ -72,7 +72,12 @@ python run_array.py benchmark.S3D2.REG-Marginal --gpu 1 --n-steps 2000 --n-unit 
 # PRIOR RUN
 python run_array.py benchmark.S3D2.GB-Prior --gpu 1 --n-estimators 300 1000  --max-depth 3 5 --learning-rate 0.1 0.05 0.01 --xp-name S3D2-GB-Prior --partition besteffort
 python run_array.py benchmark.S3D2.NN-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 1000 --xp-name S3D2-NN-Prior --partition besteffort
-python run_array.py benchmark.S3D2.DA-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --xp-name S3D2-DA-Prior --partition besteffort
+
+python run_array.py benchmark.S3D2.DA-Prior --gpu 1 --start-cv 0 --end-cv 6 --n-steps 5000 --n-unit 200 500 --xp-name S3D2-DA-Prior --partition besteffort
+python run_array.py benchmark.S3D2.DA-Prior --gpu 1 --start-cv 6 --end-cv 12 --n-steps 5000 --n-unit 200 500 --xp-name S3D2-DA-Prior --partition besteffort
+python run_array.py benchmark.S3D2.DA-Prior --gpu 1 --start-cv 12 --end-cv 18 --n-steps 5000 --n-unit 200 500 --xp-name S3D2-DA-Prior --partition besteffort
+python run_array.py benchmark.S3D2.DA-Prior --gpu 1 --start-cv 18 --end-cv 24 --n-steps 5000 --n-unit 200 500 --xp-name S3D2-DA-Prior --partition besteffort
+python run_array.py benchmark.S3D2.DA-Prior --gpu 1 --start-cv 24 --end-cv 30 --n-steps 5000 --n-unit 200 500 --xp-name S3D2-DA-Prior --partition besteffort
 
 python run_array.py benchmark.S3D2.PIVOT-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name S3D2-PIVOT-Prior --partition besteffort
 python run_array.py benchmark.S3D2.TP-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name S3D2-TP-Prior --partition besteffort
