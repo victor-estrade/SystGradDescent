@@ -102,10 +102,12 @@ def main():
     config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
     # RUN
     if args.load_run:
+        logger.info(f'Loading previous runs [{args.start_cv},{args.end_cv}[')
         directory = model.results_directory
         estimations = load_estimations(directory, start_cv=args.start_cv, end_cv=args.end_cv)
         conditional_estimations = load_conditional_estimations(directory, start_cv=args.start_cv, end_cv=args.end_cv)
     else:
+        logger.info(f'Running runs [{args.start_cv},{args.end_cv}[')
         results = [run(args, i_cv) for i_cv in range(args.start_cv, args.end_cv)]
         estimations = [e0 for e0, e1 in results]
         estimations = pd.concat(estimations, ignore_index=True)
