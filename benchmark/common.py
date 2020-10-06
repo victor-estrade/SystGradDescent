@@ -9,18 +9,21 @@ import glob
 import pandas as pd
 
 def load_estimations(directory, start_cv=0, end_cv=30):
-    all_estimations = [pd.read_csv(os.path.join(directory, f"cv_{i_cv}", "estimations.csv")) for i_cv in range(start_cv, end_cv)]
+    all_estimations = [pd.read_csv(os.path.join(directory, f"cv_{i_cv}", "estimations.csv"))
+                        for i_cv in range(start_cv, end_cv)]
     estimations = pd.concat(all_estimations, ignore_index=True)
     return estimations
 
 
 def load_conditional_estimations(directory, start_cv=0, end_cv=30):
     try:
-        all_estimations = [pd.read_csv(os.path.join(directory, f"cv_{i_cv}", "conditional_estimations.csv")) for i_cv in range(start_cv, end_cv)]
+        all_estimations = [pd.read_csv(os.path.join(directory, f"cv_{i_cv}", "conditional_estimations.csv"))
+                            for i_cv in range(start_cv, end_cv)]
     except FileNotFoundError:
         try:
             generate_conditional_estimations(directory, start_cv=start_cv, end_cv=end_cv)
-            all_estimations = [pd.read_csv(os.path.join(directory, f"cv_{i_cv}", "conditional_estimations.csv")) for i_cv in range(start_cv, end_cv)]
+            all_estimations = [pd.read_csv(os.path.join(directory, f"cv_{i_cv}", "conditional_estimations.csv"))
+                                for i_cv in range(start_cv, end_cv)]
         except FileNotFoundError as e:
             raise e
     conditional_estimations = pd.concat(all_estimations, ignore_index=True)
