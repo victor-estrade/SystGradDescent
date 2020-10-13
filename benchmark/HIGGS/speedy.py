@@ -63,6 +63,9 @@ def main():
     def gpu_generator():
         param = param_generator()
         X, y, w = generator.generate(*param, n_samples=N_SAMPLES)
+        X = X.cpu().numpy()
+        y = y.cpu().numpy()
+        w = w.cpu().numpy()
 
     mean_time = measure_time(gpu_generator)
     print(time_to_str(mean_time))
