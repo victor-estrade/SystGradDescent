@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 # Command line : 
 # python -m benchmark.HIGGS.speedy
 
+import argparse
 import time
 
 from problem.higgs import Generator

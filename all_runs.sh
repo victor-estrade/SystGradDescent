@@ -1,5 +1,6 @@
 # All_cmd
 python run_array.py benchmark.HIGGS.assert_torch_generator --xp-name HIGGS-assert_torch_generator --partition besteffort
+python run_array.py benchmark.HIGGS.speedy --xp-name HIGGS-speedy --partition besteffort
 
 # TOY 1D
 #========
