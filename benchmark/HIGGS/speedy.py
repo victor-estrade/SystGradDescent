@@ -56,7 +56,7 @@ def main():
         X, y, w = generator.generate(*param, n_samples=N_SAMPLES)
 
     mean_time = measure_time(cpu_generator)
-    print(time_to_str(mean_time))
+    print(f"{time_to_str(mean_time)} for CPU")
 
 
     generator = GeneratorTorch(data, seed=42, cuda=args.cuda)
@@ -68,7 +68,7 @@ def main():
         w = w.cpu().numpy()
 
     mean_time = measure_time(gpu_generator)
-    print(time_to_str(mean_time))
+    print(f"{time_to_str(mean_time)} for GPU")
 
 
     print("Done")
