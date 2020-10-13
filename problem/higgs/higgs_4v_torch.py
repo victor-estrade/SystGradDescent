@@ -3,6 +3,37 @@ import collections
 import torch
 import numpy as np
 
+
+
+def normalize_weight(batch, background_luminosity=410999.84732187376, 
+                              signal_luminosity=691.9886077135781):
+    """Normalizes weight inplace"""
+    w = batch['Weight']
+    y = batch['Label']
+    batch['Weight'] = compute_normalized_weight(w, y, background_luminosity=background_luminosity, signal_luminosity=signal_luminosity)
+
+
+def compute_normalized_weight(w, y, 
+                              background_luminosity=410999.84732187376, 
+                              signal_luminosity=691.9886077135781):
+    """Normalize the given weight to assert that the luminosity is the same as the nominal.
+    Returns the normalized weight vector/Series
+    """
+    background_weight_sum = w[y==0].sum()
+    signal_weight_sum = w[y==1].sum()
+    w_new = w.clone().detach()
+    w_new[y==0] = w[y==0] * ( background_luminosity / background_weight_sum )
+    w_new[y==1] = w[y==1] * ( signal_luminosity / signal_weight_sum )
+    return w_new
+
+
+def split_data_label_weights(batch, feature_names):
+    X = torch.cat([batch[name].view(-1, 1) for name in feature_names], axis=1)
+    y = batch["Label"]
+    W = batch["Weight"]
+    return X, y, W
+
+
 def asinh(x):
     """
     $$ asinh(x) = ln(x + \sqrt{ x^2 +1 }) $$
@@ -18,7 +49,7 @@ class V4:
     py=0
     pz=0
     e=0
-    def __init__(self,apx=0., apy=0., apz=0., ae=0.):
+    def __init__(self, apx=0., apy=0., apz=0., ae=0.):
         """
         Constructor with 4 coordinates
         """
@@ -31,10 +62,10 @@ class V4:
 
     def copy(self):
         new_v4 = V4()
-        new_v4.px = torch.identity(self.px)
-        new_v4.py = torch.identity(self.py)
-        new_v4.pz = torch.identity(self.pz)
-        new_v4.e = torch.identity(self.e)
+        new_v4.px = self.px.clone().detach()
+        new_v4.py = self.py.clone().detach()
+        new_v4.pz = self.pz.clone().detach()
+        new_v4.e = self.e.clone().detach()
         return new_v4
     
     def p2(self):
@@ -299,6 +330,20 @@ def update_all(batch, vj1, vj2, vlep, vmet, vtau, missing_value_batch):
 
 
 # ==================================================================================
+# Mu reweighting
+# ==================================================================================
+def mu_reweighting(data, mu=1.0):
+    """
+    Update signal weights inplace to correspond to the new value of mu
+    """
+    y = data['Label']
+    w = data['Weight']
+    w_new = w.clone().detach()
+    w_new[y==1] = mu * w[y==1]
+    data['Weight'] = w_new
+
+
+# ==================================================================================
 # TES : Tau Energy Scale
 # ==================================================================================
 def tau_energy_scale(batch, scale=1.0, missing_value=0.0):
@@ -529,3 +574,59 @@ def nasty_background(batch, scale=1.5):
     batch["Weight"] = W_nasty + W_original
     return batch
 
+
+
+def syst_effect(batch, tes=1.0, jes=1.0, les=1.0, missing_value=0.0):
+    """
+    Manipulate primaries input and recompute the others values accordingly.
+
+    Args
+    ----
+        batch: the dataset should be a OrderedDict like object.
+            This function will modify the given data inplace.
+        tes : the tau energy factor applied : PRI_tau_pt <-- PRI_tau_pt * scale
+        jes : the jet energy factor applied : PRI_jet_pt <-- PRI_jet_pt * scale
+        les : the lep energy factor applied : PRI_lep_pt <-- PRI_lep_pt * scale
+        missing_value : (default=0.0) the value used to code missing value.
+            This is not used to find missing values but to write them in feature column that have some.
+
+    """
+    vtau_original = V4_tau(batch).copy() # tau 4-vector
+    vj1_original = V4_leading_jet(batch).copy() # first jet if it exists
+    vj2_original = V4_subleading_jet(batch).copy() # second jet if it exists
+    vlep_original = V4_lep(batch).copy() # lepton 4-vector
+
+    # scale tau energy scale, arbitrary but reasonable value
+    batch["PRI_tau_pt"] = batch["PRI_tau_pt"] * tes
+    # scale jet energy, arbitrary but reasonable value
+    batch["PRI_jet_leading_pt"] = batch["PRI_jet_leading_pt"] * jes
+    batch["PRI_jet_subleading_pt"] = batch["PRI_jet_subleading_pt"] * jes
+    batch["PRI_jet_all_pt"] = batch["PRI_jet_all_pt"] * jes
+    # scale jet energy, arbitrary but reasonable value
+    batch["PRI_lep_pt"] = batch["PRI_lep_pt"] * les
+
+    # build new 4-vectors
+    vtau = V4_tau(batch) # tau 4-vector
+    vlep = V4_lep(batch) # lepton 4-vector
+    vmet = V4_met(batch) # met 4-vector
+    vj1 = V4_leading_jet(batch) # first jet if it exists
+    vj2 = V4_subleading_jet(batch) # second jet if it exists
+
+    # fix MET according to tau pt change
+    vtau_original.scaleFixedM( tes - 1.0 )
+    vmet -= vtau_original
+    # fix MET according to jet pt change
+    vj1_original.scaleFixedM( jes - 1.0 )
+    vj2_original.scaleFixedM( jes - 1.0 )
+    vmet -= vj1_original + vj2_original
+    # fix MET according to jet pt change
+    vlep_original.scaleFixedM( les - 1.0 )
+    vmet -= vlep_original
+    # Fix MET pz to 0 and update e accordingly
+    vmet.pz = 0.
+    vmet.e = vmet.eWithM(0.)
+
+    zeros_batch = torch.zeros_like(batch["PRI_tau_pt"])
+    missing_value_batch = zeros_batch + missing_value
+
+    update_all(batch, vj1, vj2, vlep, vmet, vtau, missing_value_batch)

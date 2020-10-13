@@ -15,7 +15,7 @@ class V4:
     py=0
     pz=0
     e=0
-    def __init__(self,apx=0., apy=0., apz=0., ae=0.):
+    def __init__(self, apx=0., apy=0., apz=0., ae=0.):
         """
         Constructor with 4 coordinates
         """
