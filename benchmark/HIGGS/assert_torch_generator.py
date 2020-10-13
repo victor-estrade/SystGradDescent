@@ -73,11 +73,11 @@ def main():
         pp = ( np.abs(X_diff[:, i]) > (A_TOL + R_TOL * np.abs(X_ref[:, i]) ) ).mean() * 100
         print(f"{pp:.3f} % [{X_diff[:, i].min()}, {X_diff[:, i].max()}] {col}")
 
-    w_diff = w_ref - w.cpu().numpy()
+    w_diff = w_ref - w.detach().cpu().numpy()
     pp = ( np.abs(w_diff) > (A_TOL + R_TOL * np.abs(w_ref) ) ).mean() * 100
     print(f"{pp:.3f} % [{w_diff.min()}, {w_diff.max()}] Weight")
 
-    y_diff = y_ref - y.cpu().numpy()
+    y_diff = y_ref - y.detach().cpu().numpy()
     pp = ( np.abs(y_diff) > (A_TOL + R_TOL * np.abs(y_ref) ) ).mean() * 100
     print(f"{pp:.3f} % [{y_diff.min()}, {y_diff.max()}] Label")
 
@@ -95,11 +95,11 @@ def main():
         pp = ( np.abs(X_diff[:, i]) > (A_TOL + R_TOL * np.abs(X_ref[:, i]) ) ).mean() * 100
         print(f"{pp:.3f} % [{X_diff[:, i].min()}, {X_diff[:, i].max()}] {col}")
 
-    w_diff = w_ref - w.cpu().numpy()
+    w_diff = w_ref - w.detach().cpu().numpy()
     pp = ( np.abs(w_diff) > (A_TOL + R_TOL * np.abs(w_ref) ) ).mean() * 100
     print(f"{pp:.3f} % [{w_diff.min()}, {w_diff.max()}] Weight")
 
-    y_diff = y_ref - y.cpu().numpy()
+    y_diff = y_ref - y.detach().cpu().numpy()
     pp = ( np.abs(y_diff) > (A_TOL + R_TOL * np.abs(y_ref) ) ).mean() * 100
     print(f"{pp:.3f} % [{y_diff.min()}, {y_diff.max()}] Label")
 
