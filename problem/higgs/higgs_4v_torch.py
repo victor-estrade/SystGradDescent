@@ -251,6 +251,11 @@ def V4_met(batch):
 def V4_leading_jet(batch):
     zeros_batch = torch.zeros_like(batch["PRI_tau_pt"])
     vj1 = V4()
+    print(batch["PRI_jet_num"].dtype, "PRI_jet_num")
+    print(zeros_batch.dtype, "zeros_batch")
+    print(batch["PRI_jet_leading_pt"].dtype, "PRI_jet_leading_pt")
+    print(batch["PRI_jet_leading_eta"].dtype, "PRI_jet_leading_eta")
+    print(batch["PRI_jet_leading_phi"].dtype, "PRI_jet_leading_phi")
     vj1.setPtEtaPhiM(torch.where(batch["PRI_jet_num"] > 0, batch["PRI_jet_leading_pt"], zeros_batch),
                      torch.where(batch["PRI_jet_num"] > 0, batch["PRI_jet_leading_eta"], zeros_batch),
                      torch.where(batch["PRI_jet_num"] > 0, batch["PRI_jet_leading_phi"], zeros_batch),
