@@ -597,6 +597,7 @@ def syst_effect(batch, tes=1.0, jes=1.0, les=1.0, missing_value=0.0):
 
     """
     print("PRI_tau_pt", batch["PRI_tau_pt"].dtype, "!")
+    print("TES", tes.dtype, "!")
     print("PRI_jet_leading_pt", batch["PRI_jet_leading_pt"].dtype, "!")
     vtau_original = V4_tau(batch).copy() # tau 4-vector
     vj1_original = V4_leading_jet(batch).copy() # first jet if it exists
