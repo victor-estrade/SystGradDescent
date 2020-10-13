@@ -51,7 +51,7 @@ class GeneratorTorch():
         self.device = 'cuda'
 
     def tensor(self, data, requires_grad=False, dtype=None):
-        return torch.tensor(data, requires_grad=requires_grad, device=self.device, dtype=None)
+        return torch.tensor(data, requires_grad=requires_grad, device=self.device, dtype=dtype)
 
     def sample_event(self, rescale, mix, size=1):
         n_sig = int(mix * size)

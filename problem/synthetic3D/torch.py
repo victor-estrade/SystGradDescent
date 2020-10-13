@@ -54,7 +54,7 @@ class GeneratorTorch():
         self.device = 'cuda'
 
     def tensor(self, data, requires_grad=False, dtype=None):
-        return torch.tensor(data, requires_grad=requires_grad, device=self.device, dtype=None)
+        return torch.tensor(data, requires_grad=requires_grad, device=self.device, dtype=dtype)
 
     def gen_bkg(self, n_samples):
         a = self.b_01.rsample((n_samples,))
