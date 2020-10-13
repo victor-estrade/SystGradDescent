@@ -92,10 +92,10 @@ class GeneratorTorch():
         return data
 
     def generate(self, tau_es, jet_es, lep_es, mu, n_samples=None):
-        tau_es = self.tensor(tau_es, requires_grad=True)
-        jet_es = self.tensor(jet_es, requires_grad=True)
-        lep_es = self.tensor(lep_es, requires_grad=True)
-        mu = self.tensor(mu, requires_grad=True)
+        tau_es = self.tensor(tau_es, requires_grad=True, dtype="float32")
+        jet_es = self.tensor(jet_es, requires_grad=True, dtype="float32")
+        lep_es = self.tensor(lep_es, requires_grad=True, dtype="float32")
+        mu = self.tensor(mu, requires_grad=True, dtype="float32")
         
         data = self.data_dict if (n_samples is None) else self.sample(n_samples)
         data = self._deep_copy_data(data)
