@@ -96,11 +96,12 @@ class GeneratorTorch():
         jet_es = self.tensor(jet_es, requires_grad=True, dtype="float32")
         lep_es = self.tensor(lep_es, requires_grad=True, dtype="float32")
         mu = self.tensor(mu, requires_grad=True, dtype="float32")
-        
+        missing_value = self.tensor(0.0, dtype="float32")
+
         data = self.data_dict if (n_samples is None) else self.sample(n_samples)
         data = self._deep_copy_data(data)
 
-        syst_effect(data, tes=tau_es, jes=jet_es, les=lep_es, missing_value=0.0)
+        syst_effect(data, tes=tau_es, jes=jet_es, les=lep_es, missing_value=missing_value)
         normalize_weight(data, background_luminosity=self.background_luminosity, signal_luminosity=self.signal_luminosity)
         mu_reweighting(data, mu)
         X, y, w = split_data_label_weights(data, self.feature_names)
