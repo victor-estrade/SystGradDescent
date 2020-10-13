@@ -49,7 +49,7 @@ class GeneratorTorch():
         self.device = 'cuda'
 
     def tensor(self, data, requires_grad=False, dtype=None):
-        return torch.tensor(data, requires_grad=requires_grad, device=self.device, dtype=None)
+        return torch.tensor(data, requires_grad=requires_grad, device=self.device, dtype=dtype)
 
     def reset(self):
         torch.manual_seed(self.seed)
