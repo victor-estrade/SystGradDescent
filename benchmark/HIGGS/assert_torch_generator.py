@@ -27,7 +27,7 @@ def parse_args(main_description="assert GPU and CPU generator do the same comput
     parser.add_argument('--no-cuda', '--no-gpu', help='flag to use or not the gpu',
                         action='store_false', dest='cuda')
 
-    args = parser.parse_known_args()
+    args, others = parser.parse_known_args()
     return args
 
 def main():
