@@ -164,7 +164,7 @@ def main():
     os.makedirs(DIRECTORY, exist_ok=True)
     set_plot_config()
 
-    # features()
+    features()
 
     explore_links()
 
