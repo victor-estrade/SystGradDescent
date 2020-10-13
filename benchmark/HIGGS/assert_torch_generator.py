@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 # Command line : 
 # python -m benchmark.HIGGS.assert_torch_generator
 
-import time
 import numpy as np
 
 from problem.higgs import Generator
