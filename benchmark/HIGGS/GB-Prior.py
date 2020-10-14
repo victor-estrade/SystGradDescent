@@ -56,7 +56,7 @@ N_ITER = 30
 
 
 
-class TrainGenerator:
+class GeneratorCPU:
     def __init__(self, data_generator):
         self.data_generator = data_generator
 
@@ -129,7 +129,9 @@ def run(args, i_cv):
     config = Config()
     seed = SEED + i_cv * 5
     train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
-    train_generator = TrainGenerator(train_generator)
+    train_generator = GeneratorCPU(train_generator)
+    valid_generator = GeneratorCPU(valid_generator)
+    test_generator = GeneratorCPU(test_generator)
 
     # SET MODEL
     logger.info('Set up classifier')
