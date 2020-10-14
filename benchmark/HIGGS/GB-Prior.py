@@ -67,6 +67,10 @@ class GeneratorCPU:
             w = w.detach().cpu().numpy()
             return X, y, w
 
+    def reset(self):
+        self.data_generator.reset()
+
+
 def build_model(args, i_cv):
     model = get_model(args, GradientBoostingModel)
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
