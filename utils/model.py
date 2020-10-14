@@ -94,8 +94,8 @@ def train_or_load_classifier(model, train_generator, parameters, n_samples, retr
             retrain = True
     if retrain:
         logger.info('Generate training data')
-        logger.info('Training {}'.format(model.get_name()))
         X_train, y_train, w_train = train_generator.generate(*parameters, n_samples=n_samples)
+        logger.info('Training {}'.format(model.get_name()))
         model.fit(X_train, y_train, w_train)
         logger.info('Training DONE')
 
