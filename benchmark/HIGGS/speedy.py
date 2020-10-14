@@ -63,7 +63,7 @@ def main():
         return func
 
     mean_time = measure_time(get_cpu_func(N_SAMPLES))
-    print(f"{time_to_str(mean_time)} for CPU")
+    print(f"{time_to_str(*mean_time)} for CPU")
 
 
     gpu_generator = GeneratorTorch(data, seed=42, cuda=args.cuda)
@@ -77,11 +77,11 @@ def main():
         return func
 
     mean_time = measure_time(get_gpu_func(N_SAMPLES))
-    print(f"{time_to_str(mean_time)} for GPU")
+    print(f"{time_to_str(*mean_time)} for GPU")
 
     N_LIST = [1000, 5000, 10_000, 50_000, 100_000, 200_000]
-    cpu_times = [f"{n_samples:6d}" + time_to_str(measure_time(get_cpu_func(n_samples))) for n_samples in N_LIST]
-    gpu_times = [f"{n_samples:6d}" + time_to_str(measure_time(get_gpu_func(n_samples))) for n_samples in N_LIST]
+    cpu_times = [f"{n_samples:6d} : " + time_to_str(*measure_time(get_cpu_func(n_samples))) for n_samples in N_LIST]
+    gpu_times = [f"{n_samples:6d} : " + time_to_str(*measure_time(get_gpu_func(n_samples))) for n_samples in N_LIST]
     print("CPU")
     print('\n'.join(cpu_times))
     print("="*10)
