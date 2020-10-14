@@ -22,7 +22,20 @@ def get_minimizer(compute_nll, calibrated_param, calibrated_param_error):
                            limit_les=(MIN_VALUE, MAX_VALUE),
                            mu=calibrated_param.mu,
                            error_mu=calibrated_param_error.mu,
-                           limit_mu=(MIN_VALUE, 5),
+                           limit_mu=(MIN_VALUE, MAX_VALUE),
+                          )
+    return minimizer
+
+
+def get_minimizer_no_nuisance(compute_nll, calibrated_param, calibrated_param_error):
+    MIN_VALUE = 0.01
+    MAX_VALUE = 10 
+    minimizer = iminuit.Minuit(compute_nll,
+                           errordef=ERRORDEF_NLL,
+                           mu=calibrated_param.mu,
+                           error_mu=calibrated_param_error.mu,
+                           limit_mu=(MIN_VALUE, MAX_VALUE),
+                           print_level=0,
                           )
     return minimizer
 
@@ -49,6 +62,6 @@ def futur_get_minimizer(compute_nll, calibrated_param, calibrated_param_error):
                            limit_sigma_soft=(0, MAX_VALUE),
                            mu=calibrated_param.mu,
                            error_mu=calibrated_param_error.mu,
-                           limit_mu=(MIN_VALUE, 5),
+                           limit_mu=(MIN_VALUE, MAX_VALUE),
                           )
     return minimizer

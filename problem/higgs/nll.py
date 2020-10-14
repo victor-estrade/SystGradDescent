@@ -57,7 +57,7 @@ class HiggsNLL():
     def get_s_b(self, tes, jes, les, mu):
         # Systematic effects
         self.valid_generator.reset()
-        X, y, w = self.valid_generator.generate(tes, jes, les, mu, n_samples=None)
+        X, y, w = self.valid_generator.generate(tes, jes, les, mu, n_samples=None, no_grad=True)
         s = X[y==1]
         w_s = w[y==1]
         b = X[y==0]
@@ -67,7 +67,7 @@ class HiggsNLL():
     def __call__(self, tes, jes, les, mu):
         """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""        
         self.valid_generator.reset()
-        X, y, w = self.valid_generator.generate(tes, jes, les, mu, n_samples=None)
+        X, y, w = self.valid_generator.generate(tes, jes, les, mu, n_samples=None, no_grad=True)
         EPSILON = 1e-5  # avoid log(0)
         rate_histogram = self.compute_summaries(X, w) + EPSILON
         # xp_histogram = self.compute_summaries(self.X_test, self.w_test)

@@ -109,7 +109,7 @@ class Generator():
         return data_sample
 
 
-    def generate(self, tau_es, jet_es, lep_es, mu, n_samples=None):
+    def generate(self, tau_es, jet_es, lep_es, mu, n_samples=None, no_grad=None):
         if n_samples is None:
             data = self.data.copy()
         else:
