@@ -28,7 +28,7 @@ def plot_summaries(b_histogram, s_histogram,
         plt.xticks(x_ticks)
         plt.title(title)
         plt.legend()
-        plt.savefig(os.path.join(directory, fname))
+        plt.savefig(os.path.join(directory, fname), bbox_inches="tight")
         plt.clf()
     except Exception as e:
         logger.warning('Plot summaries failed')
