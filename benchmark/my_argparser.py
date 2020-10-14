@@ -31,6 +31,8 @@ def GB_parse_args(main_description="Training launcher"):
                         default=1e-1, type=float)
 
     # OTHER
+    parser.add_argument('--no-cuda', '--no-gpu', help='flag to use or not the gpu',
+                        action='store_false', dest='cuda')
     parser.add_argument('--retrain', help='flag to force retraining',
                         action='store_true')
     parser.add_argument('--skip-minuit', help='flag to skip minuit NLL minization',
