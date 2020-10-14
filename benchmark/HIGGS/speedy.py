@@ -31,12 +31,15 @@ def time_to_str(t):
     return f"{t: 2.5f} sec"
 
 def measure_time(func, repeat=3):
-    start_time = time.time()
+    iter_times = []
     for i in range(repeat):
+        start_time = time.time()
         func()
-    end_time = time.time()
-    total_time = end_time - start_time
-    mean_time = total_time / repeat
+        end_time = time.time()
+        exec_time = end_time - start_time
+        iter_times.append(exec_time)
+    total_time = sum(iter_times)
+    mean_time = total_time / len(iter_times)
     return mean_time
 
 def main():
@@ -50,26 +53,38 @@ def main():
     # N_SAMPLES = None
 
 
-    generator = Generator(data, seed=42)
-    def cpu_generator():
-        param = param_generator()
-        X, y, w = generator.generate(*param, n_samples=N_SAMPLES)
+    cpu_generator = Generator(data, seed=42)
+    def get_cpu_func(n_samples):
+        def func():
+            param = param_generator()
+            X, y, w = cpu_generator.generate(*param, n_samples=n_samples)
+        return func
 
-    mean_time = measure_time(cpu_generator)
+    mean_time = measure_time(get_cpu_func(N_SAMPLES))
     print(f"{time_to_str(mean_time)} for CPU")
 
 
-    generator = GeneratorTorch(data, seed=42, cuda=args.cuda)
-    def gpu_generator():
-        param = param_generator()
-        X, y, w = generator.generate(*param, n_samples=N_SAMPLES)
-        X = X.detach().cpu().numpy()
-        y = y.detach().cpu().numpy()
-        w = w.detach().cpu().numpy()
+    gpu_generator = GeneratorTorch(data, seed=42, cuda=args.cuda)
+    def get_gpu_func(n_samples):
+        def func():
+            param = param_generator()
+            X, y, w = gpu_generator.generate(*param, n_samples=n_samples)
+            X = X.detach().cpu().numpy()
+            y = y.detach().cpu().numpy()
+            w = w.detach().cpu().numpy()
+        return func
 
-    mean_time = measure_time(gpu_generator)
+    mean_time = measure_time(get_gpu_func(N_SAMPLES))
     print(f"{time_to_str(mean_time)} for GPU")
 
+    N_LIST = [1000, 5000, 10_000, 50_000, 100_000, 200_000]
+    cpu_times = [f"{n_samples:6d}" + time_to_str(measure_time(get_cpu_func(n_samples))) for n_samples in N_LIST]
+    gpu_times = [f"{n_samples:6d}" + time_to_str(measure_time(get_gpu_func(n_samples))) for n_samples in N_LIST]
+    print("CPU")
+    print('\n'.join(cpu_times))
+    print("="*10)
+    print("GPU")
+    print('\n'.join(gpu_times))
 
     print("Done")
 
