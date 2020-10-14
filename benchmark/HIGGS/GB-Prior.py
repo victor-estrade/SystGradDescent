@@ -60,8 +60,8 @@ class GeneratorCPU:
     def __init__(self, data_generator):
         self.data_generator = data_generator
 
-    def generate(self, *params, n_samples=None):
-            X, y, w = self.data_generator.generate(*params, n_samples=n_samples)
+    def generate(self, *params, n_samples=None, no_grad=False):
+            X, y, w = self.data_generator.generate(*params, n_samples=n_samples, no_grad=no_grad)
             X = X.detach().cpu().numpy()
             y = y.detach().cpu().numpy()
             w = w.detach().cpu().numpy()
