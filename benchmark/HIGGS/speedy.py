@@ -31,7 +31,7 @@ def parse_args(main_description="assert GPU and CPU generator do the same comput
 def time_to_str(t, std):
     return f"{t:2.5f} +/- {std:.5f} sec"
 
-def measure_time(func, repeat=3):
+def measure_time(func, repeat=15):
     iter_times = []
     for i in range(repeat):
         start_time = time.time()
