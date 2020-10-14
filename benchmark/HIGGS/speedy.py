@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 
 import argparse
 import time
+import numpy as np
 
 from problem.higgs import Generator
 from problem.higgs import GeneratorTorch
@@ -27,8 +28,8 @@ def parse_args(main_description="assert GPU and CPU generator do the same comput
     args, others = parser.parse_known_args()
     return args
 
-def time_to_str(t):
-    return f"{t: 2.5f} sec"
+def time_to_str(t, std):
+    return f"{t:2.5f} +/- {std:.5f} sec"
 
 def measure_time(func, repeat=3):
     iter_times = []
@@ -40,7 +41,8 @@ def measure_time(func, repeat=3):
         iter_times.append(exec_time)
     total_time = sum(iter_times)
     mean_time = total_time / len(iter_times)
-    return mean_time
+    std_time = np.std(iter_times)
+    return mean_time, std_time
 
 def main():
     print("hello")
