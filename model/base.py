@@ -100,7 +100,7 @@ class BaseClassifierModel(BaseModel, ClassifierMixin):
     """ More specific than BaseModel for classifiers
     """
     def summary_computer(self, n_bins=DEFAULT_N_BINS):
-        return ClassifierSummaryComputer(self, n_bins=n_bins)
+        return lambda X, w : self.compute_summaries(X, w, n_bins=n_bins)
 
     def compute_summaries(self, X, W, n_bins=DEFAULT_N_BINS):
         proba = self.predict_proba(X)
