@@ -223,7 +223,7 @@ def make_conditional_estimation(compute_nll, config):
             results_row[name] = value
             results_row[name+_TRUTH] = config.TRUE[name]
         results.append(results_row)
-        print(f"ncalls = {results_row['ncalls']}")
+        print(f"ncalls = {results_row['ncalls']}", flush=True)
     return results
 
 if __name__ == '__main__':
