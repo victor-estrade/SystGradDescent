@@ -15,6 +15,7 @@ from .torch import get_easy_generators_torch
 from .parameter import Parameter
 from .nll import HiggsNLL
 from .config import HiggsConfig
+from .config import HiggsConfigTesOnly
 from .calibration import param_generator
 from .minimizer import get_minimizer
 from .minimizer import get_minimizer_no_nuisance

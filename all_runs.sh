@@ -157,4 +157,16 @@ python run_array.py benchmark.HIGGS.GB-Prior --gpu 1 --n-estimators 300  --max-d
 
 
 
+# HIGGS TES ONLY
+#===============
+
+# PRIOR RUN
+python run_array.py benchmark.HIGGSTES.GB-Prior --gpu 1 --n-estimators 300  --max-depth 3 --learning-rate 0.1 --xp-name HIGGSTES-GB-Prior --partition besteffort
+
+
+
+
+# OTHERS
+#=========
+
 python run_array.py benchmark.S3D2.GB-Prior --gpu 1 --n-estimators 300 1000  --max-depth 3 5 --learning-rate 0.1 0.05 0.01 --xp-name S3D2-GB-Prior --partition besteffort
