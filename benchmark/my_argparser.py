@@ -19,6 +19,10 @@ def GB_parse_args(main_description="Training launcher"):
                         default=30, help="end of i_cv for range(start, end)")
     parser.add_argument('--load-run', help='load saved runs. Do not run the models',
                         action='store_true')
+    parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
+                        action='store_true')
+    parser.add_argument('--conditional-only', help='Turns off common estimation',
+                        action='store_true')
 
     # MODEL HYPER PARAMETERS
     parser.add_argument('--n-estimators', help='number of estimators',
@@ -53,6 +57,10 @@ def REG_parse_args(main_description="Training launcher"):
     parser.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
     parser.add_argument('--load-run', help='load saved runs. Do not run the models',
+                        action='store_true')
+    parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
+                        action='store_true')
+    parser.add_argument('--conditional-only', help='Turns off common estimation',
                         action='store_true')
 
     # MODEL HYPER PARAMETERS
@@ -103,6 +111,10 @@ def INFERNO_parse_args(main_description="Training launcher"):
     parser.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
     parser.add_argument('--load-run', help='load saved runs. Do not run the models',
+                        action='store_true')
+    parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
+                        action='store_true')
+    parser.add_argument('--conditional-only', help='Turns off common estimation',
                         action='store_true')
 
     # MODEL HYPER PARAMETERS
@@ -159,6 +171,10 @@ def NET_parse_args(main_description="Training launcher"):
                         default=30, help="end of i_cv for range(start, end)")
     parser.add_argument('--load-run', help='load saved runs. Do not run the models',
                         action='store_true')
+    parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
+                        action='store_true')
+    parser.add_argument('--conditional-only', help='Turns off common estimation',
+                        action='store_true')
 
     # MODEL HYPER PARAMETERS
     parser.add_argument('--learning-rate', '--lr', help='learning rate',
@@ -206,6 +222,10 @@ def TP_parse_args(main_description="Training launcher"):
     parser.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
     parser.add_argument('--load-run', help='load saved runs. Do not run the models',
+                        action='store_true')
+    parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
+                        action='store_true')
+    parser.add_argument('--conditional-only', help='Turns off common estimation',
                         action='store_true')
 
     # MODEL HYPER PARAMETERS
@@ -258,6 +278,10 @@ def PIVOT_parse_args(main_description="Training launcher"):
     parser.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
     parser.add_argument('--load-run', help='load saved runs. Do not run the models',
+                        action='store_true')
+    parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
+                        action='store_true')
+    parser.add_argument('--conditional-only', help='Turns off common estimation',
                         action='store_true')
 
     # MODEL HYPER PARAMETERS
