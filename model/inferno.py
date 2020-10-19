@@ -72,8 +72,8 @@ class Inferno(BaseModel, BaseNeuralNet):
             s_prime_counts = self.forward(s_prime, w_s.detach())
             b_prime_counts = self.forward(b_prime, w_b.detach())
 
-            total_count = mu * s_counts + b_counts # should be mu s + b + epsilon
-            asimov = mu_prime * s_prime_counts + b_prime_counts # should be mu s + b + epsilon
+            total_count = mu * s_counts + b_counts # if NaN then should be mu s + b + epsilon ?
+            asimov = mu_prime * s_prime_counts + b_prime_counts # if NaN then should be mu s + b + epsilon ?
             loss = self.criterion(total_count, asimov, params)
             self.losses.append(loss.item())
             
