@@ -48,6 +48,10 @@ def parse_args():
                         default=30, help="end of i_cv for range(start, end)")
     main_args.add_argument('--load-run', help='load saved runs. Do not run the models',
                         action='store_true')
+    main_args.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
+                        action='store_true')
+    main_args.add_argument('--conditional-only', help='Turns off common estimation',
+                        action='store_true')
 
     grid_args = parser.add_argument_group('grid_args', 'arguments passed to the subjobs for grid search')
     grid_args.add_argument('--n-estimators',
@@ -243,6 +247,16 @@ def main():
         main_args['--load-run'] = ' '
     else:
         main_args.pop('--load-run')
+
+    if main_args['--estimate-only'] :
+        main_args['--estimate-only'] = ' '
+    else:
+        main_args.pop('--estimate-only')
+
+    if main_args['--conditional-only'] :
+        main_args['--conditional-only'] = ' '
+    else:
+        main_args.pop('--conditional-only')
 
     if not main_args['--no-cuda'] :
         main_args['--no-cuda'] = ' '
