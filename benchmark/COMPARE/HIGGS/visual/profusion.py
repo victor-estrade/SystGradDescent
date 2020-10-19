@@ -26,10 +26,10 @@ def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
         chosen_true_mix = evaluation.true_mix.median()
         data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
-        for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
+        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.n_test_samples
             y = df.target_mse
-            label = f"$\\alpha$ = {true_rescale}"
+            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
             plt.plot(x, y, 'o-', label=label, color=color_cycle[i%len(unique_alphas)])
 
     plt.xlabel('# test samples')
@@ -66,10 +66,10 @@ def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
         chosen_true_mix = evaluation.true_mix.median()
         data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
-        for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
+        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.n_test_samples
             y = df.var_stat
-            label = f"$\\alpha$ = {true_rescale}"
+            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
             plt.plot(x, y, 'o-', label=label, color=color_cycle[i%len(unique_alphas)])
 
     plt.xlabel('# test samples')
@@ -106,10 +106,10 @@ def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
         chosen_true_mix = evaluation.true_mix.median()
         data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
-        for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
+        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.n_test_samples
             y = df.var_syst
-            label = f"$\\alpha$ = {true_rescale}"
+            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
             plt.plot(x, y, 'o-', label=label, color=color_cycle[i%len(unique_alphas)])
 
     plt.xlabel('# test samples')
@@ -146,10 +146,10 @@ def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DI
     for evaluation in all_evaluations:
         chosen_true_mix = evaluation.true_mix.median()
         data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
-        for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
+        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.n_test_samples
             y = df.sigma_mean
-            label = f"$\\alpha$ = {true_rescale}"
+            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
             plt.plot(x, y, 'o-', label=label, color=color_cycle[i%len(unique_alphas)])
 
     plt.xlabel('# test samples')
@@ -186,12 +186,12 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-        for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
-            x = df.true_mix
+        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+            x = df.true_mu
             y = df.target_mean
             y_err = df.sigma_mean
-            true = df.true_mix
-            label = f"$\\alpha$ = {true_rescale}"
+            true = df.true_mu
+            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
             plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label, color=color_cycle[i%len(unique_alphas)])
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
 
@@ -211,12 +211,12 @@ def true_mu_target_mean_std(all_evaluations, title="No Title", directory=DEFAULT
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-        for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
-            x = df.true_mix
+        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+            x = df.true_mu
             y = df.target_mean
             y_err = df.target_std
-            true = df.true_mix
-            label = f"$\\alpha$ = {true_rescale}"
+            true = df.true_mu
+            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
             plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label, color=color_cycle[i%len(unique_alphas)])
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
 
@@ -238,11 +238,11 @@ def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-        for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
-            x = df.true_mix
+        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+            x = df.true_mu
             y = df.target_mean
-            true = df.true_mix
-            label = f"$\\alpha$ = {true_rescale}"
+            true = df.true_mu
+            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
             plt.scatter(x, y, marker='o', label=label, color=color_cycle[i%len(unique_alphas)])
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500)
 
