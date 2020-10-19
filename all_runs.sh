@@ -121,7 +121,7 @@ python run_array.py benchmark.S3D2.REG-Calib --gpu 1 --n-steps 2000 --n-unit 200
 
 
 # PRIOR RUN
-python run_array.py benchmark.HIGGS.GB-Prior --gpu 1 --n-estimators 300  --max-depth 3 --learning-rate 0.1 --xp-name HIGGS-GB-Prior --partition besteffort
+python run_array.py benchmark.HIGGS.GB-Prior --gpu 1 --n-estimators 300  --max-depth 3 --learning-rate 0.1 --xp-name HIGGS-GB-Prior --partition besteffort --estimate-only
 # python run_array.py benchmark.HIGGS.GB-Prior --gpu 1 --n-estimators 300 1000  --max-depth 3 5 --learning-rate 0.1 0.05 0.01 --xp-name HIGGS-GB-Prior --partition besteffort
 # python run_array.py benchmark.HIGGS.NN-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 1000 --xp-name HIGGS-NN-Prior --partition besteffort
 
