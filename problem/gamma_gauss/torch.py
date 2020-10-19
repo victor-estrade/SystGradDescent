@@ -173,7 +173,6 @@ class GGHessian(nn.Module):
 
         self.constraints_distrib = {'rescale': self.rescale_constraints,
                                    }
-        self.i =  0
 
     def constraints_nll(self, params):
         nll = 0.0
