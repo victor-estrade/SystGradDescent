@@ -6,12 +6,17 @@ import torch.nn as nn
 
 from hessian import hessian
 
+from .config import S3D2Config
+
 SEED = 42
 
 class GeneratorTorch():
     def __init__(self, seed=SEED, r_dist=2.0, b_rate=3.0, s_rate=2.0, ratio=50/(1000+50),
+                        background_luminosity=1000, signal_luminosity=50,
                         reset_every=None, cuda=False):
         self.seed = seed
+        self.background_luminosity = background_luminosity
+        self.signal_luminosity = signal_luminosity
         if cuda:
             self.cuda()
         else:
@@ -20,8 +25,8 @@ class GeneratorTorch():
         self.B_RATE = self.tensor(b_rate, requires_grad=True)
         self.s_b_ratio = self.tensor(ratio, requires_grad=True)
         self.nuisance_params = OrderedDict([
-                                ('r_dist', self.R_DIST), 
-                                ('b_rate', self.B_RATE), 
+                                ('r', self.R_DIST), 
+                                ('lam', self.B_RATE), 
                                 ])
         zero = torch.zeros(1)
         if self.cuda_flag:
@@ -66,6 +71,22 @@ class GeneratorTorch():
         b = self.s_2.rsample((n_samples,)).type(a.type())
         return torch.cat((a, b.view(-1, 1)), dim=1)
 
+    def _generate_labels(self, n_bkg, n_sig):
+        y_b = torch.zeros(n_bkg, dtype=int)
+        y_s = torch.ones(n_sig, dtype=int)
+        y = torch.cat([y_b, y_s], axis=0)
+        if self.cuda_flag:
+            y = y.cuda()
+        return y
+
+    def _generate_weights(self, n_bkg, n_sig):
+        w_b = torch.ones(n_bkg) * (self.background_luminosity / n_bkg)
+        w_s = torch.ones(n_sig) * (self.signal_luminosity / n_sig)
+        if self.cuda_flag:
+            w_b = w_b.cuda()
+            w_s = w_s.cuda()
+        return w_s.view(-1, 1), w_b.view(-1, 1)
+
     def generate(self, n_samples):
         if self.reset_every is not None and self.reset_every < self.n_generated:
             self.reset()
@@ -75,12 +96,9 @@ class GeneratorTorch():
         s = self.gen_sig(n_signals)
         b = self.gen_bkg(n_backgrounds)
         self.n_generated += n_samples
-        w_s = torch.ones(n_signals).view(-1, 1)
-        w_b = torch.ones(n_backgrounds).view(-1, 1)
-        if self.cuda_flag:
-            w_b = w_b.cuda()
-            w_s = w_s.cuda()
-        return s, w_s, b, w_b, 0
+        w_s, w_b = self._generate_weights(n_backgrounds, n_signals)
+        y = self._generate_labels(n_backgrounds, n_signals)
+        return s, w_s, b, w_b, y
 
     def reset(self):
         torch.manual_seed(self.seed)
@@ -92,20 +110,23 @@ class GeneratorTorch():
 class S3D2Loss(nn.Module):
     def __init__(self):
         super().__init__()
-        r_loc, r_std = 0.0, 0.4
+        config = S3D2Config()
+        r_loc = torch.tensor(config.CALIBRATED.r)
+        r_std = torch.tensor(config.CALIBRATED_ERROR.r)
         self.r_constraints = torch.distributions.Normal(r_loc, r_std)
 
-        b_rate_loc, b_rate_std = 0.0, 0.4
-        self.b_rate_constraints = torch.distributions.Normal(b_rate_loc, b_rate_std)
-        self.constraints_distrib = {'r_dist': self.r_constraints,
-                                    'b_rate': self.b_rate_constraints,
+        lam_loc = torch.tensor(config.CALIBRATED.lam)
+        lam_std = torch.tensor(config.CALIBRATED_ERROR.lam)
+        self.lam_constraints = torch.distributions.Normal(lam_loc, lam_std)
+        self.constraints_distrib = {'r': self.r_constraints,
+                                    'lam': self.lam_constraints,
                                    }
-        self.i =  0
+
     def constraints_nll(self, params):
-        nll = 0
+        nll = 0.0
         for param_name, distrib in self.constraints_distrib.items():
             if param_name in params:
-                nll = nll - distrib.log_prob(params['b_rate'])
+                nll = nll - distrib.log_prob(params[param_name])
         return nll
 
     def forward(self, input, target, params):
