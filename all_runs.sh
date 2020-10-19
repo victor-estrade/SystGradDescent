@@ -162,6 +162,7 @@ python run_array.py benchmark.HIGGS.GB-Prior --gpu 1 --n-estimators 300  --max-d
 
 # PRIOR RUN
 python run_array.py benchmark.HIGGSTES.GB-Prior --gpu 1 --n-estimators 300  --max-depth 3 --learning-rate 0.1 --xp-name HIGGSTES-GB-Prior --partition besteffort
+python run_array.py benchmark.HIGGSTES.NN-Prior --gpu 1 --n-steps 5000 --n-unit 500 --batch-size 10000 --xp-name HIGGSTES-NN-Prior --partition besteffort
 
 
 
