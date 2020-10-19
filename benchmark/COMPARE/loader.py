@@ -18,11 +18,11 @@ set_plot_config()
 
 
 from model.gradient_boost import GradientBoostingModel
-from model.neural_network import NeuralNetClassifier
-from model.tangent_prop import TangentPropClassifier
-from model.pivot import PivotClassifier
-from model.inferno import Inferno
-from model.regressor import Regressor
+# from model.neural_network import NeuralNetClassifier
+# from model.tangent_prop import TangentPropClassifier
+# from model.pivot import PivotClassifier
+# from model.inferno import Inferno
+# from model.regressor import Regressor
 
 
 
