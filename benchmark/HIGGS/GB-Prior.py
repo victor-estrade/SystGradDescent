@@ -82,7 +82,7 @@ def build_model(args, i_cv):
 def main():
     # BASIC SETUP
     logger = set_logger()
-    args = GB_parse_args(main_description="Training launcher for Gradient boosting on S3D2 benchmark")
+    args = GB_parse_args(main_description="Training launcher for Gradient boosting on HIGGS benchmark")
     logger.info(args)
     flush(logger)
     # INFO
@@ -96,14 +96,15 @@ def main():
         eval_table = get_eval_table(args, model.results_directory)
     if not args.estimate_only:
         eval_conditional = get_eval_conditional(args, model.results_directory)
-    # EVALUATION
-    eval_table = pd.concat([eval_table, eval_conditional], axis=1)
-    print_line()
-    print_line()
-    print(eval_table)
-    print_line()
-    print_line()
-    eval_table.to_csv(os.path.join(model.results_directory, 'evaluation.csv'))
+    if not args.estimate_only and not args.conditional_only: 
+        eval_table = pd.concat([eval_table, eval_conditional], axis=1)
+        # EVALUATION
+        print_line()
+        print_line()
+        print(eval_table)
+        print_line()
+        print_line()
+        eval_table.to_csv(os.path.join(model.results_directory, 'evaluation.csv'))
     gather_images(model.results_directory)
 
 
