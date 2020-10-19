@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import torch
+import torch.nn as nn
 # from collections import OrderedDict
 
 from .higgs_geant import load_data
@@ -15,6 +16,10 @@ from .higgs_4v_torch import syst_effect
 from .higgs_4v_torch import nasty_background
 
 from sklearn.model_selection import ShuffleSplit
+
+from hessian import hessian
+
+from .config import HiggsConfig
 
 
 def get_generators_torch(seed, train_size=0.5, test_size=0.5, cuda=False):
@@ -165,3 +170,51 @@ class GeneratorTorch():
         mu_reweighting(data, mu)
         X, y, w = split_data_label_weights(data, self.feature_names)
         return X, y, w
+
+    def diff_generate(self, tau_es, jet_es, lep_es, mu, n_samples=None):
+        pass
+        # return s, w_s, b, w_b, y
+
+
+
+class HiggsLoss(nn.Module):
+    def __init__(self):
+        super().__init__()
+        config = HiggsConfig()
+        tes_loc = torch.tensor(config.CALIBRATED.tes)
+        tes_std = torch.tensor(config.CALIBRATED_ERROR.tes)
+        self.tes_constraints = torch.distributions.Normal(tes_loc, tes_std)
+
+        jes_loc = torch.tensor(config.CALIBRATED.jes)
+        jes_std = torch.tensor(config.CALIBRATED_ERROR.jes)
+        self.jes_constraints = torch.distributions.Normal(jes_loc, jes_std)
+
+        les_loc = torch.tensor(config.CALIBRATED.les)
+        les_std = torch.tensor(config.CALIBRATED_ERROR.les)
+        self.les_constraints = torch.distributions.Normal(les_loc, les_std)
+        self.constraints_distrib = {'tes': self.tes_constraints,
+                                    'jes': self.jes_constraints,
+                                    'les': self.les_constraints,
+                                   }
+
+    def constraints_nll(self, params):
+        nll = 0.0
+        for param_name, distrib in self.constraints_distrib.items():
+            if param_name in params:
+                nll = nll - distrib.log_prob(params[param_name])
+        return nll
+
+    def forward(self, input, target, params):
+        """
+        input is the total count, the summaries, 
+        target is the asimov, the expected
+        param_list is the OrderedDict of tensor containing the parameters
+                [mu, tes, jes, les]
+        """
+        poisson = torch.distributions.Poisson(input)
+        nll = - torch.sum(poisson.log_prob(target)) + self.constraints_nll(params)
+        param_list = params.values()
+        h = hessian(nll, param_list, create_graph=True)
+        h_inverse = torch.inverse(h)  # FIXME : may break, handle exception
+        loss = h_inverse[0,0]
+        return loss
