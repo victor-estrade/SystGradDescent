@@ -63,10 +63,21 @@ class Loader(object):
 
     def load_config_table(self):
         df = self._load_from_global("config_table.csv")
+        df['model_full_name'] = self.model_full_name
+        df['benchmark_name'] = self.benchmark_name
+        df['base_name'] = self.base_name
         return df
 
     def load_evaluation(self):
         df = self._load_from_global("evaluation.csv")
+        return df
+
+    def load_estimation_evaluation(self):
+        df = self._load_from_global("estimation_evaluation.csv")
+        return df
+
+    def load_conditional_evaluation(self):
+        df = self._load_from_global("conditional_evaluation.csv")
         return df
 
     def load_conditional_estimations(self):
@@ -77,9 +88,6 @@ class Loader(object):
         config_table = self.load_config_table()
         evaluation = self.load_evaluation()
         evaluation = evaluation.join(config_table, rsuffix='_')
-        evaluation['model_full_name'] = self.model_full_name
-        evaluation['benchmark_name'] = self.benchmark_name
-        evaluation['base_name'] = self.base_name
         return evaluation
 
 
