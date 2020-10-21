@@ -84,8 +84,8 @@ def make_common_plots(data_name, benchmark_name, args, TheLoader):
     all_loaders = []
     for kwargs in hp_kwargs_generator(args):
         loader = TheLoader(data_name, benchmark_name, **kwargs)
-        config_table = loader.load_config_table()
         try:
+            config_table = loader.load_config_table()
             evaluation = loader.load_estimation_evaluation()
         except FileNotFoundError:
             print(f"Missing estimation results for {loader.model_full_name}")
@@ -98,8 +98,8 @@ def make_common_plots(data_name, benchmark_name, args, TheLoader):
 
     for kwargs in hp_kwargs_generator(args):
         loader = TheLoader(data_name, benchmark_name, **kwargs)
-        config_table = loader.load_config_table()
         try:
+            config_table = loader.load_config_table()
             evaluation = loader.load_conditional_evaluation()
         except FileNotFoundError:
             print(f"Missing conditional estimation results for {loader.model_full_name}")
