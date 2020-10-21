@@ -70,7 +70,7 @@ class TrainGenerator:
     def generate(self, n_samples):
         if n_samples is not None:
             params = self.param_generator()
-            X, y, w = self.data_generator.generate(*params, n_samples)
+            X, y, w = self.data_generator.generate(*params, n_samples=n_samples)
             return X, params.interest_parameters, w, params.nuisance_parameters
         else:
             config = Config()
@@ -79,7 +79,7 @@ class TrainGenerator:
 
 
 def build_model(args, i_cv):
-    args.net = ARCHI(n_in=3, n_out=2, n_extra=2, n_unit=args.n_unit)
+    args.net = ARCHI(n_in=29, n_out=2, n_extra=3, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, Regressor)
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
