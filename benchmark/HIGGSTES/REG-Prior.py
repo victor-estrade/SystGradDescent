@@ -38,20 +38,15 @@ from utils.images import gather_images
 from visual.misc import plot_params
 
 from problem.higgs import HiggsConfigTesOnly as Config
-from problem.higgs import get_minimizer
-from problem.higgs import get_minimizer_no_nuisance
 from problem.higgs import get_generators_torch
 from problem.higgs import param_generator
 from problem.higgs import Generator
-from problem.higgs import HiggsNLL as NLLComputer
 
 from model.regressor import Regressor
 from model.monte_carlo import many_predict
 from model.monte_carlo import monte_carlo_data
 from model.monte_carlo import monte_carlo_infer
 from model.monte_carlo import save_monte_carlo
-
-from visual.special.higgs import plot_nll_around_min
 
 from archi.reducer import EA3ML3 as ARCHI
 # from archi.reducer import EA1AR8MR8L1 as ARCHI
