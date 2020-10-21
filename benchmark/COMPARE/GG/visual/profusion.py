@@ -183,6 +183,7 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     color_cycle = prop_cycle.by_key()['color']
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
+    x, true = None, None  # Strange fix for 'x referenced before assignement' in plt.scatter(x, true, ...)
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
@@ -208,6 +209,7 @@ def true_mu_target_mean_std(all_evaluations, title="No Title", directory=DEFAULT
     color_cycle = prop_cycle.by_key()['color']
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
+    x, true = None, None  # Strange fix for 'x referenced before assignement' in plt.scatter(x, true, ...)
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
@@ -235,6 +237,7 @@ def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR
     color_cycle = prop_cycle.by_key()['color']
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
+    x, true = None, None  # Strange fix for 'x referenced before assignement' in plt.scatter(x, true, ...)
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
