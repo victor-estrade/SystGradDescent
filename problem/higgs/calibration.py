@@ -8,6 +8,7 @@ import numpy as np
 from scipy import stats
 
 from .parameter import Parameter
+from .parameter import FuturParameter
 from .config import HiggsConfig
 
 def param_generator(config=HiggsConfig()):
@@ -51,6 +52,6 @@ def futur_param_generator(config=HiggsConfig()):
     nasty_bkg = prior_nasty_bkg.rvs()
     sigma_soft = prior_sigma_soft.rvs()
     mu = np.random.uniform(config.MIN.mu, config.MAX.mu)
-    return Parameter(tes, jes, les, nasty_bkg, sigma_soft, mu)
+    return FuturParameter(tes, jes, les, nasty_bkg, sigma_soft, mu)
 
 
