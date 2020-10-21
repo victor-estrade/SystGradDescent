@@ -95,9 +95,9 @@ def true_mu_estimator(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def true_mu_target_mean_std(evaluation, title="No Title", directory=DEFAULT_DIR):
-    max_n_test_samples = evaluation.n_test_samples.max()
-
-    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    data = evaluation
     x, true = None, None  # Strange fix for 'x referenced before assignement' in plt.scatter(x, true, ...)
     for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
@@ -117,9 +117,9 @@ def true_mu_target_mean_std(evaluation, title="No Title", directory=DEFAULT_DIR)
 
 
 def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
-    max_n_test_samples = evaluation.n_test_samples.max()
-
-    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    data = evaluation
     x, true = None, None  # Strange fix for 'x referenced before assignement' in plt.scatter(x, true, ...)
     for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
