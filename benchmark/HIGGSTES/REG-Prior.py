@@ -185,7 +185,7 @@ def run_estimation(args, i_cv):
     flush(logger)
     
     # TRAINING / LOADING
-    train_or_load_neural_net(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
+    train_or_load_neural_net(model, train_generator, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
@@ -275,7 +275,7 @@ def run_conditional_estimation(args, i_cv):
     flush(logger)
     
     # TRAINING / LOADING
-    train_or_load_neural_net(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
+    train_or_load_neural_net(model, train_generator, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
