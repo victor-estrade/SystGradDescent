@@ -28,6 +28,7 @@ def make_individual_estimation_plots(evaluation, loader):
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name, loader.model_full_name)
     os.makedirs(directory, exist_ok=True)
     print(evaluation)
+    print(evaluation.columns)
 
     individual.true_mu_mse(evaluation, title=loader.model_full_name, directory=directory)
     individual.true_mu_estimator(evaluation, title=loader.model_full_name, directory=directory)
