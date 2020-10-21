@@ -21,7 +21,7 @@ def true_mu_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
     max_n_test_samples = evaluation.n_test_samples.max()
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for true_tes, true_jes, true_les, df in data.groupby(["true_tes", "true_jes", "true_les"]):
+    for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
         y = df.target_mse
         label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
@@ -39,7 +39,7 @@ def true_mu_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
     max_n_test_samples = evaluation.n_test_samples.max()
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for true_tes, true_jes, true_les, df in data.groupby(["true_tes", "true_jes", "true_les"]):
+    for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
         y = df.var_stat
         label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
@@ -57,7 +57,7 @@ def true_mu_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
     max_n_test_samples = evaluation.n_test_samples.max()
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for true_tes, true_jes, true_les, df in data.groupby(["true_tes", "true_jes", "true_les"]):
+    for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
         y = df.var_syst
         label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
@@ -76,7 +76,7 @@ def true_mu_estimator(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     x, true = None, None  # Strange fix for 'x referenced before assignement' in plt.scatter(x, true, ...)
-    for true_tes, true_jes, true_les, df in data.groupby(["true_tes", "true_jes", "true_les"]):
+    for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
         y = df.target_mean
         y_err = df.sigma_mean
@@ -98,7 +98,7 @@ def true_mu_target_mean_std(evaluation, title="No Title", directory=DEFAULT_DIR)
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     x, true = None, None  # Strange fix for 'x referenced before assignement' in plt.scatter(x, true, ...)
-    for true_tes, true_jes, true_les, df in data.groupby(["true_tes", "true_jes", "true_les"]):
+    for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
         y = df.target_mean
         y_err = df.target_std
@@ -120,7 +120,7 @@ def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     x, true = None, None  # Strange fix for 'x referenced before assignement' in plt.scatter(x, true, ...)
-    for true_tes, true_jes, true_les, df in data.groupby(["true_tes", "true_jes", "true_les"]):
+    for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
         y = df.target_mean
         true = df.true_mu
@@ -140,7 +140,7 @@ def n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
     chosen_true_mu = evaluation.true_mu.median()
 
     data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-    for true_tes, true_jes, true_les, df in data.groupby(["true_tes", "true_jes", "true_les"]):
+    for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.n_test_samples
         y = df.target_mse
         label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
@@ -174,7 +174,7 @@ def n_samples_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
     chosen_true_mu = evaluation.true_mu.median()
 
     data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-    for true_tes, true_jes, true_les, df in data.groupby(["true_tes", "true_jes", "true_les"]):
+    for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.n_test_samples
         y = df.sigma_mean
         label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
@@ -192,7 +192,7 @@ def n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
     chosen_true_mu = evaluation.true_mu.median()
 
     data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-    for true_tes, true_jes, true_les, df in data.groupby(["true_tes", "true_jes", "true_les"]):
+    for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.n_test_samples
         y = df.var_stat
         label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
@@ -211,7 +211,7 @@ def n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
     chosen_true_mu = evaluation.true_mu.median()
 
     data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-    for true_tes, true_jes, true_les, df in data.groupby(["true_tes", "true_jes", "true_les"]):
+    for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.n_test_samples
         y = df.var_syst
         label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
