@@ -94,7 +94,8 @@ def make_common_plots(data_name, benchmark_name, args, TheLoader):
             all_evaluations.append(evaluation)
             all_loaders.append(loader)
             make_individual_estimation_plots(evaluation, loader)
-    make_profusion_estimation_plots(all_evaluations, loader)
+    if all_evaluations:
+        make_profusion_estimation_plots(all_evaluations, loader)
 
     for kwargs in hp_kwargs_generator(args):
         loader = TheLoader(data_name, benchmark_name, **kwargs)
@@ -108,7 +109,8 @@ def make_common_plots(data_name, benchmark_name, args, TheLoader):
             all_evaluations.append(evaluation)
             all_loaders.append(loader)
             make_individual_conditional_plots(evaluation, loader)
-    make_profusion_conditional_plots(all_evaluations, loader)
+    if all_evaluations:
+        make_profusion_conditional_plots(all_evaluations, loader)
 
 
 
