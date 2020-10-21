@@ -26,7 +26,6 @@ def true_mu_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
         y = df.target_mse
         label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
         plt.plot(x, y, 'o-', label=label)
-        print(x, y, label)
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("MSE $\\hat \\mu$")
