@@ -55,21 +55,7 @@ DATA_NAME = 'HIGGSTES'
 BENCHMARK_NAME = DATA_NAME+'-prior'
 N_ITER = 30
 
-
-
-class GeneratorCPU:
-    def __init__(self, data_generator):
-        self.data_generator = data_generator
-
-    def generate(self, *params, n_samples=None, no_grad=False):
-            X, y, w = self.data_generator.generate(*params, n_samples=n_samples, no_grad=no_grad)
-            X = X.detach().cpu().numpy()
-            y = y.detach().cpu().numpy()
-            w = w.detach().cpu().numpy()
-            return X, y, w
-
-    def reset(self):
-        self.data_generator.reset()
+from .common import GeneratorCPU
 
 
 def build_model(args, i_cv):
@@ -211,7 +197,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
-    result_row['n_test_samples'] = config.N_TESTING_SAMPLES
+    result_row['n_test_samples'] = test_generator.n_samples
     suffix = f'-mu={config.TRUE.mu:1.2f}_tes={config.TRUE.tes}_jes={config.TRUE.jes}_les={config.TRUE.les}'
     
     logger.info('Generate testing data')

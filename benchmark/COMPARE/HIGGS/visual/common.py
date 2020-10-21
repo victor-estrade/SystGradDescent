@@ -29,6 +29,7 @@ def make_individual_estimation_plots(evaluation, loader):
     os.makedirs(directory, exist_ok=True)
     print(evaluation)
     print(evaluation.columns)
+    print(evaluation.groupby(["true_tes", "true_jes", "true_les"]))
 
     individual.true_mu_mse(evaluation, title=loader.model_full_name, directory=directory)
     individual.true_mu_estimator(evaluation, title=loader.model_full_name, directory=directory)

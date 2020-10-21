@@ -18,9 +18,9 @@ from config import DEFAULT_DIR
 
 
 def true_mu_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
-    max_n_test_samples = evaluation.n_test_samples.max()
-
-    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    data = evaluation
     for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
         y = df.target_mse
@@ -37,9 +37,9 @@ def true_mu_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def true_mu_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
-    max_n_test_samples = evaluation.n_test_samples.max()
-
-    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    data = evaluation
     for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
         y = df.var_stat
@@ -55,9 +55,9 @@ def true_mu_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def true_mu_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
-    max_n_test_samples = evaluation.n_test_samples.max()
-
-    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    data = evaluation
     for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
         y = df.var_syst
@@ -73,9 +73,9 @@ def true_mu_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def true_mu_estimator(evaluation, title="No Title", directory=DEFAULT_DIR):
-    max_n_test_samples = evaluation.n_test_samples.max()
-
-    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    data = evaluation
     x, true = None, None  # Strange fix for 'x referenced before assignement' in plt.scatter(x, true, ...)
     for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
