@@ -292,7 +292,7 @@ def run_conditional_estimation(args, i_cv):
     # MEASUREMENT
     N_BINS = 10
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
-    iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=N_BINS)
+    iter_results = [run_conditional_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=N_BINS)
                     for i, test_config in enumerate(config.iter_test_config())]
 
     conditional_estimate = pd.concat(iter_results)
