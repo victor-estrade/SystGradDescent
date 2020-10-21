@@ -10,8 +10,8 @@ rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/CO
 
 rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG/learning_curve/ ./OUTPUT/GG/learning_curve
 
-rsync -rtv "titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-prior/DataAugmentation/DataAugmentation-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_summaries.png" "./OUTPUT/GG-prior/DataAugmentation/DataAugmentation-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_summaries.png"
-rsync -rtv "titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-prior/NeuralNetClassifier/NeuralNetClassifier-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_summaries.png" "./OUTPUT/GG-prior/NeuralNetClassifier/NeuralNetClassifier-L4x200-Adam-0.001-(0.9-0.999)-2000-20/cv_0/valid_summaries.png"
+rsync -rtv "titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-prior/DataAugmentation/DataAugmentation-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_summaries.png" ./OUTPUT/GG-prior/DataAugmentation/DataAugmentation-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_summaries.png
+rsync -rtv "titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-prior/NeuralNetClassifier/NeuralNetClassifier-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_summaries.png" ./OUTPUT/GG-prior/NeuralNetClassifier/NeuralNetClassifier-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_summaries.png
 
 
 
