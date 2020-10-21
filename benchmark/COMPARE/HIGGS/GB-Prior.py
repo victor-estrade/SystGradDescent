@@ -20,6 +20,11 @@ def main():
     make_hp_table(data_name, benchmark_name, GB_HP, GBLoader)
     make_common_plots(data_name, benchmark_name, GB_HP, GBLoader)
 
+    data_name = 'HIGGSTES'
+    benchmark_name = 'HIGGSTES-prior'
+    make_hp_table(data_name, benchmark_name, GB_HP, GBLoader)
+    make_common_plots(data_name, benchmark_name, GB_HP, GBLoader)
+
 
 
 
