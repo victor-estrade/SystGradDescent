@@ -188,14 +188,14 @@ class INFLoader(Loader):
 class REGLoader(Loader):
     """docstring for REGLoader"""
     def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
-                batch_size=20, n_samples=1000, learning_rate=1e-4, beta1=0.5, beta2=0.9, optimizer_name="Adam"):
+                batch_size=20, sample_size=1000, learning_rate=1e-4, beta1=0.5, beta2=0.9, optimizer_name="Adam"):
         if optimizer_name == "Adam":
             optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
         else:
             optimizer_name = f"SGD-{learning_rate}"
         base_name = "Regressor"
         archi_name = archi_name+f"x{n_units:d}"
-        model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{n_samples}"
+        model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{sample_size}"
         super().__init__(benchmark_name, base_name, model_full_name)
         self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name)
