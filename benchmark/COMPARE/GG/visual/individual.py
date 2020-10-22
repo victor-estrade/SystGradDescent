@@ -82,7 +82,7 @@ def true_mu_estimator(evaluation, title="No Title", directory=DEFAULT_DIR):
         true = df.true_mix
         label = f"$\\alpha$ = {true_rescale}"
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
-    plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=1)
+    plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average estimated $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
@@ -103,7 +103,7 @@ def true_mu_target_mean_std(evaluation, title="No Title", directory=DEFAULT_DIR)
         true = df.true_mix
         label = f"$\\alpha$ = {true_rescale}"
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
-    plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=1)
+    plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average $\\hat \\mu \\pm std(\\hat \\mu)$")
@@ -123,7 +123,7 @@ def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
         true = df.true_mix
         label = f"$\\alpha$ = {true_rescale}"
         plt.scatter(x, y, marker='o', label=label)
-    plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=1)
+    plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average estimated $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
