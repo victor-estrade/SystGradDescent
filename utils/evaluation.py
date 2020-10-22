@@ -63,6 +63,7 @@ def evaluate_config(config):
     table = []
     for i, test_config in enumerate(config.iter_test_config()):
         row = {"i" : i, "n_test_samples" : test_config.N_TESTING_SAMPLES }
+        row["n_test_samples"] = test_config.N_TESTING_SAMPLES if test_config.N_TESTING_SAMPLES is not None else -1
         row.update({ 'true_'+k : v for k, v in test_config.TRUE.items()})
         table.append(row)
     table = pd.DataFrame(table)
