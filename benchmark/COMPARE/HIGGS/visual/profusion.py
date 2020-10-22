@@ -193,7 +193,7 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
             true = df.true_mu
             label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
             plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label, color=color_cycle[i%len(unique_alphas)])
-    plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
+    plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=1)
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
@@ -218,7 +218,7 @@ def true_mu_target_mean_std(all_evaluations, title="No Title", directory=DEFAULT
             true = df.true_mu
             label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
             plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label, color=color_cycle[i%len(unique_alphas)])
-    plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
+    plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=1)
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average $\\hat \\mu \\pm std(\\hat \\mu)$")
@@ -244,7 +244,7 @@ def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR
             true = df.true_mu
             label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
             plt.scatter(x, y, marker='o', label=label, color=color_cycle[i%len(unique_alphas)])
-    plt.scatter(x, true, marker='+', c='red', label='truth', s=500)
+    plt.scatter(x, true, marker='+', c='red', label='truth', s=500,  zorder=1)
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average $\\hat \\mu$")
