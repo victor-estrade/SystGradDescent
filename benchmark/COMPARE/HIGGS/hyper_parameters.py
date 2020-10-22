@@ -46,12 +46,14 @@ REG_HP   = dict(
                 archi_name=["EA3ML3"]
                 , n_steps=[2000, 5000]
                 , n_units=[50, 100, 200, 500]
+                , sample_size=[10000]
                 )
 
 REG_M_HP = dict(
                 archi_name=["A1AR8MR8L1"]
                 , n_steps=[2000, 5000]
                 , n_units=[50, 100, 200, 500]
+                , sample_size=[10000]
                 )
 
 TP_HP    = dict(
