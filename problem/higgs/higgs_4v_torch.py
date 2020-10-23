@@ -78,13 +78,14 @@ class V4:
         return self.px**2 + self.py**2
     
     def pt(self):
-        return torch.sqrt(self.pt2())
+        return torch.sqrt(self.pt2() + sys.float_info.epsilon)
     
     def m(self):
         return torch.sqrt( torch.abs( self.e**2 - self.p2() ) + sys.float_info.epsilon ) # abs and epsilon are needed for protection
     
     def eta(self):
-        return asinh( self.pz/self.pt() )
+        tmp = safe_division(self.pz, self.pt())
+        return asinh( tmp )
     
     def phi(self):
         return torch.atan2(self.py, self.px)
@@ -93,58 +94,58 @@ class V4:
         """delta phi with another v"""
         return (self.phi() - v.phi() + 3*np.pi) % (2*np.pi) - np.pi
     
-    def deltaEta(self,v):
+    def deltaEta(self, v):
         """delta eta with another v"""
-        return self.eta()-v.eta()
+        return self.eta() - v.eta()
     
-    def deltaR(self,v):
+    def deltaR(self, v):
         """delta R with another v"""
         return torch.sqrt(self.deltaPhi(v)**2+self.deltaEta(v)**2 )
 
-    def eWithM(self,m=0.):
+    def eWithM(self, m=0.):
         """recompute e given m"""
-        return torch.sqrt(self.p2()+m**2)
+        return torch.sqrt(self.p2() + m**2 + sys.float_info.epsilon)
 
     # FIXME this gives ugly prints with 1D-arrays
     def __str__(self):
         return "PxPyPzE( %s,%s,%s,%s)<=>PtEtaPhiM( %s,%s,%s,%s) " % (self.px, self.py,self.pz,self.e,self.pt(),self.eta(),self.phi(),self.m())
 
-    def scale(self,factor=1.): # scale
+    def scale(self, factor=1.): # scale
         """Apply a simple scaling"""
-        self.px *= factor
-        self.py *= factor
-        self.pz *= factor
+        self.px = self.px * factor
+        self.py = self.py * factor
+        self.pz = self.pz * factor
         self.e = torch.abs( factor*self.e )
     
-    def scaleFixedM(self,factor=1.): 
+    def scaleFixedM(self, factor=1.): 
         """Scale (keeping mass unchanged)"""
         m = self.m()
-        self.px *= factor
-        self.py *= factor
-        self.pz *= factor
+        self.px = self.px * factor
+        self.py = self.py * factor
+        self.pz = self.pz * factor
         self.e = self.eWithM(m)
     
     def setPtEtaPhiM(self, pt=0., eta=0., phi=0., m=0):
         """Re-initialize with : pt, eta, phi and m"""
-        self.px = pt*torch.cos(phi)
-        self.py = pt*torch.sin(phi)
-        self.pz = pt*torch.sinh(eta)
+        self.px = pt * torch.cos(phi)
+        self.py = pt * torch.sin(phi)
+        self.pz = pt * torch.sinh(eta)
         self.e = self.eWithM(m)
     
     def sum(self, v):
         """Add another V4 into self"""
-        self.px += v.px
-        self.py += v.py
-        self.pz += v.pz
-        self.e += v.e
+        self.px = self.px + v.px
+        self.py = self.py + v.py
+        self.pz = self.pz + v.pz
+        self.e  = self.e + v.e
     
     def __iadd__(self, other):
         """Add another V4 into self"""
         try:
-            self.px += other.px
-            self.py += other.py
-            self.pz += other.pz
-            self.e += other.e
+            self.px = self.px + other.px
+            self.py = self.py + other.py
+            self.pz = self.pz + other.pz
+            self.e  = self.e + other.e
         except AttributeError: 
             # If 'other' is not V4 like object then return special NotImplemented error
             return NotImplemented
@@ -157,7 +158,7 @@ class V4:
             copy.px = self.px + other.px
             copy.py = self.py + other.py
             copy.pz = self.pz + other.pz
-            copy.e = self.e + other.e
+            copy.e  = self.e + other.e
         except AttributeError: 
             # If 'other' is not V4 like object then return special NotImplemented error
             return NotImplemented
@@ -170,7 +171,7 @@ class V4:
             copy.px = self.px - other.px
             copy.py = self.py - other.py
             copy.pz = self.pz - other.pz
-            copy.e = self.e - other.e
+            copy.e  = self.e - other.e
         except AttributeError:
             # If 'other' is not V4 like object then return special NotImplemented error
             return NotImplemented
@@ -179,10 +180,10 @@ class V4:
     def __isub__(self, other):
         """Sub another V4 into self"""
         try:
-            self.px -= other.px
-            self.py -= other.py
-            self.pz -= other.pz
-            self.e -= other.e
+            self.px = self.px - other.px
+            self.py = self.py - other.py
+            self.pz = self.pz - other.pz
+            self.e  = self.e - other.e
         except AttributeError:
             # If 'other' is not V4 like object then return special NotImplemented error
             return NotImplemented
@@ -229,7 +230,7 @@ def eta_centrality(eta, etaJ1, etaJ2):
 def V4_tau(batch):
     vtau = V4() # tau 4-vector
     vtau.setPtEtaPhiM(batch["PRI_tau_pt"], batch["PRI_tau_eta"], 
-                      batch["PRI_tau_phi"],torch.tensor(0.8, requires_grad=True))
+                      batch["PRI_tau_phi"], torch.tensor(0.8, requires_grad=True))
     # tau mass 0.8 like in original
     return vtau
 
@@ -310,7 +311,7 @@ def update_sum_pt(batch, vlep, vtau):
     batch["DER_sum_pt"] = vlep.pt() + vtau.pt() + batch["PRI_jet_all_pt"] # sum_pt is the scalar sum
 
 def update_pt_ratio_lep_tau(batch, vlep, vtau):
-    batch["DER_pt_ratio_lep_tau"] = vlep.pt()/vtau.pt()
+    batch["DER_pt_ratio_lep_tau"] = vlep.pt() / vtau.pt()
 
 def update_met_phi_centrality(batch):
     batch["DER_met_phi_centrality"] = METphi_centrality(batch["PRI_lep_phi"], batch["PRI_tau_phi"], batch["PRI_met_phi"])

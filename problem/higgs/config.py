@@ -11,9 +11,9 @@ from .parameter import FuturParameter
 
 
 class HiggsConfig():
-    CALIBRATED = Parameter(tes=1, jes=1, les=1, mu=1)
-    CALIBRATED_ERROR = Parameter(tes=0.05, jes=0.05, les=0.02, mu=1)
-    TRUE = Parameter(tes=1, jes=1, les=1, mu=1)
+    CALIBRATED = Parameter(tes=1.0, jes=1.0, les=1.0, mu=1.0)
+    CALIBRATED_ERROR = Parameter(tes=0.05, jes=0.05, les=0.02, mu=1.0)
+    TRUE = Parameter(tes=1.0, jes=1.0, les=1.0, mu=1.0)
     RANGE = Parameter(tes=np.linspace(0.95, 1.05, 3),
                         jes=np.linspace(0.95, 1.05, 3),
                         les=np.linspace(0.98, 1.02, 3),
@@ -48,9 +48,9 @@ class HiggsConfig():
 
 
 class HiggsConfigTesOnly():
-    CALIBRATED = Parameter(tes=1, jes=1, les=1, mu=1)
-    CALIBRATED_ERROR = Parameter(tes=0.05, jes=0.05, les=0.02, mu=1)
-    TRUE = Parameter(tes=1, jes=1, les=1, mu=1)
+    CALIBRATED = Parameter(tes=1.0, jes=1.0, les=1.0, mu=1.0)
+    CALIBRATED_ERROR = Parameter(tes=0.05, jes=0.05, les=0.02, mu=1.0)
+    TRUE = Parameter(tes=1.0, jes=1.0, les=1.0, mu=1.0)
     RANGE = Parameter(tes=np.linspace(0.95, 1.05, 3),
                         jes=[1.0],
                         les=[1.0],
@@ -87,14 +87,14 @@ class HiggsConfigTesOnly():
 
 
 class FuturHiggsConfig():
-    CALIBRATED = FuturParameter(tes=1, jes=1, les=1, nasty_bkg=1, sigma_soft=0, mu=1)
-    CALIBRATED_ERROR = FuturParameter(tes=0.05, jes=0.05, les=0.02, nasty_bkg=0.5, sigma_soft=1, mu=1)
-    TRUE = FuturParameter(tes=1, jes=1, les=1, nasty_bkg=1, sigma_soft=1, mu=1)
+    CALIBRATED = FuturParameter(tes=1.0, jes=1.0, les=1.0, nasty_bkg=1.0, sigma_soft=0.0, mu=1.0)
+    CALIBRATED_ERROR = FuturParameter(tes=0.05, jes=0.05, les=0.02, nasty_bkg=0.5, sigma_soft=1.0, mu=1.0)
+    TRUE = FuturParameter(tes=1.0, jes=1.0, les=1.0, nasty_bkg=1.0, sigma_soft=1.0, mu=1.0)
     RANGE = FuturParameter(tes=np.linspace(0.95, 1.05, 3), 
-                        jes=[1],
-                        les=[1],
-                        nasty_bkg=[1],
-                        sigma_soft=[3],
+                        jes=[1.0],
+                        les=[1.0],
+                        nasty_bkg=[1.0],
+                        sigma_soft=[3.0],
                         mu=[0.5,1,2])
 
     MIN = FuturParameter(tes=0.9, jes=0.95, les=0.98, nasty_bkg=1, sigma_soft=2, mu=0.3)
