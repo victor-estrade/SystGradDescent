@@ -35,8 +35,8 @@ def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('# test samples')
     plt.ylabel("MSE $\\hat \\mu$")
     plt.title(title)
-    plt.legend([f"$\\alpha$={a}" for a in unique_alphas ])
-    plt.savefig(os.path.join(directory, f'profusion_n_samples_mse.png'))
+    plt.legend([f"$\\alpha$={a}" for a in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'profusion_n_samples_mse.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -54,7 +54,7 @@ def nominal_n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_D
     plt.xlabel('# test samples')
     plt.ylabel("MSE $\\hat \\mu$")
     plt.title(title)
-    plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_mse.png'))
+    plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_mse.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -75,8 +75,8 @@ def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('# test samples')
     plt.ylabel("V_stat")
     plt.title(title)
-    plt.legend([f"$\\alpha$={a}" for a in unique_alphas ])
-    plt.savefig(os.path.join(directory, f'profusion_n_samples_v_stat.png'))
+    plt.legend([f"$\\alpha$={a}" for a in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'profusion_n_samples_v_stat.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -93,7 +93,7 @@ def nominal_n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAUL
     plt.xlabel('# test samples')
     plt.ylabel("V_stat")
     plt.title(title)
-    plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_v_stat.png'))
+    plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_v_stat.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -115,8 +115,8 @@ def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('# test samples')
     plt.ylabel("V_syst")
     plt.title(title)
-    plt.legend([f"$\\alpha$={a}" for a in unique_alphas ])
-    plt.savefig(os.path.join(directory, f'profusion_n_samples_v_syst.png'))
+    plt.legend([f"$\\alpha$={a}" for a in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'profusion_n_samples_v_syst.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -133,7 +133,7 @@ def nominal_n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAUL
     plt.xlabel('# test samples')
     plt.ylabel("V_syst")
     plt.title(title)
-    plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_v_syst.png'))
+    plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_v_syst.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -155,8 +155,8 @@ def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DI
     plt.xlabel('# test samples')
     plt.ylabel("average $\\hat \\sigma_{\\hat \\mu}$")
     plt.title(title)
-    plt.legend([f"$\\alpha$={a}" for a in unique_alphas ])
-    plt.savefig(os.path.join(directory, f'profusion_n_samples_sigma_mean.png'))
+    plt.legend([f"$\\alpha$={a}" for a in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'profusion_n_samples_sigma_mean.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -173,7 +173,7 @@ def nominal_n_samples_sigma_mean(all_evaluations, title="No Title", directory=DE
     plt.xlabel('# test samples')
     plt.ylabel("average $\\hat \\sigma_{\\hat \\mu}$")
     plt.title(title)
-    plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_sigma_mean.png'))
+    plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_sigma_mean.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -199,8 +199,8 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('true $\\mu$')
     plt.ylabel("average $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
     plt.title(title)
-    plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ])
-    plt.savefig(os.path.join(directory, f'profusion_true_mu_estimator.png'))
+    plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'profusion_true_mu_estimator.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -225,8 +225,8 @@ def true_mu_target_mean_std(all_evaluations, title="No Title", directory=DEFAULT
     plt.xlabel('true $\\mu$')
     plt.ylabel("average $\\hat \\mu \\pm std(\\hat \\mu)$")
     plt.title(title)
-    plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ])
-    plt.savefig(os.path.join(directory, f'profusion_true_mu_target_mean_std.png'))
+    plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'profusion_true_mu_target_mean_std.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -255,9 +255,9 @@ def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR
     legend_elements = [Line2D([0], [0], marker='+', color='red', label='true', markersize=15, markeredgewidth=5)]
     legend_elements += [Line2D([0], [0], marker='o', color=color_cycle[i%len(unique_alphas)], label=f"$\\alpha$={a}")
                         for i, a in enumerate(unique_alphas)]
-    plt.legend(handles=legend_elements)
+    plt.legend(handles=legend_elements, bbox_to_anchor=(1.01, 1), loc='upper left')
     # plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ])
-    plt.savefig(os.path.join(directory, f'profusion_true_mu_target_mean.png'))
+    plt.savefig(os.path.join(directory, f'profusion_true_mu_target_mean.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -274,7 +274,7 @@ def mse_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_N={n_test_samples}"
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_mse.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_mse.png'), bbox_inches='tight')
         plt.clf()
 
 
@@ -291,7 +291,7 @@ def v_stat_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_N={n_test_samples}"
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_stat.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_stat.png'), bbox_inches='tight')
         plt.clf()
 
 
@@ -308,5 +308,5 @@ def v_syst_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_N={n_test_samples}"
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_syst.png'))
+        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_syst.png'), bbox_inches='tight')
         plt.clf()

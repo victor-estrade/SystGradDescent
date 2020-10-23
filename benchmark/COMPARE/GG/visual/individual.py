@@ -30,8 +30,8 @@ def true_mu_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('true $\\mu$')
     plt.ylabel("MSE $\\hat \\mu$")
     plt.title(title)
-    plt.legend()
-    plt.savefig(os.path.join(directory, f'true_mu_mse.png'))
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'true_mu_mse.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -48,8 +48,8 @@ def true_mu_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('true $\\mu$')
     plt.ylabel("V_stat")
     plt.title(title)
-    plt.legend()
-    plt.savefig(os.path.join(directory, f'true_mu_v_stat.png'))
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'true_mu_v_stat.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -66,8 +66,8 @@ def true_mu_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('true $\\mu$')
     plt.ylabel("V_syst")
     plt.title(title)
-    plt.legend()
-    plt.savefig(os.path.join(directory, f'true_mu_v_syst.png'))
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'true_mu_v_syst.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -87,8 +87,8 @@ def true_mu_estimator(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('true $\\mu$')
     plt.ylabel("average estimated $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
     plt.title(title)
-    plt.legend()
-    plt.savefig(os.path.join(directory, f'true_mu_estimator.png'))
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'true_mu_estimator.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -108,8 +108,8 @@ def true_mu_target_mean_std(evaluation, title="No Title", directory=DEFAULT_DIR)
     plt.xlabel('true $\\mu$')
     plt.ylabel("average $\\hat \\mu \\pm std(\\hat \\mu)$")
     plt.title(title)
-    plt.legend()
-    plt.savefig(os.path.join(directory, f'true_mu_target_mean_std.png'))
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'true_mu_target_mean_std.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -128,8 +128,8 @@ def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('true $\\mu$')
     plt.ylabel("average estimated $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
     plt.title(title)
-    plt.legend()
-    plt.savefig(os.path.join(directory, f'true_mu_target_mean.png'))
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'true_mu_target_mean.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -146,8 +146,8 @@ def n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('# test samples')
     plt.ylabel("MSE $\\hat \\mu$")
     plt.title(title)
-    plt.legend()
-    plt.savefig(os.path.join(directory, f'n_samples_mse.png'))
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'n_samples_mse.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -162,8 +162,8 @@ def box_n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('# test samples')
     plt.ylabel("MSE $\\hat \\mu$")
     plt.title(title)
-    # plt.legend()
-    plt.savefig(os.path.join(directory, f'box_n_samples_mse.png'))
+    # plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'box_n_samples_mse.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -180,8 +180,8 @@ def n_samples_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('# test samples')
     plt.ylabel("avegrage $\\hat \\sigma_{\\hat \mu}$")
     plt.title(title)
-    plt.legend()
-    plt.savefig(os.path.join(directory, f'n_samples_sigma_mean.png'))
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'n_samples_sigma_mean.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -198,8 +198,8 @@ def n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('# test samples')
     plt.ylabel("V_stat")
     plt.title(title)
-    plt.legend()
-    plt.savefig(os.path.join(directory, f'n_samples_v_stat.png'))
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'n_samples_v_stat.png'), bbox_inches='tight')
     plt.clf()
 
 
@@ -217,6 +217,6 @@ def n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.xlabel('# test samples')
     plt.ylabel("V_syst")
     plt.title(title)
-    plt.legend()
-    plt.savefig(os.path.join(directory, f'n_samples_v_syst.png'))
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'n_samples_v_syst.png'), bbox_inches='tight')
     plt.clf()
