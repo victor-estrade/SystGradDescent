@@ -160,8 +160,11 @@ class GeneratorTorch():
         jet_es = self.tensor(jet_es, requires_grad=True, dtype=torch.float32)
         lep_es = self.tensor(lep_es, requires_grad=True, dtype=torch.float32)
         mu = self.tensor(mu, requires_grad=True, dtype=torch.float32)
-        missing_value = self.tensor(0.0, dtype=torch.float32)
+        X, y, w = self._skew(tau_es, jet_es, lep_es, mu, n_samples=n_samples)
+        return X, y, w
 
+    def _skew(self, tau_es, jet_es, lep_es, mu, n_samples=None):
+        missing_value = self.tensor(0.0, dtype=torch.float32)
         data = self.data_dict if (n_samples is None) else self.sample(n_samples)
         data = self._deep_copy_data(data)
 
@@ -172,8 +175,19 @@ class GeneratorTorch():
         return X, y, w
 
     def diff_generate(self, tau_es, jet_es, lep_es, mu, n_samples=None):
-        pass
-        # return s, w_s, b, w_b, y
+        """Generator for Tangent Propagation"""
+        X, y, w = self._skew(tau_es, jet_es, lep_es, mu, n_samples=n_samples)
+        return X, y, w
+
+    def split_generate(self, tau_es, jet_es, lep_es, mu, n_samples=None):
+        """Generator for INFERNO"""
+        torch.autograd.set_detect_anomaly(True)
+        X, y, w = self._skew(tau_es, jet_es, lep_es, mu, n_samples=n_samples)
+        X_s = X[y==1]
+        X_b = X[y==0]
+        w_s = w[y==1]
+        w_b = w[y==0]
+        return X_s, w_s.view(-1, 1), X_b, w_b.view(-1, 1), y
 
 
 

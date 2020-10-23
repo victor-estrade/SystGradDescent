@@ -62,9 +62,14 @@ from .common import GeneratorCPU
 
 
 class TrainGenerator:
-    def __init__(self, data_generator):
-        self.data_generator = data_generator        
-        self.mu = self.tensor(Config.CALIBRATED.mu, requires_grad=True)
+    def __init__(self, data_generator, cuda=False):
+        self.data_generator = data_generator
+        if cuda:
+            self.data_generator.cuda()
+        else:
+            self.data_generator.cpu()
+
+        self.mu  = self.tensor(Config.CALIBRATED.mu, requires_grad=True)
         self.tes = self.tensor(Config.CALIBRATED.tes, requires_grad=True)
         self.jes = self.tensor(Config.CALIBRATED.jes, requires_grad=True)
         self.les = self.tensor(Config.CALIBRATED.les, requires_grad=True)
@@ -75,12 +80,9 @@ class TrainGenerator:
                                 ('les', self.les), 
                                 ])
 
-    def generate(self, n_samples=None, no_grad=False):
-            X, y, w = self.data_generator.diff_generate(*self.params, n_samples=n_samples, no_grad=no_grad)
-            X = X.detach().cpu().numpy()
-            y = y.detach().cpu().numpy()
-            w = w.detach().cpu().numpy()
-            return X, y, w
+    def generate(self, n_samples=None):
+            X_s, w_s, X_b, w_b, y = self.data_generator.split_generate(*self.params, n_samples=n_samples)
+            return X_s, w_s, X_b, w_b, y
 
     def reset(self):
         self.data_generator.reset()
@@ -90,7 +92,7 @@ class TrainGenerator:
 
 
 def build_model(args, i_cv):
-    args.net = ARCHI(n_in=29, n_out=2, n_unit=args.n_unit)
+    args.net = ARCHI(n_in=29, n_out=10, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     args.criterion = HiggsLoss()
     model = get_model(args, Inferno)
@@ -185,7 +187,7 @@ def run_estimation(args, i_cv):
     config = Config()
     seed = SEED + i_cv * 5
     train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
-    train_generator = GeneratorCPU(train_generator)
+    train_generator = TrainGenerator(train_generator, cuda=args.cuda)
     valid_generator = GeneratorCPU(valid_generator)
     test_generator = GeneratorCPU(test_generator)
 
