@@ -18,14 +18,15 @@ from config import DEFAULT_DIR
 
 from collections import defaultdict
 
+
 def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     prop_cycle = plt.rcParams['axes.prop_cycle']
     color_cycle = prop_cycle.by_key()['color']
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
-        data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+        chosen_true_mu = 1.0  # Nominal value of mu
+        data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
         for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.n_test_samples
             y = df.target_mse
@@ -43,9 +44,9 @@ def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
 def nominal_n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
+        chosen_true_mu = 1.0  # Nominal value of mu
         chosen_true_rescale = evaluation.true_rescale.median()
-        df = evaluation[ (evaluation.true_mix == chosen_true_mix) & (evaluation.true_rescale == chosen_true_rescale)]
+        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_rescale == chosen_true_rescale)]
         x = df.n_test_samples
         y = df.target_mse
         label = f"$\\alpha$ = {chosen_true_rescale}"
@@ -64,8 +65,8 @@ def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
-        data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+        chosen_true_mu = 1.0  # Nominal value of mu
+        data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
         for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.n_test_samples
             y = df.var_stat
@@ -82,9 +83,9 @@ def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
 def nominal_n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
+        chosen_true_mu = 1.0  # Nominal value of mu
         chosen_true_rescale = evaluation.true_rescale.median()
-        df = evaluation[ (evaluation.true_mix == chosen_true_mix) & (evaluation.true_rescale == chosen_true_rescale)]
+        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_rescale == chosen_true_rescale)]
         x = df.n_test_samples
         y = df.var_stat
         label = f"$\\alpha$ = {chosen_true_rescale}"
@@ -104,8 +105,8 @@ def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
-        data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+        chosen_true_mu = 1.0  # Nominal value of mu
+        data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
         for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.n_test_samples
             y = df.var_syst
@@ -122,9 +123,9 @@ def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
 def nominal_n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
+        chosen_true_mu = 1.0  # Nominal value of mu
         chosen_true_rescale = evaluation.true_rescale.median()
-        df = evaluation[ (evaluation.true_mix == chosen_true_mix) & (evaluation.true_rescale == chosen_true_rescale)]
+        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_rescale == chosen_true_rescale)]
         x = df.n_test_samples
         y = df.var_syst
         label = f"$\\alpha$ = {chosen_true_rescale}"
@@ -144,8 +145,8 @@ def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DI
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
-        data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+        chosen_true_mu = 1.0  # Nominal value of mu
+        data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
         for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.n_test_samples
             y = df.sigma_mean
@@ -162,9 +163,9 @@ def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DI
 
 def nominal_n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
+        chosen_true_mu = 1.0  # Nominal value of mu
         chosen_true_rescale = evaluation.true_rescale.median()
-        df = evaluation[ (evaluation.true_mix == chosen_true_mix) & (evaluation.true_rescale == chosen_true_rescale)]
+        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_rescale == chosen_true_rescale)]
         x = df.n_test_samples
         y = df.sigma_mean
         label = f"$\\alpha$ = {chosen_true_rescale}"

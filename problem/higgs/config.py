@@ -12,11 +12,11 @@ from .parameter import FuturParameter
 
 class HiggsConfig():
     CALIBRATED = Parameter(tes=1, jes=1, les=1, mu=1)
-    CALIBRATED_ERROR = Parameter(tes=0.1, jes=0.1, les=0.05, mu=1)
+    CALIBRATED_ERROR = Parameter(tes=0.05, jes=0.05, les=0.02, mu=1)
     TRUE = Parameter(tes=1, jes=1, les=1, mu=1)
-    RANGE = Parameter(tes=np.linspace(0.9, 1.1, 3),
-                        jes=np.linspace(0.9, 1.1, 3),
-                        les=np.linspace(0.95, 1.05, 3),
+    RANGE = Parameter(tes=np.linspace(0.95, 1.05, 3),
+                        jes=np.linspace(0.95, 1.05, 3),
+                        les=np.linspace(0.98, 1.02, 3),
                         mu=np.linspace(0.5, 2, 3))
     
     FINE_RANGE = Parameter(tes=np.linspace(0.9, 1.1, 5),
@@ -49,12 +49,12 @@ class HiggsConfig():
 
 class HiggsConfigTesOnly():
     CALIBRATED = Parameter(tes=1, jes=1, les=1, mu=1)
-    CALIBRATED_ERROR = Parameter(tes=0.1, jes=0.1, les=0.05, mu=1)
+    CALIBRATED_ERROR = Parameter(tes=0.05, jes=0.05, les=0.02, mu=1)
     TRUE = Parameter(tes=1, jes=1, les=1, mu=1)
-    RANGE = Parameter(tes=np.linspace(0.9, 1.1, 3),
+    RANGE = Parameter(tes=np.linspace(0.95, 1.05, 3),
                         jes=[1.0],
                         les=[1.0],
-                        mu=np.linspace(0.5, 2, 3))
+                        mu=np.linspace(0.5, 2, 4))
     
     FINE_RANGE = Parameter(tes=np.linspace(0.9, 1.1, 15),
                         jes=[1.0],
@@ -88,9 +88,9 @@ class HiggsConfigTesOnly():
 
 class FuturHiggsConfig():
     CALIBRATED = FuturParameter(tes=1, jes=1, les=1, nasty_bkg=1, sigma_soft=0, mu=1)
-    CALIBRATED_ERROR = FuturParameter(tes=0.1, jes=0.1, les=0.05, nasty_bkg=0.5, sigma_soft=1, mu=1)
+    CALIBRATED_ERROR = FuturParameter(tes=0.05, jes=0.05, les=0.02, nasty_bkg=0.5, sigma_soft=1, mu=1)
     TRUE = FuturParameter(tes=1, jes=1, les=1, nasty_bkg=1, sigma_soft=1, mu=1)
-    RANGE = FuturParameter(tes=np.linspace(0.9, 1.1, 3), 
+    RANGE = FuturParameter(tes=np.linspace(0.95, 1.05, 3), 
                         jes=[1],
                         les=[1],
                         nasty_bkg=[1],

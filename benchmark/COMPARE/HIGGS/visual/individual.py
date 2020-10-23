@@ -137,7 +137,7 @@ def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
-    chosen_true_mu = evaluation.true_mu.median()
+    chosen_true_mu = 1.0  # Nominal value of mu
 
     data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
     for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
@@ -171,7 +171,7 @@ def box_n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def n_samples_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
-    chosen_true_mu = evaluation.true_mu.median()
+    chosen_true_mu = 1.0  # Nominal value of mu
 
     data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
     for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
@@ -189,7 +189,7 @@ def n_samples_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
-    chosen_true_mu = evaluation.true_mu.median()
+    chosen_true_mu = 1.0  # Nominal value of mu
 
     data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
     for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
@@ -208,7 +208,7 @@ def n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
-    chosen_true_mu = evaluation.true_mu.median()
+    chosen_true_mu = 1.0  # Nominal value of mu
 
     data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
     for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
