@@ -178,7 +178,7 @@ class GeneratorTorch():
     def diff_generate(self, tau_es, jet_es, lep_es, mu, n_samples=None):
         """Generator for Tangent Propagation"""
         X, y, w = self._skew(tau_es, jet_es, lep_es, mu, n_samples=n_samples)
-        return X, y, w
+        return X, y, w.view(-1, 1)
 
     def split_generate(self, tau_es, jet_es, lep_es, mu, n_samples=None):
         """Generator for INFERNO"""

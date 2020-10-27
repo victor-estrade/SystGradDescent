@@ -84,10 +84,12 @@ class WeightedL1Loss(nn.Module):
 
 class WeightedTPLoss(nn.Module):
     def forward(self, logits, weight, nuisance_params):
+        # decision = logits[:, 1]
         # weight = torch.sqrt(weight)
         w_sum = torch.sum(weight)
         # jac = jacobian(torch.sum(logits * weight / w_sum, 0), nuisance_params.values())
         jac = jacobian(logits, nuisance_params.values())
+        # jac = jacobian(decision, nuisance_params.values())
         loss = torch.sum( jac * jac, 1) / jac.size(1)
         loss = torch.sum(loss * weight) / w_sum
         loss = torch.mean(loss)
