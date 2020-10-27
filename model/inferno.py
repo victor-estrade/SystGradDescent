@@ -7,7 +7,7 @@ import json
 import numpy as np
 
 from collections import OrderedDict
-from .base import BaseModel
+from .base import ClassifierMixin
 from .base import BaseNeuralNet
 from .utils import to_torch
 # from .monitor import LightLossMonitorHook
@@ -15,7 +15,7 @@ from .utils import to_torch
 # from hessian import hessian
 
 
-class Inferno(BaseModel, BaseNeuralNet):
+class Inferno(ClassifierMixin, BaseNeuralNet):
     def __init__(self, net, criterion, optimizer, n_steps=5000, sample_size=1500,
                 temperature=1.0, cuda=False, verbose=0):
         super().__init__()
