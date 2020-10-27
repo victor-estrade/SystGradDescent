@@ -60,8 +60,6 @@ class TangentPropClassifier(BaseClassifierModel, BaseNeuralNet):
     def fit(self, generator):
         for i in range(self.n_steps):
             X_batch, y_batch, w_batch = generator.generate(self.batch_size)
-            # X_batch = torch.cat([s, b], axis=0)
-            # w_batch = torch.cat([w_s, w_b], axis=0)
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
 
             logits = self.net(X_batch)
