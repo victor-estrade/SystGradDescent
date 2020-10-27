@@ -58,6 +58,27 @@ BENCHMARK_NAME = DATA_NAME+'-prior'
 N_ITER = 30
 
 
+class TrainGenerator:
+    def __init__(self, data_generator, cuda=False):
+        self.data_generator = data_generator
+        if cuda:
+            self.data_generator.cuda()
+        else:
+            self.data_generator.cpu()
+        self.nuisance_params = self.data_generator.nuisance_params
+
+
+    def generate(self, n_samples=None):
+            X, y, w = self.data_generator.diff_generate(n_samples=n_samples)
+            return X, y, w
+
+    def reset(self):
+        self.data_generator.reset()
+
+    def tensor(self, data, requires_grad=False, dtype=None):
+        return self.data_generator.tensor(data, requires_grad=requires_grad, dtype=dtype)
+
+
 def build_model(args, i_cv):
     args.net = ARCHI(n_in=1, n_out=2, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
@@ -124,6 +145,7 @@ def run(args, i_cv):
     config = Config()
     seed = SEED + i_cv * 5
     train_generator = GeneratorTorch(seed, cuda=args.cuda)
+    train_generator = TrainGenerator(train_generator, cuda=args.cuda)
     valid_generator = Generator(seed+1)
     test_generator  = Generator(seed+2)
 

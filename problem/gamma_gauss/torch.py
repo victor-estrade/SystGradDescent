@@ -101,6 +101,19 @@ class GeneratorTorch():
             w_s = w_s.cuda()
         return w_s.view(-1, 1), w_b.view(-1, 1)
 
+    def diff_generate(self, n_samples=None):
+        """Generator for Tangent Propagation"""
+        s, w_s, b, w_b, y = self.generate(n_samples=n_samples)
+        X = torch.cat([s, b], axis=0)
+        w = torch.cat([w_s, w_b], axis=0)
+        return X, y, w
+
+    def split_generate(self, n_samples=None):
+        """Generator for INFERNO"""
+        # torch.autograd.set_detect_anomaly(True)
+        s, w_s, b, w_b, y = self.generate(n_samples=n_samples)
+        return s, w_s, b, w_b, y
+
     def proba_density(self, x, rescale, mix):
         """
         Computes p(x | rescale, mix)

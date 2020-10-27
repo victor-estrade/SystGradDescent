@@ -100,6 +100,19 @@ class GeneratorTorch():
         y = self._generate_labels(n_backgrounds, n_signals)
         return s, w_s, b, w_b, y
 
+    def diff_generate(self, n_samples=None):
+        """Generator for Tangent Propagation"""
+        s, w_s, b, w_b, y = self.generate(n_samples=n_samples)
+        X = torch.cat([s, b], axis=0)
+        w = torch.cat([w_s, w_b], axis=0)
+        return X, y, w
+
+    def split_generate(self, n_samples=None):
+        """Generator for INFERNO"""
+        # torch.autograd.set_detect_anomaly(True)
+        s, w_s, b, w_b, y = self.generate(n_samples=n_samples)
+        return s, w_s, b, w_b, y
+
     def reset(self):
         torch.manual_seed(self.seed)
 
