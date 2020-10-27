@@ -12,7 +12,6 @@ import numpy as np
 
 from sklearn.base import BaseEstimator
 from sklearn.base import ClassifierMixin
-from .summaries import ClassifierSummaryComputer
 from .summaries import DEFAULT_N_BINS
 
 # TODO : Maybe the sklearn dependancy is useless.
