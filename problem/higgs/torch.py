@@ -88,7 +88,7 @@ class GeneratorTorch():
 
         self.feature_names = data.columns[:-2] if len(data.columns) == 31 else data.columns[:-3]
         dtypes = {name : "float32" for name in self.feature_names}
-        dtypes["Label"] = "int32" if cuda else "int64"
+        dtypes["Label"] = "int64"
         dtypes["Weight"] = "float32"
         data = data.astype(dtypes)
         self.data_dict = {col: self.tensor(data[col].values) for col in data.columns}
