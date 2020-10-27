@@ -128,7 +128,7 @@ class Inferno(BaseClassifierModel, BaseNeuralNet):
         return weighted_counts
 
     def save(self, save_directory):
-        super(BaseModel, self).save(save_directory)
+        super().save(save_directory)
         path = os.path.join(save_directory, 'weights.pth')
         torch.save(self.net.state_dict(), path)
 
@@ -138,7 +138,7 @@ class Inferno(BaseClassifierModel, BaseNeuralNet):
         return self
 
     def load(self, save_directory):
-        super(BaseModel, self).load(save_directory)
+        super().load(save_directory)
         path = os.path.join(save_directory, 'weights.pth')
         if self.cuda_flag:
             self.net.load_state_dict(torch.load(path))
