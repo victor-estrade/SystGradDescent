@@ -181,7 +181,7 @@ class GeneratorTorch():
 
     def split_generate(self, tau_es, jet_es, lep_es, mu, n_samples=None):
         """Generator for INFERNO"""
-        torch.autograd.set_detect_anomaly(True)
+        # torch.autograd.set_detect_anomaly(True)
         X, y, w = self._skew(tau_es, jet_es, lep_es, mu, n_samples=n_samples)
         X_s = X[y==1]
         X_b = X[y==0]
