@@ -49,8 +49,11 @@ def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 def nominal_n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
         chosen_true_mu = 1.0  # Nominal value of mu
-        chosen_true_rescale = evaluation.true_rescale.median()
-        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_rescale == chosen_true_rescale)]
+        chosen_true_tes = 1.0  # Nominal value
+        chosen_true_jes = 1.0  # Nominal value
+        chosen_true_les = 1.0  # Nominal value
+        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_tes == chosen_true_tes)
+                         & (evaluation.true_jes == chosen_true_jes) & (evaluation.true_les == chosen_true_les)]
         x = df.n_test_samples
         y = df.target_mse
         label = f"$\\alpha$ = {chosen_true_rescale}"
@@ -92,8 +95,11 @@ def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 def nominal_n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
         chosen_true_mu = 1.0  # Nominal value of mu
-        chosen_true_rescale = evaluation.true_rescale.median()
-        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_rescale == chosen_true_rescale)]
+        chosen_true_tes = 1.0  # Nominal value
+        chosen_true_jes = 1.0  # Nominal value
+        chosen_true_les = 1.0  # Nominal value
+        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_tes == chosen_true_tes)
+                         & (evaluation.true_jes == chosen_true_jes) & (evaluation.true_les == chosen_true_les)]
         x = df.n_test_samples
         y = df.var_stat
         label = f"$\\alpha$ = {chosen_true_rescale}"
@@ -136,8 +142,11 @@ def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 def nominal_n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
         chosen_true_mu = 1.0  # Nominal value of mu
-        chosen_true_rescale = evaluation.true_rescale.median()
-        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_rescale == chosen_true_rescale)]
+        chosen_true_tes = 1.0  # Nominal value
+        chosen_true_jes = 1.0  # Nominal value
+        chosen_true_les = 1.0  # Nominal value
+        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_tes == chosen_true_tes)
+                         & (evaluation.true_jes == chosen_true_jes) & (evaluation.true_les == chosen_true_les)]
         x = df.n_test_samples
         y = df.var_syst
         label = f"$\\alpha$ = {chosen_true_rescale}"
@@ -180,8 +189,11 @@ def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DI
 def nominal_n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
         chosen_true_mu = 1.0  # Nominal value of mu
-        chosen_true_rescale = evaluation.true_rescale.median()
-        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_rescale == chosen_true_rescale)]
+        chosen_true_tes = 1.0  # Nominal value
+        chosen_true_jes = 1.0  # Nominal value
+        chosen_true_les = 1.0  # Nominal value
+        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_tes == chosen_true_tes)
+                         & (evaluation.true_jes == chosen_true_jes) & (evaluation.true_les == chosen_true_les)]
         x = df.n_test_samples
         y = df.sigma_mean
         label = f"$\\alpha$ = {chosen_true_rescale}"
