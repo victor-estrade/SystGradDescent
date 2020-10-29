@@ -79,6 +79,7 @@ def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
         chosen_true_mu = 1.0  # Nominal value of mu
         data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
         for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+            print("df.columns", df.columns)
             x = df.n_test_samples
             y = df.var_stat
             label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
