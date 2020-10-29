@@ -165,7 +165,8 @@ python run_array.py benchmark.HIGGSTES.GB-Prior --gpu 1 --n-estimators 300  --ma
 python run_array.py benchmark.HIGGSTES.NN-Prior --gpu 1 --n-steps 5000 --n-unit 500 --batch-size 10000 --xp-name HIGGSTES-NN-Prior --partition besteffort
 python run_array.py benchmark.HIGGSTES.DA-Prior --gpu 1 --n-steps 5000 --n-unit 500 --batch-size 10000 --xp-name HIGGSTES-DA-Prior --partition besteffort
 
-python run_array.py benchmark.HIGGSTES.TP-Prior --gpu 1 --n-steps 5000 --n-unit 500 --sample-size 10000 --xp-name HIGGSTES-TP-Prior --partition besteffort
+python run_array.py benchmark.HIGGSTES.TP-Prior --gpu 1 --n-steps 5000 --n-unit 500 --batch-size 10000 --xp-name HIGGSTES-TP-Prior --partition besteffort
+
 python run_array.py benchmark.HIGGSTES.INF-Prior --gpu 1 --n-steps 2000 --n-unit 500 --sample-size 10000 --xp-name HIGGSTES-INF-Prior --partition besteffort
 
 python run_array.py benchmark.HIGGSTES.REG-Prior --gpu 1 --n-steps 5000 --n-unit 500 --sample-size 10000 --xp-name HIGGSTES-REG-Prior --partition besteffort

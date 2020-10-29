@@ -24,7 +24,7 @@ INF_HP   = dict(
                 archi_name=["L4"]
                 , n_steps=[2000, 5000]
                 , n_units=[500]
-                , batch_size=[10000]
+                , sample_size=[10000]
                 )
 
 NN_HP    = dict(
