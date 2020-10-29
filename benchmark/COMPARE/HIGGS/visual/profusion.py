@@ -31,7 +31,7 @@ def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
         chosen_true_mu = 1.0  # Nominal value of mu
         data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.n_test_samples
             y = df.target_mse
             label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
@@ -75,7 +75,7 @@ def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
         chosen_true_mu = 1.0  # Nominal value of mu
         data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.n_test_samples
             y = df.var_stat
             label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
@@ -119,7 +119,7 @@ def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
         chosen_true_mu = 1.0  # Nominal value of mu
         data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.n_test_samples
             y = df.var_syst
             label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
@@ -163,7 +163,7 @@ def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DI
     for evaluation in all_evaluations:
         chosen_true_mu = 1.0  # Nominal value of mu
         data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.n_test_samples
             y = df.sigma_mean
             label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
@@ -207,7 +207,7 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.true_mu
             y = df.target_mean
             y_err = df.sigma_mean
@@ -236,7 +236,7 @@ def true_mu_target_mean_std(all_evaluations, title="No Title", directory=DEFAULT
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.true_mu
             y = df.target_mean
             y_err = df.target_std
@@ -267,7 +267,7 @@ def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-        for i, (true_tes, true_jes, true_les, df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
             x = df.true_mu
             y = df.target_mean
             true = df.true_mu
