@@ -97,6 +97,8 @@ def make_common_plots(data_name, benchmark_name, args, TheLoader):
     if all_evaluations:
         make_profusion_estimation_plots(all_evaluations, loader)
 
+    all_evaluations = []
+    all_loaders = []
     for kwargs in hp_kwargs_generator(args):
         loader = TheLoader(data_name, benchmark_name, **kwargs)
         try:
