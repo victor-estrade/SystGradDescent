@@ -56,7 +56,7 @@ def nominal_n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_D
                          & (evaluation.true_jes == chosen_true_jes) & (evaluation.true_les == chosen_true_les)]
         x = df.n_test_samples
         y = df.target_mse
-        label = f"$\\alpha$ = {chosen_true_rescale}"
+        label = f"tes={chosen_true_tes}, jes={chosen_true_jes}, les={chosen_true_les}"
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('# test samples')
@@ -102,7 +102,7 @@ def nominal_n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAUL
                          & (evaluation.true_jes == chosen_true_jes) & (evaluation.true_les == chosen_true_les)]
         x = df.n_test_samples
         y = df.var_stat
-        label = f"$\\alpha$ = {chosen_true_rescale}"
+        label = f"tes={chosen_true_tes}, jes={chosen_true_jes}, les={chosen_true_les}"
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('# test samples')
@@ -149,7 +149,7 @@ def nominal_n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAUL
                          & (evaluation.true_jes == chosen_true_jes) & (evaluation.true_les == chosen_true_les)]
         x = df.n_test_samples
         y = df.var_syst
-        label = f"$\\alpha$ = {chosen_true_rescale}"
+        label = f"tes={chosen_true_tes}, jes={chosen_true_jes}, les={chosen_true_les}"
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('# test samples')
@@ -196,7 +196,7 @@ def nominal_n_samples_sigma_mean(all_evaluations, title="No Title", directory=DE
                          & (evaluation.true_jes == chosen_true_jes) & (evaluation.true_les == chosen_true_les)]
         x = df.n_test_samples
         y = df.sigma_mean
-        label = f"$\\alpha$ = {chosen_true_rescale}"
+        label = f"tes={chosen_true_tes}, jes={chosen_true_jes}, les={chosen_true_les}"
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('# test samples')
