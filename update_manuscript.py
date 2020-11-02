@@ -13,9 +13,9 @@ THESIS_DIR = "/home/estrade/Bureau/PhD/Manuscrit"
 
 def cp(src, dst):
     """Just a reminder"""
-    print("++", dst[len(THESIS_DIR):])
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     shutil.copyfile(src, dst)
+    print("++", dst[len(THESIS_DIR):])
 
 
 
@@ -56,7 +56,7 @@ BEST_MEDIAN = "BEST_MEDIAN"
 
 
 
-# Chapter 
+# Chapter
 Chap1 = os.path.join("Chapter1", "Figs", "Raster")
 Chap2 = os.path.join("Chapter2", "Figs", "Raster")
 Chap3 = os.path.join("Chapter3", "Figs", "Raster")
@@ -74,7 +74,7 @@ App4 = os.path.join("Appendix4", "Figs", "Raster")
 
 
 def main():
-    
+
     # =================================================================
     # CHAPTER 4
     # =================================================================
@@ -146,7 +146,7 @@ def main():
             , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=2000-errplot_mse.png") )
     cp(src(OUT_DIR, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=2000-boxplot_mse.png")
             , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=2000-boxplot_mse.png") )
-    
+
     cp(src(OUT_DIR, COMPARE, GGCalib, BEST_MSE, "GG-calib_best_average_N=2000-errplot_mse.png")
             , dst(THESIS_DIR, Chap5, COMPARE, GGCalib, BEST_MSE, "GG-calib_best_average_N=2000-errplot_mse.png") )
     cp(src(OUT_DIR, COMPARE, GGCalib, BEST_MSE, "GG-calib_best_average_N=2000-boxplot_mse.png")
@@ -173,7 +173,7 @@ def main():
             , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=50-errplot_mse.png") )
     cp(src(OUT_DIR, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=50-boxplot_mse.png")
             , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=50-boxplot_mse.png") )
-    
+
     cp(src(OUT_DIR, COMPARE, GGCalib, BEST_MSE, "GG-calib_best_average_N=50-errplot_mse.png")
             , dst(THESIS_DIR, Chap5, COMPARE, GGCalib, BEST_MSE, "GG-calib_best_average_N=50-errplot_mse.png") )
     cp(src(OUT_DIR, COMPARE, GGCalib, BEST_MSE, "GG-calib_best_average_N=50-boxplot_mse.png")
