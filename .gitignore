@@ -107,5 +107,6 @@ logs/
 savings/
 old_savings/
 OUTPUT/
+hessian/
 # Jupyter notebooks too !
 *.ipynb
