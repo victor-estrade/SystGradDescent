@@ -67,6 +67,7 @@ def make_individual_fisher_plots(fisher_table, loader):
     os.makedirs(directory, exist_ok=True)
 
     individual.nominal_fisher_n_bins(fisher_table, title=loader.model_full_name, directory=directory)
+    individual.fisher_n_bins(fisher_table, title=loader.model_full_name, directory=directory)
 
 
 
