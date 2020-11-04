@@ -71,7 +71,11 @@ def make_individual_fisher_plots(fisher_table, loader):
 
 
 def make_common_plots(data_name, benchmark_name, args, TheLoader):
+    print("Make evaluation plots")
+    print("="*25)
     make_evaluation_plots(data_name, benchmark_name, args, TheLoader)
+    print("Make fisher plots")
+    print("="*25)
     make_fisher_plots(data_name, benchmark_name, args, TheLoader)
 
 
@@ -93,7 +97,8 @@ def make_evaluation_plots(data_name, benchmark_name, args, TheLoader):
             all_evaluations.append(evaluation)
             all_loaders.append(loader)
             make_individual_plots(evaluation, loader)
-    make_profusion_plots(all_evaluations, loader)
+    if all_evaluations:
+        make_profusion_plots(all_evaluations, loader)
 
 
 def make_hp_table(data_name, benchmark_name, args, TheLoader):
