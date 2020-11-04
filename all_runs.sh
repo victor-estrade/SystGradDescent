@@ -54,6 +54,8 @@ python run_array.py benchmark.GG.REG-Calib --gpu 1 --n-steps 2000 --n-unit 200 -
 
 python run_array.py benchmark.GG.REG-Prior-Plus --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name GG-REG-Prior-Plus --partition besteffort
 
+# VAR RUN
+python run_array.py benchmark.VAR.GG.DA --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name VAR-GG-DA --partition besteffort
 
 
 
