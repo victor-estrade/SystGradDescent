@@ -60,11 +60,21 @@ def make_profusion_plots(all_evaluations, loader):
     profusion.mse_box_plot(all_evaluations, title=title, directory=directory)
     profusion.v_stat_box_plot(all_evaluations, title=title, directory=directory)
     profusion.v_syst_box_plot(all_evaluations, title=title, directory=directory)
+
+def make_individual_plots(fisher_table, loader):
+    directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name, loader.model_full_name)
+    os.makedirs(directory, exist_ok=True)
     
-    
+
+
+
+
 
 
 def make_common_plots(data_name, benchmark_name, args, TheLoader):
+    make_evaluation_plots(data_name, benchmark_name, args, TheLoader)
+
+def make_evaluation_plots(data_name, benchmark_name, args, TheLoader):
     """
     make all the common individual plots and profusion plots.
     """
@@ -91,8 +101,16 @@ def make_hp_table(data_name, benchmark_name, args, TheLoader):
     path = os.path.join(directory, "hp_table.csv")
     pd.DataFrame(hp_kwargs_generator(args)).to_csv(path)
 
+def make_fisher_plots(data_name, benchmark_name, args, TheLoader):
+    for kwargs in hp_kwargs_generator(args):
+        loader = TheLoader(data_name, benchmark_name, **kwargs)
+        try:
+            fisher_data = loader.load_fisher()
+        except FileNotFoundError:
+            print(f"Missing results for {loader.model_full_name}")
+        else:
+            make_individual_fisher_plots(fisher_data, loader)
+
 
 def _stuff(args):
     print(list(filter(lambda kwargs : kwargs['max_depth']==3, hp_kwargs_generator(args))))
-
-
