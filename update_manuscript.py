@@ -6,16 +6,27 @@ from __future__ import unicode_literals
 
 import os
 import shutil
+import stat
 
 
 OUT_DIR = "/home/estrade/Bureau/PhD/SystML/SystGradDescent/OUTPUT"
 THESIS_DIR = "/home/estrade/Bureau/PhD/Manuscrit"
 
 def cp(src, dst):
-    """Just a reminder"""
+    """Copy file if dst is less recent than src."""
     os.makedirs(os.path.dirname(dst), exist_ok=True)
-    shutil.copyfile(src, dst)
-    print("++", dst[len(THESIS_DIR):])
+    src_stat = os.stat(src)
+    try:
+        dst_stat = os.stat(dst)
+    except FileNotFoundError:
+        dst_stat = (0,)*10
+    src_modif_time = src_stat[stat.ST_MTIME]
+    dst_modif_time = dst_stat[stat.ST_MTIME]
+    if src_modif_time > dst_modif_time:
+        shutil.copyfile(src, dst)
+        print("  ++", dst[len(THESIS_DIR):])
+    else:
+        print("  --", dst[len(THESIS_DIR):])
 
 
 
@@ -78,6 +89,7 @@ def main():
     # =================================================================
     # CHAPTER 4
     # =================================================================
+    print('CHAPTER 4')
     cp(src(OUT_DIR, GG, "explore", "x_distrib.png")
             , dst(THESIS_DIR, Chap4, "minitoy", "gg_distrib.png") )
     cp(src(OUT_DIR, S3D2, "explore", "pairgrid.png")
@@ -86,7 +98,9 @@ def main():
     # =================================================================
     # CHAPTER 5
     # =================================================================
+    print('CHAPTER 5')
     # fig:gg_baseline_nominal_n_samples_mse
+    print('fig:gg_baseline_nominal_n_samples_mse')
     cp(src(OUT_DIR, COMPARE, GGPrior, GB, PROFUSION,  "profusion_nominal_n_samples_mse.png")
             , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, GB,  "profusion_nominal_n_samples_mse.png") )
     cp(src(OUT_DIR, COMPARE, GGPrior, NN, PROFUSION,  "profusion_nominal_n_samples_mse.png")
@@ -108,6 +122,7 @@ def main():
             , dst(THESIS_DIR, Chap5, COMPARE, GGPriorPlus, REG,  "profusion_nominal_n_samples_mse.png") )
 
     # fig:gg_baseline_n_samples_mse
+    print("fig:gg_baseline_n_samples_mse")
     cp(src(OUT_DIR, COMPARE, GGPrior, GB, PROFUSION,  "profusion_n_samples_mse.png")
             , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, GB,  "profusion_n_samples_mse.png") )
     cp(src(OUT_DIR, COMPARE, GGPrior, NN, PROFUSION,  "profusion_n_samples_mse.png")
@@ -130,12 +145,46 @@ def main():
 
 
     # fig:gg_baseline_compare_calib_estimator
+    print('fig:gg_baseline_compare_calib_estimator')
+    cp(src(OUT_DIR, COMPARE, GGPrior, GB, PROFUSION,  "profusion_true_mu_target_mean.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, GB,  "profusion_true_mu_target_mean.png") )
+    cp(src(OUT_DIR, COMPARE, GGCalib, GB, PROFUSION,  "profusion_true_mu_target_mean.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGCalib, GB,  "profusion_true_mu_target_mean.png") )
     cp(src(OUT_DIR, COMPARE, GGPrior, NN, PROFUSION,  "profusion_true_mu_target_mean.png")
             , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, NN,  "profusion_true_mu_target_mean.png") )
     cp(src(OUT_DIR, COMPARE, GGCalib, NN, PROFUSION,  "profusion_true_mu_target_mean.png")
             , dst(THESIS_DIR, Chap5, COMPARE, GGCalib, NN,  "profusion_true_mu_target_mean.png") )
 
+    # fig:gg_syst_aware_compare_calib_estimator
+    print('fig:gg_syst_aware_compare_calib_estimator')
+    cp(src(OUT_DIR, COMPARE, GGPrior, DA, PROFUSION,  "profusion_true_mu_target_mean.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, DA,  "profusion_true_mu_target_mean.png") )
+    cp(src(OUT_DIR, COMPARE, GGCalib, DA, PROFUSION,  "profusion_true_mu_target_mean.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGCalib, DA,  "profusion_true_mu_target_mean.png") )
+    cp(src(OUT_DIR, COMPARE, GGPrior, TP, PROFUSION,  "profusion_true_mu_target_mean.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, TP,  "profusion_true_mu_target_mean.png") )
+    cp(src(OUT_DIR, COMPARE, GGCalib, TP, PROFUSION,  "profusion_true_mu_target_mean.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGCalib, TP,  "profusion_true_mu_target_mean.png") )
+    cp(src(OUT_DIR, COMPARE, GGPrior, PIVOT, PROFUSION,  "profusion_true_mu_target_mean.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, PIVOT,  "profusion_true_mu_target_mean.png") )
+    cp(src(OUT_DIR, COMPARE, GGCalib, PIVOT, PROFUSION,  "profusion_true_mu_target_mean.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGCalib, PIVOT,  "profusion_true_mu_target_mean.png") )
+    cp(src(OUT_DIR, COMPARE, GGPrior, INF, PROFUSION,  "profusion_true_mu_target_mean.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, INF,  "profusion_true_mu_target_mean.png") )
+    cp(src(OUT_DIR, COMPARE, GGCalib, INF, PROFUSION,  "profusion_true_mu_target_mean.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGCalib, INF,  "profusion_true_mu_target_mean.png") )
+
+    # fig:gg_regressor_compare_calib_estimator
+    print('fig:gg_regressor_compare_calib_estimator')
+    cp(src(OUT_DIR, COMPARE, GGPrior, REG, PROFUSION,  "profusion_true_mu_target_mean.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, REG,  "profusion_true_mu_target_mean.png") )
+    cp(src(OUT_DIR, COMPARE, GGCalib, REG, PROFUSION,  "profusion_true_mu_target_mean.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGCalib, REG,  "profusion_true_mu_target_mean.png") )
+    cp(src(OUT_DIR, COMPARE, GGMarginal, REG, PROFUSION,  "profusion_true_mu_target_mean.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGMarginal, REG,  "profusion_true_mu_target_mean.png") )
+
     # fig:gg_baseline_compare_calib_n_samples_mse
+    print('fig:gg_baseline_compare_calib_n_samples_mse')
     cp(src(OUT_DIR, COMPARE, GGPrior, NN, PROFUSION,  "profusion_n_samples_mse.png")
             , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, NN,  "profusion_n_samples_mse.png") )
     cp(src(OUT_DIR, COMPARE, GGCalib, NN, PROFUSION,  "profusion_n_samples_mse.png")
@@ -154,10 +203,12 @@ def main():
 
 
     # fig:gg_mean_link
+    print('fig:gg_mean_link')
     cp(src(OUT_DIR, GG, "explore", "mean_link.png")
         , dst(THESIS_DIR, Chap5, GG,  "mean_link.png") )
 
     # fig:gg_prior_distrib_summaries
+    print('fig:gg_prior_distrib_summaries')
     cp(src(OUT_DIR, GGPrior, DA, "DataAugmentation-L4x200-Adam-0.001-(0.9-0.999)-2000-20", "cv_0", "valid_summaries.png")
             , dst(THESIS_DIR, Chap5, GGPrior, DA, "valid_summaries.png") )
     cp(src(OUT_DIR, GGPrior, DA, "DataAugmentation-L4x200-Adam-0.001-(0.9-0.999)-2000-20", "cv_0", "valid_distrib.png")
@@ -169,6 +220,7 @@ def main():
 
 
     # fig:compare_gg_best_mse50_samples
+    print('fig:compare_gg_best_mse50_samples')
     cp(src(OUT_DIR, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=50-errplot_mse.png")
             , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=50-errplot_mse.png") )
     cp(src(OUT_DIR, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=50-boxplot_mse.png")
@@ -181,6 +233,7 @@ def main():
 
 
     # fig:compare_gg_prior_best_mse_v_stat_syst
+    print('fig:compare_gg_prior_best_mse_v_stat_syst')
     cp(src(OUT_DIR, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=2000-errplot_v_stat.png")
             , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=2000-errplot_v_stat.png") )
     cp(src(OUT_DIR, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=2000-errplot_v_syst.png")
