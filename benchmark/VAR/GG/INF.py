@@ -32,6 +32,7 @@ from utils.images import gather_images
 from visual.misc import plot_params
 
 from problem.gamma_gauss.torch import GeneratorTorch
+from problem.gamma_gauss.torch import GGLoss
 from problem.gamma_gauss import GGConfig as Config
 from problem.gamma_gauss import Generator
 from problem.gamma_gauss import param_generator

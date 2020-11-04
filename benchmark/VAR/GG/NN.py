@@ -31,15 +31,14 @@ from utils.images import gather_images
 
 from visual.misc import plot_params
 
-from problem.gamma_gauss.torch import GeneratorTorch
 from problem.gamma_gauss import GGConfig as Config
 from problem.gamma_gauss import Generator
 from problem.gamma_gauss import param_generator
 from problem.gamma_gauss import GGNLL as NLLComputer
 
-from model.inferno import Inferno
+from model.neural_network import NeuralNetClassifier
 from archi.classic import L4 as ARCHI
-from ...my_argparser import INFERNO_parse_args
+from ...my_argparser import NET_parse_args
 
 
 DATA_NAME = 'GG'
@@ -48,10 +47,9 @@ N_ITER = 30
 
 
 def build_model(args, i_cv):
-    args.net = ARCHI(n_in=1, n_out=args.n_bins, n_unit=args.n_unit)
+    args.net = ARCHI(n_in=1, n_out=2, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
-    args.criterion = GGLoss()
-    model = get_model(args, Inferno)
+    model = get_model(args, NeuralNetClassifier)
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     return model
 
@@ -62,7 +60,7 @@ def build_model(args, i_cv):
 def main():
     # BASIC SETUP
     logger = set_logger()
-    args = INFERNO_parse_args(main_description="Training launcher for INFERNO on GG benchmark")
+    args = NET_parse_args(main_description="Training launcher for INFERNO on GG benchmark")
     logger.info(args)
     flush(logger)
     # INFO
@@ -89,7 +87,7 @@ def run(args, i_cv):
     logger.info('Set up data generator')
     config = Config()
     seed = SEED + i_cv * 5
-    train_generator = GeneratorTorch(seed, cuda=args.cuda)
+    train_generator = Generator(seed)
     valid_generator = Generator(seed+1)
     test_generator  = Generator(seed+2)
 
@@ -100,7 +98,7 @@ def run(args, i_cv):
     flush(logger)
 
     # TRAINING / LOADING
-    train_or_load_inferno(model, train_generator, retrain=args.retrain)
+    train_or_load_classifier(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
 
     some_fisher = compute_fisher(*compute_bins(model, valid_generator, config, n_bins=3), config.TRUE.mu)
     some_fisher_bis = compute_fisher(*compute_bins(model, valid_generator, config, n_bins=3), config.TRUE.mu)
