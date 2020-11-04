@@ -224,7 +224,7 @@ def n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
 def nominal_fisher_n_bins(fisher_table, title="No Title", directory=DEFAULT_DIR):
     chosen_true_mix = fisher_table.true_mix.median()
     chosen_true_rescale = fisher_table.true_rescale.median()
-    data = fisher_table[ (fisher_table.true_mix == chosen_true_mix) and (fisher_table.true_rescale == chosen_true_rescale) ]
+    data = fisher_table[ (fisher_table.true_mix == chosen_true_mix) & (fisher_table.true_rescale == chosen_true_rescale) ]
     data = data[ data.n_test_samples == 2000 ]
 
     data_mean = data_table.groupby("i_cv").mean()
