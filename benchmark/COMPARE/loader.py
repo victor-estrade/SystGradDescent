@@ -28,10 +28,15 @@ from model.gradient_boost import GradientBoostingModel
 
 class Loader(object):
     """docstring for Loader"""
-    def __init__(self, benchmark_name, base_name, model_full_name):
+    def __init__(self, data_name, benchmark_name, base_name, model_full_name):
+        self.data_name = data_name
         self.benchmark_name = benchmark_name
         self.base_name = base_name
         self.model_full_name = model_full_name
+
+    def _get_var_result_directory(self):
+        benchmark_name = 'VAR-'+self.data_name
+        return os.path.join(SAVING_DIR, benchmark_name, self.base_name, self.model_full_name)
 
     def _get_result_directory(self):
         return os.path.join(SAVING_DIR, self.benchmark_name, self.base_name, self.model_full_name)
@@ -90,6 +95,11 @@ class Loader(object):
         evaluation = evaluation.join(config_table, rsuffix='_')
         return evaluation
 
+    def load_fisher(self):
+        path = os.path.join(self._get_var_result_directory(), "ficher.csv")
+        fisher = pd.read_csv(path, index_col=0)
+        return fisher
+
 
 class GBLoader(Loader):
     """docstring for GBLoader"""
@@ -98,7 +108,7 @@ class GBLoader(Loader):
         model.set_info(data_name, benchmark_name, 0)
         model_full_name = model.get_name()
         base_name = model.base_name
-        super().__init__(benchmark_name, base_name, model_full_name)
+        super().__init__(data_name, benchmark_name, base_name, model_full_name)
         self.args = dict(n_estimators=n_estimators, max_depth=max_depth, learning_rate=learning_rate)
 
 
@@ -113,8 +123,8 @@ class NNLoader(Loader):
         base_name = "NeuralNetClassifier"
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}"
-        super().__init__(benchmark_name, base_name, model_full_name)
-        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
+        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size,
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name)
 
 
@@ -130,8 +140,8 @@ class DALoader(Loader):
         base_name = "DataAugmentation"
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}"
-        super().__init__(benchmark_name, base_name, model_full_name)
-        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
+        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size,
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name)
 
 
@@ -146,8 +156,8 @@ class TPLoader(Loader):
         base_name = "TangentPropClassifier"
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{trade_off}"
-        super().__init__(benchmark_name, base_name, model_full_name)
-        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
+        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size,
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name, trade_off=trade_off)
 
 
@@ -162,8 +172,8 @@ class PIVOTLoader(Loader):
         base_name = "PivotClassifier"
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}_{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{trade_off}"
-        super().__init__(benchmark_name, base_name, model_full_name)
-        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
+        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size,
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name, trade_off=trade_off)
 
 
@@ -180,8 +190,8 @@ class INFLoader(Loader):
         base_name = "Inferno"
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{sample_size}-{temperature}"
-        super().__init__(benchmark_name, base_name, model_full_name)
-        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, sample_size=sample_size, 
+        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, sample_size=sample_size,
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name, temperature=temperature)
 
 
@@ -196,10 +206,6 @@ class REGLoader(Loader):
         base_name = "Regressor"
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{sample_size}"
-        super().__init__(benchmark_name, base_name, model_full_name)
-        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size, 
+        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size,
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name)
-        
-
-
-
