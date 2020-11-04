@@ -46,10 +46,6 @@ DATA_NAME = 'GG'
 BENCHMARK_NAME = 'VAR-'+DATA_NAME
 N_ITER = 30
 
-def build_model(args, i_cv):
-    model = get_model(args, GradientBoostingModel)
-    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
-    return model
 
 def build_model(args, i_cv):
     args.net = ARCHI(n_in=1, n_out=args.n_bins, n_unit=args.n_unit)
