@@ -6,6 +6,7 @@
 
 
 
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/MODELS/ ./OUTPUT/MODELS
 rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/COMPARE/ ./OUTPUT/COMPARE
 
 rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG/learning_curve/ ./OUTPUT/GG/learning_curve
