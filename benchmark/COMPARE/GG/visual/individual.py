@@ -203,7 +203,6 @@ def n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.clf()
 
 
-
 def n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
     chosen_true_mix = evaluation.true_mix.median()
 
@@ -219,4 +218,25 @@ def n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.title(title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'n_samples_v_syst.png'), bbox_inches='tight')
+    plt.clf()
+
+
+def nominal_fisher_n_bins(fisher_table, title="No Title", directory=DEFAULT_DIR):
+    chosen_true_mix = fisher_table.true_mix.median()
+    chosen_true_rescale = fisher_table.true_rescale.median()
+    data = fisher_table[ (fisher_table.true_mix == chosen_true_mix) and (fisher_table.true_rescale == chosen_true_rescale) ]
+    data = data[ data.n_test_samples == 2000 ]
+
+    data_mean = data_table.groupby("i_cv").mean()
+    x = data_mean.n_bins
+    y = data_mean.fisher
+    data_std = data_table.groupby("i_cv").std()
+    y_err = data_std.fisher
+    label = "nominal"
+    plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
+    plt.xlabel('# bins')
+    plt.ylabel('mean(fisher info) $\pm$ std(fisher info)')
+    plt.title(title)
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'nominal_fisher_n_bins.png'), bbox_inches='tight')
     plt.clf()
