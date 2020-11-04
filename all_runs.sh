@@ -55,7 +55,16 @@ python run_array.py benchmark.GG.REG-Calib --gpu 1 --n-steps 2000 --n-unit 200 -
 python run_array.py benchmark.GG.REG-Prior-Plus --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name GG-REG-Prior-Plus --partition besteffort
 
 # VAR RUN
+python run_array.py benchmark.VAR.GG.GB --gpu 1 --n-estimators 100 300 1000  --max-depth 3 5 10 --learning-rate 0.1 0.05 0.01 --xp-name VAR-GG-GB --partition besteffort
+python run_array.py benchmark.VAR.GG.NN --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --batch-size 1000 --xp-name VAR-GG-NN --partition besteffort
 python run_array.py benchmark.VAR.GG.DA --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name VAR-GG-DA --partition besteffort
+
+python run_array.py benchmark.VAR.GG.PIVOT --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name VAR-GG-PIVOT --partition besteffort
+python run_array.py benchmark.VAR.GG.TP --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name VAR-GG-TP --partition besteffort
+
+python run_array.py benchmark.VAR.GG.INF --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name VAR-GG-INF --partition besteffort
+
+python run_array.py benchmark.VAR.GG.REG --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name VAR-GG-REG --partition besteffort
 
 
 
