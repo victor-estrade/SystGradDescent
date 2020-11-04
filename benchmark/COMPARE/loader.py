@@ -96,7 +96,7 @@ class Loader(object):
         return evaluation
 
     def load_fisher(self):
-        path = os.path.join(self._get_var_result_directory(), "ficher.csv")
+        path = os.path.join(self._get_var_result_directory(), "fisher.csv")
         fisher = pd.read_csv(path, index_col=0)
         return fisher
 
