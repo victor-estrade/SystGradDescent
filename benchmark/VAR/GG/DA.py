@@ -138,7 +138,7 @@ def run(args, i_cv):
             fisher = compute_fisher(gamma_array, beta_array, test_config.TRUE.mu)
             result_row.update({f'gamma_{i}' : gamma for i, gamma in enumerate(gamma_array, 1)})
             result_row.update({f'beta_{i}' : beta for i, beta in enumerate(beta_array, 1)})
-            result_row.update(test_config.TRUE.to_dict(prefix='true'))
+            result_row.update(test_config.TRUE.to_dict(prefix='true_'))
             result_row['n_test_samples'] = test_config.N_TESTING_SAMPLES
             result_row['fisher'] = fisher
             result_row['n_bins'] = n_bins
