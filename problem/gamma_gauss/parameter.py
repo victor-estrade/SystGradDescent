@@ -34,7 +34,11 @@ from dataclasses import asdict
 class Parameter:
     rescale : float
     mix : float
-    
+
+    @property
+    def mu(self):
+        return self.mix
+
     @property
     def nuisance_parameters(self):
         return (self.rescale,)
@@ -69,7 +73,7 @@ class Parameter:
         new_parameter = Parameter(rescale, mix)
         return new_parameter
 
-    def __getitem__(self, key): 
+    def __getitem__(self, key):
         return asdict(self)[key]
 
     def items(self):
