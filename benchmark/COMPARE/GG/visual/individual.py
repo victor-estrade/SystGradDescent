@@ -268,3 +268,4 @@ def fisher_n_bins(data, title="No Title", directory=DEFAULT_DIR):
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'fisher_n_bins.png'), bbox_inches='tight')
     plt.clf()
+    plt.close(fig)
