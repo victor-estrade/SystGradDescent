@@ -64,8 +64,6 @@ python run_array.py benchmark.VAR.GG.TP --gpu 1 --n-steps 2000 5000 --n-unit 50 
 
 python run_array.py benchmark.VAR.GG.INF --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name VAR-GG-INF --partition besteffort
 
-python run_array.py benchmark.VAR.GG.REG --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name VAR-GG-REG --partition besteffort
-
 
 
 # TOY 3D
@@ -176,7 +174,7 @@ python run_array.py benchmark.HIGGSTES.GB-Prior --gpu 1 --n-estimators 300  --ma
 python run_array.py benchmark.HIGGSTES.NN-Prior --gpu 1 --n-steps 5000 --n-unit 500 --batch-size 10000 --xp-name HIGGSTES-NN-Prior --partition besteffort
 python run_array.py benchmark.HIGGSTES.DA-Prior --gpu 1 --n-steps 5000 --n-unit 500 --batch-size 10000 --xp-name HIGGSTES-DA-Prior --partition besteffort
 
-python run_array.py benchmark.HIGGSTES.TP-Prior --gpu 1 --n-steps 5000 --n-unit 500 --batch-size 10000 --xp-name HIGGSTES-TP-Prior --partition besteffort
+python run_array.py benchmark.HIGGSTES.TP-Prior --gpu 1 --n-steps 5000 --n-unit 500 --batch-size 200 --xp-name HIGGSTES-TP-Prior --partition besteffort
 
 python run_array.py benchmark.HIGGSTES.INF-Prior --gpu 1 --n-steps 2000 --n-unit 500 --sample-size 10000 --xp-name HIGGSTES-INF-Prior --partition besteffort
 
