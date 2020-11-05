@@ -80,7 +80,6 @@ class TrainGenerator:
                                 ('jes', self.jes),
                                 ('les', self.les),
                                 ])
-        self.n_samples = self.data_generator.data_generator.size
 
     def generate(self, n_samples=None):
             X, y, w = self.data_generator.diff_generate(*self.params, n_samples=n_samples)
