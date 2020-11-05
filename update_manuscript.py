@@ -133,6 +133,26 @@ def main():
     cp(src(OUT_DIR, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=2000-boxplot_mse.png")
             , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=2000-boxplot_mse.png") )
 
+
+    # fig:gg_compare_true_mu_target_bias
+    print('fig:gg_compare_true_mu_target_bias')
+    cp(src(OUT_DIR, COMPARE, GGPrior, GB, PROFUSION,  "profusion_true_mu_target_bias.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, GB,  "profusion_true_mu_target_bias.png") )
+    cp(src(OUT_DIR, COMPARE, GGPrior, NN, PROFUSION,  "profusion_true_mu_target_bias.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, NN,  "profusion_true_mu_target_bias.png") )
+    cp(src(OUT_DIR, COMPARE, GGPrior, DA, PROFUSION,  "profusion_true_mu_target_bias.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, DA,  "profusion_true_mu_target_bias.png") )
+    cp(src(OUT_DIR, COMPARE, GGPrior, TP, PROFUSION,  "profusion_true_mu_target_bias.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, TP,  "profusion_true_mu_target_bias.png") )
+    cp(src(OUT_DIR, COMPARE, GGPrior, INF, PROFUSION,  "profusion_true_mu_target_bias.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, INF,  "profusion_true_mu_target_bias.png") )
+    cp(src(OUT_DIR, COMPARE, GGPrior, PIVOT, PROFUSION,  "profusion_true_mu_target_bias.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, PIVOT,  "profusion_true_mu_target_bias.png") )
+    cp(src(OUT_DIR, COMPARE, GGPrior, REG, PROFUSION,  "profusion_true_mu_target_bias.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, REG,  "profusion_true_mu_target_bias.png") )
+    cp(src(OUT_DIR, COMPARE, GGMarginal, REG, PROFUSION,  "profusion_true_mu_target_bias.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGMarginal, REG,  "profusion_true_mu_target_bias.png") )
+
     # fig:gg_baseline_n_samples_mse
     print("fig:gg_baseline_n_samples_mse")
     cp(src(OUT_DIR, COMPARE, GGPrior, GB, PROFUSION,  "profusion_n_samples_mse.png")
