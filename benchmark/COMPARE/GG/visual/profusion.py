@@ -280,7 +280,7 @@ def true_mu_target_bias(all_evaluations, title="No Title", directory=DEFAULT_DIR
     # plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
 
     plt.xlabel('true $\\mu$')
-    plt.ylabel("average $\\hat \\mu$")
+    plt.ylabel("bias $\\hat \\mu$")
     plt.title(title)
     # legend_elements = [Line2D([0], [0], marker='+', color='red', label='true', markersize=15, markeredgewidth=5)]
     legend_elements += [Line2D([0], [0], marker='o', color=color_cycle[i%len(unique_alphas)], label=f"$\\alpha$={a}")
