@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
+# Command line :
 # python -m benchmark.HIGGS.REG-Marginal
 
 import os
@@ -82,7 +82,7 @@ def build_model(args, i_cv):
 def main():
     # BASIC SETUP
     logger = set_logger()
-    args = REG_parse_args(main_description="Training launcher for Gradient boosting on S3D2 benchmark")
+    args = REG_parse_args(main_description="Training launcher for Marginal Regressor on HIGGS benchmark")
     logger.info(args)
     flush(logger)
     # INFO
@@ -122,14 +122,14 @@ def run(args, i_cv):
     logger.info('Set up rergessor')
     model = build_model(args, i_cv)
     flush(logger)
-    
+
     # TRAINING / LOADING
     train_or_load_neural_net(model, train_generator, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
-    
+
     result_row.update(evaluate_neural_net(model, prefix='valid'))
     evaluate_regressor(model, prefix='valid')
 
@@ -170,11 +170,11 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     result_row.update(params_to_dict(config.CALIBRATED))
     result_row.update(params_to_dict(config.CALIBRATED_ERROR, ext=_ERROR ))
     result_row.update(params_to_dict(config.TRUE, ext=_TRUTH ))
-    name = config.INTEREST_PARAM_NAME 
+    name = config.INTEREST_PARAM_NAME
     result_row[name] = target
     result_row[name+_ERROR] = sigma
     result_row[name+_TRUTH] = config.TRUE.mu
-    logger.info('mu  = {} =vs= {} +/- {}'.format(config.TRUE.mu, target, sigma) ) 
+    logger.info('mu  = {} =vs= {} +/- {}'.format(config.TRUE.mu, target, sigma) )
     return result_row.copy()
 
 
