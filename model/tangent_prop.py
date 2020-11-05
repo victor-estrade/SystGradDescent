@@ -61,7 +61,6 @@ class TangentPropClassifier(BaseClassifierModel, BaseNeuralNet):
         for i in range(self.n_steps):
             X_batch, y_batch, w_batch = generator.generate(self.batch_size)
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
-            torch.autograd.functional.vjp(self.net, X_batch, generator.nuisance_params )
 
             logits = self.net(X_batch)
             cross_entropy_loss = self.cross_entropy(logits, y_batch, w_batch)

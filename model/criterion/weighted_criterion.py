@@ -81,7 +81,8 @@ class WeightedL1Loss(nn.Module):
         loss = torch.mean(loss)
         return loss
 
-
+# MAybe I can use these new functions ?
+# torch.autograd.functional.vjp(self.net, X_batch, generator.nuisance_params )
 class WeightedTPLoss(nn.Module):
     def forward(self, logits, weight, nuisance_params):
         # decision = logits[:, 1]
