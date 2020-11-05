@@ -28,7 +28,7 @@ def main():
     for kwargs in hp_kwargs_generator(REG_M_HP):
         loader = REGLoader(data_name, benchmark_name, **kwargs)
         evaluation = loader.load_evaluation_config()
-        
+
         all_evaluations.append(evaluation)
         all_loaders.append(loader)
 
@@ -41,7 +41,7 @@ def main():
         individual.n_samples_mse(evaluation, title=loader.model_full_name, directory=directory)
         individual.n_samples_sigma_mean(evaluation, title=loader.model_full_name, directory=directory)
         individual.box_n_samples_mse(evaluation, title=loader.model_full_name, directory=directory)
-        
+
     title = f"{loader.benchmark_name}-{loader.base_name}"
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name, "PROFUSION")
     os.makedirs(directory, exist_ok=True)
@@ -49,6 +49,7 @@ def main():
     profusion.n_samples_sigma_mean(all_evaluations, title=title, directory=directory)
     profusion.true_mu_estimator(all_evaluations, title=title, directory=directory)
     profusion.true_mu_target_mean(all_evaluations, title=title, directory=directory)
+    profusion.true_mu_target_bias(all_evaluations, title=title, directory=directory)
     profusion.true_mu_target_mean_std(all_evaluations, title=title, directory=directory)
     profusion.nominal_n_samples_mse(all_evaluations, title=f"Nominal {title}", directory=directory)
     profusion.nominal_n_samples_sigma_mean(all_evaluations, title=f"Nominal {title}", directory=directory)
