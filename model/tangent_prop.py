@@ -56,11 +56,12 @@ class TangentPropClassifier(BaseClassifierModel, BaseNeuralNet):
         self.loss = []
         self.cross_entropy_loss = []
         self.jac_loss = []
-        
+
     def fit(self, generator):
         for i in range(self.n_steps):
             X_batch, y_batch, w_batch = generator.generate(self.batch_size)
             self.optimizer.zero_grad()  # zero-out the gradients because they accumulate by default
+            torch.autograd.functional.vjp(self.net, X_batch, generator.nuisance_params )
 
             logits = self.net(X_batch)
             cross_entropy_loss = self.cross_entropy(logits, y_batch, w_batch)
@@ -86,7 +87,7 @@ class TangentPropClassifier(BaseClassifierModel, BaseNeuralNet):
             probas = torch.softmax(logits, 1)
         y_proba = np.array(probas.cpu())
         return y_proba
-    
+
     def save(self, save_directory):
         super().save(save_directory)
         path = os.path.join(save_directory, 'weights.pth')
@@ -117,5 +118,3 @@ class TangentPropClassifier(BaseClassifierModel, BaseNeuralNet):
     def get_name(self):
         name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{trade_off}".format(**self.__dict__)
         return name
-
-
