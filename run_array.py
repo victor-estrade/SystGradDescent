@@ -94,7 +94,7 @@ def parse_args():
                         help='width for the data augmentation sampling',
                         type=float)
 
-    grid_args.add_argument('--n-unit', 
+    grid_args.add_argument('--n-unit',
                         nargs='+',
                         help='Number of units in layers. Controls NN width.',
                         type=int)
@@ -161,7 +161,7 @@ SBATCH_TEMPLATE = \
 #SBATCH --mem={memory}
 #SBATCH --partition={partition}
 #SBATCH --gres=gpu:{gpu}
-#SBATCH --exclude=baltic-1,republic-3
+#SBATCH --exclude=baltic-1,republic-1
 
 hostname
 
@@ -192,9 +192,9 @@ sdocker -i  -v /home/tao/vestrade/datawarehouse:/datawarehouse \
             bash -c "cd ${{WORKDIR}}; python -m {benchmark} {main_args} ${{GRID_PARAMS}}"
 """
 
-# 
+#
 # python -m {benchmark} {main_args} ${{GRID_PARAMS}}
-# 
+#
 
 
 def param_to_grid(parameter_dict):
@@ -262,7 +262,7 @@ def main():
         main_args['--no-cuda'] = ' '
     else:
         main_args.pop('--no-cuda')
-        
+
     if main_args['--skip-minuit'] :
         main_args['--skip-minuit'] = ' '
     else:
