@@ -283,7 +283,7 @@ def true_mu_target_bias(all_evaluations, title="No Title", directory=DEFAULT_DIR
     plt.ylabel("bias $\\hat \\mu$")
     plt.title(title)
     # legend_elements = [Line2D([0], [0], marker='+', color='red', label='true', markersize=15, markeredgewidth=5)]
-    legend_elements += [Line2D([0], [0], marker='o', color=color_cycle[i%len(unique_alphas)], label=f"$\\alpha$={a}")
+    legend_elements = [Line2D([0], [0], marker='o', color=color_cycle[i%len(unique_alphas)], label=f"$\\alpha$={a}")
                         for i, a in enumerate(unique_alphas)]
     plt.legend(handles=legend_elements, bbox_to_anchor=(1.01, 1), loc='upper left')
     # plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ])
