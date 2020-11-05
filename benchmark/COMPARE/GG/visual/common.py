@@ -52,6 +52,7 @@ def make_profusion_plots(all_evaluations, loader):
     profusion.n_samples_sigma_mean(all_evaluations, title=title, directory=directory)
     profusion.true_mu_estimator(all_evaluations, title=title, directory=directory)
     profusion.true_mu_target_mean(all_evaluations, title=title, directory=directory)
+    profusion.true_mu_target_bias(all_evaluations, title=title, directory=directory)
     profusion.true_mu_target_mean_std(all_evaluations, title=title, directory=directory)
     profusion.nominal_n_samples_mse(all_evaluations, title=f"Nominal {title}", directory=directory)
     profusion.nominal_n_samples_v_stat(all_evaluations, title=f"Nominal {title}", directory=directory)
