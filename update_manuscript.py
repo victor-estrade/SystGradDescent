@@ -121,6 +121,18 @@ def main():
     cp(src(OUT_DIR, COMPARE, GGPriorPlus, REG, PROFUSION,  "profusion_nominal_n_samples_mse.png")
             , dst(THESIS_DIR, Chap5, COMPARE, GGPriorPlus, REG,  "profusion_nominal_n_samples_mse.png") )
 
+
+    # fig:compare_gg_best_mse_n_samples
+    print('fig:compare_gg_best_mse_n_samples')
+    cp(src(OUT_DIR, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=50-boxplot_mse.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=50-boxplot_mse.png") )
+    cp(src(OUT_DIR, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=100-boxplot_mse.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=100-boxplot_mse.png") )
+    cp(src(OUT_DIR, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=500-boxplot_mse.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=500-boxplot_mse.png") )
+    cp(src(OUT_DIR, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=2000-boxplot_mse.png")
+            , dst(THESIS_DIR, Chap5, COMPARE, GGPrior, BEST_MSE, "GG-prior_best_average_N=2000-boxplot_mse.png") )
+
     # fig:gg_baseline_n_samples_mse
     print("fig:gg_baseline_n_samples_mse")
     cp(src(OUT_DIR, COMPARE, GGPrior, GB, PROFUSION,  "profusion_n_samples_mse.png")
