@@ -26,7 +26,7 @@ from .utils import to_numpy
 from .utils import classwise_balance_weight
 
 class Pivot(BaseClassifierModel, BaseNeuralNet):
-    def __init__(self, net, adv_net, 
+    def __init__(self, net, adv_net,
                 net_criterion, adv_criterion, trade_off,
                 net_optimizer, adv_optimizer,
                 n_net_pre_training_steps=10, n_adv_pre_training_steps=10,
@@ -41,7 +41,7 @@ class Pivot(BaseClassifierModel, BaseNeuralNet):
         self.trade_off = trade_off
         self.net_optimizer = net_optimizer
         self.adv_optimizer = adv_optimizer
-        self.optimizer = net_optimizer  # monkey patching for name convention only 
+        self.optimizer = net_optimizer  # monkey patching for name convention only
         self.set_optimizer_name()
         self.n_net_pre_training_steps = n_net_pre_training_steps
         self.n_adv_pre_training_steps = n_adv_pre_training_steps
@@ -98,7 +98,7 @@ class Pivot(BaseClassifierModel, BaseNeuralNet):
         # Pre-training adversarial
         adv_generator = EpochShuffle(X, z, w, batch_size=self.batch_size)
         self._fit_adv_net(adv_generator, self.n_adv_pre_training_steps)  # pre-training
-        
+
         # Training
         comb_generator = EpochShuffle(X, y, z, w, batch_size=self.batch_size)
         self._fit_combined(comb_generator, comb_generator, self.n_steps)
@@ -213,13 +213,13 @@ class Pivot(BaseClassifierModel, BaseNeuralNet):
 
     def load(self, save_directory):
         path = os.path.join(save_directory, 'net_weights.pth')
-        if self.cuda:
+        if self.cuda_flag:
             self.net.load_state_dict(torch.load(path))
         else:
             self.net.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage))
 
         path = os.path.join(save_directory, 'adv_net_weights.pth')
-        if self.cuda:
+        if self.cuda_flag:
             self.adv_net.load_state_dict(torch.load(path))
         else:
             self.adv_net.load_state_dict(torch.load(path, map_location=lambda storage, loc: storage))
