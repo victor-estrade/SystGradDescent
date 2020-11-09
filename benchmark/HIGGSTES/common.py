@@ -19,5 +19,3 @@ class GeneratorCPU:
 
     def reset(self):
         self.data_generator.reset()
-
-
