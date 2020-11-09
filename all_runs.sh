@@ -166,22 +166,112 @@ python run_array.py benchmark.HIGGS.GB-Prior --gpu 1 --n-estimators 300  --max-d
 
 
 
+
+
+# EASY HIGGS
+#===========
+
+# CALIBRATION / MARGINAL
+
+# PRIOR RUN
+
+
+# CALIB RUN
+
+
+
+
+
+
+# BALANCED HIGGS
+#===============
+
+# CALIBRATION / MARGINAL
+
+# PRIOR RUN
+
+
+# CALIB RUN
+
+
+
+
+
+
+
+
 # HIGGS TES ONLY
 #===============
 
 # CALIBRATION / MARGINAL
-python run_array.py benchmark.HIGGSTES.REG-Marginal --gpu 1 --n-steps 5000 --n-unit 500 --sample-size 10000 --xp-name HIGGSTES-REG-Marginal --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGSTES.REG-Marginal --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-REG-Marginal --partition besteffort --estimate-only
 
 # PRIOR RUN
-python run_array.py benchmark.HIGGSTES.GB-Prior --gpu 1 --n-estimators 300  --max-depth 3 --learning-rate 0.1 --xp-name HIGGSTES-GB-Prior --partition besteffort --estimate-only
-python run_array.py benchmark.HIGGSTES.NN-Prior --gpu 1 --n-steps 5000 --n-unit 500 --batch-size 10000 --xp-name HIGGSTES-NN-Prior --partition besteffort --estimate-only
-python run_array.py benchmark.HIGGSTES.DA-Prior --gpu 1 --n-steps 5000 --n-unit 500 --batch-size 10000 --xp-name HIGGSTES-DA-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGSTES.GB-Prior --gpu 1 --n-estimators 300 800  --max-depth 3 6 --learning-rate 0.1 0.01 --xp-name HIGGSTES-GB-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGSTES.NN-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name HIGGSTES-NN-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGSTES.DA-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name HIGGSTES-DA-Prior --partition besteffort --estimate-only
 
-python run_array.py benchmark.HIGGSTES.TP-Prior --gpu 1 --n-steps 5000 --n-unit 500 --batch-size 200 --xp-name HIGGSTES-TP-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGSTES.TP-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 200 --xp-name HIGGSTES-TP-Prior --partition besteffort --estimate-only
 
-python run_array.py benchmark.HIGGSTES.INF-Prior --gpu 1 --n-steps 2000 --n-unit 500 --sample-size 10000 --xp-name HIGGSTES-INF-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGSTES.INF-Prior --gpu 1 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-INF-Prior --partition besteffort --estimate-only
 
-python run_array.py benchmark.HIGGSTES.REG-Prior --gpu 1 --n-steps 5000 --n-unit 500 --sample-size 10000 --xp-name HIGGSTES-REG-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGSTES.REG-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-REG-Prior --partition besteffort --estimate-only
+
+# CALIB RUN
+
+
+
+
+
+
+
+
+# EASY HIGGS TES ONLY
+#====================
+
+# CALIBRATION / MARGINAL
+python run_array.py benchmark.EASYHIGGSTES.REG-Marginal --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name EASYHIGGSTES-REG-Marginal --partition besteffort --estimate-only
+
+# PRIOR RUN
+python run_array.py benchmark.EASYHIGGSTES.GB-Prior --gpu 1 --n-estimators 300 800  --max-depth 3 6 --learning-rate 0.1 0.01 --xp-name EASYHIGGSTES-GB-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.EASYHIGGSTES.NN-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name EASYHIGGSTES-NN-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.EASYHIGGSTES.DA-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name EASYHIGGSTES-DA-Prior --partition besteffort --estimate-only
+
+python run_array.py benchmark.EASYHIGGSTES.TP-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 200 --xp-name EASYHIGGSTES-TP-Prior --partition besteffort --estimate-only
+
+python run_array.py benchmark.EASYHIGGSTES.INF-Prior --gpu 1 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name EASYHIGGSTES-INF-Prior --partition besteffort --estimate-only
+
+python run_array.py benchmark.EASYHIGGSTES.REG-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name EASYHIGGSTES-REG-Prior --partition besteffort --estimate-only
+
+
+# CALIB RUN
+
+
+
+
+
+
+
+# BALANCED HIGGS TES ONLY
+#========================
+
+# CALIBRATION / MARGINAL
+python run_array.py benchmark.BALANCEDHIGGSTES.REG-Marginal --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name BALANCEDHIGGSTES-REG-Marginal --partition besteffort --estimate-only
+
+# PRIOR RUN
+python run_array.py benchmark.BALANCEDHIGGSTES.GB-Prior --gpu 1 --n-estimators 300 800  --max-depth 3 6 --learning-rate 0.1 0.01 --xp-name BALANCEDHIGGSTES-GB-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.BALANCEDHIGGSTES.NN-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name BALANCEDHIGGSTES-NN-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.BALANCEDHIGGSTES.DA-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name BALANCEDHIGGSTES-DA-Prior --partition besteffort --estimate-only
+
+python run_array.py benchmark.BALANCEDHIGGSTES.TP-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 200 --xp-name BALANCEDHIGGSTES-TP-Prior --partition besteffort --estimate-only
+
+python run_array.py benchmark.BALANCEDHIGGSTES.INF-Prior --gpu 1 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name BALANCEDHIGGSTES-INF-Prior --partition besteffort --estimate-only
+
+python run_array.py benchmark.BALANCEDHIGGSTES.REG-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name BALANCEDHIGGSTES-REG-Prior --partition besteffort --estimate-only
+
+# CALIB RUN
+
+
 
 
 
