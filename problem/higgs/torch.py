@@ -58,8 +58,8 @@ def get_balanced_generators_torch(seed, train_size=0.5, test_size=0.1, cuda=Fals
     return train_generator, valid_generator, test_generator
 
 
-def get_easy_generators_torch(seed, train_size=0.5, test_size=0.1):
-    train_generator, valid_generator, test_generator = get_generators_torch(seed, train_size=train_size, test_size=test_size)
+def get_easy_generators_torch(seed, train_size=0.5, test_size=0.1, cuda=False):
+    train_generator, valid_generator, test_generator = get_generators_torch(seed, train_size=train_size, test_size=test_size, cuda=cuda)
     train_generator.background_luminosity = 95
     train_generator.signal_luminosity = 5
 
@@ -221,7 +221,7 @@ class HiggsLoss(nn.Module):
 
     def forward(self, input, target, params):
         """
-        input is the total count, the summaries, 
+        input is the total count, the summaries,
         target is the asimov, the expected
         param_list is the OrderedDict of tensor containing the parameters
                 [mu, tes, jes, les]

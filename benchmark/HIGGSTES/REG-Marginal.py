@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line :
-# python -m benchmark.HIGGS.REG-Marginal
+# python -m benchmark.HIGGSTES.REG-Marginal
 
 import os
 import logging

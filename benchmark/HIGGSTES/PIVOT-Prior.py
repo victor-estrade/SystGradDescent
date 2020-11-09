@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line :
-# python -m benchmark.HIGGS.GB-Prior
+# python -m benchmark.HIGGSTES.PIVOT-Prior
 
 import os
 import logging
