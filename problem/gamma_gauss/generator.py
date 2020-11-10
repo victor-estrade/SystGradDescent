@@ -17,14 +17,17 @@ def assert_clean_mix(mix):
 
 
 class Generator():
-    def __init__(self, seed=None, gamma_k=2, gamma_loc=0, normal_mean=5, normal_sigma=0.5):
+    def __init__(self, seed=None, gamma_k=2, gamma_loc=0, normal_mean=5, normal_sigma=0.5,
+                     background_luminosity=1000, signal_luminosity=1000):
         self.seed = seed
         self.random = np.random.RandomState(seed=seed)
         self.gamma_k = gamma_k
         self.gamma_loc = gamma_loc
         self.normal_mean = normal_mean
         self.normal_sigma = normal_sigma
-        self.n_expected_events = 2000
+        self.background_luminosity = background_luminosity
+        self.signal_luminosity = signal_luminosity
+        self.n_expected_events = background_luminosity + signal_luminosity
 
     def reset(self):
         self.random = np.random.RandomState(seed=self.seed)
@@ -71,8 +74,8 @@ class Generator():
         return y
 
     def _generate_weights(self, mix, n_bkg, n_sig, n_expected_events):
-        w_b = np.ones(n_bkg) * (1-mix) * n_expected_events/n_bkg
-        w_s = np.ones(n_sig) * mix * n_expected_events/n_sig
+        w_b = np.ones(n_bkg) * self.background_luminosity / n_bkg
+        w_s = np.ones(n_sig) * mix * self.signal_luminosity / n_sig
         w = np.concatenate([w_b, w_s], axis=0)
         return w
 
@@ -106,4 +109,3 @@ class Generator():
         """
         nll = - self.log_proba_density(data, rescale, mix).sum()
         return nll
-
