@@ -5,6 +5,9 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+# Command line :
+# python -m benchmark.GG.Likelihood_histogram-Prior
+
 import os
 import logging
 

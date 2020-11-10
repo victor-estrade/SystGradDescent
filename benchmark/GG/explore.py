@@ -5,6 +5,9 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+# Command line :
+# python -m benchmark.GG.explore
+
 import os
 import numpy as np
 
@@ -60,7 +63,7 @@ def explore_distribs():
     config = Config()
     generator = Generator()
     data, label = generator.sample_event(*config.TRUE, size=config.N_TESTING_SAMPLES)
-    
+
     prior_rescale = stats.norm(loc=config.CALIBRATED.rescale, scale=config.CALIBRATED_ERROR.rescale)
     prior_mix   = stats.uniform(loc=0, scale=1)
 

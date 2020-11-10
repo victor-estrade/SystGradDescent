@@ -5,8 +5,8 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
-# python -m benchmark.GG.GB
+# Command line :
+# python -m benchmark.GG.GB-Reboot
 
 import os
 import logging
@@ -77,7 +77,7 @@ class NLL():
         seed = SEED + self.i_cv * 5
         train_generator = Generator(seed)
         valid_generator = Generator(seed+1)
-        
+
         classifier = build_model(self.args, self.i_cv)
         X_train, y_train, w_train = train_generator.generate(rescale, config.CALIBRATED.mix, n_samples=config.N_TRAINING_SAMPLES)
         classifier.fit(X_train, y_train, w_train)
@@ -142,14 +142,14 @@ def run(args, i_cv):
     # logger.info('Set up classifier')
     model = build_model(args, i_cv)
     # flush(logger)
-    
+
     # TRAINING / LOADING
     # train_or_load_classifier(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     # X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
-    
+
     # result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
     # MEASUREMENT

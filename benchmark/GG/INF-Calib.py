@@ -5,8 +5,8 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
-# python -m benchmark.S3D2.INF-Calib
+# Command line :
+# python -m benchmark.GG.INF-Calib
 
 import os
 import logging
@@ -158,14 +158,14 @@ def run(args, i_cv):
     model = build_model(args, i_cv)
     os.makedirs(model.results_path, exist_ok=True)
     flush(logger)
-    
+
     # TRAINING / LOADING
     train_or_load_inferno(model, train_generator, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
-    
+
     result_row.update(evaluate_neural_net(model, prefix='valid'))
     evaluate_inferno(model, prefix='valid')
 
@@ -196,13 +196,13 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
     flush(logger)
-    
+
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
     result_row['n_test_samples'] = config.N_TESTING_SAMPLES
     suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
-    
+
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     # PLOT SUMMARIES
@@ -210,7 +210,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
 
     # CALIBRATION
     rescale_mean, rescale_sigma = calib_rescale.predict(X_test, w_test)
-    logger.info('rescale  = {} =vs= {} +/- {}'.format(config.TRUE.rescale, rescale_mean, rescale_sigma) ) 
+    logger.info('rescale  = {} =vs= {} +/- {}'.format(config.TRUE.rescale, rescale_mean, rescale_sigma) )
     config.CALIBRATED = Parameter(rescale_mean, config.CALIBRATED.interest_parameters)
     config.CALIBRATED_ERROR = Parameter(rescale_sigma, config.CALIBRATED_ERROR.interest_parameters)
     for name, value in config.CALIBRATED.items():

@@ -5,6 +5,8 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+# Command line :
+# python -m benchmark.GG.bayes
 
 import os
 import logging
@@ -103,7 +105,7 @@ def run_iter(i_cv, i_iter, config, seed, directory):
     # Config
     RESCALE_MIN = config.TRUE.rescale - 0.2
     RESCALE_MAX = config.TRUE.rescale + 0.2
-    
+
     MIX_MIN = max(0, config.TRUE.mix - 0.1)
     MIX_MAX = min(1.0, config.TRUE.mix + 0.1)
 
@@ -147,7 +149,7 @@ def run_iter(i_cv, i_iter, config, seed, directory):
     debug_marginal(marginal_rescale, "rescale")
     debug_marginal(marginal_mix, "mix")
 
-    # Conditional posterior 
+    # Conditional posterior
     posterior_mix = np.divide(posterior_rescale_mix, marginal_rescale.reshape(RESCALE_N_SAMPLES, 1),
         out=np.zeros_like(posterior_rescale_mix), where=(posterior_rescale_mix!=0))
 
