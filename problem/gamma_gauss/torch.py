@@ -17,7 +17,8 @@ from .config import GGConfig
 
 
 class GeneratorTorch():
-    def __init__(self, seed=None, gamma_k=2.0, gamma_loc=0.0, normal_mean=5.0, normal_sigma=0.5, cuda=False):
+    def __init__(self, seed=None, gamma_k=2.0, gamma_loc=0.0, normal_mean=5.0, normal_sigma=0.5, cuda=False,
+                     background_luminosity=1000, signal_luminosity=1000):
         self.seed = seed
         if cuda:
             self.cuda()
@@ -27,7 +28,7 @@ class GeneratorTorch():
         self.rescale = self.tensor(config.CALIBRATED.rescale, requires_grad=True)
         self.mix = self.tensor(config.CALIBRATED.mix, requires_grad=True)
         self.nuisance_params = OrderedDict([
-                                ('rescale', self.rescale), 
+                                ('rescale', self.rescale),
                                 ])
         # Define distributions
         self.gamma_k      = self.tensor(gamma_k)
@@ -36,11 +37,13 @@ class GeneratorTorch():
 
         self.normal_mean  = self.tensor(normal_mean)
         self.normal_sigma = self.tensor(normal_sigma)
-        
+
         self.gamma = Gamma(self.gamma_k, self.gamma_rate)
         self.norm  = Normal(self.normal_mean, self.normal_sigma)
 
-        self.n_expected_events = 2000
+        self.background_luminosity = background_luminosity
+        self.signal_luminosity = signal_luminosity
+        self.n_expected_events = background_luminosity + signal_luminosity
 
     def cpu(self):
         self.cuda_flag = False
@@ -94,8 +97,8 @@ class GeneratorTorch():
         return y
 
     def _generate_weights(self, n_bkg, n_sig, n_expected_events):
-        w_b = torch.ones(n_bkg) * (1-self.mix) * n_expected_events/n_bkg
-        w_s = torch.ones(n_sig) * self.mix * n_expected_events/n_sig
+        w_b = torch.ones(n_bkg) * self.background_luminosity / n_bkg
+        w_s = torch.ones(n_sig) * self.mix * self.signal_luminosity / n_sig
         if self.cuda_flag:
             w_b = w_b.cuda()
             w_s = w_s.cuda()
@@ -163,7 +166,7 @@ class GGLoss(nn.Module):
 
     def forward(self, input, target, params):
         """
-        input is the total count, the summaries, 
+        input is the total count, the summaries,
         target is the asimov, the expected
         param_list is the OrderedDict of tensor containing the parameters
         """
@@ -196,7 +199,7 @@ class GGHessian(nn.Module):
 
     def forward(self, input, target, params):
         """
-        input is the total count, the summaries, 
+        input is the total count, the summaries,
         target is the asimov, the expected
         param_list is the OrderedDict of tensor containing the parameters
         """
@@ -205,4 +208,3 @@ class GGHessian(nn.Module):
         param_list = params.values()
         h = hessian(nll, param_list, create_graph=True)
         return h
-
