@@ -109,3 +109,9 @@ class Generator():
         """
         nll = - self.log_proba_density(data, rescale, mix).sum()
         return nll
+
+
+class HardGenerator(Generator):
+    def __init__(self, seed=None, gamma_k=2, gamma_loc=0, normal_mean=5, normal_sigma=0.5):
+        super().__init__(seed=seed, gamma_k=gamma_k, gamma_loc=gamma_loc, normal_mean=normal_mean, normal_sigma=normal_sigma,
+        background_luminosity=950, signal_luminosity=50)
