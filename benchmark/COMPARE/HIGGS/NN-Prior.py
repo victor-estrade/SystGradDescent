@@ -25,6 +25,15 @@ def main():
     make_hp_table(data_name, benchmark_name, NN_HP, NNLoader)
     make_common_plots(data_name, benchmark_name, NN_HP, NNLoader)
 
+    data_name = 'BALANCEDHIGGSTES'
+    benchmark_name = 'BALANCEDHIGGSTES-prior'
+    make_hp_table(data_name, benchmark_name, NN_HP, NNLoader)
+    make_common_plots(data_name, benchmark_name, NN_HP, NNLoader)
+
+    data_name = 'EASYHIGGSTES'
+    benchmark_name = 'EASYHIGGSTES-prior'
+    make_hp_table(data_name, benchmark_name, NN_HP, NNLoader)
+    make_common_plots(data_name, benchmark_name, NN_HP, NNLoader)
 
 
 
