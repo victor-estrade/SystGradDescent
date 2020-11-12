@@ -97,8 +97,8 @@ class GeneratorTorch():
         return y
 
     def _generate_weights(self, n_bkg, n_sig, n_expected_events):
-        w_b = torch.ones(n_bkg) * self.background_luminosity / n_bkg
-        w_s = torch.ones(n_sig) * self.mix * self.signal_luminosity / n_sig
+        w_b = torch.ones(n_bkg) * (self.background_luminosity / n_bkg)
+        w_s = torch.ones(n_sig) * (self.mix * self.signal_luminosity / n_sig)
         if self.cuda_flag:
             w_b = w_b.cuda()
             w_s = w_s.cuda()

@@ -25,8 +25,8 @@ class GeneratorTorch():
         self.B_RATE = self.tensor(b_rate, requires_grad=True)
         self.s_b_ratio = self.tensor(ratio, requires_grad=True)
         self.nuisance_params = OrderedDict([
-                                ('r', self.R_DIST), 
-                                ('lam', self.B_RATE), 
+                                ('r', self.R_DIST),
+                                ('lam', self.B_RATE),
                                 ])
         zero = torch.zeros(1)
         if self.cuda_flag:
@@ -37,7 +37,7 @@ class GeneratorTorch():
             self.b_cov = self.b_cov.cuda()
         self.b_01 = torch.distributions.MultivariateNormal(loc=self.b_loc, covariance_matrix=self.b_cov)
         self.b_2 = torch.distributions.Exponential(self.B_RATE)
-        
+
         self.S_RATE = self.tensor(s_rate)
         self.s_loc =  torch.zeros(2)
         self.s_cov = torch.eye(2)
@@ -46,7 +46,7 @@ class GeneratorTorch():
             self.s_cov = self.s_cov.cuda()
         self.s_01 = torch.distributions.MultivariateNormal(loc=self.s_loc, covariance_matrix=self.s_cov)
         self.s_2 = torch.distributions.Exponential(self.S_RATE)
-        
+
         self.n_generated = 0
         self.reset_every = reset_every
 
@@ -65,7 +65,7 @@ class GeneratorTorch():
         a = self.b_01.rsample((n_samples,))
         b = self.b_2.rsample((n_samples,)).type(a.type())
         return torch.cat((a, b.view(-1, 1)), dim=1)
-    
+
     def gen_sig(self, n_samples):
         a = self.s_01.rsample((n_samples,))
         b = self.s_2.rsample((n_samples,)).type(a.type())
@@ -144,7 +144,7 @@ class S3D2Loss(nn.Module):
 
     def forward(self, input, target, params):
         """
-        input is the total count, the summaries, 
+        input is the total count, the summaries,
         target is the asimov, the expected
         param_list is the OrderedDict of tensor containing the parameters
                 [MU, R_DIST, B_RATE]
@@ -156,4 +156,3 @@ class S3D2Loss(nn.Module):
         h_inverse = torch.inverse(h)  # FIXME : may break, handle exception
         loss = h_inverse[0,0]
         return loss
-
