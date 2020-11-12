@@ -10,7 +10,7 @@ SEED = 42
 
 
 class S3D2():
-    def __init__(self, seed, background_luminosity=1000, 
+    def __init__(self, seed, background_luminosity=1000,
                               signal_luminosity=50):
         self.seed = seed
         self.random = np.random.RandomState(seed=seed)
@@ -31,13 +31,13 @@ class S3D2():
     def _generate(self, r, lam, mu, n_bkg=1000, n_sig=50):
         """
         $$
-        f_b (x|r, \lambda) = \mathcal N \left ( (x_0, x_1) | (2+r, 0) 
+        f_b (x|r, \lambda) = \mathcal N \left ( (x_0, x_1) | (2+r, 0)
         \begin{bmatrix} 5 & 0 \\ 0 & 9 \end{bmatrix} \right ) Exp((x_2| \lambda)
         $$
 
 
         $$
-        f_s (x|r, \lambda) = \mathcal N \left ( (x_0, x_1) | (1, 1) 
+        f_s (x|r, \lambda) = \mathcal N \left ( (x_0, x_1) | (1, 1)
         \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} \right ) Exp((x_2| 2)
         $$
 
@@ -49,7 +49,7 @@ class S3D2():
         y = self._generate_labels(n_bkg, n_sig)
         w = self._generate_weights(mu, n_bkg, n_sig)
         return X, y, w
-    
+
     def _generate_vars(self, r, lam, mu, n_bkg, n_sig):
         bkg_mean = self.get_bkg_mean(r)
         bkg_cov  = self.get_bkg_cov()
@@ -64,7 +64,7 @@ class S3D2():
         X_s = np.concatenate([X_s_12, X_s_3], axis=1)
         X = np.concatenate([X_b, X_s], axis=0)
         return X
-        
+
     def _generate_labels(self, n_bkg, n_sig):
         y_b = np.zeros(n_bkg)
         y_s = np.ones(n_sig)
@@ -72,8 +72,8 @@ class S3D2():
         return y
 
     def _generate_weights(self, mu, n_bkg, n_sig):
-        w_b = np.ones(n_bkg) * self.background_luminosity / n_bkg
-        w_s = np.ones(n_sig) * mu * self.signal_luminosity / n_sig
+        w_b = np.ones(n_bkg) * (self.background_luminosity / n_bkg)
+        w_s = np.ones(n_sig) * (mu * self.signal_luminosity / n_sig)
         w = np.concatenate([w_b, w_s], axis=0)
         return w
 
