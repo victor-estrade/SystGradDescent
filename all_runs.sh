@@ -211,6 +211,7 @@ python run_array.py benchmark.HIGGSTES.GB-Prior --gpu 1 --n-estimators 300 800  
 python run_array.py benchmark.HIGGSTES.NN-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name HIGGSTES-NN-Prior --partition besteffort --estimate-only
 python run_array.py benchmark.HIGGSTES.DA-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name HIGGSTES-DA-Prior --partition besteffort --estimate-only
 
+python run_array.py benchmark.HIGGSTES.PIVOT-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --trade-off 1 0.1 --xp-name HIGGSTES-PIVOT-Prior --partition besteffort
 python run_array.py benchmark.HIGGSTES.TP-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 200 --xp-name HIGGSTES-TP-Prior --partition besteffort --estimate-only
 
 python run_array.py benchmark.HIGGSTES.INF-Prior --gpu 1 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-INF-Prior --partition besteffort --estimate-only
@@ -237,6 +238,7 @@ python run_array.py benchmark.EASYHIGGSTES.GB-Prior --gpu 1 --n-estimators 300 8
 python run_array.py benchmark.EASYHIGGSTES.NN-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name EASYHIGGSTES-NN-Prior --partition besteffort --estimate-only
 python run_array.py benchmark.EASYHIGGSTES.DA-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name EASYHIGGSTES-DA-Prior --partition besteffort --estimate-only
 
+python run_array.py benchmark.EASYHIGGSTES.PIVOT-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --trade-off 1 0.1 --xp-name EASYHIGGSTES-PIVOT-Prior --partition besteffort
 python run_array.py benchmark.EASYHIGGSTES.TP-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 200 --xp-name EASYHIGGSTES-TP-Prior --partition besteffort --estimate-only
 
 python run_array.py benchmark.EASYHIGGSTES.INF-Prior --gpu 1 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name EASYHIGGSTES-INF-Prior --partition besteffort --estimate-only
@@ -263,6 +265,7 @@ python run_array.py benchmark.BALANCEDHIGGSTES.GB-Prior --gpu 1 --n-estimators 3
 python run_array.py benchmark.BALANCEDHIGGSTES.NN-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name BALANCEDHIGGSTES-NN-Prior --partition besteffort --estimate-only
 python run_array.py benchmark.BALANCEDHIGGSTES.DA-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name BALANCEDHIGGSTES-DA-Prior --partition besteffort --estimate-only
 
+python run_array.py benchmark.BALANCEDHIGGSTES.PIVOT-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --trade-off 1 0.1 --xp-name BALANCEDHIGGSTES-PIVOT-Prior --partition besteffort
 python run_array.py benchmark.BALANCEDHIGGSTES.TP-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 200 --xp-name BALANCEDHIGGSTES-TP-Prior --partition besteffort --estimate-only
 
 python run_array.py benchmark.BALANCEDHIGGSTES.INF-Prior --gpu 1 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name BALANCEDHIGGSTES-INF-Prior --partition besteffort --estimate-only
