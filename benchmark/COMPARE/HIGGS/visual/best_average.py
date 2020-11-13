@@ -157,7 +157,7 @@ def true_mu_mse(data, title="No Title", directory=DEFAULT_DIR):
             plt.plot(x, y, 'o-', label=code_name)
 
         plt.xlabel('true $\\mu$')
-        plt.ylabel("MSE $\\hat \\mu$")
+        plt.ylabel("average MSE $\\hat \\mu$")
         plt.title(plot_title)
         plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
         plt.savefig(os.path.join(directory, f'{plot_title}-true_mu_mse.png'), bbox_inches='tight')
@@ -180,7 +180,7 @@ def true_mu_sigma_mean(data, title="No Title", directory=DEFAULT_DIR):
             plt.plot(x, y, 'o-', label=code_name)
 
         plt.xlabel('true $\\mu$')
-        plt.ylabel("MSE $\\hat \\mu$")
+        plt.ylabel("average $\\hat \\sigma_{\\hat \\mu}$")
         plt.title(plot_title)
         plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
         plt.savefig(os.path.join(directory, f'{plot_title}-true_mu_sigma_mean.png'), bbox_inches='tight')
@@ -203,7 +203,7 @@ def true_mu_target_std(data, title="No Title", directory=DEFAULT_DIR):
             plt.plot(x, y, 'o-', label=code_name)
 
         plt.xlabel('true $\\mu$')
-        plt.ylabel("MSE $\\hat \\mu$")
+        plt.ylabel("average $std(\\hat \\mu)$")
         plt.title(plot_title)
         plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
         plt.savefig(os.path.join(directory, f'{plot_title}-true_mu_target_std.png'), bbox_inches='tight')
