@@ -418,67 +418,67 @@ def main():
     benchmark_name = 'HIGGSTES-calib'
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    data_estimation = pd.concat(all_estimation_data, sort=False)
-    data_conditional = pd.concat(all_conditional_data, sort=False)
-    data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
-
-    make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
-    make_common_conditional_plots(data_conditional, benchmark_name)
+    if all_estimation_data :
+        data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
+        make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
+    if all_conditional_data:
+        data_conditional = pd.concat(all_conditional_data, sort=False)
+        make_common_conditional_plots(data_conditional, benchmark_name)
 
     # HIGGSTES PRIOR PLOTS
     benchmark_name = 'HIGGSTES-prior'
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    data_estimation = pd.concat(all_estimation_data, sort=False)
-    data_conditional = pd.concat(all_conditional_data, sort=False)
-    data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
-
-    make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
-    make_common_conditional_plots(data_conditional, benchmark_name)
+    if all_estimation_data :
+        data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
+        make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
+    if all_conditional_data:
+        data_conditional = pd.concat(all_conditional_data, sort=False)
+        make_common_conditional_plots(data_conditional, benchmark_name)
 
     # EASYHIGGSTES CALIB PLOTS
     benchmark_name = 'EASYHIGGSTES-calib'
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    data_estimation = pd.concat(all_estimation_data, sort=False)
-    data_conditional = pd.concat(all_conditional_data, sort=False)
-    data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
-
-    make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
-    make_common_conditional_plots(data_conditional, benchmark_name)
+    if all_estimation_data :
+        data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
+        make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
+    if all_conditional_data:
+        data_conditional = pd.concat(all_conditional_data, sort=False)
+        make_common_conditional_plots(data_conditional, benchmark_name)
 
     # EASYHIGGSTES PRIOR PLOTS
     benchmark_name = 'EASYHIGGSTES-prior'
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    data_estimation = pd.concat(all_estimation_data, sort=False)
-    data_conditional = pd.concat(all_conditional_data, sort=False)
-    data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
-
-    make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
-    make_common_conditional_plots(data_conditional, benchmark_name)
+    if all_estimation_data :
+        data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
+        make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
+    if all_conditional_data:
+        data_conditional = pd.concat(all_conditional_data, sort=False)
+        make_common_conditional_plots(data_conditional, benchmark_name)
 
     # BALANCEDHIGGS CALIB PLOTS
     benchmark_name = 'BALANCEDHIGGS-calib'
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    data_estimation = pd.concat(all_estimation_data, sort=False)
-    data_conditional = pd.concat(all_conditional_data, sort=False)
-    data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
-
-    make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
-    make_common_conditional_plots(data_conditional, benchmark_name)
+    if all_estimation_data :
+        data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
+        make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
+    if all_conditional_data:
+        data_conditional = pd.concat(all_conditional_data, sort=False)
+        make_common_conditional_plots(data_conditional, benchmark_name)
 
     # BALANCEDHIGGS PRIOR PLOTS
     benchmark_name = 'BALANCEDHIGGS-prior'
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    data_estimation = pd.concat(all_estimation_data, sort=False)
-    data_conditional = pd.concat(all_conditional_data, sort=False)
-    data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
-
-    make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
-    make_common_conditional_plots(data_conditional, benchmark_name)
+    if all_estimation_data :
+        data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
+        make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
+    if all_conditional_data:
+        data_conditional = pd.concat(all_conditional_data, sort=False)
+        make_common_conditional_plots(data_conditional, benchmark_name)
 
 
 if __name__ == '__main__':
