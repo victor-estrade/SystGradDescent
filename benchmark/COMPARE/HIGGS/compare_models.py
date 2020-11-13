@@ -174,6 +174,7 @@ def main():
 
     # HIGGSTES CALIB PLOTS
     benchmark_name = 'HIGGSTES-calib'
+    print()
     print("="*15, benchmark_name, "="*15)
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
@@ -190,6 +191,7 @@ def main():
 
     # HIGGSTES PRIOR PLOTS
     benchmark_name = 'HIGGSTES-prior'
+    print()
     print("="*15, benchmark_name, "="*15)
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
@@ -206,6 +208,7 @@ def main():
 
     # EASYHIGGSTES CALIB PLOTS
     benchmark_name = 'EASYHIGGSTES-calib'
+    print()
     print("="*15, benchmark_name, "="*15)
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
@@ -222,6 +225,7 @@ def main():
 
     # EASYHIGGSTES PRIOR PLOTS
     benchmark_name = 'EASYHIGGSTES-prior'
+    print()
     print("="*15, benchmark_name, "="*15)
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
@@ -238,6 +242,7 @@ def main():
 
     # BALANCEDHIGGSTES CALIB PLOTS
     benchmark_name = 'BALANCEDHIGGSTES-calib'
+    print()
     print("="*15, benchmark_name, "="*15)
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
@@ -254,6 +259,7 @@ def main():
 
     # BALANCEDHIGGSTES PRIOR PLOTS
     benchmark_name = 'BALANCEDHIGGSTES-prior'
+    print()
     print("="*15, benchmark_name, "="*15)
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
