@@ -162,3 +162,49 @@ def true_mu_mse(data, title="No Title", directory=DEFAULT_DIR):
         plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
         plt.savefig(os.path.join(directory, f'{plot_title}-true_mu_mse.png'), bbox_inches='tight')
         plt.clf()
+
+
+def true_mu_sigma_mean(data, title="No Title", directory=DEFAULT_DIR):
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
+        label = f"tes={true_tes}_jes={true_jes}_les={true_les}"
+        plot_title = f"{title}_best_average_{label}"
+        v_syst = []
+        methods = []
+        for code_name, all_evaluation in df.groupby("code_name"):
+            full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.mean())
+            groupby_data = best_mse_evaluation.groupby("true_mu").mean()
+            x = groupby_data.index
+            y = groupby_data.sigma_mean
+            plt.plot(x, y, 'o-', label=code_name)
+
+        plt.xlabel('true $\\mu$')
+        plt.ylabel("MSE $\\hat \\mu$")
+        plt.title(plot_title)
+        plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+        plt.savefig(os.path.join(directory, f'{plot_title}-true_mu_sigma_mean.png'), bbox_inches='tight')
+        plt.clf()
+
+
+def true_mu_target_std(data, title="No Title", directory=DEFAULT_DIR):
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
+        label = f"tes={true_tes}_jes={true_jes}_les={true_les}"
+        plot_title = f"{title}_best_average_{label}"
+        v_syst = []
+        methods = []
+        for code_name, all_evaluation in df.groupby("code_name"):
+            full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.mean())
+            groupby_data = best_mse_evaluation.groupby("true_mu").mean()
+            x = groupby_data.index
+            y = groupby_data.target_std
+            plt.plot(x, y, 'o-', label=code_name)
+
+        plt.xlabel('true $\\mu$')
+        plt.ylabel("MSE $\\hat \\mu$")
+        plt.title(plot_title)
+        plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+        plt.savefig(os.path.join(directory, f'{plot_title}-true_mu_target_std.png'), bbox_inches='tight')
+        plt.clf()
