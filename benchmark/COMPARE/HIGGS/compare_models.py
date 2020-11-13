@@ -482,8 +482,8 @@ def main():
     else:
         print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
 
-    # BALANCEDHIGGS CALIB PLOTS
-    benchmark_name = 'BALANCEDHIGGS-calib'
+    # BALANCEDHIGGSTES CALIB PLOTS
+    benchmark_name = 'BALANCEDHIGGSTES-calib'
     print("="*15, benchmark_name, "="*15)
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
@@ -498,8 +498,8 @@ def main():
     else:
         print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
 
-    # BALANCEDHIGGS PRIOR PLOTS
-    benchmark_name = 'BALANCEDHIGGS-prior'
+    # BALANCEDHIGGSTES PRIOR PLOTS
+    benchmark_name = 'BALANCEDHIGGSTES-prior'
     print("="*15, benchmark_name, "="*15)
     all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
     all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
