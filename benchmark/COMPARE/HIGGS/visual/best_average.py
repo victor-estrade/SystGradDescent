@@ -151,8 +151,9 @@ def true_mu_mse(data, title="No Title", directory=DEFAULT_DIR):
         methods = []
         for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.mean())
-            x = best_mse_evaluation.groupby("true_mu").index
-            y = best_mse_evaluation.groupby("true_mu").mean().target_mse
+            groupby_data = best_mse_evaluation.groupby("true_mu").mean()
+            x = groupby_data.index
+            y = groupby_data.target_mse
             plt.plot(x, y, 'o-', label=code_name)
 
         plt.xlabel('true $\\mu$')
