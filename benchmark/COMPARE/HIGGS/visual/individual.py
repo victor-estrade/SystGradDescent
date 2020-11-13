@@ -156,6 +156,7 @@ def true_mu_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.savefig(os.path.join(directory, f'true_mu_sigma_mean.png'), bbox_inches='tight')
     plt.clf()
 
+
 def true_mu_target_std(evaluation, title="No Title", directory=DEFAULT_DIR):
     # max_n_test_samples = evaluation.n_test_samples.max()
     # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
