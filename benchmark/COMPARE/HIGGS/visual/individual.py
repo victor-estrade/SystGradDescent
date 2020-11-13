@@ -140,14 +140,12 @@ def true_mu_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
     # max_n_test_samples = evaluation.n_test_samples.max()
     # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     data = evaluation
-    x, true = None, None  # Strange fix for 'x referenced before assignement' in plt.scatter(x, true, ...)
     for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
         y = df.sigma_mean
         true = df.true_mu
         label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
         plt.scatter(x, y, marker='o', label=label)
-    plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average estimated $\\hat \\sigma_{\\hat \\mu}$")
@@ -161,14 +159,12 @@ def true_mu_target_std(evaluation, title="No Title", directory=DEFAULT_DIR):
     # max_n_test_samples = evaluation.n_test_samples.max()
     # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     data = evaluation
-    x, true = None, None  # Strange fix for 'x referenced before assignement' in plt.scatter(x, true, ...)
     for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
         x = df.true_mu
         y = df.target_std
         true = df.true_mu
         label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
         plt.scatter(x, y, marker='o', label=label)
-    plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average estimated $std(\\hat \\mu)$")
