@@ -105,6 +105,7 @@ def make_common_estimation_plots(data_and_marginal, benchmark_name):
     os.makedirs(directory, exist_ok=True)
     best_average.mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
     best_average.mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    best_average.true_mu_mse(data_and_marginal, title=benchmark_name, directory=directory)
 
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MEDIAN")
     os.makedirs(directory, exist_ok=True)
