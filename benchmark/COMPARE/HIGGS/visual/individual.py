@@ -156,6 +156,26 @@ def true_mu_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.savefig(os.path.join(directory, f'true_mu_sigma_mean.png'), bbox_inches='tight')
     plt.clf()
 
+def true_mu_target_std(evaluation, title="No Title", directory=DEFAULT_DIR):
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    data = evaluation
+    x, true = None, None  # Strange fix for 'x referenced before assignement' in plt.scatter(x, true, ...)
+    for (true_tes, true_jes, true_les), df in data.groupby(["true_tes", "true_jes", "true_les"]):
+        x = df.true_mu
+        y = df.target_std
+        true = df.true_mu
+        label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
+        plt.scatter(x, y, marker='o', label=label)
+    plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
+
+    plt.xlabel('true $\\mu$')
+    plt.ylabel("average estimated $std(\\hat \\mu)$")
+    plt.title(title)
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'true_mu_target_std.png'), bbox_inches='tight')
+    plt.clf()
+
 
 def n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
     chosen_true_mu = 1.0  # Nominal value of mu

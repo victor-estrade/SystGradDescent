@@ -33,6 +33,7 @@ def make_individual_estimation_plots(evaluation, loader):
     individual.true_mu_target_mean(evaluation, title=loader.model_full_name, directory=directory)
     individual.true_mu_target_mean_std(evaluation, title=loader.model_full_name, directory=directory)
     individual.true_mu_sigma_mean(evaluation, title=loader.model_full_name, directory=directory)
+    individual.true_mu_target_std(evaluation, title=loader.model_full_name, directory=directory)
     individual.n_samples_mse(evaluation, title=loader.model_full_name, directory=directory)
     individual.n_samples_sigma_mean(evaluation, title=loader.model_full_name, directory=directory)
     # individual.box_n_samples_mse(evaluation, title=loader.model_full_name, directory=directory)
