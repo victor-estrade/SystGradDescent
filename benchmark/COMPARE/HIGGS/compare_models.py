@@ -426,9 +426,13 @@ def main():
     if all_estimation_data :
         data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
         make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO ESTIMATION FOR {benchmark_name}")
     if all_conditional_data:
         data_conditional = pd.concat(all_conditional_data, sort=False)
         make_common_conditional_plots(data_conditional, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
 
     # HIGGSTES PRIOR PLOTS
     benchmark_name = 'HIGGSTES-prior'
@@ -438,9 +442,13 @@ def main():
     if all_estimation_data :
         data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
         make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO ESTIMATION FOR {benchmark_name}")
     if all_conditional_data:
         data_conditional = pd.concat(all_conditional_data, sort=False)
         make_common_conditional_plots(data_conditional, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
 
     # EASYHIGGSTES CALIB PLOTS
     benchmark_name = 'EASYHIGGSTES-calib'
@@ -450,9 +458,13 @@ def main():
     if all_estimation_data :
         data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
         make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO ESTIMATION FOR {benchmark_name}")
     if all_conditional_data:
         data_conditional = pd.concat(all_conditional_data, sort=False)
         make_common_conditional_plots(data_conditional, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
 
     # EASYHIGGSTES PRIOR PLOTS
     benchmark_name = 'EASYHIGGSTES-prior'
@@ -462,9 +474,13 @@ def main():
     if all_estimation_data :
         data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
         make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO ESTIMATION FOR {benchmark_name}")
     if all_conditional_data:
         data_conditional = pd.concat(all_conditional_data, sort=False)
         make_common_conditional_plots(data_conditional, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
 
     # BALANCEDHIGGS CALIB PLOTS
     benchmark_name = 'BALANCEDHIGGS-calib'
@@ -474,9 +490,13 @@ def main():
     if all_estimation_data :
         data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
         make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO ESTIMATION FOR {benchmark_name}")
     if all_conditional_data:
         data_conditional = pd.concat(all_conditional_data, sort=False)
         make_common_conditional_plots(data_conditional, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
 
     # BALANCEDHIGGS PRIOR PLOTS
     benchmark_name = 'BALANCEDHIGGS-prior'
@@ -486,9 +506,13 @@ def main():
     if all_estimation_data :
         data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
         make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO ESTIMATION FOR {benchmark_name}")
     if all_conditional_data:
         data_conditional = pd.concat(all_conditional_data, sort=False)
         make_common_conditional_plots(data_conditional, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
 
 
 if __name__ == '__main__':
