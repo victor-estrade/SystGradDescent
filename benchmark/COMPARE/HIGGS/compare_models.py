@@ -413,6 +413,8 @@ def main():
         marginal_eval = pd.concat(marginal_eval, sort=False)
         marginal_eval['base_name'] = "Marginal"
         marginal_eval['code_name'] = "Blind-REG"
+    else:
+        marginal_eval = pd.DataFrame()
 
     # HIGGSTES CALIB PLOTS
     benchmark_name = 'HIGGSTES-calib'
