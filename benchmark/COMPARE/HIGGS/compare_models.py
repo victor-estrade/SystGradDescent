@@ -312,11 +312,13 @@ def load_all_conditional_evaluation(TheLoader, hp_args, data_name='HIGGSTES', be
         loader = TheLoader(data_name, benchmark_name, **kwargs)
         try:
             config_table = loader.load_config_table()
-            evaluation = loader.load_conditional_evaluation()
+            evaluation = loader.load_estimation_evaluation()
+            conditional_evaluation = loader.load_conditional_evaluation()
         except FileNotFoundError:
             print(f"Missing conditional estimation results for {loader.model_full_name}")
         else:
             evaluation = evaluation.join(config_table, rsuffix='_')
+            evaluation = evaluation.join(conditional_evaluation, rsuffix='__')
             all_evaluation.append(evaluation)
     return all_evaluation
 
