@@ -32,6 +32,7 @@ def make_individual_estimation_plots(evaluation, loader):
     individual.true_mu_estimator(evaluation, title=loader.model_full_name, directory=directory)
     individual.true_mu_target_mean(evaluation, title=loader.model_full_name, directory=directory)
     individual.true_mu_target_mean_std(evaluation, title=loader.model_full_name, directory=directory)
+    individual.true_mu_sigma_mean(evaluation, title=loader.model_full_name, directory=directory)
     individual.n_samples_mse(evaluation, title=loader.model_full_name, directory=directory)
     individual.n_samples_sigma_mean(evaluation, title=loader.model_full_name, directory=directory)
     # individual.box_n_samples_mse(evaluation, title=loader.model_full_name, directory=directory)
@@ -60,7 +61,7 @@ def make_individual_conditional_plots(evaluation, loader):
     individual.true_mu_v_syst(evaluation, title=loader.model_full_name, directory=directory)
     individual.n_samples_v_stat(evaluation, title=loader.model_full_name, directory=directory)
     individual.n_samples_v_syst(evaluation, title=loader.model_full_name, directory=directory)
-    
+
 
 def make_profusion_conditional_plots(all_evaluations, loader):
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name, "PROFUSION")
@@ -128,5 +129,3 @@ def make_hp_table(data_name, benchmark_name, args, TheLoader):
 
 def _stuff(args):
     print(list(filter(lambda kwargs : kwargs['max_depth']==3, hp_kwargs_generator(args))))
-
-
