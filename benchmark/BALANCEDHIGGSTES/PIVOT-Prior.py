@@ -84,7 +84,7 @@ class TrainGenerator:
 # net_criterion, adv_criterion, trade_off, net_optimizer, adv_optimizer,
 
 def build_model(args, i_cv):
-    args.net = ARCHI(n_in=1, n_out=2, n_unit=args.n_unit)
+    args.net = ARCHI(n_in=29, n_out=2, n_unit=args.n_unit)
     args.adv_net = ARCHI(n_in=2, n_out=2, n_unit=args.n_unit)
     args.net_optimizer = get_optimizer(args)
     args.adv_optimizer = get_optimizer(args)
