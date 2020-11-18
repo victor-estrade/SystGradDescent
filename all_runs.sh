@@ -65,6 +65,16 @@ python run_array.py benchmark.VAR.GG.TP --gpu 1 --n-steps 2000 5000 --n-unit 50 
 python run_array.py benchmark.VAR.GG.INF --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name VAR-GG-INF --partition besteffort
 
 
+# AMS RUN
+python run_array.py benchmark.AMS.GG.GB --gpu 1 --n-estimators 100 300 1000  --max-depth 3 5 10 --learning-rate 0.1 0.05 0.01 --xp-name AMS-GG-GB --partition besteffort
+python run_array.py benchmark.AMS.GG.NN --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --batch-size 20 --xp-name AMS-GG-NN --partition besteffort
+python run_array.py benchmark.AMS.GG.DA --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name AMS-GG-DA --partition besteffort
+
+python run_array.py benchmark.AMS.GG.PIVOT --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name AMS-GG-PIVOT --partition besteffort
+python run_array.py benchmark.AMS.GG.TP --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name AMS-GG-TP --partition besteffort
+
+python run_array.py benchmark.AMS.GG.INF --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name AMS-GG-INF --partition besteffort
+
 
 # TOY 3D
 #========

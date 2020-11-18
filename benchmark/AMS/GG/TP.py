@@ -122,11 +122,6 @@ def run(args, i_cv):
     # TRAINING / LOADING
     train_or_load_neural_net(model, train_generator, retrain=args.retrain)
 
-    some_fisher = compute_fisher(*compute_bins(model, valid_generator, config, n_bins=3), config.TRUE.mu)
-    some_fisher_bis = compute_fisher(*compute_bins(model, valid_generator, config, n_bins=3), config.TRUE.mu)
-
-    assert some_fisher == some_fisher_bis, f"Fisher info should be deterministic but found : {some_fisher} =/= {some_fisher_bis}"
-
     # MEASUREMENT
     result_row = {'i_cv': i_cv}
     results = []
