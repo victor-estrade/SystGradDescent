@@ -100,6 +100,11 @@ class Loader(object):
         fisher = pd.read_csv(path, index_col=0)
         return fisher
 
+    def load_threshold(self):
+        path = os.path.join(self._get_var_result_directory(), "threshold.csv")
+        fisher = pd.read_csv(path, index_col=0)
+        return fisher
+
 
 class GBLoader(Loader):
     """docstring for GBLoader"""

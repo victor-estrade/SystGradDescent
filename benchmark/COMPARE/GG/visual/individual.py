@@ -269,3 +269,32 @@ def fisher_n_bins(data, title="No Title", directory=DEFAULT_DIR):
     plt.savefig(os.path.join(directory, f'fisher_n_bins.png'), bbox_inches='tight')
     plt.clf()
     plt.close(fig)
+
+
+def threshold_s_sqrt_s_b(data, title="No Title", directory=DEFAULT_DIR):
+    import numpy as np
+    NUM_COLORS = 15
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    colors = sns.color_palette('husl', n_colors=NUM_COLORS)
+    # cm = plt.get_cmap('gist_rainbow')
+    # colors = [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)]
+    ax.set_prop_cycle(color=colors, linestyle=['solid', 'dashed', 'dashdot']*5)
+
+    data = data[ data.n_test_samples == data.n_test_samples.max() ]
+    for (true_mix, true_rescale), df in data.groupby(["true_mix", "true_rescale"]):
+        df_mean = df.groupby('threshold').mean()
+        label = f"$\\mu = {true_mix}$, $\\alpha={true_rescale}$"
+        x = df_mean.index
+        y = df_mean.s / np.sqrt(df_mean.s + df_mean.b)
+        ax.plot(x, y, label=label)
+        # df_std = df.groupby('n_bins').std()
+        # y_err = df_std.fisher
+        # ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
+    plt.xlabel('# bins')
+    plt.ylabel('mean( fisher info ) $\pm$ std( fisher info )')
+    plt.title(title)
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'threshold_s_sqrt_s_b.png'), bbox_inches='tight')
+    plt.clf()
+    plt.close(fig)
