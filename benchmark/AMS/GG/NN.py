@@ -103,10 +103,9 @@ def run(args, i_cv):
     # MEASUREMENT
     result_row = {'i_cv': i_cv}
     results = []
-    # for test_config in list(config.iter_test_config())[:9]:  # FASTER
     for test_config in config.iter_test_config():
         logger.info(f"Running test set : {test_config.TRUE}, {test_config.N_TESTING_SAMPLES} samples")
-        for threshold in np.linspace(0, 1, 10):
+        for threshold in np.linspace(0, 1, 500):
             result_row = {'i_cv': i_cv}
             result_row['threshold'] = threshold
             result_row.update(test_config.TRUE.to_dict(prefix='true_'))
@@ -131,6 +130,8 @@ def run(args, i_cv):
             result_row['n'] = n_selected
             result_row['b'] = n_selected_bkg
             result_row['s'] = n_selected_sig
+            result_row['s_sqrt_n'] = n_selected_sig / np.sqrt(n_selected)
+            result_row['s_sqrt_b'] = n_selected_sig / np.sqrt(n_selected)
             results.append(result_row.copy())
     results = pd.DataFrame(results)
     print(results)
