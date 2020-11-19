@@ -33,6 +33,7 @@ from visual.misc import plot_params
 
 from problem.higgs import HiggsConfigTesOnly as Config
 from problem.higgs import get_generators_torch
+from problem.higgs import param_generator
 from problem.higgs import GeneratorCPU
 from problem.higgs import HiggsNLL as NLLComputer
 
