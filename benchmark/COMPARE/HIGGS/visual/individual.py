@@ -12,7 +12,7 @@ set_plot_config()
 
 # import matplotlib as mpl
 import matplotlib.pyplot as plt
-# import seaborn as sns
+import seaborn as sns
 
 from config import DEFAULT_DIR
 
