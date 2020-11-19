@@ -49,7 +49,7 @@ N_ITER = 30
 N_AUGMENT = 5
 
 def build_model(args, i_cv):
-    args.net = ARCHI(n_in=1, n_out=2, n_unit=args.n_unit)
+    args.net = ARCHI(n_in=29, n_out=2, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     model = get_model(args, NeuralNetClassifier)
     model.base_name = "DataAugmentation"
