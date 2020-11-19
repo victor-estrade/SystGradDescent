@@ -67,9 +67,24 @@ def get_easy_generators(seed, train_size=0.5, test_size=0.1):
     return train_generator, valid_generator, test_generator
 
 
+class GeneratorCPU:
+    def __init__(self, data_generator):
+        self.data_generator = data_generator
+        self.n_samples = data_generator.size
+
+    def generate(self, *params, n_samples=None, no_grad=False):
+            X, y, w = self.data_generator.generate(*params, n_samples=n_samples, no_grad=no_grad)
+            X = X.detach().cpu().numpy()
+            y = y.detach().cpu().numpy()
+            w = w.detach().cpu().numpy()
+            return X, y, w
+
+    def reset(self):
+        self.data_generator.reset()
+
 
 class Generator():
-    def __init__(self, data, seed=None, background_luminosity=410999.84732187376, 
+    def __init__(self, data, seed=None, background_luminosity=410999.84732187376,
                               signal_luminosity=691.9886077135781):
         self.data = data
         self.feature_names = data.columns[:-2] if len(data.columns) == 31 else data.columns[:-3]
@@ -140,7 +155,7 @@ class FuturGenerator():
     def _restart(self):
         self.random.shuffle(self.indexes)
         self.i = 0
-    
+
     def sample(self, n_samples):
         assert n_samples > 0, 'n_samples must be > 0'
         blocs = []
@@ -153,7 +168,7 @@ class FuturGenerator():
             remains = self.size - self.i
         if n_samples > 0:
             excerpt = self.data.iloc[self.indexes[self.i:self.i+n_samples]]
-            blocs.append(excerpt)            
+            blocs.append(excerpt)
             self.i += n_samples
         data_sample = blocs[0] if len(blocs) == 1 else pd.concat(blocs, axis=0)
         return data_sample
