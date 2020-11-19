@@ -77,8 +77,28 @@ def make_profusion_conditional_plots(all_evaluations, loader):
     profusion.v_syst_box_plot(all_evaluations, title=title, directory=directory)
 
 
+def make_individual_threshold_plots(threshold_table, loader):
+    directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name, loader.model_full_name)
+    os.makedirs(directory, exist_ok=True)
+
+    individual.threshold_s_sqrt_s_b(threshold_table, title=loader.model_full_name, directory=directory)
+
 
 def make_common_plots(data_name, benchmark_name, args, TheLoader):
+    print("Make evaluation plots")
+    print("="*25)
+    make_evaluation_plots(data_name, benchmark_name, args, TheLoader)
+    # print("Make fisher plots")
+    # print("="*25)
+    # make_fisher_plots(data_name, benchmark_name, args, TheLoader)
+    print("Make threshold plots")
+    print("="*25)
+    make_threshold_plots(data_name, benchmark_name, args, TheLoader)
+
+
+
+
+def make_evaluation_plots(data_name, benchmark_name, args, TheLoader):
     """
     make all the common individual plots and profusion plots.
     """
@@ -116,6 +136,16 @@ def make_common_plots(data_name, benchmark_name, args, TheLoader):
     if all_evaluations:
         make_profusion_conditional_plots(all_evaluations, loader)
 
+
+def make_threshold_plots(data_name, benchmark_name, args, TheLoader):
+    for kwargs in hp_kwargs_generator(args):
+        loader = TheLoader(data_name, benchmark_name, **kwargs)
+        try:
+            threshold_data = loader.load_threshold()
+        except FileNotFoundError:
+            print(f"Missing results for {loader.model_full_name}")
+        else:
+            make_individual_threshold_plots(threshold_data, loader)
 
 
 

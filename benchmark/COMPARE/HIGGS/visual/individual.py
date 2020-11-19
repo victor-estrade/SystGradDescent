@@ -261,3 +261,33 @@ def n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'n_samples_v_syst.png'), bbox_inches='tight')
     plt.clf()
+
+
+
+def threshold_s_sqrt_s_b(data, title="No Title", directory=DEFAULT_DIR):
+    import numpy as np
+    NUM_COLORS = 15
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    colors = sns.color_palette('husl', n_colors=NUM_COLORS)
+    # cm = plt.get_cmap('gist_rainbow')
+    # colors = [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)]
+    ax.set_prop_cycle(color=colors, linestyle=['solid', 'dashed', 'dashdot']*5)
+
+    data = data[ data.n_test_samples == data.n_test_samples.max() ]
+    for (true_mu, true_tes, true_jes, true_les), df in data.groupby(["true_mu", "true_tes", "true_jes", "true_les"]):
+        df_mean = df.groupby('threshold').mean()
+        label = f"$\\mu = {true_mix}$, $\\alpha={true_rescale}$"
+        x = df_mean.index
+        y = df_mean.s_sqrt_n
+        # ax.plot(x, y, label=label)
+        df_std = df.groupby('n_bins').std()
+        y_err = df_std.s_sqrt_n
+        ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
+    plt.xlabel('# bins')
+    plt.ylabel('mean( $s / \sqrt{s+b} $ ) $\pm$ std( fisher info )')
+    plt.title(title)
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'threshold_s_sqrt_s_b.png'), bbox_inches='tight')
+    plt.clf()
+    plt.close(fig)
