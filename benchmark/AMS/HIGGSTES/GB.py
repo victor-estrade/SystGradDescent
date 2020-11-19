@@ -31,10 +31,10 @@ from utils.images import gather_images
 
 from visual.misc import plot_params
 
-from problem.gamma_gauss import GGConfig as Config
-from problem.gamma_gauss import Generator
-from problem.gamma_gauss import param_generator
-from problem.gamma_gauss import GGNLL as NLLComputer
+from problem.higgs import HiggsConfigTesOnly as Config
+from problem.higgs import get_generators_torch
+from problem.higgs import GeneratorCPU
+from problem.higgs import HiggsNLL as NLLComputer
 
 from model.gradient_boost import GradientBoostingModel
 from ...my_argparser import GB_parse_args
@@ -84,9 +84,10 @@ def run(args, i_cv):
     logger.info('Set up data generator')
     config = Config()
     seed = SEED + i_cv * 5
-    train_generator = Generator(seed)
-    valid_generator = Generator(seed+1)
-    test_generator  = Generator(seed+2)
+    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
+    train_generator = GeneratorCPU(train_generator)
+    valid_generator = GeneratorCPU(valid_generator)
+    test_generator = GeneratorCPU(test_generator)
 
     # SET MODEL
     logger.info('Set up classifier')
@@ -102,7 +103,7 @@ def run(args, i_cv):
     results = []
     for test_config in config.iter_test_config():
         logger.info(f"Running test set : {test_config.TRUE}, {test_config.N_TESTING_SAMPLES} samples")
-        for threshold in np.linspace(0, 1, 500):
+        for threshold in np.linspace(0, 1, 50):
             result_row = {'i_cv': i_cv}
             result_row['threshold'] = threshold
             result_row.update(test_config.TRUE.to_dict(prefix='true_'))
@@ -127,14 +128,16 @@ def run(args, i_cv):
             result_row['n'] = n_selected
             result_row['b'] = n_selected_bkg
             result_row['s'] = n_selected_sig
-            result_row['s_sqrt_n'] = n_selected_sig / np.sqrt(n_selected)
-            result_row['s_sqrt_b'] = n_selected_sig / np.sqrt(n_selected)
+            result_row['s_sqrt_n'] = safe_division( n_selected_sig, np.sqrt(n_selected) )
+            result_row['s_sqrt_b'] = safe_division( n_selected_sig, np.sqrt(n_selected_bkg) )
             results.append(result_row.copy())
     results = pd.DataFrame(results)
     print(results)
     return results
 
-
+def safe_division(numerator, denominator):
+    div = np.divide(numerator, denominator, out=np.zeros_like(numerator, dtype="float"), where=denominator!=0)
+    return div
 
 
 if __name__ == '__main__':

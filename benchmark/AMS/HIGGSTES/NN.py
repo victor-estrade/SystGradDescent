@@ -33,14 +33,12 @@ from visual.misc import plot_params
 
 from problem.higgs import HiggsConfigTesOnly as Config
 from problem.higgs import get_generators_torch
-from problem.higgs import Generator
+from problem.higgs import GeneratorCPU
 from problem.higgs import HiggsNLL as NLLComputer
 
 from model.neural_network import NeuralNetClassifier
 from archi.classic import L4 as ARCHI
 from ...my_argparser import NET_parse_args
-
-from .common import GeneratorCPU
 
 DATA_NAME = 'HIGGSTES'
 BENCHMARK_NAME = 'VAR-'+DATA_NAME
@@ -107,7 +105,7 @@ def run(args, i_cv):
     results = []
     for test_config in config.iter_test_config():
         logger.info(f"Running test set : {test_config.TRUE}, {test_config.N_TESTING_SAMPLES} samples")
-        for threshold in np.linspace(0, 1, 10):
+        for threshold in np.linspace(0, 1, 50):
             logger.info(f"threshold  =  {threshold}")
             result_row = {'i_cv': i_cv}
             result_row['threshold'] = threshold
