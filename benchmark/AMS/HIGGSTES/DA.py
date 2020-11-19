@@ -43,7 +43,7 @@ from ...my_argparser import NET_parse_args
 from archi.classic import L4 as ARCHI
 
 
-DATA_NAME = 'GG'
+DATA_NAME = 'HIGGSTES'
 BENCHMARK_NAME = 'VAR-'+DATA_NAME
 N_ITER = 30
 N_AUGMENT = 5

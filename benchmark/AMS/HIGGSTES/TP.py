@@ -41,7 +41,7 @@ from archi.classic import L4 as ARCHI
 from ...my_argparser import TP_parse_args
 
 
-DATA_NAME = 'GG'
+DATA_NAME = 'HIGGSTES'
 BENCHMARK_NAME = 'VAR-'+DATA_NAME
 N_ITER = 30
 

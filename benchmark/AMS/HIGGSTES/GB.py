@@ -40,7 +40,7 @@ from model.gradient_boost import GradientBoostingModel
 from ...my_argparser import GB_parse_args
 
 
-DATA_NAME = 'GG'
+DATA_NAME = 'HIGGSTES'
 BENCHMARK_NAME = 'VAR-'+DATA_NAME
 N_ITER = 30
 
