@@ -233,12 +233,12 @@ python run_array.py benchmark.HIGGSTES.REG-Prior --gpu 1 --n-steps 5000 --n-unit
 
 
 # AMS RUN
-# python run_array.py benchmark.AMS.HIGGSTES.GB --gpu 1 --n-estimators 300 800  --max-depth 3 6 --learning-rate 0.1 0.01 --xp-name AMS.HIGGSTES-GB --partition besteffort --end-cv 5
-python run_array.py benchmark.AMS.HIGGSTES.NN --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name AMS.HIGGSTES-NN --partition besteffort --end-cv 5
-python run_array.py benchmark.AMS.HIGGSTES.DA --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name AMS.HIGGSTES-DA --partition besteffort --end-cv 5
+# python run_array.py benchmark.AMS.HIGGSTES.GB --gpu 1 --n-estimators 300 800  --max-depth 3 6 --learning-rate 0.1 0.01 --xp-name AMS-HIGGSTES-GB --partition besteffort --end-cv 5
+python run_array.py benchmark.AMS.HIGGSTES.NN --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name AMS-HIGGSTES-NN --partition besteffort --end-cv 5
+python run_array.py benchmark.AMS.HIGGSTES.DA --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name AMS-HIGGSTES-DA --partition besteffort --end-cv 5
 
-python run_array.py benchmark.AMS.HIGGSTES.PIVOT --gpu 1 --n-steps 5000 --n-unit 200 500 --trade-off 1 0.1 --xp-name AMS.HIGGSTES-PIVOT --partition besteffort --end-cv 5
-python run_array.py benchmark.AMS.HIGGSTES.TP --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 200 --xp-name AMS.HIGGSTES-TP --partition besteffort --end-cv 5
+python run_array.py benchmark.AMS.HIGGSTES.PIVOT --gpu 1 --n-steps 5000 --n-unit 200 500 --trade-off 1 0.1 --xp-name AMS-HIGGSTES-PIVOT --partition besteffort --end-cv 5
+python run_array.py benchmark.AMS.HIGGSTES.TP --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 200 --xp-name AMS-HIGGSTES-TP --partition besteffort --end-cv 5
 
 
 
