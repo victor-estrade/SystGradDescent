@@ -117,35 +117,42 @@ def run(args, i_cv):
             bin_2 = decision > threshold
             bin_1 = np.logical_not(bin_2)
 
-            result_row['beta_2'] = np.sum(w[y[bin_2] == 0])
-            result_row['gamma_2'] = np.sum(w[y[bin_2] == 1])
-            result_row['beta_1'] = np.sum(w[y[bin_1] == 0])
-            result_row['gamma_1'] = np.sum(w[y[bin_1] == 1])
-            result_row['beta_0'] = np.sum(w[y == 0])
-            result_row['gamma_0'] = np.sum(w[y == 1])
+            result_row['beta_2'] = np.sum( w [ np.logical_and(bin_2, y == 0) ] )
+            result_row['gamma_2'] = np.sum( w [ np.logical_and(bin_2, y == 1) ] )
+            result_row['beta_1'] = np.sum( w [ np.logical_and(bin_1, y == 0) ] )
+            result_row['gamma_1'] = np.sum( w [ np.logical_and(bin_1, y == 1) ] )
+            result_row['beta_0'] = np.sum( w [ y == 0 ] )
+            result_row['gamma_0'] = np.sum( w [ y == 1 ] )
+
             gamma_array = np.array(result_row['gamma_0'])
             beta_array = np.array(result_row['beta_0'])
             result_row['fisher_1'] = compute_fisher(gamma_array, beta_array, test_config.TRUE.mu)
+
             gamma_array = np.array(result_row['gamma_1'], result_row['gamma_2'])
             beta_array = np.array(result_row['beta_1'], result_row['beta_2'])
             result_row['fisher_2'] = compute_fisher(gamma_array, beta_array, test_config.TRUE.mu)
+
             result_row['g_sqrt_b_g'] = safe_division( result_row['gamma_2'], np.sqrt(result_row['gamma_2'] + result_row['beta_2']) )
             result_row['g_sqrt_b'] = safe_division( result_row['gamma_2'], np.sqrt(result_row['beta_2']) )
 
+            # On TEST SET
             X, y, w = test_generator.generate(*test_config.TRUE, n_samples=config.N_VALIDATION_SAMPLES)
             proba = model.predict_proba(X)
             decision = proba[:, 1]
             bin_2 = decision > threshold
             n_bin_2 = np.sum(bin_2)
             bin_1 = np.logical_not(bin_2)
-            result_row['b_2'] = np.sum(w[y[bin_2] == 0])
-            result_row['s_2'] = np.sum(w[y[bin_2] == 1])
-            result_row['b_1'] = np.sum(w[y[bin_1] == 0])
-            result_row['s_1'] = np.sum(w[y[bin_1] == 1])
-            result_row['b_0'] = np.sum(w[y == 0])
-            result_row['s_0'] = np.sum(w[y == 1])
+
+            result_row['b_2'] = np.sum( w [ np.logical_and(bin_2, y == 0) ] )
+            result_row['s_2'] = np.sum( w [ np.logical_and(bin_2, y == 1) ] )
+            result_row['b_1'] = np.sum( w [ np.logical_and(bin_1, y == 0) ] )
+            result_row['s_1'] = np.sum( w [ np.logical_and(bin_1, y == 1) ] )
+            result_row['b_0'] = np.sum( w [ y == 0 ] )
+            result_row['s_0'] = np.sum( w [ y == 1 ] )
+
             result_row['s_sqrt_n'] = safe_division( result_row['s_2'], np.sqrt(result_row['s_2'] + result_row['b_2']) )
             result_row['s_sqrt_b'] = safe_division( result_row['s_2'], np.sqrt(result_row['b_2']) )
+            
             results.append(result_row.copy())
     results = pd.DataFrame(results)
     print(results)
