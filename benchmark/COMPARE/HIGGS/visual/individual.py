@@ -274,7 +274,6 @@ def threshold_s_sqrt_s_b(data, title="No Title", directory=DEFAULT_DIR):
     # colors = [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)]
     ax.set_prop_cycle(color=colors, linestyle=['solid', 'dashed', 'dashdot']*5)
 
-    print(data.n_test_samples)
     for (true_mu, true_tes, true_jes, true_les), df in data.groupby(["true_mu", "true_tes", "true_jes", "true_les"]):
         df_mean = df.groupby('threshold').mean()
         label = f"$\\mu = {true_mu}$, tes={true_tes}, jes={true_jes}, les={true_les}"
@@ -304,9 +303,8 @@ def threshold_fisher_diff(data, title="No Title", directory=DEFAULT_DIR):
     ax.set_prop_cycle(color=colors, linestyle=['solid', 'dashed', 'dashdot']*5)
 
     # data = data[ data.n_test_samples == data.n_test_samples.max() ]
-    print(data.n_test_samples)
+    data['fisher_diff'] = data.fisher_2 - data.fisher_1
     for (true_mu, true_tes, true_jes, true_les), df in data.groupby(["true_mu", "true_tes", "true_jes", "true_les"]):
-        df['fisher_diff'] = df.fisher_2 - df.fisher_1
         df_mean = df.groupby('threshold').mean()
         label = f"$\\mu = {true_mu}$, tes={true_tes}, jes={true_jes}, les={true_les}"
         x = df_mean.index
