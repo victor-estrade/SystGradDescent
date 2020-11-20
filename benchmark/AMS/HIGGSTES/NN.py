@@ -106,31 +106,42 @@ def run(args, i_cv):
     for test_config in config.iter_test_config():
         logger.info(f"Running test set : {test_config.TRUE}, {test_config.N_TESTING_SAMPLES} samples")
         for threshold in np.linspace(0, 1, 50):
-            logger.info(f"threshold  =  {threshold}")
             result_row = {'i_cv': i_cv}
             result_row['threshold'] = threshold
             result_row.update(test_config.TRUE.to_dict(prefix='true_'))
             result_row['n_test_samples'] = test_config.N_TESTING_SAMPLES
 
-            X, y, w = valid_generator.generate(*config.TRUE, n_samples=config.N_VALIDATION_SAMPLES)
+            X, y, w = valid_generator.generate(*test_config.TRUE, n_samples=config.N_VALIDATION_SAMPLES)
             proba = model.predict_proba(X)
             decision = proba[:, 1]
-            selected = decision > threshold
-            beta = np.sum(y[selected] == 0)
-            gamma = np.sum(y[selected] == 1)
-            result_row['beta'] = beta
-            result_row['gamma'] = gamma
+            bin_2 = decision > threshold
+            bin_1 = np.logical_not(bin_2)
 
-            X, y, w = test_generator.generate(*config.TRUE, n_samples=config.N_VALIDATION_SAMPLES)
+            result_row['beta_2'] = np.sum(w[y[bin_2] == 0])
+            result_row['gamma_2'] = np.sum(w[y[bin_2] == 1])
+            result_row['beta_1'] = np.sum(w[y[bin_1] == 0])
+            result_row['gamma_1'] = np.sum(w[y[bin_1] == 1])
+            result_row['beta_0'] = np.sum(w[y == 0])
+            result_row['gamma_0'] = np.sum(w[y == 1])
+            gamma_array = np.array(result_row['gamma_0'])
+            beta_array = np.array(result_row['beta_0'])
+            result_row['fisher_1'] = compute_fisher(gamma_array, beta_array, test_config.TRUE.mu)
+            gamma_array = np.array(result_row['gamma_1'], result_row['gamma_2'])
+            beta_array = np.array(result_row['beta_1'], result_row['beta_2'])
+            result_row['fisher_2'] = compute_fisher(gamma_array, beta_array, test_config.TRUE.mu)
+
+            X, y, w = test_generator.generate(*test_config.TRUE, n_samples=config.N_VALIDATION_SAMPLES)
             proba = model.predict_proba(X)
             decision = proba[:, 1]
-            selected = decision > threshold
-            n_selected = np.sum(selected)
-            n_selected_bkg = np.sum(y[selected] == 0)
-            n_selected_sig = np.sum(y[selected] == 1)
-            result_row['n'] = n_selected
-            result_row['b'] = n_selected_bkg
-            result_row['s'] = n_selected_sig
+            bin_2 = decision > threshold
+            n_bin_2 = np.sum(bin_2)
+            bin_1 = np.logical_not(bin_2)
+            result_row['b_2'] = np.sum(w[y[bin_2] == 0])
+            result_row['s_2'] = np.sum(w[y[bin_2] == 1])
+            result_row['b_1'] = np.sum(w[y[bin_1] == 0])
+            result_row['s_1'] = np.sum(w[y[bin_1] == 1])
+            result_row['b_0'] = np.sum(w[y == 0])
+            result_row['s_0'] = np.sum(w[y == 1])
             result_row['s_sqrt_n'] = safe_division( n_selected_sig, np.sqrt(n_selected) )
             result_row['s_sqrt_b'] = safe_division( n_selected_sig, np.sqrt(n_selected_bkg) )
             results.append(result_row.copy())
@@ -141,6 +152,12 @@ def run(args, i_cv):
 def safe_division(numerator, denominator):
     div = np.divide(numerator, denominator, out=np.zeros_like(numerator, dtype="float"), where=denominator!=0)
     return div
+
+
+def compute_fisher(gamma_array, beta_array, mu):
+    EPSILON = 1e-7  # Avoid zero division
+    fisher_k = np.sum( (gamma_array**2) / (mu * gamma_array + beta_array + EPSILON) )
+    return fisher_k
 
 
 if __name__ == '__main__':
