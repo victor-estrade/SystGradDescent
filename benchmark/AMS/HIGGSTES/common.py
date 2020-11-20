@@ -56,8 +56,8 @@ def measurement(model, i_cv, config, valid_generator, test_generator):
             beta_array = np.array(result_row['beta_0'])
             result_row['fisher_1'] = compute_fisher(gamma_array, beta_array, test_config.TRUE.mu)
 
-            gamma_array = np.array(result_row['gamma_1'], result_row['gamma_2'])
-            beta_array = np.array(result_row['beta_1'], result_row['beta_2'])
+            gamma_array = np.array([result_row['gamma_1'], result_row['gamma_2']])
+            beta_array = np.array([result_row['beta_1'], result_row['beta_2']])
             result_row['fisher_2'] = compute_fisher(gamma_array, beta_array, test_config.TRUE.mu)
 
             result_row['g_sqrt_b_g'] = safe_division( result_row['gamma_2'], np.sqrt(result_row['gamma_2'] + result_row['beta_2']) )
@@ -92,5 +92,8 @@ def safe_division(numerator, denominator):
 
 def compute_fisher(gamma_array, beta_array, mu):
     EPSILON = 1e-7  # Avoid zero division
+    print(gamma_array)
     fisher_k = np.sum( (gamma_array**2) / (mu * gamma_array + beta_array + EPSILON) )
+    print(fisher_k)
+    print('------')
     return fisher_k
