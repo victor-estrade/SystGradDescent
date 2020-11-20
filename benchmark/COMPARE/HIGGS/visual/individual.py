@@ -276,8 +276,8 @@ def threshold_s_sqrt_s_b(data, title="No Title", directory=DEFAULT_DIR):
 
     data = data[ data.n_test_samples == data.n_test_samples.max() ]
     for (true_mu, true_tes, true_jes, true_les), df in data.groupby(["true_mu", "true_tes", "true_jes", "true_les"]):
+        print(df)
         df_mean = df.groupby('threshold').mean()
-        print(df_mean)
         label = f"$\\mu = {true_mix}$, $\\alpha={true_rescale}$"
         x = df_mean.index
         y = df_mean.s_sqrt_n
