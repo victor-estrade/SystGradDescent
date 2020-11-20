@@ -274,14 +274,14 @@ def threshold_s_sqrt_s_b(data, title="No Title", directory=DEFAULT_DIR):
     # colors = [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)]
     ax.set_prop_cycle(color=colors, linestyle=['solid', 'dashed', 'dashdot']*5)
 
+    print(data.n_test_samples)
     for (true_mu, true_tes, true_jes, true_les), df in data.groupby(["true_mu", "true_tes", "true_jes", "true_les"]):
-        print(df)
         df_mean = df.groupby('threshold').mean()
         label = f"$\\mu = {true_mu}$, tes={true_tes}, jes={true_jes}, les={true_les}"
         x = df_mean.index
         y = df_mean.s_sqrt_n
         # ax.plot(x, y, label=label)
-        df_std = df.groupby('n_bins').std()
+        df_std = df.groupby('threshold').std()
         y_err = df_std.s_sqrt_n
         ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
     plt.xlabel('threshold')
