@@ -82,6 +82,7 @@ def make_individual_threshold_plots(threshold_table, loader):
     os.makedirs(directory, exist_ok=True)
 
     individual.threshold_s_sqrt_s_b(threshold_table, title=loader.model_full_name, directory=directory)
+    individual.threshold_fisher_diff(threshold_table, title=loader.model_full_name, directory=directory)
 
 
 def make_common_plots(data_name, benchmark_name, args, TheLoader):
