@@ -277,7 +277,7 @@ def threshold_s_sqrt_s_b(data, title="No Title", directory=DEFAULT_DIR):
     for (true_mu, true_tes, true_jes, true_les), df in data.groupby(["true_mu", "true_tes", "true_jes", "true_les"]):
         print(df)
         df_mean = df.groupby('threshold').mean()
-        label = f"$\\mu = {true_mix}$, $\\alpha={true_rescale}$"
+        label = f"$\\mu = {true_mu}$, tes={true_tes}, jes={true_jes}, les={true_les}"
         x = df_mean.index
         y = df_mean.s_sqrt_n
         # ax.plot(x, y, label=label)
@@ -308,7 +308,7 @@ def threshold_fisher_diff(data, title="No Title", directory=DEFAULT_DIR):
     for (true_mu, true_tes, true_jes, true_les), df in data.groupby(["true_mu", "true_tes", "true_jes", "true_les"]):
         df['fisher_diff'] = df.fisher_2 - df.fisher_1
         df_mean = df.groupby('threshold').mean()
-        label = f"$\\mu = {true_mix}$, $\\alpha={true_rescale}$"
+        label = f"$\\mu = {true_mu}$, tes={true_tes}, jes={true_jes}, les={true_les}"
         x = df_mean.index
         y = df_mean.fisher_diff
         ax.plot(x, y, label=label)
