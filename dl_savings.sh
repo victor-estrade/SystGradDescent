@@ -32,3 +32,6 @@ rsync -rtv "titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/G
 
 
 # rsync -rtv ./hessian titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/hessian/
+
+
+# rsync -rtv "titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/VAR-HIGGSTES/NeuralNetClassifier/NeuralNetClassifier-L4x500-Adam-0.001-\(0.9-0.999\)-5000-10000/threshold.csv" OUTPUT/VAR-HIGGSTES/NeuralNetClassifier/NeuralNetClassifier-L4x500-Adam-0.001-\(0.9-0.999\)-5000-10000/threshold.csv
