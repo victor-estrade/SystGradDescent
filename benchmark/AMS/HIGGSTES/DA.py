@@ -65,6 +65,7 @@ class TrainGenerator:
         self.param_generator = param_generator
         self.data_generator = data_generator
         self.n_bunch = n_bunch
+        self.n_samples = data_generator.n_samples
 
     def generate(self, n_samples):
         n_bunch_samples = n_samples // self.n_bunch
@@ -122,7 +123,7 @@ def run(args, i_cv):
     flush(logger)
 
     # TRAINING / LOADING
-    train_or_load_data_augmentation(model, train_generator, config.N_TRAINING_SAMPLES*N_AUGMENT, retrain=args.retrain)
+    train_or_load_data_augmentation(model, train_generator, train_generator.n_samples*N_AUGMENT, retrain=args.retrain)
 
 
     # MEASUREMENT
