@@ -102,7 +102,6 @@ class Loader(object):
 
     def load_threshold(self):
         path = os.path.join(self._get_var_result_directory(), "threshold.csv")
-        print(path)
         fisher = pd.read_csv(path, index_col=0)
         return fisher
 

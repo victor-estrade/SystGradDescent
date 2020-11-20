@@ -277,6 +277,7 @@ def threshold_s_sqrt_s_b(data, title="No Title", directory=DEFAULT_DIR):
     data = data[ data.n_test_samples == data.n_test_samples.max() ]
     for (true_mu, true_tes, true_jes, true_les), df in data.groupby(["true_mu", "true_tes", "true_jes", "true_les"]):
         df_mean = df.groupby('threshold').mean()
+        print(df_mean)
         label = f"$\\mu = {true_mix}$, $\\alpha={true_rescale}$"
         x = df_mean.index
         y = df_mean.s_sqrt_n
@@ -284,7 +285,7 @@ def threshold_s_sqrt_s_b(data, title="No Title", directory=DEFAULT_DIR):
         df_std = df.groupby('n_bins').std()
         y_err = df_std.s_sqrt_n
         ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
-    plt.xlabel('# bins')
+    plt.xlabel('threshold')
     plt.ylabel('mean( $s / \sqrt{s+b} $ ) $\pm$ std( fisher info )')
     plt.title(title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
@@ -314,7 +315,7 @@ def threshold_fisher_diff(data, title="No Title", directory=DEFAULT_DIR):
         # df_std = df.groupby('n_bins').std()
         # y_err = df_std.s_sqrt_n
         # ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
-    plt.xlabel('# bins')
+    plt.xlabel('threshold')
     plt.ylabel('mean( fisher_2 - fisher_2 )')
     plt.title(title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
