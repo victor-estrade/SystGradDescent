@@ -129,7 +129,3 @@ python run_array.py benchmark.COMPARE.HIGGS.REG-Calib --gpu 1 --xp-name COMPARE-
 
 # BEST METHODS
 python run_array.py benchmark.COMPARE.HIGGS.compare_models --gpu 1 --xp-name COMPARE-HIGGS-MODELS --partition besteffort
-
-
-
-
