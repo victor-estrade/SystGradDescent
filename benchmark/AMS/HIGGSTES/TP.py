@@ -40,6 +40,8 @@ from model.tangent_prop import TangentPropClassifier
 from archi.classic import L4 as ARCHI
 from ...my_argparser import TP_parse_args
 
+from .common import measurement
+
 
 DATA_NAME = 'HIGGSTES'
 BENCHMARK_NAME = 'VAR-'+DATA_NAME
@@ -123,46 +125,9 @@ def run(args, i_cv):
     train_or_load_neural_net(model, train_generator, retrain=args.retrain)
 
     # MEASUREMENT
-    result_row = {'i_cv': i_cv}
-    results = []
-    for test_config in config.iter_test_config():
-        logger.info(f"Running test set : {test_config.TRUE}, {test_config.N_TESTING_SAMPLES} samples")
-        for threshold in np.linspace(0, 1, 50):
-            result_row = {'i_cv': i_cv}
-            result_row['threshold'] = threshold
-            result_row.update(test_config.TRUE.to_dict(prefix='true_'))
-            result_row['n_test_samples'] = test_config.N_TESTING_SAMPLES
-
-            X, y, w = valid_generator.generate(*config.TRUE, n_samples=config.N_VALIDATION_SAMPLES)
-            proba = model.predict_proba(X)
-            decision = proba[:, 1]
-            selected = decision > threshold
-            beta = np.sum(y[selected] == 0)
-            gamma = np.sum(y[selected] == 1)
-            result_row['beta'] = beta
-            result_row['gamma'] = gamma
-
-            X, y, w = test_generator.generate(*config.TRUE, n_samples=config.N_VALIDATION_SAMPLES)
-            proba = model.predict_proba(X)
-            decision = proba[:, 1]
-            selected = decision > threshold
-            n_selected = np.sum(selected)
-            n_selected_bkg = np.sum(y[selected] == 0)
-            n_selected_sig = np.sum(y[selected] == 1)
-            result_row['n'] = n_selected
-            result_row['b'] = n_selected_bkg
-            result_row['s'] = n_selected_sig
-            result_row['s_sqrt_n'] = safe_division( n_selected_sig, np.sqrt(n_selected) )
-            result_row['s_sqrt_b'] = safe_division( n_selected_sig, np.sqrt(n_selected_bkg) )
-            results.append(result_row.copy())
-    results = pd.DataFrame(results)
+    results = measurement(model, i_cv, config, valid_generator, test_generator)
     print(results)
     return results
-
-def safe_division(numerator, denominator):
-    div = np.divide(numerator, denominator, out=np.zeros_like(numerator, dtype="float"), where=denominator!=0)
-    return div
-
 
 if __name__ == '__main__':
     main()
