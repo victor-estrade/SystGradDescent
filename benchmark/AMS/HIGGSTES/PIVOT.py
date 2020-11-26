@@ -132,7 +132,7 @@ def run(args, i_cv):
     flush(logger)
 
     # TRAINING / LOADING
-    train_or_load_pivot(model, train_generator, config.N_TRAINING_SAMPLES*N_AUGMENT, retrain=args.retrain)
+    train_or_load_pivot(model, train_generator, train_generator.n_samples*N_AUGMENT, retrain=args.retrain)
 
     # MEASUREMENT
     results = measurement(model, i_cv, config, valid_generator, test_generator)

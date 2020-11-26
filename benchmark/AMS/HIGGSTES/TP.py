@@ -34,11 +34,13 @@ from visual.misc import plot_params
 from problem.higgs import HiggsConfigTesOnly as Config
 from problem.higgs import get_generators_torch
 from problem.higgs import GeneratorCPU
+from problem.higgs import GeneratorTorch
 from problem.higgs import HiggsNLL as NLLComputer
 
 from model.tangent_prop import TangentPropClassifier
 from archi.classic import L4 as ARCHI
 from ...my_argparser import TP_parse_args
+from collections import OrderedDict
 
 from .common import measurement
 
@@ -55,11 +57,20 @@ class TrainGenerator:
             self.data_generator.cuda()
         else:
             self.data_generator.cpu()
-        self.nuisance_params = self.data_generator.nuisance_params
 
+        self.mu  = self.tensor(Config.CALIBRATED.mu, requires_grad=True)
+        self.tes = self.tensor(Config.CALIBRATED.tes, requires_grad=True)
+        self.jes = self.tensor(Config.CALIBRATED.jes, requires_grad=True)
+        self.les = self.tensor(Config.CALIBRATED.les, requires_grad=True)
+        self.params = (self.tes, self.jes, self.tes, self.mu)
+        self.nuisance_params = OrderedDict([
+                                ('tes', self.tes),
+                                ('jes', self.jes),
+                                ('les', self.les),
+                                ])
 
     def generate(self, n_samples=None):
-            X, y, w = self.data_generator.diff_generate(n_samples=n_samples)
+            X, y, w = self.data_generator.diff_generate(*self.params, n_samples=n_samples)
             return X, y, w
 
     def reset(self):
@@ -111,7 +122,7 @@ def run(args, i_cv):
     config = Config()
     seed = SEED + i_cv * 5
     train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
-    train_generator = GeneratorTorch(seed, cuda=args.cuda)
+    train_generator = TrainGenerator(train_generator, cuda=args.cuda)
     valid_generator = GeneratorCPU(valid_generator)
     test_generator = GeneratorCPU(test_generator)
 
