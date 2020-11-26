@@ -78,7 +78,8 @@ class TrainGenerator:
         y = np.concatenate([y for X, y, w in data], axis=0)
         w = np.concatenate([w for X, y, w in data], axis=0)
         z = np.array([p.nuisance_parameters for p in params])
-        z = np.repeat(z, n_bunch_samples)
+        z = z.reshape(len(params), -1)
+        z = np.repeat(z, n_bunch_samples, axis=0)
         return X, y, z, w
 
 # net_criterion, adv_criterion, trade_off, net_optimizer, adv_optimizer,
