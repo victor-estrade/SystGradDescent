@@ -26,13 +26,12 @@ class GeneratorCPU:
         self.data_generator.reset()
 
 
-    # MEASUREMENT
 def measurement(model, i_cv, config, valid_generator, test_generator):
     logger = logging.getLogger()
     result_row = {'i_cv': i_cv}
     results = []
     for test_config in config.iter_test_config():
-        logger.info(f"Running test set : {test_config.TRUE}, {test_config.N_TESTING_SAMPLES} samples")
+        logger.info(f"Running test set : {test_config.TRUE}, {test_generator.n_samples} samples")
         for threshold in np.linspace(0, 1, 50):
             result_row = {'i_cv': i_cv}
             result_row['threshold'] = threshold
