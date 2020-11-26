@@ -88,7 +88,7 @@ def make_individual_threshold_plots(threshold_table, loader):
 def make_common_plots(data_name, benchmark_name, args, TheLoader):
     print(data_name, benchmark_name)
     print("Make evaluation plots")
-    print("="*25)
+    print("="*25, flush=True)
     make_evaluation_plots(data_name, benchmark_name, args, TheLoader)
     # print("Make fisher plots")
     # print("="*25)
