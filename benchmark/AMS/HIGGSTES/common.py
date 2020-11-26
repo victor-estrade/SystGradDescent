@@ -92,8 +92,5 @@ def safe_division(numerator, denominator):
 
 def compute_fisher(gamma_array, beta_array, mu):
     EPSILON = 1e-7  # Avoid zero division
-    print(gamma_array)
     fisher_k = np.sum( (gamma_array**2) / (mu * gamma_array + beta_array + EPSILON) )
-    print(fisher_k)
-    print('------')
     return fisher_k
