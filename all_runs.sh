@@ -62,8 +62,6 @@ python run_array.py benchmark.VAR.GG.DA --gpu 1 --n-steps 2000 5000 --n-unit 50 
 python run_array.py benchmark.VAR.GG.PIVOT --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name VAR-GG-PIVOT --partition besteffort
 python run_array.py benchmark.VAR.GG.TP --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name VAR-GG-TP --partition besteffort
 
-python run_array.py benchmark.VAR.GG.INF --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name VAR-GG-INF --partition besteffort
-
 
 # AMS RUN
 python run_array.py benchmark.AMS.GG.GB --gpu 1 --n-estimators 100 300 1000  --max-depth 3 5 10 --learning-rate 0.1 0.05 0.01 --xp-name AMS-GG-GB --partition besteffort
@@ -73,7 +71,6 @@ python run_array.py benchmark.AMS.GG.DA --gpu 1 --n-steps 2000 5000 --n-unit 50 
 python run_array.py benchmark.AMS.GG.PIVOT --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name AMS-GG-PIVOT --partition besteffort
 python run_array.py benchmark.AMS.GG.TP --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name AMS-GG-TP --partition besteffort
 
-python run_array.py benchmark.AMS.GG.INF --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name AMS-GG-INF --partition besteffort
 
 
 # TOY 3D
@@ -230,6 +227,14 @@ python run_array.py benchmark.HIGGSTES.REG-Prior --gpu 1 --n-steps 5000 --n-unit
 
 # CALIB RUN
 
+
+# VAR RUN
+python run_array.py benchmark.VAR.HIGGSTES.GB --gpu 1 --n-estimators 300 800  --max-depth 3 6 --learning-rate 0.1 0.01 --xp-name VAR-HIGGSTES-GB --partition besteffort --end-cv 5
+python run_array.py benchmark.VAR.HIGGSTES.NN --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name VAR-HIGGSTES-NN --partition besteffort --end-cv 5
+python run_array.py benchmark.VAR.HIGGSTES.DA --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name VAR-HIGGSTES-DA --partition besteffort --end-cv 5
+
+python run_array.py benchmark.VAR.HIGGSTES.PIVOT --gpu 1 --n-steps 5000 --n-unit 200 500 --trade-off 1 0.1 --xp-name VAR-HIGGSTES-PIVOT --partition besteffort --end-cv 5
+python run_array.py benchmark.VAR.HIGGSTES.TP --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 200 --xp-name VAR-HIGGSTES-TP --partition besteffort --end-cv 5
 
 
 # AMS RUN
