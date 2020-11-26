@@ -48,6 +48,8 @@ class WeightedGaussEntropyLoss(nn.Module):
         error = (prediction - target)
         error_sigma = error / torch.exp(logsigma)
         loss = logsigma + 0.5 * (error_sigma * error_sigma)
+        if loss.dim() > 1:
+            loss = loss.sum(axis=1)
         element_loss = loss * weight
         loss = torch.mean(element_loss)
         return loss
