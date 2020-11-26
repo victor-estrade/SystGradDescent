@@ -94,7 +94,7 @@ def main():
     results = [run(args, i_cv) for i_cv in range(args.start_cv, args.end_cv)]
     results = pd.concat(results, ignore_index=True)
     # EVALUATION
-    results.to_csv(os.path.join(model.results_directory, 'fisher.csv'))
+    results.to_csv(os.path.join(model.results_directory, 'threshold.csv'))
     print(results)
     print("DONE !")
 
