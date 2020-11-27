@@ -148,6 +148,19 @@ def make_evaluation_plots(data_name, benchmark_name, args, TheLoader):
         make_profusion_conditional_plots(all_evaluations, loader)
 
 
+
+def make_fisher_plots(data_name, benchmark_name, args, TheLoader):
+    for kwargs in hp_kwargs_generator(args):
+        loader = TheLoader(data_name, benchmark_name, **kwargs)
+        try:
+            fisher_data = loader.load_fisher()
+        except FileNotFoundError:
+            print(f"Missing results for {loader.model_full_name}")
+        else:
+            make_individual_fisher_plots(fisher_data, loader)
+
+
+
 def make_threshold_plots(data_name, benchmark_name, args, TheLoader):
     for kwargs in hp_kwargs_generator(args):
         loader = TheLoader(data_name, benchmark_name, **kwargs)
