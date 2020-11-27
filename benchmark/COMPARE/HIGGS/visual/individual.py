@@ -10,7 +10,7 @@ import os
 from visual.misc import set_plot_config
 set_plot_config()
 
-# import matplotlib as mpl
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -262,6 +262,56 @@ def n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.savefig(os.path.join(directory, f'n_samples_v_syst.png'), bbox_inches='tight')
     plt.clf()
 
+
+
+def nominal_fisher_n_bins(fisher_table, title="No Title", directory=DEFAULT_DIR):
+    chosen_true_mix = fisher_table.true_mu.median()
+    chosen_true_rescale = fisher_table.true_rescale.median()
+    data = fisher_table[ (fisher_table.true_mu == chosen_true_mu) & (fisher_table.true_rescale == chosen_true_rescale) ]
+    # data = data[ data.n_test_samples == 2000 ]
+
+    data_mean = data.groupby('n_bins').mean()
+    label = "nominal"
+    x = data_mean.index
+    y = data_mean.fisher
+    data_std = data.groupby('n_bins').std()
+    y_err = data_std.fisher
+    plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
+    # plt.plot(x, y, label=label)
+    plt.xlabel('# bins')
+    plt.ylabel('mean( fisher info ) $\pm$ std( fisher info )')
+    plt.title(title)
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'nominal_fisher_n_bins.png'), bbox_inches='tight')
+    plt.clf()
+
+
+def fisher_n_bins(data, title="No Title", directory=DEFAULT_DIR):
+    NUM_COLORS = 15
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    colors = sns.color_palette('husl', n_colors=NUM_COLORS)
+    # cm = plt.get_cmap('gist_rainbow')
+    # colors = [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)]
+    ax.set_prop_cycle(color=colors, linestyle=['solid', 'dashed', 'dashdot']*5)
+
+    # data = data[ data.n_test_samples == data.n_test_samples.max() ]
+    for (true_mu, true_tes, true_jes, true_les), df in data.groupby(["true_mu", "true_tes", "true_jes", "true_les"]):
+        df_mean = df.groupby('n_bins').mean()
+        label = f"$\\mu = {true_mu}$, tes={true_tes}, jes={true_jes}, les={true_les}"
+        x = df_mean.index
+        y = df_mean.fisher
+        ax.plot(x, y, label=label)
+        # df_std = df.groupby('n_bins').std()
+        # y_err = df_std.fisher
+        # ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
+    plt.xlabel('# bins')
+    plt.ylabel('mean( fisher info ) $\pm$ std( fisher info )')
+    plt.title(title)
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'fisher_n_bins.png'), bbox_inches='tight')
+    plt.clf()
+    plt.close(fig)
 
 
 def threshold_s_sqrt_s_b(data, title="No Title", directory=DEFAULT_DIR):

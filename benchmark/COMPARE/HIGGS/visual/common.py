@@ -77,6 +77,15 @@ def make_profusion_conditional_plots(all_evaluations, loader):
     profusion.v_syst_box_plot(all_evaluations, title=title, directory=directory)
 
 
+def make_individual_fisher_plots(fisher_table, loader):
+    directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name, loader.model_full_name)
+    os.makedirs(directory, exist_ok=True)
+
+    individual.nominal_fisher_n_bins(fisher_table, title=loader.model_full_name, directory=directory)
+    individual.fisher_n_bins(fisher_table, title=loader.model_full_name, directory=directory)
+
+
+
 def make_individual_threshold_plots(threshold_table, loader):
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name, loader.model_full_name)
     os.makedirs(directory, exist_ok=True)
@@ -90,9 +99,9 @@ def make_common_plots(data_name, benchmark_name, args, TheLoader):
     print("Make evaluation plots")
     print("="*25, flush=True)
     make_evaluation_plots(data_name, benchmark_name, args, TheLoader)
-    # print("Make fisher plots")
-    # print("="*25)
-    # make_fisher_plots(data_name, benchmark_name, args, TheLoader)
+    print("Make fisher plots")
+    print("="*25)
+    make_fisher_plots(data_name, benchmark_name, args, TheLoader)
     print("Make threshold plots")
     print("="*25, flush=True)
     make_threshold_plots(data_name, benchmark_name, args, TheLoader)
