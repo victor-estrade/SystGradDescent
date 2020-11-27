@@ -370,3 +370,33 @@ def threshold_fisher_diff(data, title="No Title", directory=DEFAULT_DIR):
     plt.savefig(os.path.join(directory, f'threshold_fisher_diff.png'), bbox_inches='tight')
     plt.clf()
     plt.close(fig)
+
+
+def threshold_fisher_gain(data, title="No Title", directory=DEFAULT_DIR):
+    import numpy as np
+    NUM_COLORS = 15
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    colors = sns.color_palette('husl', n_colors=NUM_COLORS)
+    # cm = plt.get_cmap('gist_rainbow')
+    # colors = [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)]
+    ax.set_prop_cycle(color=colors, linestyle=['solid', 'dashed', 'dashdot']*5)
+
+    # data = data[ data.n_test_samples == data.n_test_samples.max() ]
+    data['fisher_gain'] = (data.fisher_2 - data.fisher_1) / data.fisher_1
+    for (true_mu, true_tes, true_jes, true_les), df in data.groupby(["true_mu", "true_tes", "true_jes", "true_les"]):
+        df_mean = df.groupby('threshold').mean()
+        label = f"$\\mu = {true_mu}$, tes={true_tes}, jes={true_jes}, les={true_les}"
+        x = df_mean.index
+        y = df_mean.fisher_gain
+        ax.plot(x, y, label=label)
+        # df_std = df.groupby('n_bins').std()
+        # y_err = df_std.s_sqrt_n
+        # ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
+    plt.xlabel('threshold')
+    plt.ylabel('mean( fisher_2 - fisher_1 )')
+    plt.title(title)
+    plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.savefig(os.path.join(directory, f'threshold_fisher_gain.png'), bbox_inches='tight')
+    plt.clf()
+    plt.close(fig)
