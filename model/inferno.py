@@ -46,7 +46,7 @@ class Inferno(BaseClassifierModel, BaseNeuralNet):
     def get_losses(self):
         losses = dict(loss=self.losses)
         return losses
-        
+
     def reset(self):
         self._reset_losses()
 
@@ -72,11 +72,12 @@ class Inferno(BaseClassifierModel, BaseNeuralNet):
             s_prime_counts = self.forward(s_prime, w_s.detach())
             b_prime_counts = self.forward(b_prime, w_b.detach())
 
-            total_count = mu * s_counts + b_counts # if NaN then should be mu s + b + epsilon ?
-            asimov = mu_prime * s_prime_counts + b_prime_counts # if NaN then should be mu s + b + epsilon ?
+            epsilon = 1e-7
+            total_count = mu * s_counts + b_counts + epsilon  # if NaN then should be mu s + b + epsilon ?
+            asimov = mu_prime * s_prime_counts + b_prime_counts + epsilon  # if NaN then should be mu s + b + epsilon ?
             loss = self.criterion(total_count, asimov, params)
             self.losses.append(loss.item())
-            
+
             if self._is_bad_training(i, total_count, loss):
                 print('NaN detected at ', i)
                 print('output', total_count)
@@ -93,11 +94,11 @@ class Inferno(BaseClassifierModel, BaseNeuralNet):
                         print("i = ", i, "found non finite gradients in", name)
                         is_all_finite_grad = False
                         break
-                if is_all_finite_grad : 
+                if is_all_finite_grad :
                     self.optimizer.step()  # update params
 
     def _is_bad_training(self, i, total_count, loss):
-        loss_flag = torch.isnan(loss).byte().any() 
+        loss_flag = torch.isnan(loss).byte().any()
         output_flag = torch.isnan(total_count).byte().any()
         flag = loss_flag or output_flag
         return flag
@@ -115,7 +116,7 @@ class Inferno(BaseClassifierModel, BaseNeuralNet):
             probas = torch.softmax(logits / self.temperature, 1)
         y_proba = np.array(probas.cpu())
         return y_proba
-    
+
     def forward(self, x, w):
         logits = self.net(x)
         probas = torch.softmax(logits / self.temperature, 1)
@@ -155,5 +156,3 @@ class Inferno(BaseClassifierModel, BaseNeuralNet):
     def get_name(self):
         name = "{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{sample_size}-{temperature}".format(**self.__dict__)
         return name
-
-
