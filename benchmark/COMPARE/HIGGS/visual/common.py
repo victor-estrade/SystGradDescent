@@ -99,15 +99,24 @@ def make_common_plots(data_name, benchmark_name, args, TheLoader):
     print(data_name, benchmark_name)
     print("Make evaluation plots")
     print("="*25, flush=True)
-    make_evaluation_plots(data_name, benchmark_name, args, TheLoader)
+    try:
+        make_evaluation_plots(data_name, benchmark_name, args, TheLoader)
+    except Exception as e:
+        print(e)
+
     print("Make fisher plots")
     print("="*25)
-    # TODO try catch on all make_plots
-    make_fisher_plots(data_name, benchmark_name, args, TheLoader)
+    try:
+        make_fisher_plots(data_name, benchmark_name, args, TheLoader)
+    except Exception as e:
+        print(e)
+
     print("Make threshold plots")
     print("="*25, flush=True)
-    make_threshold_plots(data_name, benchmark_name, args, TheLoader)
-
+    try:
+        make_threshold_plots(data_name, benchmark_name, args, TheLoader)
+    except Exception as e:
+        print(e)
 
 
 
