@@ -383,7 +383,7 @@ def threshold_fisher_gain(data, title="No Title", directory=DEFAULT_DIR):
     ax.set_prop_cycle(color=colors, linestyle=['solid', 'dashed', 'dashdot']*5)
 
     # data = data[ data.n_test_samples == data.n_test_samples.max() ]
-    data['fisher_gain'] = (data.fisher_2 - data.fisher_1) / data.fisher_1
+    data['fisher_gain'] = (data.fisher_2 - data.fisher_1) / data.fisher_2
     for (true_mu, true_tes, true_jes, true_les), df in data.groupby(["true_mu", "true_tes", "true_jes", "true_les"]):
         df_mean = df.groupby('threshold').mean()
         label = f"$\\mu = {true_mu}$, tes={true_tes}, jes={true_jes}, les={true_les}"
