@@ -226,7 +226,7 @@ python run_array.py benchmark.HIGGSTES.TP-Prior --gpu 1 --n-steps 5000 --n-unit 
 python run_array.py benchmark.HIGGSTES.INF-Prior --gpu 1 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-INF-Prior --partition besteffort --estimate-only
 
 python run_array.py benchmark.HIGGSTES.REG-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-REG-Prior --partition besteffort --estimate-only
-python run_array.py benchmark.HIGGSTES.FREG-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-REG-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGSTES.FREG-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-FREG-Prior --partition besteffort --estimate-only
 
 # CALIB RUN
 
@@ -269,7 +269,7 @@ python run_array.py benchmark.EASYHIGGSTES.TP-Prior --gpu 1 --n-steps 5000 --n-u
 python run_array.py benchmark.EASYHIGGSTES.INF-Prior --gpu 1 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name EASYHIGGSTES-INF-Prior --partition besteffort --estimate-only
 
 python run_array.py benchmark.EASYHIGGSTES.REG-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name EASYHIGGSTES-REG-Prior --partition besteffort --estimate-only
-python run_array.py benchmark.EASYHIGGSTES.FREG-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name EASYHIGGSTES-REG-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.EASYHIGGSTES.FREG-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name EASYHIGGSTES-FREG-Prior --partition besteffort --estimate-only
 
 
 # CALIB RUN
@@ -297,7 +297,7 @@ python run_array.py benchmark.BALANCEDHIGGSTES.TP-Prior --gpu 1 --n-steps 5000 -
 python run_array.py benchmark.BALANCEDHIGGSTES.INF-Prior --gpu 1 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name BALANCEDHIGGSTES-INF-Prior --partition besteffort --estimate-only
 
 python run_array.py benchmark.BALANCEDHIGGSTES.REG-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name BALANCEDHIGGSTES-REG-Prior --partition besteffort --estimate-only
-python run_array.py benchmark.BALANCEDHIGGSTES.FREG-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name BALANCEDHIGGSTES-REG-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.BALANCEDHIGGSTES.FREG-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name BALANCEDHIGGSTES-FREG-Prior --partition besteffort --estimate-only
 
 # CALIB RUN
 
