@@ -25,7 +25,7 @@ import joblib
 from sklearn.ensemble import GradientBoostingClassifier
 
 class Regressor(BaseModel, BaseNeuralNet):
-    def __init__(self, net, optimizer, n_steps=5000, batch_size=20, sample_size=1000, 
+    def __init__(self, net, optimizer, n_steps=5000, batch_size=20, sample_size=1000,
                 cuda=False, verbose=0):
         super().__init__()
         self.n_steps     = n_steps
@@ -217,17 +217,16 @@ class Regressor(BaseModel, BaseNeuralNet):
 
 
 
-class ClfRegressor(Regressor):
-    def __init__(self, net, optimizer, n_steps=5000, batch_size=20, sample_size=1000, 
+class LabelRegressor(Regressor):
+    def __init__(self, net, optimizer, n_steps=5000, batch_size=20, sample_size=1000,
                 cuda=False, verbose=0):
-        super().__init__(net, optimizer, n_steps=n_steps, batch_size=batch_size, sample_size=sample_size, 
+        super().__init__(net, optimizer, n_steps=n_steps, batch_size=batch_size, sample_size=sample_size,
                 cuda=cuda, verbose=verbose)
         self.clf = GradientBoostingClassifier()
 
 
     def fit(self, generator):
         X, y, w = generator.clf_generate(n_samples=None)
-        # self.clf.fit(X, y)
         self.scaler = StandardScaler().fit(X)
         if self.batch_size > 1:
             return self._fit_batch(generator)
@@ -237,10 +236,6 @@ class ClfRegressor(Regressor):
 
     def _forward(self, generator):
         X, y, w, p, labels = generator.generate(n_samples=self.sample_size)
-        # proba = self.clf.predict_proba(X)
-        # X = self.scaler.transform(X)
-        # X = np.concatenate([X, proba, y.reshape(-1, 1)], axis=1)
-        # X = np.concatenate([X, y.reshape(-1, 1)], axis=1)
         X = labels.reshape(-1, 1)
 
         X = X.astype(np.float32)
@@ -264,9 +259,170 @@ class ClfRegressor(Regressor):
 
 
     def predict(self, X, w, p=None):
-        # proba = self.clf.predict_proba(X)
-        # X = self.scaler.transform(X)
-        # X = np.concatenate([X, proba], axis=1)
+        X = X.reshape(-1, 1)
+        X = X.astype(np.float32)
+        w = w.astype(np.float32).reshape(-1, 1)
+        p = p.astype(np.float32).reshape(1, -1) if p is not None else None
+
+        with torch.no_grad():
+            X_torch = to_torch(X, cuda=self.cuda_flag)
+            w_torch = to_torch(w, cuda=self.cuda_flag)
+            p_torch = to_torch(p, cuda=self.cuda_flag) if p is not None else None
+            X_out = self.net.forward(X_torch, w_torch, p_torch)
+            target, logsigma = torch.split(X_out, 1, dim=0)
+        target = target.item()
+        sigma = np.exp(logsigma.item())
+        return target, sigma
+
+    def save(self, save_directory):
+        """Save the model in the given directory"""
+        super().save(save_directory)
+        path = os.path.join(save_directory, 'GradientBoosting.joblib')
+        joblib.dump(self.clf, path)
+        return self
+
+    def load(self, save_directory):
+        """Load the model of the i-th CV from the given directory"""
+        super().load(save_directory)
+        path = os.path.join(save_directory, 'GradientBoosting.joblib')
+        self.clf = joblib.load(path)
+        return self
+
+
+
+class clfRegressor(Regressor):
+    def __init__(self, net, optimizer, n_steps=5000, batch_size=20, sample_size=1000,
+                cuda=False, verbose=0):
+        super().__init__(net, optimizer, n_steps=n_steps, batch_size=batch_size, sample_size=sample_size,
+                cuda=cuda, verbose=verbose)
+        self.clf = GradientBoostingClassifier()
+
+    def fit(self, generator):
+        X, y, w = generator.clf_generate(n_samples=None)
+        self.clf.fit(X, y)
+        self.scaler = StandardScaler().fit(X)
+        if self.batch_size > 1:
+            return self._fit_batch(generator)
+        else:
+            return self._fit(generator)
+
+    def _forward(self, generator):
+        X, y, w, p = generator.generate(n_samples=self.sample_size)
+        proba = self.clf.predict_proba(X)
+        X = self.scaler.transform(X)
+        X = np.concatenate([X, proba, y.reshape(-1, 1)], axis=1)
+        X = np.concatenate([X, y.reshape(-1, 1)], axis=1)
+        X = labels.reshape(-1, 1)
+
+        X = X.astype(np.float32)
+        w = w.astype(np.float32).reshape(-1, 1)
+        y = np.array(y).astype(np.float32)
+        p = np.array(p).astype(np.float32).reshape(1, -1) if p is not None else None
+
+        X_torch = to_torch(X, cuda=self.cuda_flag)
+        w_torch = to_torch(w, cuda=self.cuda_flag)
+        y_torch = to_torch(y.reshape(-1), cuda=self.cuda_flag)
+        p_torch = to_torch(p, cuda=self.cuda_flag) if p is not None else None
+
+        X_out = self.net.forward(X_torch, w_torch, p_torch)
+        target, logsigma = torch.split(X_out, 1, dim=0)
+        loss, mse, msre_sigma = self.criterion(target, y_torch, logsigma)
+        if self.verbose and (self.verbose > 1 or np.abs(target.item()) > 5) :
+            print(f"logsigma={logsigma.item()}  loss={loss.item()} ")
+            print(f"target={y.item()}  predict={target.item()}   mse={mse.item()}")
+            print(f"mean={X.mean(axis=0)}  std={X.std(axis=0)}  max={X.max(axis=0)}  min={X.min(axis=0)}  ")
+        return loss, mse, msre_sigma
+
+    def predict(self, X, w, p=None):
+        proba = self.clf.predict_proba(X)
+        X = self.scaler.transform(X)
+        X = np.concatenate([X, proba], axis=1)
+        X = X.reshape(-1, 1)
+        X = X.astype(np.float32)
+        w = w.astype(np.float32).reshape(-1, 1)
+        p = p.astype(np.float32).reshape(1, -1) if p is not None else None
+
+        with torch.no_grad():
+            X_torch = to_torch(X, cuda=self.cuda_flag)
+            w_torch = to_torch(w, cuda=self.cuda_flag)
+            p_torch = to_torch(p, cuda=self.cuda_flag) if p is not None else None
+            X_out = self.net.forward(X_torch, w_torch, p_torch)
+            target, logsigma = torch.split(X_out, 1, dim=0)
+        target = target.item()
+        sigma = np.exp(logsigma.item())
+        return target, sigma
+
+    def save(self, save_directory):
+        """Save the model in the given directory"""
+        super().save(save_directory)
+        path = os.path.join(save_directory, 'GradientBoosting.joblib')
+        joblib.dump(self.clf, path)
+        return self
+
+    def load(self, save_directory):
+        """Load the model of the i-th CV from the given directory"""
+        super().load(save_directory)
+        path = os.path.join(save_directory, 'GradientBoosting.joblib')
+        self.clf = joblib.load(path)
+        return self
+
+
+
+class FilterRegressor(Regressor):
+    def __init__(self, net, optimizer, n_steps=5000, batch_size=20, sample_size=1000, threshold=0.85,
+                cuda=False, verbose=0):
+        super().__init__(net, optimizer, n_steps=n_steps, batch_size=batch_size, sample_size=sample_size,
+                cuda=cuda, verbose=verbose)
+        self.clf = GradientBoostingClassifier()
+        self.threshold = threshold
+
+    def filter_idx(self, X):
+        proba = self.clf.predict_proba(X)
+        decision = proba[:, 1]
+        idx = decision > self.threshold
+        return idx
+
+    def fit(self, generator):
+        X, y, w = generator.clf_generate(n_samples=None)
+        self.clf.fit(X, y)
+        X, y, w, p = generator.generate(n_samples=None)
+        self.filter_idx(X)
+        self.scaler = StandardScaler().fit(X)
+        if self.batch_size > 1:
+            return self._fit_batch(generator)
+        else:
+            return self._fit(generator)
+
+    def _forward(self, generator):
+        X, y, w, p = generator.generate(n_samples=self.sample_size)
+        idx = self.filter_idx(X)
+        X = X[idx]
+        w = w[idx]
+        X = self.scaler.transform(X)
+
+        X = X.astype(np.float32)
+        w = w.astype(np.float32).reshape(-1, 1)
+        y = np.array(y).astype(np.float32)
+        p = np.array(p).astype(np.float32).reshape(1, -1) if p is not None else None
+
+        X_torch = to_torch(X, cuda=self.cuda_flag)
+        w_torch = to_torch(w, cuda=self.cuda_flag)
+        y_torch = to_torch(y.reshape(-1), cuda=self.cuda_flag)
+        p_torch = to_torch(p, cuda=self.cuda_flag) if p is not None else None
+
+        X_out = self.net.forward(X_torch, w_torch, p_torch)
+        target, logsigma = torch.split(X_out, 1, dim=0)
+        loss, mse, msre_sigma = self.criterion(target, y_torch, logsigma)
+        if self.verbose and (self.verbose > 1 or np.abs(target.item()) > 5) :
+            print(f"logsigma={logsigma.item()}  loss={loss.item()} ")
+            print(f"target={y.item()}  predict={target.item()}   mse={mse.item()}")
+            print(f"mean={X.mean(axis=0)}  std={X.std(axis=0)}  max={X.max(axis=0)}  min={X.min(axis=0)}  ")
+        return loss, mse, msre_sigma
+
+    def predict(self, X, w, p=None):
+        idx = self.filter_idx(X)
+        X = X[idx]
+        w = w[idx]
         X = X.reshape(-1, 1)
         X = X.astype(np.float32)
         w = w.astype(np.float32).reshape(-1, 1)
