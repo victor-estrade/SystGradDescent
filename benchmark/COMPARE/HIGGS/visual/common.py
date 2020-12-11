@@ -134,6 +134,7 @@ def make_evaluation_plots(data_name, benchmark_name, args, TheLoader):
         except FileNotFoundError:
             print(f"Missing estimation results for {loader.model_full_name}")
         else:
+            print(f"[SUCCESS] load for {loader.model_full_name}")
             evaluation = evaluation.join(config_table, rsuffix='_')
             all_evaluations.append(evaluation)
             all_loaders.append(loader)
