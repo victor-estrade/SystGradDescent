@@ -54,6 +54,11 @@ def parse_args():
                         action='store_true')
 
     grid_args = parser.add_argument_group('grid_args', 'arguments passed to the subjobs for grid search')
+    grid_args.add_argument('--feature-id',
+                        nargs='+',
+                        help='feature index for Feature filter model',
+                        type=int)
+
     grid_args.add_argument('--n-estimators',
                         nargs='+',
                         help='number of estimators',
