@@ -193,4 +193,3 @@ def evaluate_conditional_estimation(conditional_estimations, interest_param_name
                             , var_total.to_frame(name='var_total')]
                             , axis=1)
     return evaluation
-
