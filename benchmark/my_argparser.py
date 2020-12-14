@@ -326,3 +326,36 @@ def PIVOT_parse_args(main_description="Training launcher"):
 
     args = parser.parse_args()
     return args
+
+
+def FF_parse_args(main_description="Training launcher"):
+    parser = argparse.ArgumentParser(description=main_description)
+
+    parser.add_argument("--verbose", "-v", type=int, choices=[0, 1, 2],
+                        default=0, help="increase output verbosity")
+
+    parser.add_argument("--start-cv", type=int,
+                        default=0, help="start of i_cv for range(start, end)")
+    parser.add_argument("--end-cv", type=int,
+                        default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument('--load-run', help='load saved runs. Do not run the models',
+                        action='store_true')
+    parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
+                        action='store_true')
+    parser.add_argument('--conditional-only', help='Turns off common estimation',
+                        action='store_true')
+
+    # MODEL HYPER PARAMETERS
+    parser.add_argument('--feature-id', help='feature index to filter on',
+                        default=0, type=int)
+
+    # OTHER
+    parser.add_argument('--no-cuda', '--no-gpu', help='flag to use or not the gpu',
+                        action='store_false', dest='cuda')
+    parser.add_argument('--retrain', help='flag to force retraining',
+                        action='store_true')
+    parser.add_argument('--skip-minuit', help='flag to skip minuit NLL minization',
+                        action='store_true')
+
+    args = parser.parse_args()
+    return args
