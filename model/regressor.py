@@ -423,7 +423,6 @@ class FilterRegressor(Regressor):
         idx = self.filter_idx(X)
         X = X[idx]
         w = w[idx]
-        X = X.reshape(-1, 1)
         X = X.astype(np.float32)
         w = w.astype(np.float32).reshape(-1, 1)
         p = p.astype(np.float32).reshape(1, -1) if p is not None else None
