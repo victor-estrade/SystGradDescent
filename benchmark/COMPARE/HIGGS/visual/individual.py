@@ -394,7 +394,7 @@ def threshold_fisher_gain(data, title="No Title", directory=DEFAULT_DIR):
         # y_err = df_std.s_sqrt_n
         # ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
     plt.xlabel('threshold')
-    plt.ylabel('mean( fisher_2 - fisher_1 )')
+    plt.ylabel('mean( (fisher_2 - fisher_1) / fisher_1 )')
     plt.title(title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'threshold_fisher_gain.png'), bbox_inches='tight')
@@ -424,7 +424,7 @@ def threshold_fisher_nogain(data, title="No Title", directory=DEFAULT_DIR):
         # y_err = df_std.s_sqrt_n
         # ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
     plt.xlabel('threshold')
-    plt.ylabel('mean( fisher_2 - fisher_1 )')
+    plt.ylabel('mean( (fisher_2 - fisher_1) / fisher_2 )')
     plt.title(title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'threshold_fisher_nogain.png'), bbox_inches='tight')
