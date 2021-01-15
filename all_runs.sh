@@ -233,6 +233,7 @@ python run_array.py benchmark.HIGGSTES.REG-Prior --gpu 1 --n-steps 5000 --n-unit
 python run_array.py benchmark.HIGGSTES.FREG-Prior --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-FREG-Prior --partition besteffort --estimate-only
 
 # CALIB RUN
+python run_array.py benchmark.HIGGSTES.GB-Calib --gpu 1 --n-estimators 300 800  --max-depth 3 6 --learning-rate 0.1 0.01 --xp-name HIGGSTES-GB-Calib --partition besteffort --estimate-only
 
 
 # VAR RUN
