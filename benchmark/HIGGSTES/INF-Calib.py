@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line :
-# python -m benchmark.HIGGSTES.GB-Calib
+# python -m benchmark.HIGGSTES.INF-Calib
 
 import os
 import logging
@@ -25,7 +25,8 @@ from utils.log import set_logger
 from utils.log import flush
 from utils.log import print_line
 from utils.model import get_model
-from utils.model import train_or_load_classifier
+from utils.model import get_optimizer
+from utils.model import train_or_load_inferno
 from utils.evaluation import evaluate_classifier
 from utils.evaluation import evaluate_config
 from utils.evaluation import evaluate_summary_computer
@@ -40,18 +41,22 @@ from problem.higgs import HiggsConfigTesOnly as Config
 from problem.higgs import get_minimizer
 from problem.higgs import get_minimizer_no_nuisance
 from problem.higgs import get_generators_torch
-from problem.higgs import Generator
+from problem.higgs import GeneratorTorch
 from problem.higgs import HiggsNLL as NLLComputer
+from problem.higgs.torch import HiggsLoss
 
 from visual.special.higgs import plot_nll_around_min
 
-from model.gradient_boost import GradientBoostingModel
-from ..my_argparser import GB_parse_args
+from model.inferno import Inferno
+from ..my_argparser import INFERNO_parse_args
+from collections import OrderedDict
 
+from archi.classic import L4 as ARCHI
 
 DATA_NAME = 'HIGGSTES'
 BENCHMARK_NAME = DATA_NAME+'-calib'
 N_ITER = 30
+
 
 from .common import GeneratorCPU
 from .common import load_calib_tes
@@ -59,12 +64,43 @@ from .common import load_calib_jes
 from .common import load_calib_les
 
 
+class TrainGenerator:
+    def __init__(self, data_generator, cuda=False):
+        self.data_generator = data_generator
+        if cuda:
+            self.data_generator.cuda()
+        else:
+            self.data_generator.cpu()
+
+        self.mu  = self.tensor(Config.CALIBRATED.mu, requires_grad=True)
+        self.tes = self.tensor(Config.CALIBRATED.tes, requires_grad=True)
+        self.jes = self.tensor(Config.CALIBRATED.jes, requires_grad=True)
+        self.les = self.tensor(Config.CALIBRATED.les, requires_grad=True)
+        self.params = (self.tes, self.jes, self.tes, self.mu)
+        self.nuisance_params = OrderedDict([
+                                ('tes', self.tes),
+                                ('jes', self.jes),
+                                ('les', self.les),
+                                ])
+
+    def generate(self, n_samples=None):
+            X_s, w_s, X_b, w_b, y = self.data_generator.split_generate(*self.params, n_samples=n_samples)
+            return X_s, w_s, X_b, w_b, y
+
+    def reset(self):
+        self.data_generator.reset()
+
+    def tensor(self, data, requires_grad=False, dtype=None):
+        return self.data_generator.tensor(data, requires_grad=requires_grad, dtype=dtype)
+
 
 def build_model(args, i_cv):
-    model = get_model(args, GradientBoostingModel)
+    args.net = ARCHI(n_in=29, n_out=10, n_unit=args.n_unit)
+    args.optimizer = get_optimizer(args)
+    args.criterion = HiggsLoss()
+    model = get_model(args, Inferno)
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     return model
-
 
 
 # =====================================================================
@@ -73,7 +109,7 @@ def build_model(args, i_cv):
 def main():
     # BASIC SETUP
     logger = set_logger()
-    args = GB_parse_args(main_description="Training launcher for Gradient boosting on HIGGS benchmark")
+    args = INFERNO_parse_args(main_description="Training launcher for Neural net classifier on HIGGS benchmark")
     logger.info(args)
     flush(logger)
     # INFO
@@ -154,7 +190,7 @@ def run_estimation(args, i_cv):
     config = Config()
     seed = SEED + i_cv * 5
     train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
-    train_generator = GeneratorCPU(train_generator)
+    train_generator = TrainGenerator(train_generator, cuda=args.cuda)
     valid_generator = GeneratorCPU(valid_generator)
     test_generator = GeneratorCPU(test_generator)
 
@@ -165,7 +201,7 @@ def run_estimation(args, i_cv):
     flush(logger)
 
     # TRAINING / LOADING
-    train_or_load_classifier(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
+    train_or_load_inferno(model, train_generator, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
@@ -262,7 +298,7 @@ def run_conditional_estimation(args, i_cv):
     flush(logger)
 
     # TRAINING / LOADING
-    train_or_load_classifier(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
+    train_or_load_inferno(model, train_generator, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')

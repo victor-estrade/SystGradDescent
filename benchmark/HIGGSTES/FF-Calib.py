@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line :
-# python -m benchmark.HIGGSTES.GB-Calib
+# python -m benchmark.HIGGSTES.FF-Calib
 
 import os
 import logging
@@ -45,8 +45,8 @@ from problem.higgs import HiggsNLL as NLLComputer
 
 from visual.special.higgs import plot_nll_around_min
 
-from model.gradient_boost import GradientBoostingModel
-from ..my_argparser import GB_parse_args
+from model.feature_filter import FeatureModel
+from ..my_argparser import FF_parse_args
 
 
 DATA_NAME = 'HIGGSTES'
@@ -61,10 +61,9 @@ from .common import load_calib_les
 
 
 def build_model(args, i_cv):
-    model = get_model(args, GradientBoostingModel)
+    model = get_model(args, FeatureModel)
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     return model
-
 
 
 # =====================================================================
@@ -73,7 +72,7 @@ def build_model(args, i_cv):
 def main():
     # BASIC SETUP
     logger = set_logger()
-    args = GB_parse_args(main_description="Training launcher for Gradient boosting on HIGGS benchmark")
+    args = FF_parse_args(main_description="Training launcher for Feature Filter on HIGGS benchmark")
     logger.info(args)
     flush(logger)
     # INFO

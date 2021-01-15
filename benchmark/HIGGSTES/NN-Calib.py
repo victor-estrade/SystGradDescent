@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line :
-# python -m benchmark.HIGGSTES.GB-Calib
+# python -m benchmark.HIGGSTES.NN-Calib
 
 import os
 import logging
@@ -25,6 +25,7 @@ from utils.log import set_logger
 from utils.log import flush
 from utils.log import print_line
 from utils.model import get_model
+from utils.model import get_optimizer
 from utils.model import train_or_load_classifier
 from utils.evaluation import evaluate_classifier
 from utils.evaluation import evaluate_config
@@ -45,9 +46,10 @@ from problem.higgs import HiggsNLL as NLLComputer
 
 from visual.special.higgs import plot_nll_around_min
 
-from model.gradient_boost import GradientBoostingModel
-from ..my_argparser import GB_parse_args
+from model.neural_network import NeuralNetClassifier
+from ..my_argparser import NET_parse_args
 
+from archi.classic import L4 as ARCHI
 
 DATA_NAME = 'HIGGSTES'
 BENCHMARK_NAME = DATA_NAME+'-calib'
@@ -59,12 +61,12 @@ from .common import load_calib_jes
 from .common import load_calib_les
 
 
-
 def build_model(args, i_cv):
-    model = get_model(args, GradientBoostingModel)
+    args.net = ARCHI(n_in=29, n_out=2, n_unit=args.n_unit)
+    args.optimizer = get_optimizer(args)
+    model = get_model(args, NeuralNetClassifier)
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     return model
-
 
 
 # =====================================================================
@@ -73,7 +75,7 @@ def build_model(args, i_cv):
 def main():
     # BASIC SETUP
     logger = set_logger()
-    args = GB_parse_args(main_description="Training launcher for Gradient boosting on HIGGS benchmark")
+    args = NET_parse_args(main_description="Training launcher for Neural net classifier on HIGGS benchmark")
     logger.info(args)
     flush(logger)
     # INFO
