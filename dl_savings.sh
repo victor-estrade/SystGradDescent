@@ -5,19 +5,21 @@
 # rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/ ./OUTPUT
 
 
-
 rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/MODELS/ ./OUTPUT/MODELS
 rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/COMPARE/ ./OUTPUT/COMPARE
 
-rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG/learning_curve/ ./OUTPUT/GG/learning_curve
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG/ ./OUTPUT/GG
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-calib/ ./OUTPUT/GG-calib
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-prior/ ./OUTPUT/GG-prior
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-marginal/ ./OUTPUT/GG-marginal
 
-mkdir -p "OUTPUT/GG-prior/DataAugmentation/DataAugmentation-L4x200-Adam-0.001-(0.9-0.999)-2000-20/cv_0/"
-rsync -rtv "titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-prior/DataAugmentation/DataAugmentation-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_summaries.png" OUTPUT/GG-prior/DataAugmentation/DataAugmentation-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_summaries.png
-rsync -rtv "titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-prior/DataAugmentation/DataAugmentation-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_distrib.png" OUTPUT/GG-prior/DataAugmentation/DataAugmentation-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_distrib.png
-mkdir -p "./OUTPUT/GG-prior/NeuralNetClassifier/NeuralNetClassifier-L4x200-Adam-0.001-(0.9-0.999)-2000-20/cv_0"
-rsync -rtv "titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-prior/NeuralNetClassifier/NeuralNetClassifier-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_summaries.png" ./OUTPUT/GG-prior/NeuralNetClassifier/NeuralNetClassifier-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_summaries.png
-rsync -rtv "titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-prior/NeuralNetClassifier/NeuralNetClassifier-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_distrib.png" ./OUTPUT/GG-prior/NeuralNetClassifier/NeuralNetClassifier-L4x200-Adam-0.001-\(0.9-0.999\)-2000-20/cv_0/valid_distrib.png
-
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/BALANCEDHIGGSTES-marginal/ ./OUTPUT/BALANCEDHIGGSTES-marginal
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/BALANCEDHIGGSTES-prior/ ./OUTPUT/BALANCEDHIGGSTES-prior
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/EASYHIGGSTES-marginal/ ./OUTPUT/EASYHIGGSTES-marginal
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/EASYHIGGSTES-prior/ ./OUTPUT/EASYHIGGSTES-prior
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/HIGGSTES-marginal/ ./OUTPUT/HIGGSTES-marginal
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/HIGGSTES-prior/ ./OUTPUT/HIGGSTES-prior
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/HIGGSTES-calib/ ./OUTPUT/HIGGSTES-calib
 
 
 
