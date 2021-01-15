@@ -62,7 +62,7 @@ class TrainGenerator:
         if n_samples is not None:
             params = self.param_generator()
             X, y, w = self.data_generator.generate(*params, n_samples=n_samples)
-            return X, params.tes, w, None
+            return X, params.les, w, None
         else:
             config = Config()
             X, y, w = self.data_generator.generate(*config.CALIBRATED, n_samples=config.N_TRAINING_SAMPLES)
