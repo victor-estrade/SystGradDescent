@@ -127,8 +127,9 @@ python run_array.py benchmark.S3D2.REG-Calib --gpu 1 --n-steps 2000 --n-unit 200
 #========
 
 # CALIBRATION / MARGINAL
-# python run_array.py benchmark.HIGGS.CALIB-LAM --gpu 1  --n-steps 1000 2000 5000 --n-unit 80 200 --xp-name HIGGS-CALIB-LAM --partition besteffort
-# python run_array.py benchmark.HIGGS.CALIB-R --gpu 1  --n-steps 1000 2000 5000 --n-unit 80 200 --xp-name HIGGS-CALIB-R --partition besteffort
+python run_array.py benchmark.HIGGS.CALIB-TES --retrain --gpu 1 --n-steps 5000 --n-unit 100 300 500 --sample-size 10000 --xp-name HIGGS-CALIB-TES --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGS.CALIB-JES --retrain --gpu 1 --n-steps 5000 --n-unit 100 300 500 --sample-size 10000 --xp-name HIGGS-CALIB-JES --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGS.CALIB-LES --retrain --gpu 1 --n-steps 5000 --n-unit 100 300 500 --sample-size 10000 --xp-name HIGGS-CALIB-LES --partition besteffort --estimate-only
 
 # python run_array.py benchmark.HIGGS.likelihood --gpu 1 --xp-name HIGGS-likelihood --partition besteffort
 # python run_array.py benchmark.HIGGS.bayes --gpu 1 --xp-name HIGGS-bayes --partition besteffort
