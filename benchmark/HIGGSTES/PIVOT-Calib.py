@@ -44,6 +44,7 @@ from problem.higgs import get_minimizer_no_nuisance
 from problem.higgs import get_generators_torch
 from problem.higgs import param_generator
 from problem.higgs import Generator
+from problem.higgs import Parameter
 from problem.higgs import HiggsNLL as NLLComputer
 
 from visual.special.higgs import plot_nll_around_min
