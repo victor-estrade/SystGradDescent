@@ -212,9 +212,9 @@ python run_array.py benchmark.HIGGS.GB-Prior --gpu 1 --n-estimators 300  --max-d
 #===============
 
 # CALIBRATION / MARGINAL
-python run_array.py benchmark.HIGGSTES.CALIB-TES --gpu 1 --n-steps 5000 --n-unit 100 300 500 --sample-size 10000 --xp-name HIGGSTES-CALIB-TES --partition besteffort --estimate-only
-python run_array.py benchmark.HIGGSTES.CALIB-JES --gpu 1 --n-steps 5000 --n-unit 100 300 500 --sample-size 10000 --xp-name HIGGSTES-CALIB-JES --partition besteffort --estimate-only
-python run_array.py benchmark.HIGGSTES.CALIB-LES --gpu 1 --n-steps 5000 --n-unit 100 300 500 --sample-size 10000 --xp-name HIGGSTES-CALIB-LES --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGSTES.CALIB-TES --retrain --gpu 1 --n-steps 5000 --n-unit 100 300 500 --sample-size 10000 --xp-name HIGGSTES-CALIB-TES --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGSTES.CALIB-JES --retrain --gpu 1 --n-steps 5000 --n-unit 100 300 500 --sample-size 10000 --xp-name HIGGSTES-CALIB-JES --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGSTES.CALIB-LES --retrain --gpu 1 --n-steps 5000 --n-unit 100 300 500 --sample-size 10000 --xp-name HIGGSTES-CALIB-LES --partition besteffort --estimate-only
 
 python run_array.py benchmark.HIGGSTES.REG-Marginal --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-REG-Marginal --partition besteffort --estimate-only
 
