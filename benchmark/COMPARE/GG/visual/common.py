@@ -103,8 +103,9 @@ def make_evaluation_plots(data_name, benchmark_name, args, TheLoader):
         try:
             evaluation = loader.load_evaluation_config()
         except FileNotFoundError:
-            print(f"Missing results for {loader.model_full_name}")
+            print(f"[MISSING] results for {loader.model_full_name}")
         else:
+            print(f"[SUCCESS] load for {loader.model_full_name}")
             all_evaluations.append(evaluation)
             all_loaders.append(loader)
             make_individual_plots(evaluation, loader)
@@ -127,8 +128,9 @@ def make_fisher_plots(data_name, benchmark_name, args, TheLoader):
         try:
             fisher_data = loader.load_fisher()
         except FileNotFoundError:
-            print(f"Missing results for {loader.model_full_name}")
+            print(f"[MISSING] results for {loader.model_full_name}")
         else:
+            print(f"[SUCCESS] load for {loader.model_full_name}")
             make_individual_fisher_plots(fisher_data, loader)
 
 
@@ -138,8 +140,9 @@ def make_threshold_plots(data_name, benchmark_name, args, TheLoader):
         try:
             threshold_data = loader.load_threshold()
         except FileNotFoundError:
-            print(f"Missing results for {loader.model_full_name}")
+            print(f"[MISSING] results for {loader.model_full_name}")
         else:
+            print(f"[SUCCESS] load for {loader.model_full_name}")
             make_individual_threshold_plots(threshold_data, loader)
 
 
