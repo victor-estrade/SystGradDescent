@@ -63,12 +63,12 @@ class HiggsNLL():
         b = X[y==0]
         w_b = w[y==0]
         return s, w_s, b, w_b
-        
+
     def __call__(self, tes, jes, les, mu):
-        """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""        
+        """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""
         self.valid_generator.reset()
         X, y, w = self.valid_generator.generate(tes, jes, les, mu, n_samples=None, no_grad=True)
-        EPSILON = 1e-5  # avoid log(0)
+        EPSILON = 1e-6  # avoid log(0)
         rate_histogram = self.compute_summaries(X, w) + EPSILON
         # xp_histogram = self.compute_summaries(self.X_test, self.w_test)
 
@@ -102,9 +102,9 @@ class FuturHiggsNLL():
         b = X[y==0]
         w_b = w[y==0]
         return s, w_s, b, w_b
-        
+
     def __call__(self, tes, jes, les, nasty_bkg, sigma_soft, mu):
-        """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""        
+        """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""
         self.valid_generator.reset()
         X, y, w = self.valid_generator.generate(tes, jes, les, nasty_bkg, sigma_soft, mu, n_samples=None)
         EPSILON = 1e-5  # avoid log(0)
@@ -125,6 +125,3 @@ class FuturHiggsNLL():
             sigma_soft_constraint = 0
         total_nll = mu_nll + tes_constraint + jes_constraint + les_constraint + sigma_soft_constraint + nasty_bkg_constraint
         return total_nll
-
-
-
