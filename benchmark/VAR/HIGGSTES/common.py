@@ -38,7 +38,7 @@ def measurement(model, i_cv, config, valid_generator, test_generator):
     results = []
     for test_config in config.iter_test_config():
         logger.info(f"Running test set : {test_config.TRUE}, {test_config.N_TESTING_SAMPLES} samples")
-        for n_bins in range(1, 30):
+        for n_bins in range(1, 60):
             result_row = {'i_cv': i_cv}
             gamma_array, beta_array = compute_bins(model, valid_generator, test_config, n_bins=n_bins)
             fisher = compute_fisher(gamma_array, beta_array, test_config.TRUE.mu)
