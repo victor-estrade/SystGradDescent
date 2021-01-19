@@ -102,30 +102,18 @@ python run_array.py benchmark.COMPARE.HIGGS.REG-Marginal --gpu 1 --xp-name COMPA
 
 
 # PRIOR RUN
-python run_array.py benchmark.COMPARE.HIGGS.GB-Prior --gpu 1 --xp-name COMPARE-HIGGS-GB-Prior --partition besteffort
-python run_array.py benchmark.COMPARE.HIGGS.NN-Prior --gpu 1 --xp-name COMPARE-HIGGS-NN-Prior --partition besteffort
-python run_array.py benchmark.COMPARE.HIGGS.DA-Prior --gpu 1 --xp-name COMPARE-HIGGS-DA-Prior --partition besteffort
+python run_array.py benchmark.COMPARE.HIGGS.GB --gpu 1 --xp-name COMPARE-HIGGS-GB --partition besteffort
+python run_array.py benchmark.COMPARE.HIGGS.NN --gpu 1 --xp-name COMPARE-HIGGS-NN --partition besteffort
+python run_array.py benchmark.COMPARE.HIGGS.DA --gpu 1 --xp-name COMPARE-HIGGS-DA --partition besteffort
 
-python run_array.py benchmark.COMPARE.HIGGS.PIVOT-Prior --gpu 1 --xp-name COMPARE-HIGGS-PIVOT-Prior --partition besteffort
-python run_array.py benchmark.COMPARE.HIGGS.TP-Prior --gpu 1 --xp-name COMPARE-HIGGS-TP-Prior --partition besteffort
+python run_array.py benchmark.COMPARE.HIGGS.PIVOT --gpu 1 --xp-name COMPARE-HIGGS-PIVOT --partition besteffort
+python run_array.py benchmark.COMPARE.HIGGS.TP --gpu 1 --xp-name COMPARE-HIGGS-TP --partition besteffort
 
-python run_array.py benchmark.COMPARE.HIGGS.INF-Prior --gpu 1 --xp-name COMPARE-HIGGS-INF-Prior --partition besteffort
+python run_array.py benchmark.COMPARE.HIGGS.INF --gpu 1 --xp-name COMPARE-HIGGS-INF --partition besteffort
 
-python run_array.py benchmark.COMPARE.HIGGS.REG-Prior --gpu 1 --xp-name COMPARE-HIGGS-REG-Prior --partition besteffort
+python run_array.py benchmark.COMPARE.HIGGS.REG --gpu 1 --xp-name COMPARE-HIGGS-REG --partition besteffort
 
 
-# CALIB RUN
-
-python run_array.py benchmark.COMPARE.HIGGS.GB-Calib --gpu 1 --xp-name COMPARE-HIGGS-GB-Calib --partition besteffort
-python run_array.py benchmark.COMPARE.HIGGS.NN-Calib --gpu 1 --xp-name COMPARE-HIGGS-NN-Calib --partition besteffort
-python run_array.py benchmark.COMPARE.HIGGS.DA-Calib --gpu 1 --xp-name COMPARE-HIGGS-DA-Calib --partition besteffort
-
-python run_array.py benchmark.COMPARE.HIGGS.PIVOT-Calib --gpu 1 --xp-name COMPARE-HIGGS-PIVOT-Calib --partition besteffort
-python run_array.py benchmark.COMPARE.HIGGS.TP-Calib --gpu 1 --xp-name COMPARE-HIGGS-TP-Calib --partition besteffort
-
-python run_array.py benchmark.COMPARE.HIGGS.INF-Calib --gpu 1 --xp-name COMPARE-HIGGS-INF-Calib --partition besteffort
-
-python run_array.py benchmark.COMPARE.HIGGS.REG-Calib --gpu 1 --xp-name COMPARE-HIGGS-REG-Calib --partition besteffort
 
 # BEST METHODS
 python run_array.py benchmark.COMPARE.HIGGS.compare_models --gpu 1 --xp-name COMPARE-HIGGS-MODELS --partition besteffort
