@@ -22,8 +22,10 @@ rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/HI
 rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/HIGGSTES-calib/ ./OUTPUT/HIGGSTES-calib
 
 
-
 rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/HIGGS-prior/ ./OUTPUT/HIGGS-prior
+
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/VAR-GG/ ./OUTPUT/VAR-GG
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/VAR-HIGGSTES/ ./OUTPUT/VAR-HIGGSTES
 
 
 # rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG-prior/PivotClassifier2/ ./OUTPUT/GG-prior/PivotClassifier2
