@@ -6,7 +6,7 @@
 python run_array.py benchmark.COMPARE.GG.REG-Marginal --gpu 1 --xp-name COMPARE-GG-REG-Marginal --partition besteffort
 
 
-# RUNs
+# RUNS
 python run_array.py benchmark.COMPARE.GG.GB --gpu 1 --xp-name COMPARE-GG-GB --partition besteffort
 python run_array.py benchmark.COMPARE.GG.NN --gpu 1 --xp-name COMPARE-GG-NN --partition besteffort
 python run_array.py benchmark.COMPARE.GG.DA --gpu 1 --xp-name COMPARE-GG-DA --partition besteffort
