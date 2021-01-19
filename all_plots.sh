@@ -6,31 +6,18 @@
 python run_array.py benchmark.COMPARE.GG.REG-Marginal --gpu 1 --xp-name COMPARE-GG-REG-Marginal --partition besteffort
 
 
-# PRIOR RUN
-python run_array.py benchmark.COMPARE.GG.GB-Prior --gpu 1 --xp-name COMPARE-GG-GB-Prior --partition besteffort
-python run_array.py benchmark.COMPARE.GG.NN-Prior --gpu 1 --xp-name COMPARE-GG-NN-Prior --partition besteffort
-python run_array.py benchmark.COMPARE.GG.DA-Prior --gpu 1 --xp-name COMPARE-GG-DA-Prior --partition besteffort
+# RUNs
+python run_array.py benchmark.COMPARE.GG.GB --gpu 1 --xp-name COMPARE-GG-GB --partition besteffort
+python run_array.py benchmark.COMPARE.GG.NN --gpu 1 --xp-name COMPARE-GG-NN --partition besteffort
+python run_array.py benchmark.COMPARE.GG.DA --gpu 1 --xp-name COMPARE-GG-DA --partition besteffort
 
-python run_array.py benchmark.COMPARE.GG.PIVOT-Prior --gpu 1 --xp-name COMPARE-GG-PIVOT-Prior --partition besteffort
-python run_array.py benchmark.COMPARE.GG.TP-Prior --gpu 1 --xp-name COMPARE-GG-TP-Prior --partition besteffort
+python run_array.py benchmark.COMPARE.GG.PIVOT --gpu 1 --xp-name COMPARE-GG-PIVOT --partition besteffort
+python run_array.py benchmark.COMPARE.GG.TP --gpu 1 --xp-name COMPARE-GG-TP --partition besteffort
 
-python run_array.py benchmark.COMPARE.GG.INF-Prior --gpu 1 --xp-name COMPARE-GG-INF-Prior --partition besteffort
+python run_array.py benchmark.COMPARE.GG.INF --gpu 1 --xp-name COMPARE-GG-INF --partition besteffort
 
-python run_array.py benchmark.COMPARE.GG.REG-Prior --gpu 1 --xp-name COMPARE-GG-REG-Prior --partition besteffort
+python run_array.py benchmark.COMPARE.GG.REG --gpu 1 --xp-name COMPARE-GG-REG --partition besteffort
 
-
-# CALIB RUN
-
-python run_array.py benchmark.COMPARE.GG.GB-Calib --gpu 1 --xp-name COMPARE-GG-GB-Calib --partition besteffort
-python run_array.py benchmark.COMPARE.GG.NN-Calib --gpu 1 --xp-name COMPARE-GG-NN-Calib --partition besteffort
-python run_array.py benchmark.COMPARE.GG.DA-Calib --gpu 1 --xp-name COMPARE-GG-DA-Calib --partition besteffort
-
-python run_array.py benchmark.COMPARE.GG.PIVOT-Calib --gpu 1 --xp-name COMPARE-GG-PIVOT-Calib --partition besteffort
-python run_array.py benchmark.COMPARE.GG.TP-Calib --gpu 1 --xp-name COMPARE-GG-TP-Calib --partition besteffort
-
-python run_array.py benchmark.COMPARE.GG.INF-Calib --gpu 1 --xp-name COMPARE-GG-INF-Calib --partition besteffort
-
-python run_array.py benchmark.COMPARE.GG.REG-Calib --gpu 1 --xp-name COMPARE-GG-REG-Calib --partition besteffort
 
 # BEST METHODS
 python run_array.py benchmark.COMPARE.GG.compare_models --gpu 1 --xp-name COMPARE-GG-MODELS --partition besteffort
@@ -38,11 +25,6 @@ python run_array.py benchmark.COMPARE.GG.compare_models --gpu 1 --xp-name COMPAR
 
 # CHEAT RUN
 python run_array.py benchmark.COMPARE.GG.REG-Cheat --gpu 1 --xp-name COMPARE-GG-REG-Cheat --partition besteffort
-
-
-
-
-
 
 
 
@@ -58,31 +40,18 @@ python run_array.py benchmark.COMPARE.GG.REG-Cheat --gpu 1 --xp-name COMPARE-GG-
 python run_array.py benchmark.COMPARE.S3D2.REG-Marginal --gpu 1 --xp-name COMPARE-S3D2-REG-Marginal --partition besteffort
 
 
-# PRIOR RUN
-python run_array.py benchmark.COMPARE.S3D2.GB-Prior --gpu 1 --xp-name COMPARE-S3D2-GB-Prior --partition besteffort
-python run_array.py benchmark.COMPARE.S3D2.NN-Prior --gpu 1 --xp-name COMPARE-S3D2-NN-Prior --partition besteffort
-python run_array.py benchmark.COMPARE.S3D2.DA-Prior --gpu 1 --xp-name COMPARE-S3D2-DA-Prior --partition besteffort
+# RUNS
+python run_array.py benchmark.COMPARE.S3D2.GB --gpu 1 --xp-name COMPARE-S3D2-GB --partition besteffort
+python run_array.py benchmark.COMPARE.S3D2.NN --gpu 1 --xp-name COMPARE-S3D2-NN --partition besteffort
+python run_array.py benchmark.COMPARE.S3D2.DA --gpu 1 --xp-name COMPARE-S3D2-DA --partition besteffort
 
-python run_array.py benchmark.COMPARE.S3D2.PIVOT-Prior --gpu 1 --xp-name COMPARE-S3D2-PIVOT-Prior --partition besteffort
-python run_array.py benchmark.COMPARE.S3D2.TP-Prior --gpu 1 --xp-name COMPARE-S3D2-TP-Prior --partition besteffort
+python run_array.py benchmark.COMPARE.S3D2.PIVOT --gpu 1 --xp-name COMPARE-S3D2-PIVOT --partition besteffort
+python run_array.py benchmark.COMPARE.S3D2.TP --gpu 1 --xp-name COMPARE-S3D2-TP --partition besteffort
 
-python run_array.py benchmark.COMPARE.S3D2.INF-Prior --gpu 1 --xp-name COMPARE-S3D2-INF-Prior --partition besteffort
+python run_array.py benchmark.COMPARE.S3D2.INF --gpu 1 --xp-name COMPARE-S3D2-INF --partition besteffort
 
-python run_array.py benchmark.COMPARE.S3D2.REG-Prior --gpu 1 --xp-name COMPARE-S3D2-REG-Prior --partition besteffort
+python run_array.py benchmark.COMPARE.S3D2.REG --gpu 1 --xp-name COMPARE-S3D2-REG --partition besteffort
 
-
-# CALIB RUN
-
-python run_array.py benchmark.COMPARE.S3D2.GB-Calib --gpu 1 --xp-name COMPARE-S3D2-GB-Calib --partition besteffort
-python run_array.py benchmark.COMPARE.S3D2.NN-Calib --gpu 1 --xp-name COMPARE-S3D2-NN-Calib --partition besteffort
-python run_array.py benchmark.COMPARE.S3D2.DA-Calib --gpu 1 --xp-name COMPARE-S3D2-DA-Calib --partition besteffort
-
-python run_array.py benchmark.COMPARE.S3D2.PIVOT-Calib --gpu 1 --xp-name COMPARE-S3D2-PIVOT-Calib --partition besteffort
-python run_array.py benchmark.COMPARE.S3D2.TP-Calib --gpu 1 --xp-name COMPARE-S3D2-TP-Calib --partition besteffort
-
-python run_array.py benchmark.COMPARE.S3D2.INF-Calib --gpu 1 --xp-name COMPARE-S3D2-INF-Calib --partition besteffort
-
-python run_array.py benchmark.COMPARE.S3D2.REG-Calib --gpu 1 --xp-name COMPARE-S3D2-REG-Calib --partition besteffort
 
 # BEST METHODS
 python run_array.py benchmark.COMPARE.S3D2.compare_models --gpu 1 --xp-name COMPARE-S3D2-MODELS --partition besteffort
