@@ -19,6 +19,10 @@ def main():
     make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
     make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
 
+    data_name = 'GG'
+    benchmark_name = 'GG-calib'
+    make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
+    make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
 
 
 
