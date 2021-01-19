@@ -249,6 +249,7 @@ python run_array.py benchmark.HIGGSTES.FREG-Calib --gpu 1 --n-steps 5000 --n-uni
 
 
 # VAR RUN
+python run_array.py benchmark.VAR.HIGGSTES.FF --gpu 1 --feature-id 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 --xp-name VAR-HIGGSTES-FF --partition besteffort --estimate-only
 python run_array.py benchmark.VAR.HIGGSTES.GB --gpu 1 --n-estimators 300 800  --max-depth 3 6 --learning-rate 0.1 0.01 --xp-name VAR-HIGGSTES-GB --partition besteffort --end-cv 5
 python run_array.py benchmark.VAR.HIGGSTES.NN --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name VAR-HIGGSTES-NN --partition besteffort --end-cv 5
 python run_array.py benchmark.VAR.HIGGSTES.DA --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name VAR-HIGGSTES-DA --partition besteffort --end-cv 5
@@ -258,6 +259,7 @@ python run_array.py benchmark.VAR.HIGGSTES.TP --gpu 1 --n-steps 5000 --n-unit 20
 
 
 # AMS RUN
+python run_array.py benchmark.AMS.HIGGSTES.FF --gpu 1 --feature-id 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 --xp-name AMS-HIGGSTES-FF --partition besteffort --estimate-only
 python run_array.py benchmark.AMS.HIGGSTES.GB --gpu 1 --n-estimators 300 800  --max-depth 3 6 --learning-rate 0.1 0.01 --xp-name AMS-HIGGSTES-GB --partition besteffort --end-cv 5
 python run_array.py benchmark.AMS.HIGGSTES.NN --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name AMS-HIGGSTES-NN --partition besteffort --end-cv 5
 python run_array.py benchmark.AMS.HIGGSTES.DA --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 10000 --xp-name AMS-HIGGSTES-DA --partition besteffort --end-cv 5
