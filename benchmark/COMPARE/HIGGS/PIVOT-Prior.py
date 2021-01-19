@@ -35,6 +35,20 @@ def main():
     make_hp_table(data_name, benchmark_name, PIVOT_HP, PIVOTLoader)
     make_common_plots(data_name, benchmark_name, PIVOT_HP, PIVOTLoader)
 
+    data_name = 'HIGGSTES'
+    benchmark_name = 'HIGGSTES-calib'
+    make_hp_table(data_name, benchmark_name, PIVOT_HP, PIVOTLoader)
+    make_common_plots(data_name, benchmark_name, PIVOT_HP, PIVOTLoader)
+
+    data_name = 'BALANCEDHIGGSTES'
+    benchmark_name = 'BALANCEDHIGGSTES-calib'
+    make_hp_table(data_name, benchmark_name, PIVOT_HP, PIVOTLoader)
+    make_common_plots(data_name, benchmark_name, PIVOT_HP, PIVOTLoader)
+
+    data_name = 'EASYHIGGSTES'
+    benchmark_name = 'EASYHIGGSTES-calib'
+    make_hp_table(data_name, benchmark_name, PIVOT_HP, PIVOTLoader)
+    make_common_plots(data_name, benchmark_name, PIVOT_HP, PIVOTLoader)
 
 
 
