@@ -101,7 +101,7 @@ python run_array.py benchmark.COMPARE.S3D2.compare_models --gpu 1 --xp-name COMP
 python run_array.py benchmark.COMPARE.HIGGS.REG-Marginal --gpu 1 --xp-name COMPARE-HIGGS-REG-Marginal --partition besteffort
 
 
-# PRIOR RUN
+# RUN
 python run_array.py benchmark.COMPARE.HIGGS.GB --gpu 1 --xp-name COMPARE-HIGGS-GB --partition besteffort
 python run_array.py benchmark.COMPARE.HIGGS.NN --gpu 1 --xp-name COMPARE-HIGGS-NN --partition besteffort
 python run_array.py benchmark.COMPARE.HIGGS.DA --gpu 1 --xp-name COMPARE-HIGGS-DA --partition besteffort
