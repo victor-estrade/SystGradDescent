@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
+# Command line :
 # python -m benchmark.GG.PIVOT-Calib
 
 import os
@@ -52,18 +52,15 @@ from visual.special.gamma_gauss import plot_nll_around_min
 from model.pivot import PivotClassifier
 from model.criterion.weighted_criterion import WeightedCrossEntropyLoss
 from model.criterion.weighted_criterion import WeightedGaussEntropyLoss
-from model.regressor import Regressor
 from model.summaries import ClassifierSummaryComputer
 from ..my_argparser import PIVOT_parse_args
 
 from archi.classic import L4 as ARCHI
 
-from archi.reducer import A3ML3 as CALIB_ARCHI
-# from archi.reducer import EA1AR8MR8L1 as CALIB_ARCHI
+from .common import load_calib_rescale
 
 DATA_NAME = 'GG'
 BENCHMARK_NAME = DATA_NAME+'-calib'
-CALIB_RESCALE = "Calib_rescale"
 N_ITER = 30
 N_AUGMENT = 5
 
@@ -98,24 +95,6 @@ class TrainGenerator:
 
 
 
-def load_calib_rescale():
-    args = lambda : None
-    args.n_unit     = 80
-    args.optimizer_name  = "adam"
-    args.beta1      = 0.5
-    args.beta2      = 0.9
-    args.learning_rate = 1e-4
-    args.n_samples  = 1000
-    args.n_steps    = 1000
-    args.batch_size = 20
-
-    args.net = CALIB_ARCHI(n_in=1, n_out=2, n_unit=args.n_unit)
-    args.optimizer = get_optimizer(args)
-    model = get_model(args, Regressor)
-    model.base_name = CALIB_RESCALE
-    model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
-    model.load(model.model_path)
-    return model
 
 # =====================================================================
 # MAIN
@@ -182,19 +161,19 @@ def run(args, i_cv):
     model = build_model(args, i_cv)
     os.makedirs(model.results_path, exist_ok=True)
     flush(logger)
-    
+
     # TRAINING / LOADING
     train_or_load_pivot(model, train_generator, config.N_TRAINING_SAMPLES*N_AUGMENT, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
-    
+
     result_row.update(evaluate_neural_net(model, prefix='valid'))
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
     # MEASUREMENT
-    calib_rescale = load_calib_rescale()
+    calib_rescale = load_calib_rescale(DATA_NAME, BENCHMARK_NAME)
     N_BINS = 10
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
     iter_results = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_rescale, n_bins=N_BINS)
@@ -220,13 +199,13 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
     flush(logger)
-    
+
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
     result_row['n_test_samples'] = config.N_TESTING_SAMPLES
     suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
-    
+
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     # PLOT SUMMARIES
@@ -234,7 +213,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
 
     # CALIBRATION
     rescale_mean, rescale_sigma = calib_rescale.predict(X_test, w_test)
-    logger.info('rescale  = {} =vs= {} +/- {}'.format(config.TRUE.rescale, rescale_mean, rescale_sigma) ) 
+    logger.info('rescale  = {} =vs= {} +/- {}'.format(config.TRUE.rescale, rescale_mean, rescale_sigma) )
     config.CALIBRATED = Parameter(rescale_mean, config.CALIBRATED.interest_parameters)
     config.CALIBRATED_ERROR = Parameter(rescale_sigma, config.CALIBRATED_ERROR.interest_parameters)
     for name, value in config.CALIBRATED.items():

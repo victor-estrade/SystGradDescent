@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
+# Command line :
 # python -m benchmark.GG.REG-Calib
 
 import os
@@ -52,35 +52,16 @@ from model.monte_carlo import save_monte_carlo
 
 from archi.reducer import EA3ML3 as ARCHI
 # from archi.reducer import EA1AR8MR8L1 as ARCHI
-from archi.reducer import A3ML3 as CALIB_ARCHI
-# from archi.reducer import EA1AR8MR8L1 as CALIB_ARCHI
+
+from .common import load_calib_rescale
 
 from ..my_argparser import REG_parse_args
 
 DATA_NAME = 'GG'
 BENCHMARK_NAME = DATA_NAME+'-calib'
-CALIB_RESCALE = "Calib_rescale"
 N_ITER = 30
 NCALL = 100
 
-def load_calib_rescale():
-    args = lambda : None
-    args.n_unit     = 80
-    args.optimizer_name  = "adam"
-    args.beta1      = 0.5
-    args.beta2      = 0.9
-    args.learning_rate = 1e-4
-    args.n_samples  = 1000
-    args.n_steps    = 1000
-    args.batch_size = 20
-
-    args.net = CALIB_ARCHI(n_in=1, n_out=2, n_unit=args.n_unit)
-    args.optimizer = get_optimizer(args)
-    model = get_model(args, Regressor)
-    model.base_name = CALIB_RESCALE
-    model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
-    model.load(model.model_path)
-    return model
 
 
 class TrainGenerator:
@@ -172,19 +153,19 @@ def run(args, i_cv):
     model = build_model(args, i_cv)
     os.makedirs(model.results_path, exist_ok=True)
     flush(logger)
-    
+
     # TRAINING / LOADING
     train_or_load_neural_net(model, train_generator, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
-    
+
     result_row.update(evaluate_neural_net(model, prefix='valid'))
     evaluate_regressor(model, prefix='valid')
 
     # MEASUREMENT
-    calib_rescale = load_calib_rescale()
+    calib_rescale = load_calib_rescale(DATA_NAME, BENCHMARK_NAME)
     result_row['nfcn'] = NCALL
     iter_results = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_rescale)
                     for i, test_config in enumerate(config.iter_test_config())]
@@ -209,7 +190,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
     flush(logger)
-    
+
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
@@ -221,7 +202,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
 
     # CALIBRATION
     rescale_mean, rescale_sigma = calib_rescale.predict(X_test, w_test)
-    logger.info('rescale  = {} =vs= {} +/- {}'.format(config.TRUE.rescale, rescale_mean, rescale_sigma) ) 
+    logger.info('rescale  = {} =vs= {} +/- {}'.format(config.TRUE.rescale, rescale_mean, rescale_sigma) )
     config.CALIBRATED = Parameter(rescale_mean, config.CALIBRATED.interest_parameters)
     config.CALIBRATED_ERROR = Parameter(rescale_sigma, config.CALIBRATED_ERROR.interest_parameters)
 
@@ -250,17 +231,17 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     result_row.update(config.CALIBRATED.to_dict())
     result_row.update(config.CALIBRATED_ERROR.to_dict( suffix=_ERROR) )
     result_row.update(config.TRUE.to_dict(suffix=_TRUTH) )
-    name = config.INTEREST_PARAM_NAME 
+    name = config.INTEREST_PARAM_NAME
     result_row[name] = target
     result_row[name+_ERROR] = sigma
     result_row[name+_TRUTH] = config.TRUE.interest_parameters
-    logger.info('mix  = {} =vs= {} +/- {}'.format(config.TRUE.interest_parameters, target, sigma) ) 
+    logger.info('mix  = {} =vs= {} +/- {}'.format(config.TRUE.interest_parameters, target, sigma) )
     return result_row.copy(), conditional_estimate
 
 
 def make_conditional_estimation(model, X_test, w_test, config):
     results = []
-    interest_name = config.INTEREST_PARAM_NAME 
+    interest_name = config.INTEREST_PARAM_NAME
     for j, nuisance_parameters in enumerate(config.iter_nuisance()):
         result_row = {}
         target, sigma = model.predict(X_test, w_test, np.array(nuisance_parameters) )
