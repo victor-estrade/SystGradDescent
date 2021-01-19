@@ -74,6 +74,80 @@ python run_array.py benchmark.AMS.GG.TP --gpu 1 --n-steps 2000 5000 --n-unit 50 
 
 
 
+
+
+# TOY 1D HARD MODE
+#=================
+
+#  LEANRING CURVE
+python run_array.py benchmark.HARDGG.GB_learning_curve --gpu 1 --n-estimators 300  --max-depth 3 --learning-rate 0.1 --xp-name HARDGG-GB_learning_curve --partition besteffort
+python run_array.py benchmark.HARDGG.NN_learning_curve --gpu 1 --n-steps 5000 --n-unit 200 --batch-size 1000 --xp-name HARDGG-NN_learning_curve --partition besteffort
+
+
+# CALIBRATION / MARGINAL
+python run_array.py benchmark.HARDGG.CALIB-Rescale --gpu 1  --n-steps 1000 2000 5000 --n-unit 80 200 --xp-name HARDGG-CALIB-Rescale --partition besteffort
+
+python run_array.py benchmark.HARDGG.likelihood --gpu 1 --xp-name HARDGG-likelihood --partition besteffort
+python run_array.py benchmark.HARDGG.bayes --gpu 1 --xp-name HARDGG-bayes --partition besteffort
+
+python run_array.py benchmark.HARDGG.REG-Marginal --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name HARDGG-REG-Marginal --partition besteffort
+python run_array.py benchmark.HARDGG.REG-Marginal --gpu 1 --n-steps 2000 --n-unit 200 --beta1 0.9 --beta2 0.999 --xp-name HARDGG-REG-Marginal-bouncing --partition besteffort
+
+
+# PRIOR RUN
+python run_array.py benchmark.HARDGG.FF-Prior --gpu 1 --feature-id 0 --xp-name HARDGG-FF-Prior --partition besteffort
+python run_array.py benchmark.HARDGG.GB-Prior --gpu 1 --n-estimators 100 300 1000  --max-depth 3 5 10 --learning-rate 0.1 0.05 0.01 --xp-name HARDGG-GB-Prior --partition besteffort
+python run_array.py benchmark.HARDGG.NN-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --batch-size 20 --xp-name HARDGG-NN-Prior --partition besteffort
+python run_array.py benchmark.HARDGG.DA-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name HARDGG-DA-Prior --partition besteffort
+
+python run_array.py benchmark.HARDGG.PIVOT-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name HARDGG-PIVOT-Prior --partition besteffort
+python run_array.py benchmark.HARDGG.TP-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name HARDGG-TP-Prior --partition besteffort
+
+python run_array.py benchmark.HARDGG.INF-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name HARDGG-INF-Prior --partition besteffort
+
+python run_array.py benchmark.HARDGG.REG-Prior --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name HARDGG-REG-Prior --partition besteffort
+python run_array.py benchmark.HARDGG.REG-Prior --gpu 1 --n-steps 2000 --n-unit 200 --beta1 0.9 --beta2 0.999 --xp-name HARDGG-REG-Prior-bouncing --partition besteffort
+
+
+
+# CALIB RUN
+python run_array.py benchmark.HARDGG.GB-Calib --gpu 1 --n-estimators 100 300 1000  --max-depth 3 5 10 --learning-rate 0.1 0.05 0.01 --xp-name HARDGG-GB-Calib --partition besteffort
+python run_array.py benchmark.HARDGG.NN-Calib --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --batch-size 20 --xp-name HARDGG-NN-Calib --partition besteffort
+python run_array.py benchmark.HARDGG.DA-Calib --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name HARDGG-DA-Calib --partition besteffort
+
+python run_array.py benchmark.HARDGG.PIVOT-Calib --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name HARDGG-PIVOT-Calib --partition besteffort
+python run_array.py benchmark.HARDGG.TP-Calib --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name HARDGG-TP-Calib --partition besteffort
+
+python run_array.py benchmark.HARDGG.INF-Calib --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name HARDGG-INF-Calib --partition besteffort
+
+python run_array.py benchmark.HARDGG.REG-Calib --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name HARDGG-REG-Calib --partition besteffort
+python run_array.py benchmark.HARDGG.REG-Calib --gpu 1 --n-steps 2000 --n-unit 200 --beta1 0.9 --beta2 0.999 --xp-name HARDGG-REG-Calib-bouncing --partition besteffort
+
+
+
+# PRIOR PLUS
+
+python run_array.py benchmark.HARDGG.REG-Prior-Plus --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name HARDGG-REG-Prior-Plus --partition besteffort
+
+# VAR RUN
+python run_array.py benchmark.VAR.HARDGG.GB --gpu 1 --n-estimators 100 300 1000  --max-depth 3 5 10 --learning-rate 0.1 0.05 0.01 --xp-name VAR-HARDGG-GB --partition besteffort
+python run_array.py benchmark.VAR.HARDGG.NN --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --batch-size 20 --xp-name VAR-HARDGG-NN --partition besteffort
+python run_array.py benchmark.VAR.HARDGG.DA --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name VAR-HARDGG-DA --partition besteffort
+
+python run_array.py benchmark.VAR.HARDGG.PIVOT --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name VAR-HARDGG-PIVOT --partition besteffort
+python run_array.py benchmark.VAR.HARDGG.TP --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name VAR-HARDGG-TP --partition besteffort
+
+
+# AMS RUN
+python run_array.py benchmark.AMS.HARDGG.GB --gpu 1 --n-estimators 100 300 1000  --max-depth 3 5 10 --learning-rate 0.1 0.05 0.01 --xp-name AMS-HARDGG-GB --partition besteffort
+python run_array.py benchmark.AMS.HARDGG.NN --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --batch-size 20 --xp-name AMS-HARDGG-NN --partition besteffort
+python run_array.py benchmark.AMS.HARDGG.DA --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name AMS-HARDGG-DA --partition besteffort
+
+python run_array.py benchmark.AMS.HARDGG.PIVOT --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name AMS-HARDGG-PIVOT --partition besteffort
+python run_array.py benchmark.AMS.HARDGG.TP --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --trade-off 1 0.1 1e-2 1e-3 --xp-name AMS-HARDGG-TP --partition besteffort
+
+
+
 # TOY 3D
 #========
 
