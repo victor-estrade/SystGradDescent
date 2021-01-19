@@ -96,7 +96,9 @@ def make_individual_threshold_plots(threshold_table, loader):
 
 
 def make_common_plots(data_name, benchmark_name, args, TheLoader):
+    print("="*50)
     print(data_name, benchmark_name)
+    print("="*50)
     print("Make evaluation plots")
     print("="*25, flush=True)
     try:
@@ -132,7 +134,7 @@ def make_evaluation_plots(data_name, benchmark_name, args, TheLoader):
             config_table = loader.load_config_table()
             evaluation = loader.load_estimation_evaluation()
         except FileNotFoundError:
-            print(f"Missing estimation results for {loader.model_full_name}")
+            print(f"[MISSING] estimation results for {loader.model_full_name}")
         else:
             print(f"[SUCCESS] load for {loader.model_full_name}")
             evaluation = evaluation.join(config_table, rsuffix='_')
