@@ -24,8 +24,8 @@ BENCHMARK_NAME =  "COMPARE"
 
 def load_cheat_evaluation_config(loader, benchmark_name):
     estimations = loader.load_estimations()
-    estimations["mix"] = estimations["cheat_mu"]
-    estimations["mix_error"] = estimations["cheat_sigma_mu"]
+    estimations["mu"] = estimations["cheat_mu"]
+    estimations["mu_error"] = estimations["cheat_sigma_mu"]
     evaluation = evaluate_estimator(Config.INTEREST_PARAM_NAME, estimations)
     config_table = loader.load_config_table()
     evaluation = evaluation.join(config_table, rsuffix='_')
@@ -33,7 +33,7 @@ def load_cheat_evaluation_config(loader, benchmark_name):
     evaluation['benchmark_name'] = benchmark_name
     evaluation['base_name'] = loader.base_name
     return evaluation
-    
+
 
 
 def main():
@@ -49,7 +49,7 @@ def main():
     for kwargs in hp_kwargs_generator(REG_HP):
         loader = REGLoader(data_name, orig_benchmark_name, **kwargs)
         evaluation = load_cheat_evaluation_config(loader, benchmark_name)
-        
+
         all_evaluations.append(evaluation)
         all_loaders.append(loader)
 
@@ -62,7 +62,7 @@ def main():
         individual.n_samples_mse(evaluation, title=loader.model_full_name, directory=directory)
         individual.n_samples_sigma_mean(evaluation, title=loader.model_full_name, directory=directory)
         individual.box_n_samples_mse(evaluation, title=loader.model_full_name, directory=directory)
-        
+
     title = f"{benchmark_name}-{loader.base_name}"
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, loader.base_name, "PROFUSION")
     os.makedirs(directory, exist_ok=True)

@@ -35,7 +35,7 @@ def plot_eval_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     for true_rescale, df in data.groupby("true_rescale"):
-        x = df.true_mix
+        x = df.true_mu
         y = df.target_mse
         label = f"$\\alpha$ = {true_rescale}"
         plt.plot(x, y, 'o-', label=label)
@@ -53,7 +53,7 @@ def plot_eval_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     for true_rescale, df in data.groupby("true_rescale"):
-        x = df.true_mix
+        x = df.true_mu
         y = df.var_stat
         label = f"$\\alpha$ = {true_rescale}"
         plt.plot(x, y, 'o-', label=label)
@@ -71,7 +71,7 @@ def plot_eval_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     for true_rescale, df in data.groupby("true_rescale"):
-        x = df.true_mix
+        x = df.true_mu
         y = df.var_syst
         label = f"$\\alpha$ = {true_rescale}"
         plt.plot(x, y, 'o-', label=label)
@@ -89,10 +89,10 @@ def plot_eval_mu(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     for true_rescale, df in data.groupby("true_rescale"):
-        x = df.true_mix
+        x = df.true_mu
         y = df.target_mean
         y_err = df.sigma_mean
-        true = df.true_mix
+        true = df.true_mu
         label = f"$\\alpha$ = {true_rescale}"
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)
@@ -106,9 +106,9 @@ def plot_eval_mu(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def plot_n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
-    true_mix = evaluation.true_mix.median()
+    true_mu = evaluation.true_mu.median()
 
-    data = evaluation[ (evaluation.true_mix == true_mix)]
+    data = evaluation[ (evaluation.true_mu == true_mu)]
     for true_rescale, df in data.groupby("true_rescale"):
         x = df.n_test_samples
         y = df.var_stat
@@ -125,9 +125,9 @@ def plot_n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def plot_n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
-    true_mix = evaluation.true_mix.median()
+    true_mu = evaluation.true_mu.median()
 
-    data = evaluation[ (evaluation.true_mix == true_mix)]
+    data = evaluation[ (evaluation.true_mu == true_mu)]
     for true_rescale, df in data.groupby("true_rescale"):
         x = df.n_test_samples
         y = df.var_syst
@@ -151,7 +151,7 @@ def main():
     # my_loader = NNLoader('GG', 'GG-prior', "L4")
     # my_loader = REGLoader('GG', 'GG-prior', "EA3ML3")
     evaluation = my_loader.load_evaluation_config()
-    
+
     plot_eval_mu(evaluation, title=my_loader.model_full_name)
     plot_eval_mse(evaluation, title=my_loader.model_full_name)
     plot_eval_v_stat(evaluation, title=my_loader.model_full_name)
@@ -173,9 +173,9 @@ def main():
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
     for evaluation in all_evaluations:
-        true_mix = evaluation.true_mix.median()
+        true_mu = evaluation.true_mu.median()
 
-        data = evaluation[ (evaluation.true_mix == true_mix)]
+        data = evaluation[ (evaluation.true_mu == true_mu)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
             x = df.n_test_samples
             y = df.var_stat
@@ -197,10 +197,10 @@ def main():
 
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
-            x = df.true_mix
+            x = df.true_mu
             y = df.target_mean
             y_err = df.sigma_mean
-            true = df.true_mix
+            true = df.true_mu
             label = f"$\\alpha$ = {true_rescale}"
             plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label, color=color_cycle[i%len(unique_alphas)])
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500,)

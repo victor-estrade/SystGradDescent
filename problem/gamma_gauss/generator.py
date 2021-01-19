@@ -73,15 +73,15 @@ class Generator():
         y = np.concatenate([y_b, y_s], axis=0)
         return y
 
-    def _generate_weights(self, mix, n_bkg, n_sig, n_expected_events):
+    def _generate_weights(self, mu, n_bkg, n_sig, n_expected_events):
         w_b = np.ones(n_bkg) * self.background_luminosity / n_bkg
-        w_s = np.ones(n_sig) * mix * self.signal_luminosity / n_sig
+        w_s = np.ones(n_sig) * mu * self.signal_luminosity / n_sig
         w = np.concatenate([w_b, w_s], axis=0)
         return w
 
-    def proba_density(self, x, rescale, mix):
+    def proba_density(self, x, rescale, mu):
         """
-        Computes p(x | rescale, mix)
+        Computes p(x | rescale, mu)
         """
         # assert_clean_rescale(rescale)
         # assert_clean_mix(mix)
@@ -92,7 +92,10 @@ class Generator():
         normal_sigma = self.normal_sigma * rescale
         proba_gamma  = stats.gamma.pdf(x, gamma_k, loc=gamma_loc, scale=gamma_scale)
         proba_normal  = stats.norm.pdf(x, loc=normal_mean, scale=normal_sigma)
-        proba_density = mix * proba_normal + (1-mix) * proba_gamma
+        total_luminosity = mu * self.signal_luminosity + self.background_luminosity
+        signal_strength = mu * self.signal_luminosity / total_luminosity
+        background_strength = self.background_luminosity / total_luminosity
+        proba_density = signal_strength * proba_normal + background_strength * proba_gamma
         return proba_density
 
     def log_proba_density(self, x, rescale, mix):

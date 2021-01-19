@@ -69,7 +69,7 @@ class NLL():
         self.config = Config() if config is None else config
         self.n_bins = n_bins
 
-    def __call__(self, rescale, mix):
+    def __call__(self, rescale, mu):
         """
         $\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$
         """
@@ -79,10 +79,10 @@ class NLL():
         valid_generator = Generator(seed+1)
 
         classifier = build_model(self.args, self.i_cv)
-        X_train, y_train, w_train = train_generator.generate(rescale, config.CALIBRATED.mix, n_samples=config.N_TRAINING_SAMPLES)
+        X_train, y_train, w_train = train_generator.generate(rescale, config.CALIBRATED.mu, n_samples=config.N_TRAINING_SAMPLES)
         classifier.fit(X_train, y_train, w_train)
 
-        X, y, w = valid_generator.generate(rescale, mix, n_samples=config.N_VALIDATION_SAMPLES)
+        X, y, w = valid_generator.generate(rescale, mu, n_samples=config.N_VALIDATION_SAMPLES)
         valid_summaries = classifier.compute_summaries(X, w, n_bins=self.n_bins)
         test_summaries = classifier.compute_summaries(self.X_test, self.w_test, n_bins=self.n_bins)
 
@@ -173,7 +173,7 @@ def run_iter(model, result_row, i_iter, i_cv, args, config, test_generator, n_bi
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
-    suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
+    suffix = f'-mu={config.TRUE.mu:1.2f}_rescale={config.TRUE.rescale}'
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     # PLOT SUMMARIES

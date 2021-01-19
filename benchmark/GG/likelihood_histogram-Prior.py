@@ -101,7 +101,7 @@ def run_iter(compute_summaries, i_cv, i_iter, config, valid_generator, test_gene
     os.makedirs(iter_directory, exist_ok=True)
 
     logger.info(f"True Parameters   = {config.TRUE}")
-    suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
+    suffix = f'-mu={config.TRUE.mu:1.2f}_rescale={config.TRUE.rescale}'
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     debug_label(y_test)
 

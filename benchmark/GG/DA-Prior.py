@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
+# Command line :
 # python -m benchmark.GG.DA-Prior
 
 import os
@@ -77,7 +77,7 @@ class TrainGenerator:
 
     def generate(self, n_samples):
         n_bunch_samples = n_samples // self.n_bunch
-        params = [self.param_generator().clone_with(mix=0.5) for i in range(self.n_bunch)]
+        params = [self.param_generator().clone_with(mu=0.5) for i in range(self.n_bunch)]
         data = [self.data_generator.generate(*parameters, n_samples=n_bunch_samples) for parameters in params]
         X = np.concatenate([X for X, y, w in data], axis=0)
         y = np.concatenate([y for X, y, w in data], axis=0)
@@ -150,14 +150,14 @@ def run(args, i_cv):
     model = build_model(args, i_cv)
     os.makedirs(model.results_path, exist_ok=True)
     flush(logger)
-    
+
     # TRAINING / LOADING
     train_or_load_data_augmentation(model, train_generator, config.N_TRAINING_SAMPLES*N_AUGMENT, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
-    
+
     result_row.update(evaluate_neural_net(model, prefix='valid'))
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
@@ -187,13 +187,13 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
     flush(logger)
-    
+
     iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
     result_row['n_test_samples'] = config.N_TESTING_SAMPLES
-    suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
-    
+    suffix = f'-mu={config.TRUE.mu:1.2f}_rescale={config.TRUE.rescale}'
+
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     # PLOT SUMMARIES
@@ -224,7 +224,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
 def make_conditional_estimation(compute_nll, config):
     results = []
     for j, nuisance_parameters in enumerate(config.iter_nuisance()):
-        compute_nll_no_nuisance = lambda mix : compute_nll(*nuisance_parameters, mix)
+        compute_nll_no_nuisance = lambda mu : compute_nll(*nuisance_parameters, mu)
         minimizer = get_minimizer_no_nuisance(compute_nll_no_nuisance, config.CALIBRATED, config.CALIBRATED_ERROR)
         results_row = evaluate_minuit(minimizer, config.TRUE, do_hesse=False)
         results_row['j'] = j

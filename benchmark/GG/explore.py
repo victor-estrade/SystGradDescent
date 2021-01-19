@@ -37,18 +37,18 @@ def explore_links():
     config = Config()
     generator = Generator()
     rescale_range = np.linspace(min(config.RANGE.rescale), max(config.RANGE.rescale), num=5)
-    mix_range = np.linspace(min(config.RANGE.mix), max(config.RANGE.mix), num=15)
+    mu_range = np.linspace(min(config.RANGE.mu), max(config.RANGE.mu), num=15)
     for rescale in rescale_range:
         average_list = []
         target_list = []
-        for mix in mix_range:
-            data, label = generator.sample_event(rescale, mix, size=config.N_TESTING_SAMPLES)
+        for mu in mu_range:
+            data, label = generator.sample_event(rescale, mu, size=config.N_TESTING_SAMPLES)
             average_list.append(np.mean(data, axis=0))
-            target_list.append(mix)
+            target_list.append(mu)
         plt.scatter(average_list, target_list, label=f'rescale={rescale}')
 
-    plt.title('Link between mean(x) and mix')
-    plt.ylabel('mix')
+    plt.title('Link between mean(x) and mu')
+    plt.ylabel('mu')
     plt.xlabel('mean(x)')
     plt.legend()
     plt.savefig(os.path.join(DIRECTORY, 'mean_link.png'))
@@ -65,11 +65,11 @@ def explore_distribs():
     data, label = generator.sample_event(*config.TRUE, size=config.N_TESTING_SAMPLES)
 
     prior_rescale = stats.norm(loc=config.CALIBRATED.rescale, scale=config.CALIBRATED_ERROR.rescale)
-    prior_mix   = stats.uniform(loc=0, scale=1)
+    prior_mu   = stats.uniform(loc=0, scale=1)
 
     plot_data_distrib(generator, config)
     plot_prior(prior_rescale, "rescale")
-    plot_prior(prior_mix, "mix")
+    plot_prior(prior_mu, "mu")
 
 
 

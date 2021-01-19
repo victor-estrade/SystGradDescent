@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
+# Command line :
 # python -m benchmark.GG.GB
 
 import os
@@ -61,9 +61,9 @@ def build_model(args, i_cv):
 def get_minimizer(compute_nll):
     minimizer = iminuit.Minuit(compute_nll,
                            errordef=ERRORDEF_NLL,
-                           mix=0.5,
-                           error_mix=1.0,
-                           limit_mix=(0, 1),
+                           mu=0.5,
+                           error_mu=1.0,
+                           limit_mu=(0, 1),
                           )
     return minimizer
 
@@ -82,7 +82,7 @@ def main():
     flush(logger)
     # Config
     config = Config()
-    config.TRUE = Parameter(rescale=0.9, mix=0.1)
+    config.TRUE = Parameter(rescale=0.9, mu=0.1)
     train_generator = Generator(SEED)
     valid_generator = Generator(SEED+1)
     test_generator  = Generator(SEED+2)
@@ -106,10 +106,10 @@ def main():
             clf.fit(X_train, y_train, w_train)
             compute_summaries = ClassifierSummaryComputer(clf, n_bins=10)
             nll_computer = NLLComputer(compute_summaries, valid_generator, X_test, w_test, config=config)
-            compute_nll = lambda mix : nll_computer(*nuisance_params, mix)
+            compute_nll = lambda mu : nll_computer(*nuisance_params, mu)
             minimizer = get_minimizer(compute_nll)
             results = evaluate_minuit(minimizer, [config.TRUE.interest_parameters])
-            estimator_values.append(results['mix'])
+            estimator_values.append(results['mu'])
             results['i_cv'] = i_cv
             results.update(params_to_dict(parameters, suffix='true'))
             result_table.append(results.copy())

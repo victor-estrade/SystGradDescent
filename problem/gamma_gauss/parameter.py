@@ -9,7 +9,7 @@ from dataclasses import asdict
 
 # from collections import namedtuple
 
-# class Parameter(namedtuple('Parameter', ['rescale', 'mix'])):
+# class Parameter(namedtuple('Parameter', ['rescale', 'mu'])):
 #     @property
 #     def nuisance_parameters(self):
 #         return self[:-1]
@@ -33,11 +33,11 @@ from dataclasses import asdict
 @dataclass(frozen=True)
 class Parameter:
     rescale : float
-    mix : float
+    mu : float
 
     @property
-    def mu(self):
-        return self.mix
+    def mix(self):
+        return self.mu
 
     @property
     def nuisance_parameters(self):
@@ -45,11 +45,11 @@ class Parameter:
 
     @property
     def interest_parameters(self):
-        return self.mix
+        return self.mu
 
     @property
     def parameter_names(self):
-        return ("rescale", "mix")
+        return ("rescale", "mu")
 
     @property
     def nuisance_parameters_names(self):
@@ -57,20 +57,20 @@ class Parameter:
 
     @property
     def interest_parameters_names(self):
-        return "mix"
+        return "mu"
 
     def __iter__(self):
         return iter(astuple(self))
 
     def __add__(self, other):
         rescale = self.rescale + other.rescale
-        mix = self.mix + other.mix
-        return Parameter(rescale, mix)
+        mu = self.mu + other.mu
+        return Parameter(rescale, mu)
 
-    def clone_with(self, rescale=None, mix=None):
+    def clone_with(self, rescale=None, mu=None):
         rescale = self.rescale if rescale is None else rescale
-        mix = self.mix if mix is None else mix
-        new_parameter = Parameter(rescale, mix)
+        mu = self.mu if mu is None else mu
+        new_parameter = Parameter(rescale, mu)
         return new_parameter
 
     def __getitem__(self, key):

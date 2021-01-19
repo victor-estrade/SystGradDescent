@@ -22,7 +22,7 @@ def true_mu_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     for true_rescale, df in data.groupby("true_rescale"):
-        x = df.true_mix
+        x = df.true_mu
         y = df.target_mse
         label = f"$\\alpha$ = {true_rescale}"
         plt.plot(x, y, 'o-', label=label)
@@ -40,7 +40,7 @@ def true_mu_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     for true_rescale, df in data.groupby("true_rescale"):
-        x = df.true_mix
+        x = df.true_mu
         y = df.var_stat
         label = f"$\\alpha$ = {true_rescale}"
         plt.plot(x, y, 'o-', label=label)
@@ -58,7 +58,7 @@ def true_mu_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     for true_rescale, df in data.groupby("true_rescale"):
-        x = df.true_mix
+        x = df.true_mu
         y = df.var_syst
         label = f"$\\alpha$ = {true_rescale}"
         plt.plot(x, y, 'o-', label=label)
@@ -76,10 +76,10 @@ def true_mu_estimator(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     for true_rescale, df in data.groupby("true_rescale"):
-        x = df.true_mix
+        x = df.true_mu
         y = df.target_mean
         y_err = df.sigma_mean
-        true = df.true_mix
+        true = df.true_mu
         label = f"$\\alpha$ = {true_rescale}"
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
@@ -97,10 +97,10 @@ def true_mu_target_mean_std(evaluation, title="No Title", directory=DEFAULT_DIR)
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     for true_rescale, df in data.groupby("true_rescale"):
-        x = df.true_mix
+        x = df.true_mu
         y = df.target_mean
         y_err = df.target_std
-        true = df.true_mix
+        true = df.true_mu
         label = f"$\\alpha$ = {true_rescale}"
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
@@ -118,9 +118,9 @@ def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
     for true_rescale, df in data.groupby("true_rescale"):
-        x = df.true_mix
+        x = df.true_mu
         y = df.target_mean
-        true = df.true_mix
+        true = df.true_mu
         label = f"$\\alpha$ = {true_rescale}"
         plt.scatter(x, y, marker='o', label=label)
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
@@ -134,9 +134,9 @@ def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
-    chosen_true_mix = evaluation.true_mix.median()
+    chosen_true_mu = evaluation.true_mu.median()
 
-    data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+    data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
     for true_rescale, df in data.groupby("true_rescale"):
         x = df.n_test_samples
         y = df.target_mse
@@ -168,9 +168,9 @@ def box_n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def n_samples_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
-    chosen_true_mix = evaluation.true_mix.median()
+    chosen_true_mu = evaluation.true_mu.median()
 
-    data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+    data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
     for true_rescale, df in data.groupby("true_rescale"):
         x = df.n_test_samples
         y = df.sigma_mean
@@ -186,9 +186,9 @@ def n_samples_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
-    chosen_true_mix = evaluation.true_mix.median()
+    chosen_true_mu = evaluation.true_mu.median()
 
-    data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+    data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
     for true_rescale, df in data.groupby("true_rescale"):
         x = df.n_test_samples
         y = df.var_stat
@@ -204,9 +204,9 @@ def n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
-    chosen_true_mix = evaluation.true_mix.median()
+    chosen_true_mu = evaluation.true_mu.median()
 
-    data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+    data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
     for true_rescale, df in data.groupby("true_rescale"):
         x = df.n_test_samples
         y = df.var_syst
@@ -222,9 +222,9 @@ def n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def nominal_fisher_n_bins(fisher_table, title="No Title", directory=DEFAULT_DIR):
-    chosen_true_mix = fisher_table.true_mix.median()
+    chosen_true_mu = fisher_table.true_mu.median()
     chosen_true_rescale = fisher_table.true_rescale.median()
-    data = fisher_table[ (fisher_table.true_mix == chosen_true_mix) & (fisher_table.true_rescale == chosen_true_rescale) ]
+    data = fisher_table[ (fisher_table.true_mu == chosen_true_mu) & (fisher_table.true_rescale == chosen_true_rescale) ]
     data = data[ data.n_test_samples == 2000 ]
 
     data_mean = data.groupby('n_bins').mean()
@@ -253,9 +253,9 @@ def fisher_n_bins(data, title="No Title", directory=DEFAULT_DIR):
     ax.set_prop_cycle(color=colors, linestyle=['solid', 'dashed', 'dashdot']*5)
 
     data = data[ data.n_test_samples == data.n_test_samples.max() ]
-    for (true_mix, true_rescale), df in data.groupby(["true_mix", "true_rescale"]):
+    for (true_mu, true_rescale), df in data.groupby(["true_mu", "true_rescale"]):
         df_mean = df.groupby('n_bins').mean()
-        label = f"$\\mu = {true_mix}$, $\\alpha={true_rescale}$"
+        label = f"$\\mu = {true_mu}$, $\\alpha={true_rescale}$"
         x = df_mean.index
         y = df_mean.fisher
         ax.plot(x, y, label=label)
@@ -282,9 +282,9 @@ def threshold_s_sqrt_s_b(data, title="No Title", directory=DEFAULT_DIR):
     ax.set_prop_cycle(color=colors, linestyle=['solid', 'dashed', 'dashdot']*5)
 
     data = data[ data.n_test_samples == data.n_test_samples.max() ]
-    for (true_mix, true_rescale), df in data.groupby(["true_mix", "true_rescale"]):
+    for (true_mu, true_rescale), df in data.groupby(["true_mu", "true_rescale"]):
         df_mean = df.groupby('threshold').mean()
-        label = f"$\\mu = {true_mix}$, $\\alpha={true_rescale}$"
+        label = f"$\\mu = {true_mu}$, $\\alpha={true_rescale}$"
         x = df_mean.index
         y = df_mean.s_sqrt_n
         # ax.plot(x, y, label=label)

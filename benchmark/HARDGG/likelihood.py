@@ -95,12 +95,12 @@ def run_iter(i_cv, i_iter, config, seed, directory):
     os.makedirs(iter_directory, exist_ok=True)
 
     logger.info(f"True Parameters   = {config.TRUE}")
-    suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
+    suffix = f'-mu={config.TRUE.mu:1.2f}_rescale={config.TRUE.rescale}'
     generator  = Generator(seed)  # test_generator
     data, label = generator.sample_event(*config.TRUE, size=config.N_TESTING_SAMPLES)
     debug_label(label)
 
-    compute_nll = lambda rescale, mix : generator.nll(data, rescale, mix)
+    compute_nll = lambda rescale, mu : generator.nll(data, rescale, mu)
     plot_nll_around_min(compute_nll, config.TRUE, iter_directory, suffix)
 
     logger.info('Prepare minuit minimizer')

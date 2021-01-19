@@ -73,7 +73,7 @@ class TrainGenerator:
 
     def generate(self, n_samples):
         n_bunch_samples = n_samples // self.n_bunch
-        params = [self.param_generator().clone_with(mix=0.5) for i in range(self.n_bunch)]
+        params = [self.param_generator().clone_with(mu=0.5) for i in range(self.n_bunch)]
         data = [self.data_generator.generate(*parameters, n_samples=n_bunch_samples) for parameters in params]
         X = np.concatenate([X for X, y, w in data], axis=0)
         y = np.concatenate([y for X, y, w in data], axis=0)

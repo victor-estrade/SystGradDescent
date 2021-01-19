@@ -87,7 +87,7 @@ class TrainGenerator:
 
     def generate(self, n_samples):
         n_bunch_samples = n_samples // self.n_bunch
-        params = [self.param_generator().clone_with(mix=0.5) for i in range(self.n_bunch)]
+        params = [self.param_generator().clone_with(mu=0.5) for i in range(self.n_bunch)]
         data = [self.data_generator.generate(*parameters, n_samples=n_bunch_samples) for parameters in params]
         X = np.concatenate([X for X, y, w in data], axis=0)
         y = np.concatenate([y for X, y, w in data], axis=0)
@@ -225,7 +225,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
     result_row['n_test_samples'] = config.N_TESTING_SAMPLES
-    suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
+    suffix = f'-mu={config.TRUE.mu:1.2f}_rescale={config.TRUE.rescale}'
 
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
@@ -266,7 +266,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
 def make_conditional_estimation(compute_nll, config):
     results = []
     for j, nuisance_parameters in enumerate(config.iter_nuisance()):
-        compute_nll_no_nuisance = lambda mix : compute_nll(*nuisance_parameters, mix)
+        compute_nll_no_nuisance = lambda mu : compute_nll(*nuisance_parameters, mu)
         minimizer = get_minimizer_no_nuisance(compute_nll_no_nuisance, config.CALIBRATED, config.CALIBRATED_ERROR)
         results_row = evaluate_minuit(minimizer, config.TRUE, do_hesse=False)
         results_row['j'] = j

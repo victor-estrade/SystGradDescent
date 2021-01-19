@@ -24,8 +24,8 @@ def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
-        data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+        chosen_true_mu = evaluation.true_mu.median()
+        data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
             x = df.n_test_samples
             y = df.target_mse
@@ -43,9 +43,9 @@ def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
 def nominal_n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
+        chosen_true_mu = evaluation.true_mu.median()
         chosen_true_rescale = evaluation.true_rescale.median()
-        df = evaluation[ (evaluation.true_mix == chosen_true_mix) & (evaluation.true_rescale == chosen_true_rescale)]
+        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_rescale == chosen_true_rescale)]
         x = df.n_test_samples
         y = df.target_mse
         label = f"$\\alpha$ = {chosen_true_rescale}"
@@ -64,8 +64,8 @@ def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
-        data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+        chosen_true_mu = evaluation.true_mu.median()
+        data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
             x = df.n_test_samples
             y = df.var_stat
@@ -82,9 +82,9 @@ def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
 def nominal_n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
+        chosen_true_mu = evaluation.true_mu.median()
         chosen_true_rescale = evaluation.true_rescale.median()
-        df = evaluation[ (evaluation.true_mix == chosen_true_mix) & (evaluation.true_rescale == chosen_true_rescale)]
+        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_rescale == chosen_true_rescale)]
         x = df.n_test_samples
         y = df.var_stat
         label = f"$\\alpha$ = {chosen_true_rescale}"
@@ -104,8 +104,8 @@ def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
-        data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+        chosen_true_mu = evaluation.true_mu.median()
+        data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
             x = df.n_test_samples
             y = df.var_syst
@@ -122,9 +122,9 @@ def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
 def nominal_n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
+        chosen_true_mu = evaluation.true_mu.median()
         chosen_true_rescale = evaluation.true_rescale.median()
-        df = evaluation[ (evaluation.true_mix == chosen_true_mix) & (evaluation.true_rescale == chosen_true_rescale)]
+        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_rescale == chosen_true_rescale)]
         x = df.n_test_samples
         y = df.var_syst
         label = f"$\\alpha$ = {chosen_true_rescale}"
@@ -144,8 +144,8 @@ def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DI
     unique_alphas = all_evaluations[0].true_rescale.unique()
 
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
-        data = evaluation[ (evaluation.true_mix == chosen_true_mix)]
+        chosen_true_mu = evaluation.true_mu.median()
+        data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
             x = df.n_test_samples
             y = df.sigma_mean
@@ -162,9 +162,9 @@ def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DI
 
 def nominal_n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
-        chosen_true_mix = evaluation.true_mix.median()
+        chosen_true_mu = evaluation.true_mu.median()
         chosen_true_rescale = evaluation.true_rescale.median()
-        df = evaluation[ (evaluation.true_mix == chosen_true_mix) & (evaluation.true_rescale == chosen_true_rescale)]
+        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_rescale == chosen_true_rescale)]
         x = df.n_test_samples
         y = df.sigma_mean
         label = f"$\\alpha$ = {chosen_true_rescale}"
@@ -188,10 +188,10 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
-            x = df.true_mix
+            x = df.true_mu
             y = df.target_mean
             y_err = df.sigma_mean
-            true = df.true_mix
+            true = df.true_mu
             label = f"$\\alpha$ = {true_rescale}"
             plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label, color=color_cycle[i%len(unique_alphas)])
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
@@ -214,10 +214,10 @@ def true_mu_target_mean_std(all_evaluations, title="No Title", directory=DEFAULT
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
-            x = df.true_mix
+            x = df.true_mu
             y = df.target_mean
             y_err = df.target_std
-            true = df.true_mix
+            true = df.true_mu
             label = f"$\\alpha$ = {true_rescale}"
             plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label, color=color_cycle[i%len(unique_alphas)])
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
@@ -242,9 +242,9 @@ def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
-            x = df.true_mix
+            x = df.true_mu
             y = df.target_mean
-            true = df.true_mix
+            true = df.true_mu
             label = f"$\\alpha$ = {true_rescale}"
             plt.scatter(x, y, marker='o', label=label, color=color_cycle[i%len(unique_alphas)])
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
@@ -272,9 +272,9 @@ def true_mu_target_bias(all_evaluations, title="No Title", directory=DEFAULT_DIR
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
         for i, (true_rescale, df) in enumerate(data.groupby("true_rescale")):
-            x = df.true_mix
+            x = df.true_mu
             y = df.target_bias
-            true = df.true_mix
+            true = df.true_mu
             label = f"$\\alpha$ = {true_rescale}"
             plt.scatter(x, y, marker='o', label=label, color=color_cycle[i%len(unique_alphas)])
     # plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)

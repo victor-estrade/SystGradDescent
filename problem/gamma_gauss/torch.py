@@ -26,7 +26,7 @@ class GeneratorTorch():
             self.cpu()
         config = GGConfig()
         self.rescale = self.tensor(config.CALIBRATED.rescale, requires_grad=True)
-        self.mix = self.tensor(config.CALIBRATED.mix, requires_grad=True)
+        self.mu = self.tensor(config.CALIBRATED.mu, requires_grad=True)
         self.nuisance_params = OrderedDict([
                                 ('rescale', self.rescale),
                                 ])
@@ -56,12 +56,12 @@ class GeneratorTorch():
     def tensor(self, data, requires_grad=False, dtype=None):
         return torch.tensor(data, requires_grad=requires_grad, device=self.device, dtype=dtype)
 
-    def sample_event(self, rescale, mix, size=1):
-        n_sig = int(mix * size)
+    def sample_event(self, rescale, mu, size=1):
+        n_sig = int(mu * size)
         n_bkg = size - n_sig
         rescale = self.tensor(rescale, requires_grad=True)
-        mix = self.tensor(mix, requires_grad=True)
-        x = self._generate_vars(rescale, mix, n_bkg, n_sig)
+        mu = self.tensor(mu, requires_grad=True)
+        x = self._generate_vars(rescale, mu, n_bkg, n_sig)
         labels = self._generate_labels(n_bkg, n_sig)
         return x, labels
 
@@ -98,7 +98,7 @@ class GeneratorTorch():
 
     def _generate_weights(self, n_bkg, n_sig, n_expected_events):
         w_b = torch.ones(n_bkg) * (self.background_luminosity / n_bkg)
-        w_s = torch.ones(n_sig) * (self.mix * self.signal_luminosity / n_sig)
+        w_s = torch.ones(n_sig) * (self.mu * self.signal_luminosity / n_sig)
         if self.cuda_flag:
             w_b = w_b.cuda()
             w_s = w_s.cuda()
@@ -117,30 +117,33 @@ class GeneratorTorch():
         s, w_s, b, w_b, y = self.generate(n_samples=n_samples)
         return s, w_s, b, w_b, y
 
-    def proba_density(self, x, rescale, mix):
+    def proba_density(self, x, rescale, mu):
         """
-        Computes p(x | rescale, mix)
+        Computes p(x | rescale, mu)
         """
         # assert_clean_rescale(rescale)
-        # assert_clean_mix(mix)
+        # assert_clean_mu(mu)
         proba_gamma   = torch.exp(self.gamma.log_prob(x-self.gamma_loc))
         proba_normal  = torch.exp(self.norm.log_prob(x))
-        proba_density = mix * proba_normal + (1-mix) * proba_gamma
+        total_luminosity = mu * self.signal_luminosity + self.background_luminosity
+        signal_strength = mu * self.signal_luminosity / total_luminosity
+        background_strength = self.background_luminosity / total_luminosity
+        proba_density = signal_strength * proba_normal + background_strength * proba_gamma
         return proba_density
 
-    def log_proba_density(self, x, rescale, mix):
+    def log_proba_density(self, x, rescale, mu):
         """
-        Computes log p(x | rescale, mix)
+        Computes log p(x | rescale, mu)
         """
-        proba_density = self.proba_density(x, rescale, mix)
+        proba_density = self.proba_density(x, rescale, mu)
         logproba_density = torch.log(proba_density)
         return logproba_density
 
-    def nll(self, data, rescale, mix):
+    def nll(self, data, rescale, mu):
         """
         Computes the negative log likelihood of the data given y and rescale.
         """
-        nll = - self.log_proba_density(data, rescale, mix).sum()
+        nll = - self.log_proba_density(data, rescale, mu).sum()
         return nll
 
 
