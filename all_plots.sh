@@ -102,6 +102,7 @@ python run_array.py benchmark.COMPARE.HIGGS.REG-Marginal --gpu 1 --xp-name COMPA
 
 
 # RUN
+python run_array.py benchmark.COMPARE.HIGGS.FF --gpu 1 --xp-name COMPARE-HIGGS-FF --partition besteffort
 python run_array.py benchmark.COMPARE.HIGGS.GB --gpu 1 --xp-name COMPARE-HIGGS-GB --partition besteffort
 python run_array.py benchmark.COMPARE.HIGGS.NN --gpu 1 --xp-name COMPARE-HIGGS-NN --partition besteffort
 python run_array.py benchmark.COMPARE.HIGGS.DA --gpu 1 --xp-name COMPARE-HIGGS-DA --partition besteffort

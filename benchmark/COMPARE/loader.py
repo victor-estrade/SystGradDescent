@@ -106,6 +106,15 @@ class Loader(object):
         return fisher
 
 
+class FFLoader(Loader):
+    """docstring for FFLoader"""
+    def __init__(self, data_name, benchmark_name, feature_id=0):
+        base_name = "FeatureModel"
+        model_full_name = f"{base_name}-{feature_id}"
+        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        self.args = dict(feature_id=feature_id)
+
+
 class GBLoader(Loader):
     """docstring for GBLoader"""
     def __init__(self, data_name, benchmark_name, n_estimators=100, max_depth=3, learning_rate=0.1):
@@ -204,6 +213,22 @@ class REGLoader(Loader):
     """docstring for REGLoader"""
     def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
                 batch_size=20, sample_size=1000, learning_rate=1e-4, beta1=0.5, beta2=0.9, optimizer_name="Adam"):
+        if optimizer_name == "Adam":
+            optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
+        else:
+            optimizer_name = f"SGD-{learning_rate}"
+        base_name = "Regressor"
+        archi_name = archi_name+f"x{n_units:d}"
+        model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{sample_size}"
+        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size,
+                learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name)
+
+
+class FREGLoader(Loader):
+    """docstring for FREGLoader"""
+    def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
+                batch_size=20, sample_size=1000, threshold=0.85, learning_rate=1e-4, beta1=0.5, beta2=0.9, optimizer_name="Adam"):
         if optimizer_name == "Adam":
             optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
         else:

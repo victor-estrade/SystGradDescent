@@ -13,6 +13,9 @@ DA_HP    = dict(
                 , batch_size=[10000]
                 )
 
+FF_HP    = dict(
+                feature_id=list(range(28))
+                )
 
 GB_HP    = dict(
                 max_depth=[3, 5, 10]
