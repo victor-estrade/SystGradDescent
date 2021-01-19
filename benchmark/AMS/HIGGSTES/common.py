@@ -31,12 +31,12 @@ def measurement(model, i_cv, config, valid_generator, test_generator):
     result_row = {'i_cv': i_cv}
     results = []
     for test_config in config.iter_test_config():
-        logger.info(f"Running test set : {test_config.TRUE}, {test_generator.n_samples} samples")
+        logger.info(f"Running test set : {test_config.TRUE}, {valid_generator.n_samples} samples")
         for threshold in np.linspace(0, 1, 50):
             result_row = {'i_cv': i_cv}
             result_row['threshold'] = threshold
             result_row.update(test_config.TRUE.to_dict(prefix='true_'))
-            result_row['n_test_samples'] = test_generator.n_samples
+            result_row['n_valid_samples'] = valid_generator.n_samples
 
             X, y, w = valid_generator.generate(*test_config.TRUE, n_samples=config.N_VALIDATION_SAMPLES)
             proba = model.predict_proba(X)
@@ -63,6 +63,7 @@ def measurement(model, i_cv, config, valid_generator, test_generator):
             result_row['g_sqrt_b'] = safe_division( result_row['gamma_2'], np.sqrt(result_row['beta_2']) )
 
             # On TEST SET
+            result_row['n_test_samples'] = test_generator.n_samples
             X, y, w = test_generator.generate(*test_config.TRUE, n_samples=config.N_VALIDATION_SAMPLES)
             proba = model.predict_proba(X)
             decision = proba[:, 1]
