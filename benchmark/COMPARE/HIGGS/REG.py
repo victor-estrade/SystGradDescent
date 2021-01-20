@@ -11,6 +11,7 @@ from .visual.common import make_common_plots
 from .visual.common import make_hp_table
 from ..loader import REGLoader
 from .hyper_parameters import REG_HP
+from .hyper_parameters import REG_M_HP
 
 
 def main():
@@ -50,6 +51,20 @@ def main():
     make_hp_table(data_name, benchmark_name, REG_HP, REGLoader)
     make_common_plots(data_name, benchmark_name, REG_HP, REGLoader)
 
+    data_name = 'HIGGSTES'
+    benchmark_name = 'HIGGSTES-marginal'
+    make_hp_table(data_name, benchmark_name, REG_M_HP, REGLoader)
+    make_common_plots(data_name, benchmark_name, REG_M_HP, REGLoader)
+
+    data_name = 'EASYHIGGSTES'
+    benchmark_name = 'EASYHIGGSTES-marginal'
+    make_hp_table(data_name, benchmark_name, REG_M_HP, REGLoader)
+    make_common_plots(data_name, benchmark_name, REG_M_HP, REGLoader)
+
+    data_name = 'BALANCEDHIGGSTES'
+    benchmark_name = 'BALANCEDHIGGSTES-marginal'
+    make_hp_table(data_name, benchmark_name, REG_M_HP, REGLoader)
+    make_common_plots(data_name, benchmark_name, REG_M_HP, REGLoader)
 
 
 
