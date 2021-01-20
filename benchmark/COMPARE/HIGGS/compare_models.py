@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
-
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
+# Command line :
+# python -m benchmark.COMPARE.HIGGS.compare_models
 
 from .hyper_parameters import DA_HP
 from .hyper_parameters import GB_HP
@@ -12,6 +14,7 @@ from .hyper_parameters import INF_HP
 from .hyper_parameters import NN_HP
 from .hyper_parameters import PIVOT_HP
 from .hyper_parameters import REG_HP
+from .hyper_parameters import FREG_HP
 from .hyper_parameters import REG_M_HP
 from .hyper_parameters import TP_HP
 
@@ -21,6 +24,7 @@ from ..loader import INFLoader
 from ..loader import NNLoader
 from ..loader import PIVOTLoader
 from ..loader import REGLoader
+from ..loader import FREGLoader
 from ..loader import TPLoader
 
 from .visual.common import hp_kwargs_generator
@@ -145,6 +149,7 @@ def main():
                 , NN_HP
                 , PIVOT_HP
                 , REG_HP
+                , FREG_HP
                 , TP_HP
                 ]
     ALL_LOADER = [
@@ -154,6 +159,7 @@ def main():
                 , NNLoader
                 , PIVOTLoader
                 , REGLoader
+                , FREGLoader
                 , TPLoader
                 ]
     ALL_NAME = [
@@ -163,6 +169,7 @@ def main():
                 , "NN"
                 , "PIVOT"
                 , "Param-REG"
+                , "Filter-REG"
                 , "TP"
                 ]
 
