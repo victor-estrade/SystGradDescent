@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 
 from .hyper_parameters import DA_HP
 from .hyper_parameters import GB_HP
+from .hyper_parameters import FF_HP
 from .hyper_parameters import INF_HP
 from .hyper_parameters import NN_HP
 from .hyper_parameters import PIVOT_HP
@@ -20,6 +21,7 @@ from .hyper_parameters import TP_HP
 
 from ..loader import DALoader
 from ..loader import GBLoader
+from ..loader import FFLoader
 from ..loader import INFLoader
 from ..loader import NNLoader
 from ..loader import PIVOTLoader
@@ -145,6 +147,7 @@ def main():
     ALL_HP = [
                 DA_HP
                 , GB_HP
+                , FF_HP
                 , INF_HP
                 , NN_HP
                 , PIVOT_HP
@@ -155,6 +158,7 @@ def main():
     ALL_LOADER = [
                 DALoader
                 , GBLoader
+                , FFLoader
                 , INFLoader
                 , NNLoader
                 , PIVOTLoader
@@ -165,6 +169,7 @@ def main():
     ALL_NAME = [
                 "DA"
                 , "GB"
+                , "FF"
                 , "INF"
                 , "NN"
                 , "PIVOT"
