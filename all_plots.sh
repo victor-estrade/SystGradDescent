@@ -82,6 +82,7 @@ python run_array.py benchmark.COMPARE.HIGGS.TP --gpu 1 --xp-name COMPARE-HIGGS-T
 python run_array.py benchmark.COMPARE.HIGGS.INF --gpu 1 --xp-name COMPARE-HIGGS-INF --partition besteffort
 
 python run_array.py benchmark.COMPARE.HIGGS.REG --gpu 1 --xp-name COMPARE-HIGGS-REG --partition besteffort
+python run_array.py benchmark.COMPARE.HIGGS.FREG --gpu 1 --xp-name COMPARE-HIGGS-FREG --partition besteffort
 
 
 
