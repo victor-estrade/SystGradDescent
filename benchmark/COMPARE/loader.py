@@ -233,7 +233,7 @@ class FREGLoader(Loader):
             optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
         else:
             optimizer_name = f"SGD-{learning_rate}"
-        base_name = "Regressor"
+        base_name = "FilterRegressor"
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{sample_size}"
         super().__init__(data_name, benchmark_name, base_name, model_full_name)
