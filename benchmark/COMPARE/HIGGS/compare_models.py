@@ -139,6 +139,23 @@ def make_common_conditional_plots(data, benchmark_name):
     best_median.v_stat_err_plot(data, title=benchmark_name, directory=directory)
     best_median.v_syst_err_plot(data, title=benchmark_name, directory=directory)
 
+def work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval):
+    print()
+    print("="*15, benchmark_name, "="*15)
+    all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, data_name=data_name, benchmark_name=benchmark_name)
+    all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, data_name=data_name, benchmark_name=benchmark_name)
+    if all_estimation_data :
+        all_estimation_data = all_estimation_data + [marginal_eval]
+        data_estimation_and_marginal = pd.concat(all_estimation_data, sort=False)
+        make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO ESTIMATION FOR {benchmark_name}")
+    if all_conditional_data:
+        data_conditional = pd.concat(all_conditional_data, sort=False)
+        make_common_conditional_plots(data_conditional, benchmark_name)
+    else:
+        print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
+
 
 def main():
     print("hello")
@@ -181,7 +198,7 @@ def main():
     data_name = 'HIGGSTES'
 
     # MARGINAL LOAD
-    marginal_eval = load_all_estimation_evaluation(REGLoader, REG_M_HP, data_name=data_name, benchmark_name='HIGGTES-marginal')
+    marginal_eval = load_all_estimation_evaluation(REGLoader, REG_M_HP, data_name=data_name, benchmark_name='HIGGSTES-marginal')
     if marginal_eval :
         marginal_eval = pd.concat(marginal_eval, sort=False)
         marginal_eval['base_name'] = "Marginal"
@@ -191,105 +208,27 @@ def main():
 
     # HIGGSTES CALIB PLOTS
     benchmark_name = 'HIGGSTES-calib'
-    print()
-    print("="*15, benchmark_name, "="*15)
-    all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    if all_estimation_data :
-        data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
-        make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
-    else:
-        print(f"WARNING : FOUND NO ESTIMATION FOR {benchmark_name}")
-    if all_conditional_data:
-        data_conditional = pd.concat(all_conditional_data, sort=False)
-        make_common_conditional_plots(data_conditional, benchmark_name)
-    else:
-        print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
+    work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
 
     # HIGGSTES PRIOR PLOTS
     benchmark_name = 'HIGGSTES-prior'
-    print()
-    print("="*15, benchmark_name, "="*15)
-    all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    if all_estimation_data :
-        data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
-        make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
-    else:
-        print(f"WARNING : FOUND NO ESTIMATION FOR {benchmark_name}")
-    if all_conditional_data:
-        data_conditional = pd.concat(all_conditional_data, sort=False)
-        make_common_conditional_plots(data_conditional, benchmark_name)
-    else:
-        print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
+    work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
 
     # EASYHIGGSTES CALIB PLOTS
     benchmark_name = 'EASYHIGGSTES-calib'
-    print()
-    print("="*15, benchmark_name, "="*15)
-    all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    if all_estimation_data :
-        data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
-        make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
-    else:
-        print(f"WARNING : FOUND NO ESTIMATION FOR {benchmark_name}")
-    if all_conditional_data:
-        data_conditional = pd.concat(all_conditional_data, sort=False)
-        make_common_conditional_plots(data_conditional, benchmark_name)
-    else:
-        print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
+    work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
 
     # EASYHIGGSTES PRIOR PLOTS
     benchmark_name = 'EASYHIGGSTES-prior'
-    print()
-    print("="*15, benchmark_name, "="*15)
-    all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    if all_estimation_data :
-        data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
-        make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
-    else:
-        print(f"WARNING : FOUND NO ESTIMATION FOR {benchmark_name}")
-    if all_conditional_data:
-        data_conditional = pd.concat(all_conditional_data, sort=False)
-        make_common_conditional_plots(data_conditional, benchmark_name)
-    else:
-        print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
+    work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
 
     # BALANCEDHIGGSTES CALIB PLOTS
     benchmark_name = 'BALANCEDHIGGSTES-calib'
-    print()
-    print("="*15, benchmark_name, "="*15)
-    all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    if all_estimation_data :
-        data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
-        make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
-    else:
-        print(f"WARNING : FOUND NO ESTIMATION FOR {benchmark_name}")
-    if all_conditional_data:
-        data_conditional = pd.concat(all_conditional_data, sort=False)
-        make_common_conditional_plots(data_conditional, benchmark_name)
-    else:
-        print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
+    work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
 
     # BALANCEDHIGGSTES PRIOR PLOTS
     benchmark_name = 'BALANCEDHIGGSTES-prior'
-    print()
-    print("="*15, benchmark_name, "="*15)
-    all_estimation_data = load_all_estimation_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    all_conditional_data = load_all_conditional_data(ALL_HP, ALL_LOADER, ALL_NAME, benchmark_name=benchmark_name)
-    if all_estimation_data :
-        data_estimation_and_marginal = pd.concat(all_estimation_data+[marginal_eval], sort=False)
-        make_common_estimation_plots(data_estimation_and_marginal, benchmark_name)
-    else:
-        print(f"WARNING : FOUND NO ESTIMATION FOR {benchmark_name}")
-    if all_conditional_data:
-        data_conditional = pd.concat(all_conditional_data, sort=False)
-        make_common_conditional_plots(data_conditional, benchmark_name)
-    else:
-        print(f"WARNING : FOUND NO CONDITIONAL ESTIMATION FOR {benchmark_name}")
+    work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
 
 
 if __name__ == '__main__':
