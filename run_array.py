@@ -221,12 +221,31 @@ def to_list(l):
         return [l]
 
 
+def register(logdir, now, benchmark, xp_logdir, main_args, parameter_dict):
+    info = format_register(now, benchmark, xp_logdir, main_args, parameter_dict)
+    print(info)
+    logfile = os.path.join(logdir, "run_log.txt")
+    with open(logfile, "a") as file:
+        print(info, file=file)
+
+
+def format_register(now, benchmark, xp_logdir, main_args, parameter_dict):
+    tabulation = " "*20
+    param_grid = f"\n{tabulation}".join([f"{k} : {v}" for k, v in parameter_dict.items()])
+    info = \
+    f"""
+{now} {benchmark:25s} {xp_logdir}
+{tabulation}{main_args}
+{tabulation}{param_grid}"""
+    return info
+
 def main():
     # Extract arguments :
     args, grid_args, main_args = parse_args()
     now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     xp_name = args.xp_name
-    logdir = os.path.join(args.logdir, xp_name, now)
+    logdir = args.logdir
+    xp_logdir = os.path.join(args.logdir, xp_name, now)
     max_time = args.max_time
     cpu = args.cpu
     memory = args.mem
@@ -276,17 +295,17 @@ def main():
     main_args = " ".join(["{} {}".format(k, v) for k, v in main_args.items()])
 
     # Extra arguments
-    log_stdout = os.path.join(logdir, '%A_%a.stdout')
-    log_stderr = os.path.join(logdir, '%A_%a.stderr')
-    script_slurm = os.path.join(logdir, 'script.slurm')
-    parameters_file = os.path.join(logdir, 'parameters.txt')
-    parameters_file_csv = os.path.join(logdir, 'parameters.csv')
+    log_stdout = os.path.join(xp_logdir, '%A_%a.stdout')
+    log_stderr = os.path.join(xp_logdir, '%A_%a.stderr')
+    script_slurm = os.path.join(xp_logdir, 'script.slurm')
+    parameters_file = os.path.join(xp_logdir, 'parameters.txt')
+    parameters_file_csv = os.path.join(xp_logdir, 'parameters.csv')
 
     # Final formating
     script = SBATCH_TEMPLATE.format(**locals())
 
     # Prepare logs files, slurm script, parameters, etc
-    os.makedirs(logdir, exist_ok=True)
+    os.makedirs(xp_logdir, exist_ok=True)
     with open(script_slurm, "w") as file:
         print(script, file=file)
     # Prepare parameter grid file
@@ -298,6 +317,7 @@ def main():
     cmd = ['sbatch', script_slurm]
     print(" ".join(cmd))
     call(cmd)
+    register(logdir, now, benchmark, xp_logdir, main_args, parameter_dict)
 
 if __name__ == '__main__':
     main()
