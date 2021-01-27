@@ -230,13 +230,16 @@ def register(logdir, now, benchmark, xp_logdir, main_args, parameter_dict):
 
 
 def format_register(now, benchmark, xp_logdir, main_args, parameter_dict):
-    tabulation = " "*20
+    tabulation = " "*4
+    head = "="*len(now)
     param_grid = f"\n{tabulation}".join([f"{k} : {v}" for k, v in parameter_dict.items()])
     info = \
     f"""
-{now} {benchmark:25s} {xp_logdir}
+{now}
+{tabulation} {benchmark:25s} {xp_logdir}
 {tabulation}{main_args}
-{tabulation}{param_grid}"""
+{tabulation}{param_grid}
+"""
     return info
 
 def main():
