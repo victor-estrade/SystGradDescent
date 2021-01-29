@@ -54,6 +54,8 @@ from collections import OrderedDict
 
 from archi.classic import L4 as ARCHI
 
+from .common import N_BINS
+
 DATA_NAME = 'BALANCEDHIGGSTES'
 BENCHMARK_NAME = DATA_NAME+'-prior'
 N_ITER = 30
@@ -93,7 +95,7 @@ class TrainGenerator:
 
 
 def build_model(args, i_cv):
-    args.net = ARCHI(n_in=29, n_out=10, n_unit=args.n_unit)
+    args.net = ARCHI(n_in=29, n_out=N_BINS, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     args.criterion = HiggsLoss()
     model = get_model(args, Inferno)

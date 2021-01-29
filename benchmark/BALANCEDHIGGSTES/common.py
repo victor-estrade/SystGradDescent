@@ -4,6 +4,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+N_BINS = 30
 
 class GeneratorCPU:
     def __init__(self, data_generator):
@@ -19,5 +20,3 @@ class GeneratorCPU:
 
     def reset(self):
         self.data_generator.reset()
-
-
