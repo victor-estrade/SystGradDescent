@@ -55,6 +55,8 @@ from collections import OrderedDict
 
 from archi.classic import L4 as ARCHI
 
+from .common import N_BINS
+
 DATA_NAME = 'HIGGSTES'
 BENCHMARK_NAME = DATA_NAME+'-calib'
 N_ITER = 30
@@ -216,7 +218,6 @@ def run_estimation(args, i_cv):
     calib_jes = load_calib_jes(DATA_NAME, BENCHMARK_NAME)
     calib_les = load_calib_les(DATA_NAME, BENCHMARK_NAME)
     calibs = (calib_tes, calib_jes, calib_les)
-    N_BINS = 10
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
     iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, calibs, n_bins=N_BINS)
                     for i, test_config in enumerate(config.iter_test_config())]
@@ -231,7 +232,7 @@ def run_estimation(args, i_cv):
     return result_table
 
 
-def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, calibs, n_bins=10):
+def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, calibs, n_bins=N_BINS):
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
@@ -309,7 +310,6 @@ def run_conditional_estimation(args, i_cv):
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
     # MEASUREMENT
-    N_BINS = 10
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
     iter_results = [run_conditional_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=N_BINS)
                     for i, test_config in enumerate(config.iter_test_config())]
@@ -322,7 +322,7 @@ def run_conditional_estimation(args, i_cv):
     return conditional_estimate
 
 
-def run_conditional_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=10):
+def run_conditional_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=N_BINS):
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')

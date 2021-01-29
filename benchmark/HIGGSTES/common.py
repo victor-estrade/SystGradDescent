@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 from utils.model import get_model
 from utils.model import get_optimizer
 
+N_BINS = 30
 
 class GeneratorCPU:
     def __init__(self, data_generator):
