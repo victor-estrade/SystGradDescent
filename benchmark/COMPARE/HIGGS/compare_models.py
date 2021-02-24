@@ -33,6 +33,7 @@ from .visual.common import hp_kwargs_generator
 
 from .visual import best_average
 from .visual import best_median
+from .visual import compare
 
 import pandas as pd
 
@@ -109,35 +110,35 @@ def load_all_conditional_data(all_hp, all_loader_classes, all_code_names, data_n
 def make_common_estimation_plots(data_and_marginal, benchmark_name):
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MSE")
     os.makedirs(directory, exist_ok=True)
-    best_average.mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
-    best_average.mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
-    best_average.true_mu_mse(data_and_marginal, title=benchmark_name, directory=directory)
-    best_average.true_mu_sigma_mean(data_and_marginal, title=benchmark_name, directory=directory)
-    best_average.true_mu_target_std(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_true_mu_mse(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_true_mu_sigma_mean(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_true_mu_target_std(data_and_marginal, title=benchmark_name, directory=directory)
 
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MEDIAN")
     os.makedirs(directory, exist_ok=True)
-    best_median.mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
-    best_median.mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
-    best_median.true_mu_mse(data_and_marginal, title=benchmark_name, directory=directory)
-    best_median.true_mu_sigma_mean(data_and_marginal, title=benchmark_name, directory=directory)
-    best_median.true_mu_target_std(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_median_mse_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_median_mse_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_median_mse_true_mu_mse(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_median_mse_true_mu_sigma_mean(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_median_mse_true_mu_target_std(data_and_marginal, title=benchmark_name, directory=directory)
 
 
 def make_common_conditional_plots(data, benchmark_name):
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MSE")
     os.makedirs(directory, exist_ok=True)
-    best_average.v_stat_box_plot(data, title=benchmark_name, directory=directory)
-    best_average.v_syst_box_plot(data, title=benchmark_name, directory=directory)
-    best_average.v_stat_err_plot(data, title=benchmark_name, directory=directory)
-    best_average.v_syst_err_plot(data, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_v_stat_box_plot(data, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_v_syst_box_plot(data, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_v_stat_err_plot(data, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_v_syst_err_plot(data, title=benchmark_name, directory=directory)
 
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MEDIAN")
     os.makedirs(directory, exist_ok=True)
-    best_median.v_stat_box_plot(data, title=benchmark_name, directory=directory)
-    best_median.v_syst_box_plot(data, title=benchmark_name, directory=directory)
-    best_median.v_stat_err_plot(data, title=benchmark_name, directory=directory)
-    best_median.v_syst_err_plot(data, title=benchmark_name, directory=directory)
+    compare.min_median_mse_v_stat_box_plot(data, title=benchmark_name, directory=directory)
+    compare.min_median_mse_v_syst_box_plot(data, title=benchmark_name, directory=directory)
+    compare.min_median_mse_v_stat_err_plot(data, title=benchmark_name, directory=directory)
+    compare.min_median_mse_v_syst_err_plot(data, title=benchmark_name, directory=directory)
 
 def work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval):
     print()
