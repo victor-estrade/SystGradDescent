@@ -93,16 +93,19 @@ class Loader(object):
         config_table = self.load_config_table()
         evaluation = self.load_evaluation()
         evaluation = evaluation.join(config_table, rsuffix='_')
+        evaluation.rename(columns={'true_mix': "true_mu"}, inplace=True)
         return evaluation
 
     def load_fisher(self):
         path = os.path.join(self._get_var_result_directory(), "fisher.csv")
         fisher = pd.read_csv(path, index_col=0)
+        fisher.rename(columns={'true_mix': "true_mu"}, inplace=True)
         return fisher
 
     def load_threshold(self):
         path = os.path.join(self._get_var_result_directory(), "threshold.csv")
         fisher = pd.read_csv(path, index_col=0)
+        fisher.rename(columns={'true_mix': "true_mu"}, inplace=True)
         return fisher
 
 
