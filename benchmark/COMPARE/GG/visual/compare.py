@@ -11,20 +11,20 @@ import matplotlib.pyplot as plt
 from config import DEFAULT_DIR
 from config import SAVING_DIR
 
-def max_target_mse_mean(all_evaluation):
-    full_name, best_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.mean())
+def min_target_mse_mean(all_evaluation):
+    full_name, best_evaluation = min(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.mean())
     return full_name, best_evaluation
 
-def max_target_mse_median(all_evaluation):
-    full_name, best_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.median())
+def min_target_mse_median(all_evaluation):
+    full_name, best_evaluation = min(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.median())
     return full_name, best_evaluation
 
 def min_sigma_mean_mean(all_evaluation):
-    full_name, best_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].sigma_mean.mean())
+    full_name, best_evaluation = min(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].sigma_mean.mean())
     return full_name, best_evaluation
 
 def min_sigma_mean_median(all_evaluation):
-    full_name, best_evaluation = max(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].sigma_mean.median())
+    full_name, best_evaluation = min(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].sigma_mean.median())
     return full_name, best_evaluation
 
 
@@ -37,10 +37,10 @@ def extract(df, value_name, criterion):
         methods.append(code_name)
     return values, methods
 
-def best_average_mse_box_plot(data, title="No Title", directory=DEFAULT_DIR):
+def min_avg_mse_mse_box_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
-        plot_title = f"{title}_best_average_N={n_test_samples}"
-        mse, methods = extract(df, "target_mse", max_target_mse_mean)
+        plot_title = f"{title}_min_avg_mse_N={n_test_samples}"
+        mse, methods = extract(df, "target_mse", min_target_mse_mean)
         plt.boxplot(mse, labels=methods)
         plt.xticks(rotation=90)
         plt.xlabel('method')
@@ -51,10 +51,10 @@ def best_average_mse_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.clf()
 
 
-def best_average_mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
+def min_avg_mse_mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
-        plot_title = f"{title}_best_average_N={n_test_samples}"
-        mse, methods = extract(df, "target_mse", max_target_mse_mean)
+        plot_title = f"{title}_min_avg_mse_N={n_test_samples}"
+        mse, methods = extract(df, "target_mse", min_target_mse_mean)
         x = list( range(len(methods)) )
         y = [v.mean() for v in mse]
         y_err = [v.std() for v in mse]
@@ -68,10 +68,10 @@ def best_average_mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.clf()
 
 
-def best_average_sigma_mean_box_plot(data, title="No Title", directory=DEFAULT_DIR):
+def min_avg_mse_sigma_mean_box_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
-        plot_title = f"{title}_best_average_N={n_test_samples}"
-        sigma, methods = extract(df, "sigma_mean", max_target_mse_mean)
+        plot_title = f"{title}_min_avg_mse_N={n_test_samples}"
+        sigma, methods = extract(df, "sigma_mean", min_target_mse_mean)
         plt.boxplot(sigma, labels=methods)
         plt.xticks(rotation=90)
         plt.xlabel('method')
@@ -83,10 +83,10 @@ def best_average_sigma_mean_box_plot(data, title="No Title", directory=DEFAULT_D
         plt.clf()
 
 
-def best_average_v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
+def min_avg_mse_v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
-        plot_title = f"{title}_best_average_N={n_test_samples}"
-        v_stat, methods = extract(df, "var_stat", max_target_mse_mean)
+        plot_title = f"{title}_min_avg_mse_N={n_test_samples}"
+        v_stat, methods = extract(df, "var_stat", min_target_mse_mean)
         plt.boxplot(v_stat, labels=methods)
         plt.xticks(rotation=90)
         plt.xlabel('method')
@@ -97,10 +97,10 @@ def best_average_v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.clf()
 
 
-def best_average_v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
+def min_avg_mse_v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
-        plot_title = f"{title}_best_average_N={n_test_samples}"
-        v_stat, methods = extract(df, "var_stat", max_target_mse_mean)
+        plot_title = f"{title}_min_avg_mse_N={n_test_samples}"
+        v_stat, methods = extract(df, "var_stat", min_target_mse_mean)
         x = list( range(len(methods)) )
         y = [v.mean() for v in v_stat]
         y_err = [v.std() for v in v_stat]
@@ -114,10 +114,10 @@ def best_average_v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.clf()
 
 
-def best_average_v_syst_box_plot(data, title="No Title", directory=DEFAULT_DIR):
+def min_avg_mse_v_syst_box_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
-        plot_title = f"{title}_best_average_N={n_test_samples}"
-        v_syst, methods = extract(df, "var_syst", max_target_mse_mean)
+        plot_title = f"{title}_min_avg_mse_N={n_test_samples}"
+        v_syst, methods = extract(df, "var_syst", min_target_mse_mean)
         plt.boxplot(v_syst, labels=methods)
         plt.xticks(rotation=90)
         plt.xlabel('method')
@@ -129,10 +129,10 @@ def best_average_v_syst_box_plot(data, title="No Title", directory=DEFAULT_DIR):
 
 
 
-def best_average_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
+def min_avg_mse_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
-        plot_title = f"{title}_best_average_N={n_test_samples}"
-        v_syst, methods = extract(df, "var_syst", max_target_mse_mean)
+        plot_title = f"{title}_min_avg_mse_N={n_test_samples}"
+        v_syst, methods = extract(df, "var_syst", min_target_mse_mean)
         x = list( range(len(methods)) )
         y = [v.mean() for v in v_syst]
         y_err = [v.std() for v in v_syst]
@@ -146,10 +146,10 @@ def best_average_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.clf()
 
 
-def best_median_mse_box_plot(data, title="No Title", directory=DEFAULT_DIR):
+def min_median_mse_mse_box_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
-        plot_title = f"{title}_best_median_N={n_test_samples}"
-        mse, methods = extract(df, "target_mse", max_target_mse_median)
+        plot_title = f"{title}_min_median_mse_N={n_test_samples}"
+        mse, methods = extract(df, "target_mse", min_target_mse_median)
         plt.boxplot(mse, labels=methods)
         plt.xticks(rotation=90)
         plt.xlabel('method')
@@ -160,10 +160,10 @@ def best_median_mse_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.clf()
 
 
-def best_median_mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
+def min_median_mse_mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
-        plot_title = f"{title}_best_median_N={n_test_samples}"
-        mse, methods = extract(df, "target_mse", max_target_mse_median)
+        plot_title = f"{title}_min_median_mse_N={n_test_samples}"
+        mse, methods = extract(df, "target_mse", min_target_mse_median)
         x = list( range(len(methods)) )
         y = [v.mean() for v in mse]
         y_err = [v.std() for v in mse]
@@ -177,10 +177,10 @@ def best_median_mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.clf()
 
 
-def best_median_v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
+def min_median_mse_v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
-        plot_title = f"{title}_best_median_N={n_test_samples}"
-        v_stat, methods = extract(df, "var_stat", max_target_mse_median)
+        plot_title = f"{title}_min_median_mse_N={n_test_samples}"
+        v_stat, methods = extract(df, "var_stat", min_target_mse_median)
         plt.boxplot(v_stat, labels=methods)
         plt.xticks(rotation=90)
         plt.xlabel('method')
@@ -191,10 +191,10 @@ def best_median_v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.clf()
 
 
-def best_median_v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
+def min_median_mse_v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
-        plot_title = f"{title}_best_median_N={n_test_samples}"
-        v_stat, methods = extract(df, "var_stat", max_target_mse_median)
+        plot_title = f"{title}_min_median_mse_N={n_test_samples}"
+        v_stat, methods = extract(df, "var_stat", min_target_mse_median)
         x = list( range(len(methods)) )
         y = [v.mean() for v in v_stat]
         y_err = [v.std() for v in v_stat]
@@ -210,10 +210,10 @@ def best_median_v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.clf()
 
 
-def best_median_v_syst_box_plot(data, title="No Title", directory=DEFAULT_DIR):
+def min_median_mse_v_syst_box_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
-        plot_title = f"{title}_best_median_N={n_test_samples}"
-        v_syst, methods = extract(df, "var_syst", max_target_mse_median)
+        plot_title = f"{title}_min_median_mse_N={n_test_samples}"
+        v_syst, methods = extract(df, "var_syst", min_target_mse_median)
         plt.boxplot(v_syst, labels=methods)
         plt.xticks(rotation=90)
         plt.xlabel('method')
@@ -224,10 +224,10 @@ def best_median_v_syst_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.clf()
 
 
-def best_median_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
+def min_median_mse_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
-        plot_title = f"{title}_best_median_N={n_test_samples}"
-        v_syst, methods = extract(df, "var_syst", max_target_mse_median)
+        plot_title = f"{title}_min_median_mse_N={n_test_samples}"
+        v_syst, methods = extract(df, "var_syst", min_target_mse_median)
         x = list( range(len(methods)) )
         y = [v.mean() for v in v_syst]
         y_err = [v.std() for v in v_syst]
