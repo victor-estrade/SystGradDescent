@@ -304,7 +304,24 @@ def mse_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
         plot_title = f"{title}_N={n_test_samples}"
         plt.title(plot_title)
         # plt.legend()
-        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_mse.png'), bbox_inches='tight')
+        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_mse.png'), bbox_inches='tight')
+        plt.clf()
+
+
+def sigma_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
+    data = defaultdict(list)
+    for evaluation in all_evaluation:
+        for i, (n_test_samples, df) in enumerate(evaluation.groupby("n_test_samples")):
+            sigma = df.sigma_mean
+            data[n_test_samples].append(sigma)
+    for n_test_samples in data.keys():
+        plt.boxplot(data[n_test_samples])
+        plt.xlabel('hyper-parameter set')
+        plt.ylabel("$\\hat \\sigma_{\\hat \\mu}$")
+        plot_title = f"{title}_N={n_test_samples}"
+        plt.title(plot_title)
+        # plt.legend()
+        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_sigma_mean.png'), bbox_inches='tight')
         plt.clf()
 
 

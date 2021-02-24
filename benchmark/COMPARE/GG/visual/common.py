@@ -59,6 +59,7 @@ def make_profusion_plots(all_evaluations, loader):
     profusion.nominal_n_samples_v_syst(all_evaluations, title=f"Nominal {title}", directory=directory)
     profusion.nominal_n_samples_sigma_mean(all_evaluations, title=f"Nominal {title}", directory=directory)
     profusion.mse_box_plot(all_evaluations, title=title, directory=directory)
+    profusion.sigma_box_plot(all_evaluations, title=title, directory=directory)
     profusion.v_stat_box_plot(all_evaluations, title=title, directory=directory)
     profusion.v_syst_box_plot(all_evaluations, title=title, directory=directory)
 
@@ -79,6 +80,9 @@ def make_individual_threshold_plots(threshold_table, loader):
 
 
 def make_common_plots(data_name, benchmark_name, args, TheLoader):
+    print("="*50)
+    print(data_name, benchmark_name)
+    print("="*50)
     print("Make evaluation plots")
     print("="*25)
     make_evaluation_plots(data_name, benchmark_name, args, TheLoader)
