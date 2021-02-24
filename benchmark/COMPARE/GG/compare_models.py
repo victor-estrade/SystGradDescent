@@ -6,6 +6,9 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+# Command line :
+# python -m benchmark.COMPARE.GG.compare_models
+
 from .hyper_parameters import DA_HP
 from .hyper_parameters import GB_HP
 from .hyper_parameters import INF_HP
@@ -122,22 +125,22 @@ def main():
 
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MSE")
     os.makedirs(directory, exist_ok=True)
-    compare.best_average_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
-    compare.best_average_sigma_mean_box_plot(data, title=benchmark_name, directory=directory)
-    compare.best_average_v_stat_box_plot(data, title=benchmark_name, directory=directory)
-    compare.best_average_v_syst_box_plot(data, title=benchmark_name, directory=directory)
-    compare.best_average_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
-    compare.best_average_v_stat_err_plot(data, title=benchmark_name, directory=directory)
-    compare.best_average_v_syst_err_plot(data, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_sigma_mean_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_v_stat_box_plot(data, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_v_syst_box_plot(data, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_v_stat_err_plot(data, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_v_syst_err_plot(data, title=benchmark_name, directory=directory)
 
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MEDIAN")
     os.makedirs(directory, exist_ok=True)
-    compare.best_median_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
-    compare.best_median_v_stat_box_plot(data, title=benchmark_name, directory=directory)
-    compare.best_median_v_syst_box_plot(data, title=benchmark_name, directory=directory)
-    compare.best_median_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
-    compare.best_median_v_stat_err_plot(data, title=benchmark_name, directory=directory)
-    compare.best_median_v_syst_err_plot(data, title=benchmark_name, directory=directory)
+    compare.min_median_mse_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_median_mse_v_stat_box_plot(data, title=benchmark_name, directory=directory)
+    compare.min_median_mse_v_syst_box_plot(data, title=benchmark_name, directory=directory)
+    compare.min_median_mse_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_median_mse_v_stat_err_plot(data, title=benchmark_name, directory=directory)
+    compare.min_median_mse_v_syst_err_plot(data, title=benchmark_name, directory=directory)
 
     # PRIOR PLOTS
 
@@ -148,22 +151,22 @@ def main():
 
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MSE")
     os.makedirs(directory, exist_ok=True)
-    compare.best_average_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
-    compare.best_average_sigma_mean_box_plot(data, title=benchmark_name, directory=directory)
-    compare.best_average_v_stat_box_plot(data, title=benchmark_name, directory=directory)
-    compare.best_average_v_syst_box_plot(data, title=benchmark_name, directory=directory)
-    compare.best_average_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
-    compare.best_average_v_stat_err_plot(data, title=benchmark_name, directory=directory)
-    compare.best_average_v_syst_err_plot(data, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_sigma_mean_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_v_stat_box_plot(data, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_v_syst_box_plot(data, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_v_stat_err_plot(data, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_v_syst_err_plot(data, title=benchmark_name, directory=directory)
 
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MEDIAN")
     os.makedirs(directory, exist_ok=True)
-    compare.best_median_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
-    compare.best_median_v_stat_box_plot(data, title=benchmark_name, directory=directory)
-    compare.best_median_v_syst_box_plot(data, title=benchmark_name, directory=directory)
-    compare.best_median_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
-    compare.best_median_v_stat_err_plot(data, title=benchmark_name, directory=directory)
-    compare.best_median_v_syst_err_plot(data, title=benchmark_name, directory=directory)
+    compare.min_median_mse_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_median_mse_v_stat_box_plot(data, title=benchmark_name, directory=directory)
+    compare.min_median_mse_v_syst_box_plot(data, title=benchmark_name, directory=directory)
+    compare.min_median_mse_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_median_mse_v_stat_err_plot(data, title=benchmark_name, directory=directory)
+    compare.min_median_mse_v_syst_err_plot(data, title=benchmark_name, directory=directory)
 
 
 
