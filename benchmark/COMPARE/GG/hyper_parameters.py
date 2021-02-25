@@ -12,6 +12,9 @@ DA_HP    = dict(
                 , n_units=[50, 100, 200, 500]
                 )
 
+FF_HP    = dict(
+                feature_id=list(range(1))
+                )
 
 GB_HP    = dict(
                 max_depth=[3, 5, 10]
