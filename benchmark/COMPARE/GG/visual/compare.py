@@ -177,6 +177,20 @@ def min_median_mse_mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.clf()
 
 
+def min_median_mse_sigma_mean_box_plot(data, title="No Title", directory=DEFAULT_DIR):
+    for n_test_samples, df in data.groupby("n_test_samples"):
+        plot_title = f"{title}_min_median_mse_N={n_test_samples}"
+        sigma, methods = extract(df, "sigma_mean", min_target_mse_median)
+        plt.boxplot(sigma, labels=methods)
+        plt.xticks(rotation=90)
+        plt.xlabel('method')
+        plt.ylabel("average $\\hat \\sigma_{\\hat \\mu}$")
+        plt.title(plot_title)
+        # plt.legend()
+        plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_sigma_mean.png'), bbox_inches="tight")
+        plt.clf()
+
+
 def min_median_mse_v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
     for n_test_samples, df in data.groupby("n_test_samples"):
         plot_title = f"{title}_min_median_mse_N={n_test_samples}"

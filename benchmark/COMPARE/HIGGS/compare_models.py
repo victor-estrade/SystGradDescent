@@ -58,9 +58,10 @@ def load_all_estimation_evaluation(TheLoader, hp_args, data_name='HIGGSTES', ben
         try:
             config_table = loader.load_config_table()
             evaluation = loader.load_estimation_evaluation()
-        except FileNotFoundError:
-            print(f"Missing estimation results for {loader.model_full_name}")
+        except FileNotFoundError as e:
+            print(f"[MISSING] estimation results for {loader.model_full_name}")
         else:
+            print(f"[SUCCESS] load for {loader.model_full_name}")
             evaluation = evaluation.join(config_table, rsuffix='_')
             all_evaluation.append(evaluation)
     return all_evaluation
@@ -75,8 +76,9 @@ def load_all_conditional_evaluation(TheLoader, hp_args, data_name='HIGGSTES', be
             evaluation = loader.load_estimation_evaluation()
             conditional_evaluation = loader.load_conditional_evaluation()
         except FileNotFoundError:
-            print(f"Missing conditional estimation results for {loader.model_full_name}")
+            print(f"[MISSING] conditional estimation results for {loader.model_full_name}")
         else:
+            print(f"[SUCCESS] load for {loader.model_full_name}")
             evaluation = evaluation.join(config_table, rsuffix='_')
             evaluation = evaluation.join(conditional_evaluation, rsuffix='__')
             all_evaluation.append(evaluation)
@@ -111,6 +113,7 @@ def make_common_estimation_plots(data_and_marginal, benchmark_name):
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, benchmark_name, "BEST_MSE")
     os.makedirs(directory, exist_ok=True)
     compare.min_avg_mse_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_avg_mse_sigma_mean_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
     compare.min_avg_mse_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
     compare.min_avg_mse_true_mu_mse(data_and_marginal, title=benchmark_name, directory=directory)
     compare.min_avg_mse_true_mu_sigma_mean(data_and_marginal, title=benchmark_name, directory=directory)
@@ -120,6 +123,7 @@ def make_common_estimation_plots(data_and_marginal, benchmark_name):
     os.makedirs(directory, exist_ok=True)
     compare.min_median_mse_mse_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
     compare.min_median_mse_mse_err_plot(data_and_marginal, title=benchmark_name, directory=directory)
+    compare.min_median_mse_sigma_mean_box_plot(data_and_marginal, title=benchmark_name, directory=directory)
     compare.min_median_mse_true_mu_mse(data_and_marginal, title=benchmark_name, directory=directory)
     compare.min_median_mse_true_mu_sigma_mean(data_and_marginal, title=benchmark_name, directory=directory)
     compare.min_median_mse_true_mu_target_std(data_and_marginal, title=benchmark_name, directory=directory)
