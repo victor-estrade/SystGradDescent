@@ -51,7 +51,8 @@ def make_profusion_estimation_plots(all_evaluations, loader):
     profusion.true_mu_target_mean_std(all_evaluations, title=title, directory=directory)
     profusion.nominal_n_samples_mse(all_evaluations, title=f"Nominal {title}", directory=directory)
     profusion.nominal_n_samples_sigma_mean(all_evaluations, title=f"Nominal {title}", directory=directory)
-    # profusion.mse_box_plot(all_evaluations, title=title, directory=directory)
+    profusion.mse_box_plot(all_evaluations, title=title, directory=directory)
+    profusion.sigma_box_plot(all_evaluations, title=title, directory=directory)
 
 
 def make_individual_conditional_plots(evaluation, loader):

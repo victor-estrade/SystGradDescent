@@ -16,6 +16,11 @@ rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/GG
 rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/HARDGG-prior/ ./OUTPUT/HARDGG-prior
 rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/HARDGG-calib/ ./OUTPUT/HARDGG-calib
 
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/S3D2/ ./OUTPUT/S3D2
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/S3D2-calib/ ./OUTPUT/S3D2-calib
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/S3D2-prior/ ./OUTPUT/S3D2-prior
+rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/S3D2-marginal/ ./OUTPUT/S3D2-marginal
+
 rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/BALANCEDHIGGSTES-marginal/ ./OUTPUT/BALANCEDHIGGSTES-marginal
 rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/BALANCEDHIGGSTES-prior/ ./OUTPUT/BALANCEDHIGGSTES-prior
 rsync -rtv titanic:/home/tao/vestrade/workspace/SystML/SystGradDescent/OUTPUT/EASYHIGGSTES-marginal/ ./OUTPUT/EASYHIGGSTES-marginal

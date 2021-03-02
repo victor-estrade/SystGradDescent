@@ -316,7 +316,7 @@ python run_array.py benchmark.HIGGSTES.DA-Calib --gpu 1 --n-steps 5000 --n-unit 
 python run_array.py benchmark.HIGGSTES.PIVOT-Calib --gpu 1 --n-steps 5000 --n-unit 200 500 --trade-off 1 0.1 --xp-name HIGGSTES-PIVOT-Calib --partition besteffort
 python run_array.py benchmark.HIGGSTES.TP-Calib --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 200 --xp-name HIGGSTES-TP-Calib --partition besteffort --estimate-only
 
-python run_array.py benchmark.HIGGSTES.INF-Calib --gpu 1 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-INF-Calib --partition besteffort --estimate-only --retrain
+python run_array.py benchmark.HIGGSTES.INF-Calib --gpu 1 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-INF-Calib --partition besteffort --estimate-only
 
 python run_array.py benchmark.HIGGSTES.REG-Calib --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 50000 --xp-name HIGGSTES-REG-Calib --partition besteffort --estimate-only
 python run_array.py benchmark.HIGGSTES.FREG-Calib --gpu 1 --n-steps 5000 --n-unit 200 500 --sample-size 10000 50000 --xp-name HIGGSTES-FREG-Calib --partition besteffort --estimate-only
