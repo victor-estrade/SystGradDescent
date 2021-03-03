@@ -39,7 +39,7 @@ from visual.misc import plot_params
 from problem.higgs import HiggsConfigTesOnly as Config
 from problem.higgs import get_minimizer
 from problem.higgs import get_minimizer_no_nuisance
-from problem.higgs import get_balanced_generators as get_generators_torch
+from problem.higgs import get_balanced_generators_torch as get_generators_torch
 from problem.higgs import Generator
 from problem.higgs import HiggsNLL as NLLComputer
 
