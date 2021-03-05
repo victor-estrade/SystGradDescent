@@ -85,8 +85,16 @@ def load_all_estimation_evaluation(TheLoader, hp_args, data_name='GG', benchmark
             config_table = loader.load_config_table()
             evaluation = loader.load_estimation_evaluation()
         except FileNotFoundError:
-            print(f"Missing estimation results for {loader.model_full_name}")
+            try:
+                evaluation = loader.load_evaluation()
+            except FileNotFoundError:
+                print(f"[MISSING] estimation results for {loader.model_full_name}")
+            else:
+                print(f"[SUCCESS] load for {loader.model_full_name}")
+                evaluation = evaluation.join(config_table, rsuffix='_')
+                all_evaluation.append(evaluation)
         else:
+            print(f"[SUCCESS] load for {loader.model_full_name}")
             evaluation = evaluation.join(config_table, rsuffix='_')
             all_evaluation.append(evaluation)
     return all_evaluation
@@ -101,8 +109,9 @@ def load_all_conditional_evaluation(TheLoader, hp_args, data_name='GG', benchmar
             evaluation = loader.load_estimation_evaluation()
             conditional_evaluation = loader.load_conditional_evaluation()
         except FileNotFoundError:
-            print(f"Missing conditional estimation results for {loader.model_full_name}")
+            print(f"[MISSING] conditional estimation results for {loader.model_full_name}")
         else:
+            print(f"[SUCCESS] load for {loader.model_full_name}")
             evaluation = evaluation.join(config_table, rsuffix='_')
             evaluation = evaluation.join(conditional_evaluation, rsuffix='__')
             all_evaluation.append(evaluation)
