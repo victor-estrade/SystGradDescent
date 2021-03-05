@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
+# Command line :
 # python -m benchmark.S3D2.DA-Calib
 
 import os
@@ -59,6 +59,9 @@ from archi.classic import L4 as ARCHI
 # from archi.reducer import A3ML3 as CALIB_ARCHI
 from archi.reducer import A1AR8MR8L1 as CALIB_ARCHI
 
+from .common import N_BINS
+from .common import load_calib_r
+from .common import load_calib_lam
 
 DATA_NAME = 'S3D2'
 BENCHMARK_NAME = DATA_NAME+'-calib'
@@ -91,45 +94,6 @@ class TrainGenerator:
         y = np.concatenate([y for X, y, w in data], axis=0)
         w = np.concatenate([w for X, y, w in data], axis=0)
         return X, y, w
-
-
-def load_calib_r():
-    args = lambda : None
-    args.n_unit     = 200
-    args.optimizer_name  = "adam"
-    args.beta1      = 0.5
-    args.beta2      = 0.9
-    args.learning_rate = 1e-4
-    args.n_samples  = 1000
-    args.n_steps    = 2000
-    args.batch_size = 20
-
-    args.net = CALIB_ARCHI(n_in=3, n_out=2, n_unit=args.n_unit)
-    args.optimizer = get_optimizer(args)
-    model = get_model(args, Regressor)
-    model.base_name = CALIB_R
-    model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
-    model.load(model.model_path)
-    return model
-
-def load_calib_lam():
-    args = lambda : None
-    args.n_unit     = 200
-    args.optimizer_name  = "adam"
-    args.beta1      = 0.5
-    args.beta2      = 0.9
-    args.learning_rate = 1e-4
-    args.n_samples  = 1000
-    args.n_steps    = 2000
-    args.batch_size = 20
-
-    args.net = CALIB_ARCHI(n_in=3, n_out=2, n_unit=args.n_unit)
-    args.optimizer = get_optimizer(args)
-    model = get_model(args, Regressor)
-    model.base_name = CALIB_LAM
-    model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
-    model.load(model.model_path)
-    return model
 
 
 
@@ -199,14 +163,14 @@ def run(args, i_cv):
     model = build_model(args, i_cv)
     os.makedirs(model.results_path, exist_ok=True)
     flush(logger)
-    
+
     # TRAINING / LOADING
     train_or_load_data_augmentation(model, train_generator, config.N_TRAINING_SAMPLES*N_AUGMENT, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
-    
+
     result_row.update(evaluate_neural_net(model, prefix='valid'))
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
@@ -244,7 +208,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     result_row['i'] = i_iter
     result_row['n_test_samples'] = config.N_TESTING_SAMPLES
     suffix = f'-mu={config.TRUE.mu:1.2f}_r={config.TRUE.r}_lambda={config.TRUE.lam}'
-    
+
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     # PLOT SUMMARIES
@@ -253,7 +217,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     # CALIBRATION
     r_mean, r_sigma = calib_r.predict(X_test, w_test)
     lam_mean, lam_sigma = calib_lam.predict(X_test, w_test)
-    logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) ) 
+    logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) )
     logger.info('lam = {} =vs= {} +/- {}'.format(config.TRUE_LAMBDA, lam_mean, lam_sigma) )
     config.CALIBRATED = Parameter(r_mean, lam_mean, config.CALIBRATED.interest_parameters)
     config.CALIBRATED_ERROR = Parameter(r_sigma, lam_sigma, config.CALIBRATED_ERROR.interest_parameters)
