@@ -22,7 +22,7 @@ class S3D2():
     def reset(self):
         self.random = np.random.RandomState(seed=self.seed)
 
-    def generate(self, r, lam, mu, n_samples=1000):
+    def generate(self, r, lam, mu, n_samples=1000, no_grad=None):
         n_bkg = n_samples // 2
         n_sig = n_samples // 2
         X, y, w = self._generate(r, lam, mu, n_bkg=n_bkg, n_sig=n_sig)
