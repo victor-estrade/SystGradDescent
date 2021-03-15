@@ -56,6 +56,33 @@ def estimate(minimizer, do_hesse=True):
                 logger.error('Exception during Hesse computation : {}'.format(e))
     else:
         logger.warning('Mingrad IS NOT VALID !')
+        fmin, params = estimate_step_by_step(minimizer, do_hesse=True)
+    return fmin, params
+
+
+def estimate_step_by_step(minimizer, do_hesse=True):
+    import logging
+    logger = logging.getLogger()
+
+    logger.info('simplex()')
+    res = minimizer.simplex()
+    logger.info(f'{res}')
+    logger.info('simplex() DONE')
+    logger.info('Mingrad() 2nd')
+    fmin, params = minimizer.migrad()
+    logger.info('Mingrad() 2nd DONE')
+
+    if minimizer.migrad_ok():
+        logger.info('Mingrad 2nd is  VALID !')
+        if do_hesse :
+            logger.info('Hesse()')
+            try:
+                params = minimizer.hesse()
+                logger.info('Hesse DONE')
+            except Exception as e:
+                logger.error('Exception during Hesse computation : {}'.format(e))
+    else:
+        logger.warning('Mingrad 2nd IS NOT VALID !')
     return fmin, params
 
 
