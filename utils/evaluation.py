@@ -27,9 +27,9 @@ from config import _TRUTH
 
 def register_params(param, params_truth, measure_dict):
     for p in param:
-        name  = p['name']
-        value = p['value']
-        error = p['error']
+        name  = p.name
+        value = p.value
+        error = p.error
         measure_dict[name] = value
         measure_dict[name+_ERROR] = error
         measure_dict[name+_TRUTH] = params_truth[name]
@@ -67,8 +67,7 @@ def estimate_step_by_step(minimizer, do_hesse=True):
     logger = logging.getLogger()
 
     logger.info('simplex()')
-    res = minimizer.simplex()
-    logger.info(f'{res}')
+    minimizer.simplex()
     logger.info('simplex() DONE')
     logger.info('Mingrad() 2nd')
     minimizer.migrad()
@@ -149,7 +148,7 @@ def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''
     fmin, params = estimate(minimizer, do_hesse=do_hesse)
     print_params(params, params_truth)
     register_params(params, params_truth, results)
-    results['is_mingrad_valid'] = minimizer.migrad_ok()
+    results['is_mingrad_valid'] = minimizer.valid
     results.update(fmin)
     plot_contour(minimizer, params_truth, directory, suffix=suffix)
     return results
