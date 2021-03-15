@@ -149,11 +149,28 @@ def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''
     print_params(params, params_truth)
     register_params(params, params_truth, results)
     results['is_mingrad_valid'] = minimizer.valid
-    results.update(fmin)
+    register_fmin(results, fmin)
     plot_contour(minimizer, params_truth, directory, suffix=suffix)
     return results
 
 
+def register_fmin(results, fmin):
+    results["edm"] = fmin.edm
+    results["edm_goal"] = fmin.edm_goal
+    results["fval"] = fmin.fval
+    results["has_parameters_at_limit"] = fmin.has_parameters_at_limit
+    results["nfcn"] = fmin.nfcn
+    results["ngrad"] = fmin.ngrad
+    results["is_valid"] = fmin.is_valid
+    results["has_valid_parameters"] = fmin.has_valid_parameters
+    results["has_accurate_covar"] = fmin.has_accurate_covar
+    results["has_posdef_covar"] = fmin.has_posdef_covar
+    results["has_made_posdef_covar"] = fmin.has_made_posdef_covar
+    results["hesse_failed"] = fmin.hesse_failed
+    results["has_covariance"] = fmin.has_covariance
+    results["is_above_max_edm"] = fmin.is_above_max_edm
+    results["has_reached_call_limit"] = fmin.has_reached_call_limit
+    results["errordef"] = fmin.errordef
 
 def evaluate_neural_net(model, prefix='', suffix=''):
     logger = logging.getLogger()
