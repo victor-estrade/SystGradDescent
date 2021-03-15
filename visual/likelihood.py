@@ -56,7 +56,7 @@ def plot_param_around_min(param_array, nll_array, true_value, param_name, suffix
 
 def plot_all_contour(minimizer, params_truth, directory, suffix=''):
     for i in range( len(minimizer.params) - 1):
-        plot_contour(-1, i, minimizer, params_truth, directory, suffix='')
+        plot_contour(-1, i, minimizer, params_truth, directory, suffix=suffix)
 
 
 def plot_contour(x, y, minimizer, params_truth, directory, suffix=''):
