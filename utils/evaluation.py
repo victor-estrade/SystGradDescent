@@ -83,7 +83,7 @@ def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''
     results = {}
     estimate(minimizer, do_hesse=do_hesse)
     if not minimizer.valid :
-        estimate_step_by_step(minimizer, do_hesse=do_hesse)
+        estimate_param_by_param(minimizer, do_hesse=do_hesse)
     params = minimizer.params
     fmin = minimizer.fmin
     print_params(params, params_truth)
@@ -114,7 +114,7 @@ def estimate(minimizer, do_hesse=True):
         _run_hesse(minimizer)
 
 
-def estimate_step_by_step(minimizer, do_hesse=True):
+def estimate_param_by_param(minimizer, do_hesse=True):
     logger = logging.getLogger()
     logger.info("Param by param minimization ...")
     minimizer.fixed = True
