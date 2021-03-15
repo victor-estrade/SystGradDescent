@@ -60,7 +60,7 @@ def plot_contour(minimizer, params_truth, directory, suffix=''):
     nuisance_param = minimizer.params[0]
     true_mu = params_truth[interest_param.name]
     true_nuisance = params_truth[nuisance_param.name]
-    print("suffix", suffix)
+    logger.info(f'Plot contour for {interest_param.name}-{nuisance_param.name}')
     try:
         minimizer.draw_contour(interest_param.name, nuisance_param.name)
         plt.scatter(true_mu, true_nuisance, label="True value")
