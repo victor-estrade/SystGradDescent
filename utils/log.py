@@ -42,8 +42,6 @@ def print_params(param, params_truth):
     logger = logging.getLogger()
     logger.info('[param_name] = [truth] vs  [value]  +/-  [error]')
     for p in param:
-        print(type(p))
-        print(p)
         name  = p.name
         value = p.value
         error = p.error
