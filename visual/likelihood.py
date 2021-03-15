@@ -54,10 +54,15 @@ def plot_param_around_min(param_array, nll_array, true_value, param_name, suffix
         logger.warning(str(e))
 
 
-def plot_contour(minimizer, params_truth, directory, suffix=''):
+def plot_all_contour(minimizer, params_truth, directory, suffix=''):
+    for i in range( len(minimizer.params) - 1):
+        plot_contour(-1, i, minimizer, params_truth, directory, suffix='')
+
+
+def plot_contour(x, y, minimizer, params_truth, directory, suffix=''):
     logger = logging.getLogger()
-    interest_param = minimizer.params[-1]
-    nuisance_param = minimizer.params[0]
+    interest_param = minimizer.params[x]
+    nuisance_param = minimizer.params[y]
     true_mu = params_truth[interest_param.name]
     true_nuisance = params_truth[nuisance_param.name]
     logger.info(f'Plot contour for {interest_param.name}-{nuisance_param.name}')

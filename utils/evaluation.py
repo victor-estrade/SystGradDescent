@@ -18,7 +18,7 @@ from .log import print_params
 from visual.classifier import plot_test_distrib
 from visual.classifier import plot_ROC
 from visual.likelihood import plot_summaries
-from visual.likelihood import plot_contour
+from visual.likelihood import plot_all_contour
 from visual.neural_net import plot_losses
 from visual.neural_net import plot_REG_log_mse
 
@@ -94,7 +94,7 @@ def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''
     print_params(params, params_truth)
     register_params(params, params_truth, results)
     register_fmin(results, fmin)
-    plot_contour(minimizer, params_truth, directory, suffix=suffix)
+    plot_all_contour(minimizer, params_truth, directory, suffix=suffix)
     return results
 
 
