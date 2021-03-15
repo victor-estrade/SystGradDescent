@@ -25,70 +25,6 @@ from visual.neural_net import plot_REG_log_mse
 from config import _ERROR
 from config import _TRUTH
 
-def register_params(param, params_truth, measure_dict):
-    for p in param:
-        name  = p.name
-        value = p.value
-        error = p.error
-        measure_dict[name] = value
-        measure_dict[name+_ERROR] = error
-        measure_dict[name+_TRUTH] = params_truth[name]
-
-
-def estimate(minimizer, do_hesse=True):
-    import logging
-    logger = logging.getLogger()
-
-    if logger.getEffectiveLevel() <= logging.DEBUG:
-        minimizer.print_param()
-    logger.info('Mingrad()')
-    minimizer.migrad()
-    params = minimizer.params
-    fmin = minimizer.fmin
-    logger.info('Mingrad DONE')
-
-    if minimizer.valid:
-        logger.info('Mingrad is VALID !')
-        if do_hesse :
-            logger.info('Hesse()')
-            try:
-                params = minimizer.hesse()
-                logger.info('Hesse DONE')
-            except Exception as e:
-                logger.error('Exception during Hesse computation : {}'.format(e))
-    else:
-        logger.warning('Mingrad IS NOT VALID !')
-        fmin, params = estimate_step_by_step(minimizer, do_hesse=True)
-    return fmin, params
-
-
-def estimate_step_by_step(minimizer, do_hesse=True):
-    import logging
-    logger = logging.getLogger()
-
-    logger.info('simplex()')
-    minimizer.simplex()
-    logger.info('simplex() DONE')
-    logger.info('Mingrad() 2nd')
-    minimizer.migrad()
-    params = minimizer.params
-    fmin = minimizer.fmin
-    logger.info('Mingrad() 2nd DONE')
-
-    if minimizer.valid:
-        logger.info('Mingrad 2nd is  VALID !')
-        if do_hesse :
-            logger.info('Hesse()')
-            try:
-                params = minimizer.hesse()
-                logger.info('Hesse DONE')
-            except Exception as e:
-                logger.error('Exception during Hesse computation : {}'.format(e))
-    else:
-        logger.warning('Mingrad 2nd IS NOT VALID !')
-    return fmin, params
-
-
 
 def evaluate_config(config):
     table = []
@@ -145,13 +81,75 @@ def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix='', d
 
 def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''):
     results = {}
-    fmin, params = estimate(minimizer, do_hesse=do_hesse)
+    estimate(minimizer, do_hesse=do_hesse)
+    if not minimizer.valid :
+        estimate_step_by_step(minimizer, do_hesse=do_hesse)
+    params = minimizer.params
+    fmin = minimizer.fmin
     print_params(params, params_truth)
     register_params(params, params_truth, results)
     results['is_mingrad_valid'] = minimizer.valid
     register_fmin(results, fmin)
     plot_contour(minimizer, params_truth, directory, suffix=suffix)
     return results
+
+
+def estimate(minimizer, do_hesse=True):
+    logger = logging.getLogger()
+
+    if logger.getEffectiveLevel() <= logging.DEBUG:
+        minimizer.print_param()
+    _run_migrad(minimizer)
+
+    if minimizer.valid:
+        logger.info('Mingrad is VALID !')
+    else:
+        logger.warning('Mingrad IS NOT VALID !')
+        _run_simplex_migrad(minimizer)
+        if minimizer.valid:
+            logger.info('Mingrad 2nd is  VALID !')
+        else:
+            logger.warning('Mingrad 2nd IS NOT VALID !')
+    if do_hesse :
+        _run_hesse(minimizer)
+
+
+def estimate_step_by_step(minimizer, do_hesse=True):
+    logger = logging.getLogger()
+    logger.info("Param by param minimization ...")
+    minimizer.fixed = True
+    for i, param in enumerate(minimizer.params):
+        logger.info(f"Unfixing {param.name}")
+        minimizer.fixed[i] = False
+        _run_simplex_migrad(minimizer)
+    logger.info("Param by param minimization DONE")
+
+
+def _run_migrad(minimizer):
+    logger = logging.getLogger()
+    logger.info('Mingrad()')
+    minimizer.migrad()
+    logger.info('Mingrad DONE')
+
+
+def _run_simplex_migrad(minimizer):
+    logger = logging.getLogger()
+    logger.info('simplex()')
+    minimizer.simplex()
+    logger.info('simplex() DONE')
+    logger.info('Mingrad() 2nd')
+    minimizer.migrad()
+    logger.info('Mingrad() 2nd DONE')
+
+
+def _run_hesse(minimizer):
+    logger = logging.getLogger()
+    logger.info('Hesse()')
+    try:
+        params = minimizer.hesse()
+        logger.info('Hesse DONE')
+    except Exception as e:
+        logger.error('Exception during Hesse computation : {}'.format(e))
 
 
 def register_fmin(results, fmin):
@@ -171,6 +169,17 @@ def register_fmin(results, fmin):
     results["is_above_max_edm"] = fmin.is_above_max_edm
     results["has_reached_call_limit"] = fmin.has_reached_call_limit
     results["errordef"] = fmin.errordef
+
+
+def register_params(param, params_truth, measure_dict):
+    for p in param:
+        name  = p.name
+        value = p.value
+        error = p.error
+        measure_dict[name] = value
+        measure_dict[name+_ERROR] = error
+        measure_dict[name+_TRUTH] = params_truth[name]
+
 
 def evaluate_neural_net(model, prefix='', suffix=''):
     logger = logging.getLogger()

@@ -38,10 +38,10 @@ def old_print_params(param, params_truth):
 
 
 
-def print_params(param, params_truth):
+def print_params(params, params_truth):
     logger = logging.getLogger()
     logger.info('[param_name] = [truth] vs  [value]  +/-  [error]')
-    for p in param:
+    for p in params:
         name  = p.name
         value = p.value
         error = p.error
