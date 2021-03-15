@@ -195,7 +195,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
     minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
-    result_row.update(evaluate_minuit(minimizer, config.TRUE))
+    result_row.update(evaluate_minuit(minimizer, config.TRUE, iter_directory, suffix=suffix))
     return result_row.copy(), conditional_estimate
 
 

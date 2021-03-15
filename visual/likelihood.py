@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 from config import DEFAULT_DIR
 
 
-def plot_summaries(b_histogram, s_histogram, 
-                    title='no title', directory=DEFAULT_DIR, fname='summaries.png', 
+def plot_summaries(b_histogram, s_histogram,
+                    title='no title', directory=DEFAULT_DIR, fname='summaries.png',
                     classes=('b', 's'),):
     logger = logging.getLogger()
     n_bins = len(b_histogram)
@@ -53,3 +53,22 @@ def plot_param_around_min(param_array, nll_array, true_value, param_name, suffix
         logger.warning('Plot nll around min failed')
         logger.warning(str(e))
 
+
+def plot_contour(minimizer, params_truth, directory, suffix=''):
+    logger = logging.getLogger()
+    interest_param = minimizer.params[0]
+    nuisance_param = minimizer.params[1]
+    true_mu = params_truth[interest_param.name]
+    true_nuisance = params_truth[nuisance_param.name]
+    print("suffix", suffix)
+    try:
+        minimizer.draw_contour(interest_param.name, nuisance_param.name)
+        plt.scatter(true_mu, true_nuisance, label="True value")
+        fname = f"contour_{interest_param.name}_{nuisance_param.name}_{suffix}.png"
+        plt.title(f"NLL_contour {interest_param.name} - {nuisance_param.name}")
+        plt.legend()
+        plt.savefig(os.path.join(directory, fname), bbox_inches="tight")
+        plt.clf()
+    except Exception as e:
+        logger.warning('Plot contour around min failed')
+        logger.warning(str(e))

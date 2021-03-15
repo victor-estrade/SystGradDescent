@@ -18,6 +18,7 @@ from .log import print_params
 from visual.classifier import plot_test_distrib
 from visual.classifier import plot_ROC
 from visual.likelihood import plot_summaries
+from visual.likelihood import plot_contour
 from visual.neural_net import plot_losses
 from visual.neural_net import plot_REG_log_mse
 
@@ -112,13 +113,14 @@ def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix='', d
                     title=model.full_name, directory=directory, fname=fname)
 
 
-def evaluate_minuit(minimizer, params_truth, do_hesse=True):
+def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''):
     results = {}
     fmin, params = estimate(minimizer, do_hesse=do_hesse)
     print_params(params, params_truth)
     register_params(params, params_truth, results)
     results['is_mingrad_valid'] = minimizer.migrad_ok()
     results.update(fmin)
+    plot_contour(minimizer, params_truth, directory, suffix=suffix)
     return results
 
 
