@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
+# Command line :
 # python -m benchmark.HIGGS.explore
 
 import os
@@ -42,24 +42,89 @@ def main():
     data = load_data()
     generator = Generator(data, seed=2)
 
-    dirname = os.path.join(DIRECTORY, 'link_standard')
-    os.makedirs(dirname, exist_ok=True)
-    explore_links(generator, dirname=dirname)
+    # dirname = os.path.join(DIRECTORY, 'features')
+    # os.makedirs(dirname, exist_ok=True)
+    # features(generator, dirname=dirname)
 
-    dirname = os.path.join(DIRECTORY, 'link_balanced')
-    os.makedirs(dirname, exist_ok=True)
-    explore_links(generator,  background_luminosity=1, signal_luminosity=1, dirname=dirname)
-    
-    dirname = os.path.join(DIRECTORY, 'link_easy')
-    os.makedirs(dirname, exist_ok=True)
-    explore_links(generator,  background_luminosity=95, signal_luminosity=5, dirname=dirname)
-    
-    dirname = os.path.join(DIRECTORY, 'link_medium')
-    os.makedirs(dirname, exist_ok=True)
-    explore_links(generator,  background_luminosity=98, signal_luminosity=2, dirname=dirname)
-    
+    # dirname = os.path.join(DIRECTORY, 'tes_effect')
+    # os.makedirs(dirname, exist_ok=True)
+    # tes_effect(generator, dirname=dirname)
+
+    # dirname = os.path.join(DIRECTORY, 'link_standard')
+    # os.makedirs(dirname, exist_ok=True)
+    # explore_links(generator, dirname=dirname)
+    #
+    # dirname = os.path.join(DIRECTORY, 'link_balanced')
+    # os.makedirs(dirname, exist_ok=True)
+    # explore_links(generator,  background_luminosity=1, signal_luminosity=1, dirname=dirname)
+    #
+    # dirname = os.path.join(DIRECTORY, 'link_easy')
+    # os.makedirs(dirname, exist_ok=True)
+    # explore_links(generator,  background_luminosity=95, signal_luminosity=5, dirname=dirname)
+    #
+    # dirname = os.path.join(DIRECTORY, 'link_medium')
+    # os.makedirs(dirname, exist_ok=True)
+    # explore_links(generator,  background_luminosity=98, signal_luminosity=2, dirname=dirname)
+
     # mu_vs_y_w(generator)
     # noise_vs_mu_variance(generator)
+
+
+def features(generator, dirname=DIRECTORY):
+    print('hahahaha')
+    N_SAMPLES = 10_000
+    config = Config()
+    X, y, w = generator.generate(*config.CALIBRATED, n_samples=N_SAMPLES)
+    df = pd.DataFrame(X, columns=generator.feature_names)
+    df['Label'] = y
+    print(df.head())
+    for i, column_name in enumerate(generator.feature_names):
+        print(column_name)
+        sns.distplot(df[column_name])
+        plt.savefig(os.path.join(dirname, f'{i:00d}_{column_name}.png'))
+        plt.clf()
+
+        sns.distplot(df[ df['Label']==0 ][ column_name ], label="B", kde=False)
+        sns.distplot(df[ df['Label']==1 ][ column_name ], label="S", kde=False)
+        plt.legend()
+        plt.savefig(os.path.join(dirname, f'c_{i:00d}_{column_name}.png'))
+        plt.clf()
+
+
+def tes_effect(generator, dirname=DIRECTORY):
+    print('hahahaha')
+    N_SAMPLES = 10_000
+    DELTA = 0.03
+    config = Config()
+    nominal_param = config.CALIBRATED
+    up_param = nominal_param.clone_with(tes=nominal_param.tes + DELTA)
+    down_param = nominal_param.clone_with(tes=nominal_param.tes - DELTA)
+    X, y, w = generator.generate(*nominal_param, n_samples=N_SAMPLES)
+    generator.reset()
+    X_up, y, w = generator.generate(*up_param, n_samples=N_SAMPLES)
+    generator.reset()
+    X_down, y, w = generator.generate(*down_param, n_samples=N_SAMPLES)
+
+    df = pd.DataFrame(X, columns=generator.feature_names)
+    df_up = pd.DataFrame(X_up, columns=generator.feature_names)
+    df_down = pd.DataFrame(X_down, columns=generator.feature_names)
+    df['Label'] = y
+    print(df.head())
+    for i, column_name in enumerate(generator.feature_names):
+        print(column_name)
+        if (df_down[column_name] == df_up[column_name]).all():
+            plt.title('No effect')
+        else:
+            plt.title('Differential distribution')
+            sns.distplot(df_up[column_name] - df_down[column_name])
+            plt.savefig(os.path.join(dirname, f'diff_{i:00d}_{column_name}.png'))
+            plt.clf()
+        sns.distplot(df_down[column_name], label="-")
+        sns.distplot(df[column_name], label="=")
+        sns.distplot(df_up[column_name], label="+")
+        plt.legend()
+        plt.savefig(os.path.join(dirname, f'{i:00d}_{column_name}.png'))
+        plt.clf()
 
 
 
@@ -76,7 +141,7 @@ def mu_vs_y_w(generator):
         mu_list.append(params.mu)
         y_w_list.append((y*w).sum() / w.sum())
 
-    plt.scatter(mu_list, y_w_list, "S = f($\mu$)")
+    plt.plot(mu_list, y_w_list, label="S = f($\mu$)")
     plt.xlabel('mu')
     plt.ylabel('S = mean(labels, w)')
     # plt.legend()
@@ -179,7 +244,7 @@ def explore_links(full_generator, background_luminosity=410999.84732187376, sign
 
     config = Config()
     N_SAMPLES = 300_000
-    feature_names = list(generator.feature_names) 
+    feature_names = list(generator.feature_names)
     threshold = 0.97
     feature_names += [f"{threshold:.2f}_cut_"+e for e in list(generator.feature_names)] + ['Label', 'classifier', 'bin', 'log_p']
     mu_range = np.linspace(min(config.RANGE.mu), max(config.RANGE.mu), num=18)
@@ -215,7 +280,7 @@ def explore_links(full_generator, background_luminosity=410999.84732187376, sign
         all_average_df[params_name] = average_df
 
     for name in feature_names:
-        for params_name, average_df in all_average_df.items(): 
+        for params_name, average_df in all_average_df.items():
             plt.scatter(average_df[name], target_list, label=params_name)
         plt.title(f'Link between weighted mean({name}) and mu')
         plt.ylabel('mu')
