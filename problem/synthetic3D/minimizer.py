@@ -8,29 +8,29 @@ ERRORDEF_NLL = 0.5
 
 def get_minimizer(compute_nll, calibrated_param, calibrated_param_error):
     MIN_VALUE = 0.01
-    MAX_VALUE = 10 
+    MAX_VALUE = 10
     minimizer = iminuit.Minuit(compute_nll,
-                           errordef=ERRORDEF_NLL,
                            r=calibrated_param.r,
-                           error_r=calibrated_param_error.r,
-                           #limit_r=(0, None),
                            lam=calibrated_param.lam,
-                           error_lam=calibrated_param_error.lam,
-                           limit_lam=(MIN_VALUE, None),
                            mu=calibrated_param.mu,
-                           error_mu=calibrated_param_error.mu,
-                           limit_mu=(MIN_VALUE, MAX_VALUE),
                           )
+    minimizer.errordef = iminuit.Minuit.LIKELIHOOD
+    minimizer.limits = [(0, None), (MIN_VALUE, None), (MIN_VALUE, MAX_VALUE)]
+    minimizer.errors = [calibrated_param_error.r
+                        ,calibrated_param_error.lam
+                        ,calibrated_param_error.mu
+                        ]
     return minimizer
+
 
 def get_minimizer_no_nuisance(compute_nll, calibrated_param, calibrated_param_error):
     MIN_VALUE = 0.01
-    MAX_VALUE = 10 
+    MAX_VALUE = 10
     minimizer = iminuit.Minuit(compute_nll,
-                           errordef=ERRORDEF_NLL,
                            mu=calibrated_param.mu,
-                           error_mu=calibrated_param_error.mu,
-                           limit_mu=(MIN_VALUE, MAX_VALUE),
                            print_level=0,
                           )
+    minimizer.errordef = iminuit.Minuit.LIKELIHOOD
+    minimizer.limits = [(MIN_VALUE, MAX_VALUE)]
+    minimizer.errors = [calibrated_param_error.mu]
     return minimizer

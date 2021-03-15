@@ -42,10 +42,12 @@ def estimate(minimizer, do_hesse=True):
     if logger.getEffectiveLevel() <= logging.DEBUG:
         minimizer.print_param()
     logger.info('Mingrad()')
-    fmin, params = minimizer.migrad()
+    minimizer.migrad()
+    params = minimizer.params
+    fmin = minimizer.fmin
     logger.info('Mingrad DONE')
 
-    if minimizer.migrad_ok():
+    if minimizer.valid:
         logger.info('Mingrad is VALID !')
         if do_hesse :
             logger.info('Hesse()')
@@ -69,10 +71,12 @@ def estimate_step_by_step(minimizer, do_hesse=True):
     logger.info(f'{res}')
     logger.info('simplex() DONE')
     logger.info('Mingrad() 2nd')
-    fmin, params = minimizer.migrad()
+    minimizer.migrad()
+    params = minimizer.params
+    fmin = minimizer.fmin
     logger.info('Mingrad() 2nd DONE')
 
-    if minimizer.migrad_ok():
+    if minimizer.valid:
         logger.info('Mingrad 2nd is  VALID !')
         if do_hesse :
             logger.info('Hesse()')
