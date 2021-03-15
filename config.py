@@ -18,9 +18,11 @@ N_CV = 6
 _ERROR = '_error'
 _TRUTH = '_truth'
 
+PLOT_CONTOUR = False
+
 # FIT PARAMETERS
 #---------------
-# TODO : one day maybe put all these values as input arguments 
+# TODO : one day maybe put all these values as input arguments
 #       and correctly sort experiments according to the paramters
 
 # Parameter of interest

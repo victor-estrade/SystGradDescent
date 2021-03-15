@@ -24,6 +24,7 @@ from visual.neural_net import plot_REG_log_mse
 
 from config import _ERROR
 from config import _TRUTH
+from config import PLOT_CONTOUR
 
 
 def evaluate_config(config):
@@ -94,7 +95,8 @@ def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''
     print_params(params, params_truth)
     register_params(params, params_truth, results)
     register_fmin(results, fmin)
-    plot_all_contour(minimizer, params_truth, directory, suffix=suffix)
+    if PLOT_CONTOUR:
+        plot_all_contour(minimizer, params_truth, directory, suffix=suffix)
     return results
 
 
