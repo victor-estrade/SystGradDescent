@@ -84,11 +84,15 @@ def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''
     estimate(minimizer, do_hesse=do_hesse)
     if not minimizer.valid :
         estimate_param_by_param(minimizer, do_hesse=do_hesse)
+    results['is_mingrad_valid'] = minimizer.valid
+
+    if do_hesse :
+        _run_hesse(minimizer)
     params = minimizer.params
     fmin = minimizer.fmin
+
     print_params(params, params_truth)
     register_params(params, params_truth, results)
-    results['is_mingrad_valid'] = minimizer.valid
     register_fmin(results, fmin)
     plot_contour(minimizer, params_truth, directory, suffix=suffix)
     return results
@@ -110,8 +114,6 @@ def estimate(minimizer, do_hesse=True):
             logger.info('Mingrad 2nd is  VALID !')
         else:
             logger.warning('Mingrad 2nd IS NOT VALID !')
-    if do_hesse :
-        _run_hesse(minimizer)
 
 
 def estimate_param_by_param(minimizer, do_hesse=True):
