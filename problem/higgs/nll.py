@@ -49,7 +49,8 @@ class HiggsNLL():
         self.valid_generator = valid_generator
         self.X_test = X_test
         self.w_test = w_test
-        self.xp_histogram = self.compute_summaries(self.X_test, self.w_test)
+        EPSILON = 1e-6  # avoid log(0)
+        self.xp_histogram = self.compute_summaries(self.X_test, self.w_test) + EPSILON
 
         self.config = HiggsConfig() if config is None else config
 
