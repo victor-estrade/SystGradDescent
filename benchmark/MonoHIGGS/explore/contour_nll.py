@@ -24,7 +24,7 @@ from utils.log import print_line
 from utils.evaluation import evaluate_minuit
 
 from problem.higgs import HiggsConfigTesOnly as Config
-from problem.higgs import get_minimizer
+from problem.higgs import get_mono_minimizer as get_minimizer
 from problem.higgs import get_minimizer_no_nuisance
 from problem.higgs import get_generators_torch
 from problem.higgs import MonoHiggsNLL as NLLComputer
@@ -58,7 +58,7 @@ def do_iter(config, model, i_iter, valid_generator, test_generator, n_bins=N_BIN
     some_dict =  evaluate_minuit(minimizer, config.TRUE, directory, suffix="")
 
     # FOCUSED contour plot
-    nll_func = lambda mu, tes : compute_nll(tes, config.TRUE.jes, config.TRUE.les, mu)
+    nll_func = lambda mu, tes : compute_nll(tes, mu)
     x = minimizer.values[1]
     y = minimizer.values[0]
     x_err = minimizer.errors[1]
@@ -82,7 +82,7 @@ def basic_contourplot(compute_nll, config, directory):
     mu_array = np.linspace(0.5, 1.5, ARRAY_SIZE)
     tes_array = np.linspace(0.95, 1.05, ARRAY_SIZE)
     mu_mesh, tes_mesh = np.meshgrid(mu_array, tes_array)
-    nll_func = lambda mu, tes : compute_nll(tes, config.TRUE.jes, config.TRUE.les, mu)
+    nll_func = lambda mu, tes : compute_nll(tes, mu)
     nll_mesh = np.array([nll_func(mu, tes) for mu, tes in zip(mu_mesh.ravel(), tes_mesh.ravel())]).reshape(mu_mesh.shape)
     plot_contour(mu_mesh, tes_mesh, nll_mesh, directory, xlabel="mu", ylabel="tes")
 

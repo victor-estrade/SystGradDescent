@@ -27,10 +27,10 @@ from utils.log import print_line
 from utils.evaluation import evaluate_minuit
 from utils.evaluation import evaluate_config
 
-from problem.higgs import HiggsConfigTesOnly as Config
-from problem.higgs import get_minimizer
+from problem.higgs import MonoHiggsConfig as Config
 from problem.higgs import get_generators_torch
-from problem.higgs import HiggsNLL as NLLComputer
+from problem.higgs import MonoHiggsNLL as NLLComputer
+from problem.higgs import MonoGeneratorTorch
 
 from ..common import N_BINS
 from ..common import GeneratorCPU
@@ -67,7 +67,7 @@ def main():
     args = parse_args()
     i_cv = 0
     seed = SEED + i_cv * 5
-    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
+    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda, GeneratorClass=MonoGeneratorTorch)
     train_generator = GeneratorCPU(train_generator)
     valid_generator = GeneratorCPU(valid_generator)
     test_generator = GeneratorCPU(test_generator)

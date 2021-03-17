@@ -28,7 +28,6 @@ from utils.evaluation import evaluate_minuit
 from utils.evaluation import evaluate_config
 
 from problem.higgs import MonoHiggsConfig as Config
-from problem.higgs import get_mono_minimizer as get_minimizer
 from problem.higgs import get_generators_torch
 from problem.higgs import MonoHiggsNLL as NLLComputer
 from problem.higgs import MonoGeneratorTorch
