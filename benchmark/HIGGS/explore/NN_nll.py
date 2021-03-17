@@ -5,7 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line :
-# python -m benchmark.HIGGS.explore.GB_nll
+# python -m benchmark.HIGGS.explore.NN_nll
 
 import os
 import logging
@@ -69,7 +69,7 @@ def main():
     train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
 
     config = Config()
-    model = load_some_GB()
+    model = load_some_NN()
     for i_iter, test_config in enumerate(config.iter_test_config()):
         do_iter(config, model, i_iter, valid_generator, test_generator)
 

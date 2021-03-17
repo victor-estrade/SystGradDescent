@@ -14,6 +14,7 @@ def load_some_GB():
     model.load(model.model_path)
     return model
 
+
 def load_some_NN():
     from model.neural_network import NeuralNetClassifier
     from archi.classic import L4 as ARCHI
