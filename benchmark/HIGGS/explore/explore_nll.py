@@ -39,6 +39,10 @@ from model.gradient_boost import GradientBoostingModel
 
 from .common import N_BINS
 
+from .load_model import load_some_GB
+from .load_model import load_some_NN
+
+
 DATA_NAME = 'HIGGS'
 BENCHMARK_NAME = DATA_NAME+'-prior'
 DIRECTORY = os.path.join(SAVING_DIR, DATA_NAME, "explore")
@@ -65,7 +69,7 @@ def main():
     train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
 
     config = Config()
-    model = load_some_model()
+    model = load_some_GB()
     for i_iter, test_config in enumerate(config.iter_test_config()):
         do_iter(config, model, i_iter, valid_generator, test_generator)
 
@@ -111,29 +115,6 @@ def do_iter(config, model, i_iter, valid_generator, test_generator):
     plt.clf()
     logger.info(f"saved at {path}")
 
-
-
-def load_some_model():
-    from model.gradient_boost import GradientBoostingModel
-    i_cv = 0
-    model = GradientBoostingModel(learning_rate=0.1, n_estimators=300, max_depth=3)
-    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
-    print(f"loading {model.model_path}")
-    model.load(model.model_path)
-    return model
-
-def load_some_NN():
-    from model.neural_network import NeuralNetClassifier
-    from archi.classic import L4 as ARCHI
-    import torch.optim as optim
-    i_cv = 0
-    n_unit = 200
-    net = ARCHI(n_in=29, n_out=2, n_unit=n_unit)
-    optimizer = optim.Adam(lr=1e-4)
-    model = NeuralNetClassifier(net, optimizer, n_steps=5000, batch_size=20, cuda=False)
-    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
-    print(f"loading {model.model_path}")
-    model.load(model.model_path)
 
 
 if __name__ == '__main__':
