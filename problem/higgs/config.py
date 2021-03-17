@@ -33,9 +33,9 @@ class MonoHiggsConfig():
 
     def iter_test_config(self):
         param_lists = [*self.RANGE ] + [ HiggsConfig.RANGE_N_TEST ]
-        for tes, jes, les, mu, n_test_samples in itertools.product(*param_lists):
+        for tes, mu, n_test_samples in itertools.product(*param_lists):
             new_config = MonoHiggsConfig()
-            new_config.TRUE = MonoParameter(tes, jes, les, mu)
+            new_config.TRUE = MonoParameter(tes, mu)
             new_config.N_TESTING_SAMPLES = n_test_samples
             yield new_config
 
