@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import itertools
 import numpy as np
+from .parameter import MonoParameter
 from .parameter import Parameter
 from .parameter import FuturParameter
 
