@@ -57,6 +57,29 @@ def do_iter(config, model, i_iter, valid_generator, test_generator, n_bins=N_BIN
     minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
     some_dict =  evaluate_minuit(minimizer, config.TRUE, directory, suffix="")
 
+    # FOCUSED contour plot
+    nll_func = lambda mu, tes : compute_nll(tes, config.TRUE.jes, config.TRUE.les, mu)
+    x = minimizer.values[3]
+    y = minimizer.values[0]
+    x_err = minimizer.errors[3]
+    y_err = minimizer.errors[0]
+    focused_contour(x, y, x_err, y_err, nll_func, directory, xlabel="mu", ylabel='tes')
+
+    nll_func = lambda mu, jes : compute_nll(config.TRUE.tes, jes, config.TRUE.les, mu)
+    x = minimizer.values[3]
+    y = minimizer.values[1]
+    x_err = minimizer.errors[3]
+    y_err = minimizer.errors[1]
+    focused_contour(x, y, x_err, y_err, nll_func, directory, xlabel="mu", ylabel='jes')
+
+    nll_func = lambda mu, jes : compute_nll(config.TRUE.tes, config.TRUE.jes, les, mu)
+    x = minimizer.values[3]
+    y = minimizer.values[2]
+    x_err = minimizer.errors[3]
+    y_err = minimizer.errors[2]
+    focused_contour(x, y, x_err, y_err, nll_func, directory, xlabel="mu", ylabel='les')
+
+
 
 def basic_check(compute_nll, config):
     logger = logging.getLogger()
@@ -107,6 +130,27 @@ def plot_contour(x, y, z, directory, xlabel="mu", ylabel="tes"):
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     fname = f"{xlabel}-{ylabel}_contour_plot.png"
+    path = os.path.join(directory, fname)
+    plt.savefig(path)
+    plt.clf()
+    logger.info(f"saved at {path}")
+
+
+def focused_contour(x, y, x_err, y_err, nll_func, directory, xlabel="mu", ylabel='tes'):
+    logger = logging.getLogger()
+    ARRAY_SIZE = 10
+    logger.info(f"focused {xlabel}-{ylabel} contour plot...")
+    x_array = np.linspace(x-3*x_err, x+3*x_err, ARRAY_SIZE)
+    y_array = np.linspace(y-3*y_err, y+3*y_err, ARRAY_SIZE)
+    x_mesh, y_mesh = np.meshgrid(x_array, y_array)
+    z_mesh = np.array([nll_func(x, y) for x, y in zip(x_mesh.ravel(), y_mesh.ravel())]).reshape(x_mesh.shape)
+
+    fig, ax = plt.subplots()
+    CS = ax.contour(x_mesh, y_mesh, z_mesh)
+    ax.clabel(CS, inline=1, fontsize=10)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    fname = f"{xlabel}-{ylabel}_focused_contour_plot.png"
     path = os.path.join(directory, fname)
     plt.savefig(path)
     plt.clf()
