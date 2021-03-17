@@ -73,11 +73,11 @@ def main():
     i_cv = 0
     seed = SEED + i_cv * 5
     train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
+    model = load_some_NN()
 
     config = Config()
     config_table = evaluate_config(config)
     config_table.to_csv(os.path.join(directory, model.name, 'config_table.csv'))
-    model = load_some_NN()
     for i_iter, test_config in enumerate(config.iter_test_config()):
         do_iter(config, model, i_iter, valid_generator, test_generator)
 
