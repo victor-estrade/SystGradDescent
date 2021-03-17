@@ -5,6 +5,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from .config import HiggsConfig
+from .config import MonoHiggsConfig
+from .config import FuturHiggsConfig
 
 import numpy as np
 
@@ -52,7 +54,7 @@ class MonoHiggsNLL():
         EPSILON = 1e-6  # avoid log(0)
         self.xp_histogram = self.compute_summaries(self.X_test, self.w_test) + EPSILON
 
-        self.config = HiggsConfig() if config is None else config
+        self.config = MonoHiggsConfig() if config is None else config
 
     # DEPRECATED : no need to separate s and b. In the end it is summed again.
     def get_s_b(self, tes, mu):
@@ -77,8 +79,6 @@ class MonoHiggsNLL():
         config = self.config
         mu_nll = np.sum(poisson_nll(self.xp_histogram, rate_histogram))
         tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
-        jes_constraint = gauss_nll(jes, config.CALIBRATED.jes, config.CALIBRATED_ERROR.jes)
-        les_constraint = gauss_nll(les, config.CALIBRATED.les, config.CALIBRATED_ERROR.les)
         total_nll = mu_nll + tes_constraint + jes_constraint + les_constraint
         return total_nll
 
@@ -131,7 +131,9 @@ class FuturHiggsNLL():
         self.valid_generator = valid_generator
         self.X_test = X_test
         self.w_test = w_test
-        self.config = HiggsConfig() if config is None else config
+        EPSILON = 1e-6  # avoid log(0)
+        self.xp_histogram = self.compute_summaries(self.X_test, self.w_test) + EPSILON
+        self.config = FuturHiggsConfig() if config is None else config
 
 
     # DEPRECATED : no need to separate s and b. In the end it is summed again.
@@ -151,12 +153,11 @@ class FuturHiggsNLL():
         X, y, w = self.valid_generator.generate(tes, jes, les, nasty_bkg, sigma_soft, mu, n_samples=None)
         EPSILON = 1e-5  # avoid log(0)
         rate_histogram = self.compute_summaries(X, w) + EPSILON
-        xp_histogram = self.compute_summaries(self.X_test, self.w_test)
 
         # Compute NLL
         config = self.config
         EPSILON = 1e-5  # avoid log(0)
-        mu_nll = np.sum(poisson_nll(xp_histogram, rate_histogram))
+        mu_nll = np.sum(poisson_nll(self.xp_histogram, rate_histogram))
         tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
         jes_constraint = gauss_nll(jes, config.CALIBRATED.jes, config.CALIBRATED_ERROR.jes)
         les_constraint = gauss_nll(les, config.CALIBRATED.les, config.CALIBRATED_ERROR.les)
