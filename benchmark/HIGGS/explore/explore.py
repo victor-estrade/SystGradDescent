@@ -5,7 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line :
-# python -m benchmark.HIGGS.explore
+# python -m benchmark.HIGGS.explore/explore
 
 import os
 import numpy as np
