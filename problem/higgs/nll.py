@@ -79,7 +79,7 @@ class MonoHiggsNLL():
         config = self.config
         mu_nll = np.sum(poisson_nll(self.xp_histogram, rate_histogram))
         tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
-        total_nll = mu_nll + tes_constraint + jes_constraint + les_constraint
+        total_nll = mu_nll + tes_constraint
         return total_nll
 
 
