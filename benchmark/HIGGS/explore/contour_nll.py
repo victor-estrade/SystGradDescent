@@ -68,9 +68,9 @@ def basic_check(compute_nll, config):
 
 def basic_contourplot(compute_nll, config, directory):
     logger = logging.getLogger()
-    logger.info(f"basic mu-tes contour plot...")
     ARRAY_SIZE = 10
     # MESH NLL
+    logger.info(f"basic mu-tes contour plot...")
     mu_array = np.linspace(0.5, 1.5, ARRAY_SIZE)
     tes_array = np.linspace(0.95, 1.05, ARRAY_SIZE)
     mu_mesh, tes_mesh = np.meshgrid(mu_array, tes_array)
@@ -78,17 +78,25 @@ def basic_contourplot(compute_nll, config, directory):
     nll_mesh = np.array([nll_func(mu, tes) for mu, tes in zip(mu_mesh.ravel(), tes_mesh.ravel())]).reshape(mu_mesh.shape)
     plot_contour(mu_mesh, tes_mesh, nll_mesh, directory, xlabel="mu", ylabel="tes")
 
+    logger.info(f"basic mu-jes contour plot...")
     jes_array = np.linspace(0.95, 1.05, ARRAY_SIZE)
     mu_mesh, jes_mesh = np.meshgrid(mu_array, jes_array)
     nll_func = lambda mu, jes : compute_nll(config.TRUE.tes, jes, config.TRUE.les, mu)
     nll_mesh = np.array([nll_func(mu, jes) for mu, jes in zip(mu_mesh.ravel(), jes_mesh.ravel())]).reshape(mu_mesh.shape)
     plot_contour(mu_mesh, jes_mesh, nll_mesh, directory, xlabel="mu", ylabel="jes")
 
+    logger.info(f"basic mu-les contour plot...")
     les_array = np.linspace(0.95, 1.05, ARRAY_SIZE)
     mu_mesh, les_mesh = np.meshgrid(mu_array, les_array)
     nll_func = lambda mu, les : compute_nll(config.TRUE.tes, config.TRUE.jes, les, mu)
     nll_mesh = np.array([nll_func(mu, les) for mu, les in zip(mu_mesh.ravel(), les_mesh.ravel())]).reshape(mu_mesh.shape)
     plot_contour(mu_mesh, les_mesh, nll_mesh, directory, xlabel="mu", ylabel="les")
+
+    logger.info(f"basic tes-jes contour plot...")
+    tes_mesh, jes_mesh = np.meshgrid(tes_array, jes_array)
+    nll_func = lambda tes, jes : compute_nll(tes, jes, config.TRUE.les, config.TRUE.mu)
+    nll_mesh = np.array([nll_func(tes, jes) for tes, jes in zip(tes_mesh.ravel(), jes_mesh.ravel())]).reshape(tes_mesh.shape)
+    plot_contour(tes_mesh, jes_mesh, nll_mesh, directory, xlabel="tes", ylabel="jes")
 
 
 def plot_contour(x, y, z, directory, xlabel="mu", ylabel="tes"):
