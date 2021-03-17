@@ -92,6 +92,7 @@ def basic_contourplot(compute_nll, config, directory):
 
 
 def plot_contour(x, y, z, directory, xlabel="mu", ylabel="tes"):
+    logger = logging.getLogger()
     fig, ax = plt.subplots()
     CS = ax.contour(x, y, z)
     ax.clabel(CS, inline=1, fontsize=10)
