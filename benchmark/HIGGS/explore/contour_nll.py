@@ -68,7 +68,7 @@ def do_iter(config, model, i_iter, valid_generator, test_generator, root_dir, n_
     y_err = minimizer.errors[1]
     focused_contour(x, y, x_err, y_err, nll_func, directory, xlabel="mu", ylabel='jes')
 
-    nll_func = lambda mu, jes : compute_nll(config.TRUE.tes, config.TRUE.jes, les, mu)
+    nll_func = lambda mu, les : compute_nll(config.TRUE.tes, config.TRUE.jes, les, mu)
     x = minimizer.values[3]
     y = minimizer.values[2]
     x_err = minimizer.errors[3]
