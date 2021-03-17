@@ -126,6 +126,10 @@ def estimate_param_by_param(minimizer, do_hesse=True):
         logger.info(f"Unfixing {param.name}")
         minimizer.fixed[i] = False
         _run_simplex_migrad(minimizer)
+        if minimizer.valid:
+            logger.info('Mingrad 2nd is  VALID !')
+        else:
+            logger.warning('Mingrad 2nd IS NOT VALID !')
     logger.info("Param by param minimization DONE")
 
 
