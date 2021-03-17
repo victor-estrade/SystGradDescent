@@ -68,21 +68,36 @@ def basic_check(compute_nll, config):
 
 def basic_contourplot(compute_nll, config, directory):
     logger = logging.getLogger()
-    logger.info(f"basic contour plot...")
+    logger.info(f"basic mu-tes contour plot...")
+    ARRAY_SIZE = 10
     # MESH NLL
-    mu_array = np.linspace(0.5, 1.5, 8)
-    tes_array = np.linspace(0.95, 1.05, 8)
+    mu_array = np.linspace(0.5, 1.5, ARRAY_SIZE)
+    tes_array = np.linspace(0.95, 1.05, ARRAY_SIZE)
     mu_mesh, tes_mesh = np.meshgrid(mu_array, tes_array)
     nll_func = lambda mu, tes : compute_nll(tes, config.TRUE.jes, config.TRUE.les, mu)
     nll_mesh = np.array([nll_func(mu, tes) for mu, tes in zip(mu_mesh.ravel(), tes_mesh.ravel())]).reshape(mu_mesh.shape)
+    plot_contour(mu_mesh, tes_mesh, nll_mesh, xlabel="mu", ylabel="tes")
 
-    # plot NLL contour
+    jes_array = np.linspace(0.95, 1.05, ARRAY_SIZE)
+    mu_mesh, jes_mesh = np.meshgrid(mu_array, jes_array)
+    nll_func = lambda mu, jes : compute_nll(config.TRUE.tes, jes, config.TRUE.les, mu)
+    nll_mesh = np.array([nll_func(mu, jes) for mu, jes in zip(mu_mesh.ravel(), jes_mesh.ravel())]).reshape(mu_mesh.shape)
+    plot_contour(mu_mesh, jes_mesh, nll_mesh, xlabel="mu", ylabel="jes")
+
+    les_array = np.linspace(0.95, 1.05, ARRAY_SIZE)
+    mu_mesh, les_mesh = np.meshgrid(mu_array, les_array)
+    nll_func = lambda mu, les : compute_nll(config.TRUE.tes, config.TRUE.jes, les, mu)
+    nll_mesh = np.array([nll_func(mu, les) for mu, les in zip(mu_mesh.ravel(), les_mesh.ravel())]).reshape(mu_mesh.shape)
+    plot_contour(mu_mesh, les_mesh, nll_mesh, xlabel="mu", ylabel="les")
+
+
+def plot_contour(x, y, z, xlabel="mu", ylabel="tes"):
     fig, ax = plt.subplots()
-    CS = ax.contour(mu_mesh, tes_mesh, nll_mesh)
+    CS = ax.contour(x, y, z)
     ax.clabel(CS, inline=1, fontsize=10)
-    ax.set_xlabel("mu")
-    ax.set_ylabel("tes")
-    fname = f"contour_plot.png"
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    fname = f"{xlabel}-{ylabel}_contour_plot.png"
     path = os.path.join(directory, fname)
     plt.savefig(path)
     plt.clf()
