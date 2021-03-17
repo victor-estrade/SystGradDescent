@@ -77,6 +77,7 @@ def main():
 
     config = Config()
     config_table = evaluate_config(config)
+    os.makedirs(os.path.join(directory, model.name), exist_ok=True)
     config_table.to_csv(os.path.join(directory, model.name, 'config_table.csv'))
     for i_iter, test_config in enumerate(config.iter_test_config()):
         do_iter(config, model, i_iter, valid_generator, test_generator)
