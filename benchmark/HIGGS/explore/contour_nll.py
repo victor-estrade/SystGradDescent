@@ -31,14 +31,10 @@ from problem.higgs import HiggsNLL as NLLComputer
 
 from ..common import N_BINS
 
-DATA_NAME = 'HIGGS'
-BENCHMARK_NAME = DATA_NAME+'-prior'
-DIRECTORY = os.path.join(SAVING_DIR, DATA_NAME, "explore")
 
-
-def do_iter(config, model, i_iter, valid_generator, test_generator, n_bins=N_BINS):
+def do_iter(config, model, i_iter, valid_generator, test_generator, root_dir, n_bins=N_BINS):
     logger = logging.getLogger()
-    directory = os.path.join(DIRECTORY, "nll_contour", model.name, f"iter_{i_iter}")
+    directory = os.path.join(root_dir, model.name, f"iter_{i_iter}")
     os.makedirs(directory, exist_ok=True)
     logger.info(f"saving dir = {directory}")
 
