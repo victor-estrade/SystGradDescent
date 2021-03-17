@@ -37,11 +37,12 @@ from problem.higgs import HiggsNLL as NLLComputer
 
 from model.gradient_boost import GradientBoostingModel
 
-from .common import N_BINS
+from ..common import N_BINS
 
 from .load_model import load_some_GB
 from .load_model import load_some_NN
 
+from .contour_nll import do_iter
 
 DATA_NAME = 'HIGGS'
 BENCHMARK_NAME = DATA_NAME+'-prior'
