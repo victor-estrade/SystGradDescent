@@ -39,6 +39,7 @@ from problem.higgs import HiggsNLL as NLLComputer
 from model.gradient_boost import GradientBoostingModel
 
 from ..common import N_BINS
+from ..common import GeneratorCPU
 
 from .load_model import load_some_GB
 from .load_model import load_some_NN
@@ -73,6 +74,10 @@ def main():
     i_cv = 0
     seed = SEED + i_cv * 5
     train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
+    train_generator = GeneratorCPU(train_generator)
+    valid_generator = GeneratorCPU(valid_generator)
+    test_generator = GeneratorCPU(test_generator)
+
     model = load_some_NN()
 
     config = Config()

@@ -16,14 +16,14 @@ def load_some_GB(i_cv=0):
     return model
 
 
-def load_some_NN(i_cv=0):
+def load_some_NN(i_cv=0, cuda=False):
     from model.neural_network import NeuralNetClassifier
     from archi.classic import L4 as ARCHI
     import torch.optim as optim
     n_unit = 200
     net = ARCHI(n_in=29, n_out=2, n_unit=n_unit)
     optimizer = optim.Adam(net.parameters(), lr=1e-3)
-    model = NeuralNetClassifier(net, optimizer, n_steps=5000, batch_size=10000, cuda=False)
+    model = NeuralNetClassifier(net, optimizer, n_steps=5000, batch_size=10000, cuda=cuda)
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     print(f"loading {model.model_path}")
     model.load(model.model_path)
