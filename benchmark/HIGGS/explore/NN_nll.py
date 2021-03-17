@@ -56,8 +56,12 @@ def parse_args(main_description="Explore NLL shape"):
 
     parser.add_argument('--no-cuda', '--no-gpu', help='flag to use or not the gpu',
                         action='store_false', dest='cuda')
+    parser.add_argument("--start-cv", type=int,
+                        default=0, help="start of i_cv for range(start, end)")
+    parser.add_argument("--end-cv", type=int,
+                        default=30, help="end of i_cv for range(start, end)")
 
-    args = parser.parse_args()
+    args, _ = parser.parse_known_args()
     return args
 
 
