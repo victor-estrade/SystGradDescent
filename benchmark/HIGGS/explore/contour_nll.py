@@ -29,8 +29,8 @@ from problem.higgs import get_minimizer_no_nuisance
 from problem.higgs import get_generators_torch
 from problem.higgs import HiggsNLL as NLLComputer
 
+from ..common import N_BINS
 
-from .common import N_BINS
 
 
 def do_iter(config, model, i_iter, valid_generator, test_generator, n_bins=N_BINS):
