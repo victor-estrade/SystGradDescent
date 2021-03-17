@@ -27,7 +27,7 @@ from problem.higgs import HiggsConfigTesOnly as Config
 from problem.higgs import get_minimizer
 from problem.higgs import get_minimizer_no_nuisance
 from problem.higgs import get_generators_torch
-from problem.higgs import HiggsNLL as NLLComputer
+from problem.higgs import MonoHiggsNLL as NLLComputer
 
 from ..common import N_BINS
 

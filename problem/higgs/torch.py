@@ -12,6 +12,7 @@ from .higgs_geant import load_data
 from .higgs_4v_torch import split_data_label_weights
 from .higgs_4v_torch import normalize_weight
 from .higgs_4v_torch import mu_reweighting
+from .higgs_4v_torch import tau_energy_scale
 from .higgs_4v_torch import syst_effect
 from .higgs_4v_torch import nasty_background
 
