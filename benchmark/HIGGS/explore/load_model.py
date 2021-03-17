@@ -27,3 +27,4 @@ def load_some_NN(i_cv=0):
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     print(f"loading {model.model_path}")
     model.load(model.model_path)
+    return model
