@@ -43,6 +43,47 @@ class LabelNLL():
 
 
 
+class MonoHiggsNLL():
+    def __init__(self, compute_summaries, valid_generator, X_test, w_test, config=None):
+        self.compute_summaries = compute_summaries
+        self.valid_generator = valid_generator
+        self.X_test = X_test
+        self.w_test = w_test
+        EPSILON = 1e-6  # avoid log(0)
+        self.xp_histogram = self.compute_summaries(self.X_test, self.w_test) + EPSILON
+
+        self.config = HiggsConfig() if config is None else config
+
+    # DEPRECATED : no need to separate s and b. In the end it is summed again.
+    def get_s_b(self, tes, mu):
+        # Systematic effects
+        self.valid_generator.reset()
+        X, y, w = self.valid_generator.generate(tes, mu, n_samples=None, no_grad=True)
+        s = X[y==1]
+        w_s = w[y==1]
+        b = X[y==0]
+        w_b = w[y==0]
+        return s, w_s, b, w_b
+
+    def __call__(self, tes, mu):
+        """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""
+        self.valid_generator.reset()
+        X, y, w = self.valid_generator.generate(tes, mu, n_samples=None, no_grad=True)
+        EPSILON = 1e-6  # avoid log(0)
+        rate_histogram = self.compute_summaries(X, w) + EPSILON
+        # xp_histogram = self.compute_summaries(self.X_test, self.w_test)
+
+        # Compute NLL
+        config = self.config
+        mu_nll = np.sum(poisson_nll(self.xp_histogram, rate_histogram))
+        tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
+        jes_constraint = gauss_nll(jes, config.CALIBRATED.jes, config.CALIBRATED_ERROR.jes)
+        les_constraint = gauss_nll(les, config.CALIBRATED.les, config.CALIBRATED_ERROR.les)
+        total_nll = mu_nll + tes_constraint + jes_constraint + les_constraint
+        return total_nll
+
+
+
 class HiggsNLL():
     def __init__(self, compute_summaries, valid_generator, X_test, w_test, config=None):
         self.compute_summaries = compute_summaries

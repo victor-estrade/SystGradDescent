@@ -11,6 +11,17 @@ from .parameter import Parameter
 from .parameter import FuturParameter
 from .config import HiggsConfig
 
+
+def mono_param_generator(config=HiggsConfig()):
+    offset = - config.CALIBRATED.tes / config.CALIBRATED_ERROR.tes
+    prior_tes = stats.truncnorm(offset, 10, loc=config.CALIBRATED.tes, scale=config.CALIBRATED_ERROR.tes)
+
+    tes = prior_tes.rvs()
+    mu = np.random.uniform(config.MIN.mu, config.MAX.mu)
+    return Parameter(tes, mu)
+
+
+
 def param_generator(config=HiggsConfig()):
     offset = - config.CALIBRATED.tes / config.CALIBRATED_ERROR.tes
     prior_tes = stats.truncnorm(offset, 10, loc=config.CALIBRATED.tes, scale=config.CALIBRATED_ERROR.tes)
@@ -53,5 +64,3 @@ def futur_param_generator(config=HiggsConfig()):
     sigma_soft = prior_sigma_soft.rvs()
     mu = np.random.uniform(config.MIN.mu, config.MAX.mu)
     return FuturParameter(tes, jes, les, nasty_bkg, sigma_soft, mu)
-
-

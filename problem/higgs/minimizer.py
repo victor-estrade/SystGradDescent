@@ -6,6 +6,22 @@ from __future__ import absolute_import
 import iminuit
 ERRORDEF_NLL = 0.5
 
+def get_mono_minimizer(compute_nll, calibrated_param, calibrated_param_error):
+    MIN_VALUE = 0.01
+    MAX_VALUE = 10
+    minimizer = iminuit.Minuit(compute_nll,
+                           tes=calibrated_param.tes,
+                           mu=calibrated_param.mu,
+                          )
+    minimizer.errordef = iminuit.Minuit.LIKELIHOOD
+    # minimizer.limits = [(MIN_VALUE, MAX_VALUE), (MIN_VALUE, MAX_VALUE)]
+    minimizer.errors = [calibrated_param_error.tes
+                        ,calibrated_param_error.mu
+                        ]
+    # minimizer.tol = 0.5  # Should I increase tolerance to help ???? (default is 0.1 according to doc)
+    return minimizer
+
+
 def get_minimizer(compute_nll, calibrated_param, calibrated_param_error):
     MIN_VALUE = 0.01
     MAX_VALUE = 10

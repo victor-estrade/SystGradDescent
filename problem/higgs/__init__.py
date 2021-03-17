@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 from .generator import Generator
 from .generator import GeneratorCPU
 from .torch import GeneratorTorch
+from .torch import MonoGeneratorTorch
 from .generator import get_generators
 from .generator import get_balanced_generators
 from .generator import get_easy_generators
@@ -14,9 +15,15 @@ from .torch import get_generators_torch
 from .torch import get_balanced_generators_torch
 from .torch import get_easy_generators_torch
 from .parameter import Parameter
+from .parameter import MonoParameter
+from .parameter import FuturParameter
 from .nll import HiggsNLL
+from .nll import MonoHiggsNLL
+from .config import MonoHiggsConfig
 from .config import HiggsConfig
 from .config import HiggsConfigTesOnly
 from .calibration import param_generator
+from .calibration import mono_param_generator
+from .minimizer import get_mono_minimizer
 from .minimizer import get_minimizer
 from .minimizer import get_minimizer_no_nuisance

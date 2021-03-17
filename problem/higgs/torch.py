@@ -22,30 +22,30 @@ from hessian import hessian
 from .config import HiggsConfig
 
 
-def get_generators_torch(seed, train_size=0.5, test_size=0.5, cuda=False):
+def get_generators_torch(seed, train_size=0.5, test_size=0.5, cuda=False, GeneratorClass=GeneratorTorch):
     data = load_data()
-    # print("data.shape", data.shape)
     data['origWeight'] = data['Weight'].copy()
+
     cv_train_other = ShuffleSplit(n_splits=1, train_size=train_size, random_state=seed)
     idx_train, idx_other = next(cv_train_other.split(data, data['Label']))
     train_data = data.iloc[idx_train]
-    train_generator = GeneratorTorch(train_data, seed=seed, cuda=cuda)
+    train_generator = GeneratorClass(train_data, seed=seed, cuda=cuda)
     other_data = data.iloc[idx_other]
-    # print("train_data.shape", train_data.shape)
 
     cv_valid_test = ShuffleSplit(n_splits=1, test_size=test_size, random_state=seed+1)
     idx_valid, idx_test = next(cv_valid_test.split(other_data, other_data['Label']))
     valid_data = other_data.iloc[idx_valid]
     test_data = other_data.iloc[idx_test]
-    valid_generator = GeneratorTorch(valid_data, seed=seed+1, cuda=cuda)
-    test_generator = GeneratorTorch(test_data, seed=seed+2, cuda=cuda)
-    # print("valid_data.shape", valid_data.shape)
-    # print("test_data.shape", test_data.shape)
+    valid_generator = GeneratorClass(valid_data, seed=seed+1, cuda=cuda)
+    test_generator = GeneratorClass(test_data, seed=seed+2, cuda=cuda)
 
     return train_generator, valid_generator, test_generator
 
-def get_balanced_generators_torch(seed, train_size=0.5, test_size=0.1, cuda=False):
-    train_generator, valid_generator, test_generator = get_generators_torch(seed, train_size=train_size, test_size=test_size, cuda=cuda)
+
+
+def get_balanced_generators_torch(seed, train_size=0.5, test_size=0.1, cuda=False, GeneratorClass=GeneratorTorch):
+    train_generator, valid_generator, test_generator = get_generators_torch(seed, train_size=train_size,
+                                    test_size=test_size, cuda=cuda, GeneratorClass=GeneratorClass)
     train_generator.background_luminosity = 1
     train_generator.signal_luminosity = 1
 
@@ -58,8 +58,9 @@ def get_balanced_generators_torch(seed, train_size=0.5, test_size=0.1, cuda=Fals
     return train_generator, valid_generator, test_generator
 
 
-def get_easy_generators_torch(seed, train_size=0.5, test_size=0.1, cuda=False):
-    train_generator, valid_generator, test_generator = get_generators_torch(seed, train_size=train_size, test_size=test_size, cuda=cuda)
+def get_easy_generators_torch(seed, train_size=0.5, test_size=0.1, cuda=False, GeneratorClass=GeneratorTorch):
+    train_generator, valid_generator, test_generator = get_generators_torch(seed, train_size=train_size,
+                                    test_size=test_size, cuda=cuda, GeneratorClass=GeneratorClass)
     train_generator.background_luminosity = 95
     train_generator.signal_luminosity = 5
 
@@ -191,6 +192,48 @@ class GeneratorTorch():
         return X_s, w_s.view(-1, 1), X_b, w_b.view(-1, 1), y
 
 
+class MonoGeneratorTorch(GeneratorTorch):
+    def generate(self, tau_es, mu, n_samples=None, no_grad=False):
+        if no_grad:
+            with torch.no_grad():
+                X, y, w = self._generate(tau_es, mu, n_samples=n_samples)
+        else:
+            X, y, w = self._generate(tau_es, mu, n_samples=n_samples)
+        return X, y, w
+
+    def _generate(self, tau_es, mu, n_samples=None):
+        tau_es = self.tensor(tau_es, requires_grad=True, dtype=torch.float32)
+        mu = self.tensor(mu, requires_grad=True, dtype=torch.float32)
+        X, y, w = self._skew(tau_es, mu, n_samples=n_samples)
+        return X, y, w
+
+    def _skew(self, tau_es, mu, n_samples=None):
+        missing_value = self.tensor(0.0, dtype=torch.float32)
+        data = self.data_dict if (n_samples is None) else self.sample(n_samples)
+        data = self._deep_copy_data(data)
+
+        tau_energy_scale(data, scale=tau_es, missing_value=missing_value)
+        normalize_weight(data, background_luminosity=self.background_luminosity, signal_luminosity=self.signal_luminosity)
+        mu_reweighting(data, mu)
+        X, y, w = split_data_label_weights(data, self.feature_names)
+        return X, y, w
+
+    def diff_generate(self, tau_es, mu, n_samples=None):
+        """Generator for Tangent Propagation"""
+        X, y, w = self._skew(tau_es, mu, n_samples=n_samples)
+        return X, y, w.view(-1, 1)
+
+    def split_generate(self, tau_es, mu, n_samples=None):
+        """Generator for INFERNO"""
+        # torch.autograd.set_detect_anomaly(True)
+        X, y, w = self._skew(tau_es, mu, n_samples=n_samples)
+        X_s = X[y==1]
+        X_b = X[y==0]
+        w_s = w[y==1]
+        w_b = w[y==0]
+        return X_s, w_s.view(-1, 1), X_b, w_b.view(-1, 1), y
+
+
 
 class HiggsLoss(nn.Module):
     def __init__(self):
@@ -233,3 +276,15 @@ class HiggsLoss(nn.Module):
         h_inverse = torch.inverse(h)  # FIXME : may break, handle exception
         loss = h_inverse[0,0]
         return loss
+
+
+class MonoHiggsLoss(HiggsLoss):
+    def __init__(self):
+        super(nn.Module).__init__()
+        config = HiggsConfig()
+        tes_loc = torch.tensor(config.CALIBRATED.tes)
+        tes_std = torch.tensor(config.CALIBRATED_ERROR.tes)
+        self.tes_constraints = torch.distributions.Normal(tes_loc, tes_std)
+
+        self.constraints_distrib = {'tes': self.tes_constraints,
+                                   }
