@@ -29,14 +29,8 @@ from utils.evaluation import evaluate_config
 
 from problem.higgs import HiggsConfigTesOnly as Config
 from problem.higgs import get_minimizer
-from problem.higgs import get_minimizer_no_nuisance
 from problem.higgs import get_generators_torch
-from problem.higgs import param_generator
-from problem.higgs import Generator
-from problem.higgs import Parameter
 from problem.higgs import HiggsNLL as NLLComputer
-
-from model.gradient_boost import GradientBoostingModel
 
 from ..common import N_BINS
 from ..common import GeneratorCPU
