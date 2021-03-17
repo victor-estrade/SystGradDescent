@@ -18,54 +18,6 @@ from .higgs_4v_pandas import nasty_background
 from sklearn.model_selection import ShuffleSplit
 
 
-def get_generators(seed, train_size=0.5, test_size=0.1, GeneratorClass=Generator):
-    data = load_data()
-    data['origWeight'] = data['Weight'].copy()
-
-    cv_train_other = ShuffleSplit(n_splits=1, train_size=train_size, test_size=1-train_size, random_state=seed)
-    idx_train, idx_other = next(cv_train_other.split(data, data['Label']))
-    train_data = data.iloc[idx_train]
-    train_generator = GeneratorClass(train_data, seed=seed)
-    other_data = data.iloc[idx_other]
-
-    cv_valid_test = ShuffleSplit(n_splits=1, test_size=test_size, random_state=seed+1)
-    idx_valid, idx_test = next(cv_valid_test.split(other_data, other_data['Label']))
-    valid_data = other_data.iloc[idx_valid]
-    test_data = other_data.iloc[idx_test]
-    valid_generator = GeneratorClass(valid_data, seed=seed+1)
-    test_generator = GeneratorClass(test_data, seed=seed+2)
-
-    return train_generator, valid_generator, test_generator
-
-
-def get_balanced_generators(seed, train_size=0.5, test_size=0.1, GeneratorClass=Generator):
-    train_generator, valid_generator, test_generator = get_generators(seed, train_size=train_size, test_size=test_size, GeneratorClass=GeneratorClass)
-    train_generator.background_luminosity = 1
-    train_generator.signal_luminosity = 1
-
-    valid_generator.background_luminosity = 1
-    valid_generator.signal_luminosity = 1
-
-    test_generator.background_luminosity = 1
-    test_generator.signal_luminosity = 1
-
-    return train_generator, valid_generator, test_generator
-
-
-def get_easy_generators(seed, train_size=0.5, test_size=0.1, GeneratorClass=Generator):
-    train_generator, valid_generator, test_generator = get_generators(seed, train_size=train_size, test_size=test_size, GeneratorClass=GeneratorClass)
-    train_generator.background_luminosity = 95
-    train_generator.signal_luminosity = 5
-
-    valid_generator.background_luminosity = 95
-    valid_generator.signal_luminosity = 5
-
-    test_generator.background_luminosity = 95
-    test_generator.signal_luminosity = 5
-
-    return train_generator, valid_generator, test_generator
-
-
 class GeneratorCPU:
     def __init__(self, data_generator):
         self.data_generator = data_generator
@@ -163,3 +115,52 @@ class FuturGenerator(Generator):
         mu_reweighting(data, mu)
         X, y, w = split_data_label_weights(data)
         return X.values, y.values, w.values
+
+
+
+def get_generators(seed, train_size=0.5, test_size=0.1, GeneratorClass=Generator):
+    data = load_data()
+    data['origWeight'] = data['Weight'].copy()
+
+    cv_train_other = ShuffleSplit(n_splits=1, train_size=train_size, test_size=1-train_size, random_state=seed)
+    idx_train, idx_other = next(cv_train_other.split(data, data['Label']))
+    train_data = data.iloc[idx_train]
+    train_generator = GeneratorClass(train_data, seed=seed)
+    other_data = data.iloc[idx_other]
+
+    cv_valid_test = ShuffleSplit(n_splits=1, test_size=test_size, random_state=seed+1)
+    idx_valid, idx_test = next(cv_valid_test.split(other_data, other_data['Label']))
+    valid_data = other_data.iloc[idx_valid]
+    test_data = other_data.iloc[idx_test]
+    valid_generator = GeneratorClass(valid_data, seed=seed+1)
+    test_generator = GeneratorClass(test_data, seed=seed+2)
+
+    return train_generator, valid_generator, test_generator
+
+
+def get_balanced_generators(seed, train_size=0.5, test_size=0.1, GeneratorClass=Generator):
+    train_generator, valid_generator, test_generator = get_generators(seed, train_size=train_size, test_size=test_size, GeneratorClass=GeneratorClass)
+    train_generator.background_luminosity = 1
+    train_generator.signal_luminosity = 1
+
+    valid_generator.background_luminosity = 1
+    valid_generator.signal_luminosity = 1
+
+    test_generator.background_luminosity = 1
+    test_generator.signal_luminosity = 1
+
+    return train_generator, valid_generator, test_generator
+
+
+def get_easy_generators(seed, train_size=0.5, test_size=0.1, GeneratorClass=Generator):
+    train_generator, valid_generator, test_generator = get_generators(seed, train_size=train_size, test_size=test_size, GeneratorClass=GeneratorClass)
+    train_generator.background_luminosity = 95
+    train_generator.signal_luminosity = 5
+
+    valid_generator.background_luminosity = 95
+    valid_generator.signal_luminosity = 5
+
+    test_generator.background_luminosity = 95
+    test_generator.signal_luminosity = 5
+
+    return train_generator, valid_generator, test_generator
