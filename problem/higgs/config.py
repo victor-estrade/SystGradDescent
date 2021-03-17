@@ -11,17 +11,17 @@ from .parameter import FuturParameter
 
 
 class MonoHiggsConfig():
-    CALIBRATED = Parameter(tes=1.0, mu=1.0)
-    CALIBRATED_ERROR = Parameter(tes=0.03, mu=1.0)
-    TRUE = Parameter(tes=1.0, mu=1.0)
-    RANGE = Parameter(tes=np.linspace(0.97, 1.03, 3),
+    CALIBRATED = MonoParameter(tes=1.0, mu=1.0)
+    CALIBRATED_ERROR = MonoParameter(tes=0.03, mu=1.0)
+    TRUE = MonoParameter(tes=1.0, mu=1.0)
+    RANGE = MonoParameter(tes=np.linspace(0.97, 1.03, 3),
                         mu=np.linspace(0.5, 2, 4))
 
-    FINE_RANGE = Parameter(tes=np.linspace(0.9, 1.1, 5),
+    FINE_RANGE = MonoParameter(tes=np.linspace(0.9, 1.1, 5),
                         mu=np.linspace(0.5, 2, 5))
 
-    MIN = Parameter(tes=0.9, mu=0.1)
-    MAX = Parameter(tes=1.1, mu=2.2)
+    MIN = MonoParameter(tes=0.9, mu=0.1)
+    MAX = MonoParameter(tes=1.1, mu=2.2)
     PARAM_NAMES = TRUE.parameter_names
     INTEREST_PARAM_NAME = TRUE.interest_parameters_names
 
@@ -33,8 +33,8 @@ class MonoHiggsConfig():
     def iter_test_config(self):
         param_lists = [*self.RANGE ] + [ HiggsConfig.RANGE_N_TEST ]
         for tes, jes, les, mu, n_test_samples in itertools.product(*param_lists):
-            new_config = HiggsConfig()
-            new_config.TRUE = Parameter(tes, jes, les, mu)
+            new_config = MonoHiggsConfig()
+            new_config.TRUE = MonoParameter(tes, jes, les, mu)
             new_config.N_TESTING_SAMPLES = n_test_samples
             yield new_config
 
