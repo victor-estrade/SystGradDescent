@@ -38,7 +38,9 @@ DIRECTORY = os.path.join(SAVING_DIR, DATA_NAME, "explore")
 
 def do_iter(config, model, i_iter, valid_generator, test_generator, n_bins=N_BINS):
     logger = logging.getLogger()
-    directory = os.path.join(DIRECTORY, "nll_contour", f"iter_{i_iter}")
+    directory = os.path.join(DIRECTORY, "nll_contour", model.name, f"iter_{i_iter}")
+    os.makedirs(directory, exist_ok=True)
+    logger.info(f"saving dir = {directory}")
 
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES, no_grad=True)
@@ -47,16 +49,26 @@ def do_iter(config, model, i_iter, valid_generator, test_generator, n_bins=N_BIN
     compute_summaries = model.summary_computer(n_bins=n_bins)
     compute_nll = NLLComputer(compute_summaries, valid_generator, X_test, w_test, config=config)
 
-    nll = compute_nll(*config.CALIBRATED)
-    logger.info(f"Calib nll = {nll}")
-    nll = compute_nll(*config.TRUE)
-    logger.info(f"TRUE nll = {nll}")
+    basic_check(compute_nll, config)
+    basic_contourplot(compute_nll, config, directory)
 
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
     minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
     some_dict =  evaluate_minuit(minimizer, config.TRUE, directory, suffix="")
 
+
+def basic_check(compute_nll, config):
+    logger = logging.getLogger()
+    nll = compute_nll(*config.CALIBRATED)
+    logger.info(f"Calib nll = {nll}")
+    nll = compute_nll(*config.TRUE)
+    logger.info(f"TRUE nll = {nll}")
+
+
+def basic_contourplot(compute_nll, config, directory):
+    logger = logging.getLogger()
+    logger.info(f"basic contour plot...")
     # MESH NLL
     mu_array = np.linspace(0.5, 1.5, 8)
     tes_array = np.linspace(0.95, 1.05, 8)

@@ -25,6 +25,7 @@ from utils.log import flush
 from utils.log import print_line
 
 from utils.evaluation import evaluate_minuit
+from utils.evaluation import evaluate_config
 
 from problem.higgs import HiggsConfigTesOnly as Config
 from problem.higgs import get_minimizer
@@ -70,6 +71,8 @@ def main():
     train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
 
     config = Config()
+    config_table = evaluate_config(config)
+    config_table.to_csv(os.path.join(directory, model.name, 'config_table.csv'))
     model = load_some_GB()
     for i_iter, test_config in enumerate(config.iter_test_config()):
         do_iter(config, model, i_iter, valid_generator, test_generator)
