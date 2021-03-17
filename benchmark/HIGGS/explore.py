@@ -291,8 +291,9 @@ def explore_links(full_generator, background_luminosity=410999.84732187376, sign
 
 
 def load_some_clf():
+    i_cv = 0
     model = GradientBoostingModel(learning_rate=0.1, n_estimators=300, max_depth=3)
-    model.set_info(DATA_NAME, "HIGGS-prior", 0)
+    model.set_info(DATA_NAME, "HIGGS-prior", i_cv)
     print(f"loading {model.model_path}")
     model.load(model.model_path)
     return model
