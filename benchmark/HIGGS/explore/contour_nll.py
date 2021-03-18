@@ -129,6 +129,7 @@ def plot_contour(x, y, z, directory, xlabel="mu", ylabel="tes"):
     path = os.path.join(directory, fname)
     plt.savefig(path)
     plt.clf()
+    plt.close(fig)
     logger.info(f"saved at {path}")
 
 
@@ -150,4 +151,5 @@ def focused_contour(x, y, x_err, y_err, nll_func, directory, xlabel="mu", ylabel
     path = os.path.join(directory, fname)
     plt.savefig(path)
     plt.clf()
+    plt.close(fig)
     logger.info(f"saved at {path}")
