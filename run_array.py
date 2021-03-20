@@ -170,6 +170,8 @@ SBATCH_TEMPLATE = \
 
 hostname
 
+export TMPDIR=$HOME/tmp
+
 function dockerkill
 {{
     echo "Killing docker {container_name}_${{SLURM_ARRAY_TASK_ID}}"
