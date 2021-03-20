@@ -42,7 +42,8 @@ from .contour_nll import do_iter
 
 DATA_NAME = 'HIGGS'
 BENCHMARK_NAME = DATA_NAME+'-prior'
-DIRECTORY = os.path.join(SAVING_DIR, DATA_NAME, "explore_mono")
+from problem.higgs.minimizer import TOLERANCE
+DIRECTORY = os.path.join(SAVING_DIR, DATA_NAME, f"explore_mono_tol_{TOLERANCE}")
 
 import argparse
 

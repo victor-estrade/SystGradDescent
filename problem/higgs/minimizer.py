@@ -21,6 +21,7 @@ def get_mono_minimizer(compute_nll, calibrated_param, calibrated_param_error):
     # minimizer.tol = 0.5  # Should I increase tolerance to help ???? (default is 0.1 according to doc)
     return minimizer
 
+TOLERANCE = 20  # Should I increase tolerance to help ???? (default is 0.1 according to doc)
 
 def get_minimizer(compute_nll, calibrated_param, calibrated_param_error):
     MIN_VALUE = 0.01
@@ -46,7 +47,7 @@ def get_minimizer(compute_nll, calibrated_param, calibrated_param_error):
                         ,calibrated_param_error.les
                         ,calibrated_param_error.mu
                         ]
-    minimizer.tol = 0.5  # Should I increase tolerance to help ???? (default is 0.1 according to doc)
+    minimizer.tol = TOLERANCE  # Should I increase tolerance to help ???? (default is 0.1 according to doc)
     return minimizer
 
 
