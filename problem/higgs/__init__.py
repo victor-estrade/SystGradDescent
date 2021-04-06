@@ -19,7 +19,7 @@ from .parameter import FuturParameter
 from .nll import HiggsNLL
 from .nll import MonoHiggsNLL
 from .nll import get_higgsnll_class
-from .config import MonoHiggsConfig
+from .config import get_config_class
 from .config import HiggsConfig
 from .config import HiggsConfigTesOnly
 from .calibration import param_generator
