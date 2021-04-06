@@ -39,13 +39,9 @@ from utils.images import gather_images
 
 from visual.misc import plot_params
 
-from problem.higgs import HiggsConfigTesOnly as Config
-from problem.higgs import get_minimizer
 from problem.higgs import get_minimizer_no_nuisance
 from problem.higgs import get_generators_torch
 from problem.higgs import param_generator
-from problem.higgs import Generator
-from problem.higgs import HiggsNLL as NLLComputer
 
 from visual.special.higgs import plot_nll_around_min
 
@@ -54,11 +50,14 @@ from ..my_argparser import NET_parse_args
 
 from archi.classic import L4 as ARCHI
 
+from .common import DATA_NAME
 from .common import N_BINS
+from .common import N_ITER
+from .common import Config
+from .common import get_minimizer
+from .common import NLLComputer
 
-DATA_NAME = 'HIGGSTES'
 BENCHMARK_NAME = DATA_NAME+'-prior'
-N_ITER = 30
 N_AUGMENT = 5
 
 from .common import GeneratorCPU
