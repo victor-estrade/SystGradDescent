@@ -50,6 +50,7 @@ from .common import N_ITER
 from .common import Config
 from .common import get_minimizer
 from .common import NLLComputer
+from .common import GeneratorClass
 
 BENCHMARK_NAME = DATA_NAME+'-prior'
 
@@ -149,7 +150,7 @@ def run_estimation(args, i_cv):
     logger.info('Set up data generator')
     config = Config()
     seed = SEED + i_cv * 5
-    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
+    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda, GeneratorClass=GeneratorClass)
     train_generator = GeneratorCPU(train_generator)
     valid_generator = GeneratorCPU(valid_generator)
     test_generator = GeneratorCPU(test_generator)
@@ -194,7 +195,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
     result_row['n_test_samples'] = test_generator.n_samples
-    suffix = f'-mu={config.TRUE.mu:1.2f}_tes={config.TRUE.tes}_jes={config.TRUE.jes}_les={config.TRUE.les}'
+    suffix = config.get_suffix()
 
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES, no_grad=True)

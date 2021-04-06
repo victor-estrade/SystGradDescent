@@ -14,12 +14,16 @@ from problem.higgs import get_minimizer_new as get_minimizer
 from problem.higgs.parameter import get_parameter_class
 from problem.higgs import get_higgsnll_class
 from problem.higgs import get_config_class
+from problem.higgs import get_generator_class
+from problem.higgs import get_higgsloss_class
 TES =  False
 JES =  False
 LES =  True
 Parameter = get_parameter_class(TES, JES, LES)
 NLLComputer = get_higgsnll_class(TES, JES, LES)
 Config = get_config_class(TES, JES, LES)
+GeneratorClass = get_generator_class(TES, JES, LES)
+HiggsLoss = get_higgsloss_class(TES, JES, LES)
 
 
 DATA_NAME = 'HIGGS'
