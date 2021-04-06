@@ -121,7 +121,7 @@ class HiggsNLLJes(BaseHiggsNLL):
 
 
 class HiggsNLLLes(BaseHiggsNLL):
-    def __call__(self, jes, mu):
+    def __call__(self, les, mu):
         """
         $\sum_{i=0}^{n_{bin}} rate - n_i \log(rate) + constraints$
          with $constraints = gaussian nll (\alpha | \alpha_{calibrated), \delta_\alpha )$
@@ -148,7 +148,7 @@ class HiggsNLLTesJes(BaseHiggsNLL):
          with $rate = \mu s + b$
         """
         self.valid_generator.reset()
-        X, y, w = self.valid_generator.generate(tes, jes, les, mu, n_samples=None, no_grad=True)
+        X, y, w = self.valid_generator.generate(tes, jes, mu, n_samples=None, no_grad=True)
         EPSILON = 1e-6  # avoid log(0)
         rate_histogram = self.compute_summaries(X, w) + EPSILON
 
@@ -170,7 +170,7 @@ class HiggsNLLTesLes(BaseHiggsNLL):
          with $rate = \mu s + b$
         """
         self.valid_generator.reset()
-        X, y, w = self.valid_generator.generate(tes, les, les, mu, n_samples=None, no_grad=True)
+        X, y, w = self.valid_generator.generate(tes, les, mu, n_samples=None, no_grad=True)
         EPSILON = 1e-6  # avoid log(0)
         rate_histogram = self.compute_summaries(X, w) + EPSILON
 
