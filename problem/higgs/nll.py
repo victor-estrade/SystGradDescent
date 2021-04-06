@@ -84,35 +84,155 @@ class MonoHiggsNLL():
 
 
 
-class HiggsNLL():
-    def __init__(self, compute_summaries, valid_generator, X_test, w_test, config=None):
+class BaseHiggsNLL():
+    def __init__(self, compute_summaries, valid_generator, X_test, w_test, config):
         self.compute_summaries = compute_summaries
         self.valid_generator = valid_generator
         self.X_test = X_test
         self.w_test = w_test
         EPSILON = 1e-6  # avoid log(0)
         self.xp_histogram = self.compute_summaries(self.X_test, self.w_test) + EPSILON
+        self.config = config
 
-        self.config = HiggsConfig() if config is None else config
 
-    # DEPRECATED : no need to separate s and b. In the end it is summed again.
-    def get_s_b(self, tes, jes, les, mu):
-        # Systematic effects
+
+class HiggsNLLTes(BaseHiggsNLL):
+    def __call__(self, tes, mu):
+        """
+        $\sum_{i=0}^{n_{bin}} rate - n_i \log(rate) + constraints$
+         with $constraints = gaussian nll (\alpha | \alpha_{calibrated), \delta_\alpha )$
+         with $rate = \mu s + b$
+        """
         self.valid_generator.reset()
-        X, y, w = self.valid_generator.generate(tes, jes, les, mu, n_samples=None, no_grad=True)
-        s = X[y==1]
-        w_s = w[y==1]
-        b = X[y==0]
-        w_b = w[y==0]
-        return s, w_s, b, w_b
+        X, y, w = self.valid_generator.generate(tes, mu, n_samples=None, no_grad=True)
+        EPSILON = 1e-6  # avoid log(0)
+        rate_histogram = self.compute_summaries(X, w) + EPSILON
 
-    def __call__(self, tes, jes, les, mu):
-        """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""
+        # Compute NLL
+        config = self.config
+        mu_nll = np.sum(poisson_nll(self.xp_histogram, rate_histogram))
+        tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
+        total_nll = mu_nll + tes_constraint
+        return total_nll
+
+
+class HiggsNLLJes(BaseHiggsNLL):
+    def __call__(self, jes, mu):
+        """
+        $\sum_{i=0}^{n_{bin}} rate - n_i \log(rate) + constraints$
+         with $constraints = gaussian nll (\alpha | \alpha_{calibrated), \delta_\alpha )$
+         with $rate = \mu s + b$
+        """
+        self.valid_generator.reset()
+        X, y, w = self.valid_generator.generate(jes, mu, n_samples=None, no_grad=True)
+        EPSILON = 1e-6  # avoid log(0)
+        rate_histogram = self.compute_summaries(X, w) + EPSILON
+
+        # Compute NLL
+        config = self.config
+        mu_nll = np.sum(poisson_nll(self.xp_histogram, rate_histogram))
+        jes_constraint = gauss_nll(jes, config.CALIBRATED.jes, config.CALIBRATED_ERROR.jes)
+        total_nll = mu_nll + jes_constraint
+        return total_nll
+
+
+class HiggsNLLLes(BaseHiggsNLL):
+    def __call__(self, jes, mu):
+        """
+        $\sum_{i=0}^{n_{bin}} rate - n_i \log(rate) + constraints$
+         with $constraints = gaussian nll (\alpha | \alpha_{calibrated), \delta_\alpha )$
+         with $rate = \mu s + b$
+        """
+        self.valid_generator.reset()
+        X, y, w = self.valid_generator.generate(les, mu, n_samples=None, no_grad=True)
+        EPSILON = 1e-6  # avoid log(0)
+        rate_histogram = self.compute_summaries(X, w) + EPSILON
+
+        # Compute NLL
+        config = self.config
+        mu_nll = np.sum(poisson_nll(self.xp_histogram, rate_histogram))
+        les_constraint = gauss_nll(les, config.CALIBRATED.les, config.CALIBRATED_ERROR.les)
+        total_nll = mu_nll + les_constraint
+        return total_nll
+
+
+class HiggsNLLTesJes(BaseHiggsNLL):
+    def __call__(self, tes, jes, mu):
+        """
+        $\sum_{i=0}^{n_{bin}} rate - n_i \log(rate) + constraints$
+         with $constraints = gaussian nll (\alpha | \alpha_{calibrated), \delta_\alpha )$
+         with $rate = \mu s + b$
+        """
         self.valid_generator.reset()
         X, y, w = self.valid_generator.generate(tes, jes, les, mu, n_samples=None, no_grad=True)
         EPSILON = 1e-6  # avoid log(0)
         rate_histogram = self.compute_summaries(X, w) + EPSILON
-        # xp_histogram = self.compute_summaries(self.X_test, self.w_test)
+
+        # Compute NLL
+        config = self.config
+        mu_nll = np.sum(poisson_nll(self.xp_histogram, rate_histogram))
+        tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
+        jes_constraint = gauss_nll(jes, config.CALIBRATED.jes, config.CALIBRATED_ERROR.jes)
+        total_nll = mu_nll + tes_constraint + jes_constraint
+        return total_nll
+
+
+
+class HiggsNLLTesLes(BaseHiggsNLL):
+    def __call__(self, tes, les, mu):
+        """
+        $\sum_{i=0}^{n_{bin}} rate - n_i \log(rate) + constraints$
+         with $constraints = gaussian nll (\alpha | \alpha_{calibrated), \delta_\alpha )$
+         with $rate = \mu s + b$
+        """
+        self.valid_generator.reset()
+        X, y, w = self.valid_generator.generate(tes, les, les, mu, n_samples=None, no_grad=True)
+        EPSILON = 1e-6  # avoid log(0)
+        rate_histogram = self.compute_summaries(X, w) + EPSILON
+
+        # Compute NLL
+        config = self.config
+        mu_nll = np.sum(poisson_nll(self.xp_histogram, rate_histogram))
+        tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
+        les_constraint = gauss_nll(les, config.CALIBRATED.les, config.CALIBRATED_ERROR.les)
+        total_nll = mu_nll + tes_constraint + les_constraint
+        return total_nll
+
+
+class HiggsNLLTesJesLes(BaseHiggsNLL):
+    def __call__(self, tes, jes, les, mu):
+        """
+        $\sum_{i=0}^{n_{bin}} rate - n_i \log(rate) + constraints$
+         with $constraints = gaussian nll (\alpha | \alpha_{calibrated), \delta_\alpha )$
+         with $rate = \mu s + b$
+        """
+        self.valid_generator.reset()
+        X, y, w = self.valid_generator.generate(tes, jes, les, mu, n_samples=None, no_grad=True)
+        EPSILON = 1e-6  # avoid log(0)
+        rate_histogram = self.compute_summaries(X, w) + EPSILON
+
+        # Compute NLL
+        config = self.config
+        mu_nll = np.sum(poisson_nll(self.xp_histogram, rate_histogram))
+        tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
+        jes_constraint = gauss_nll(jes, config.CALIBRATED.jes, config.CALIBRATED_ERROR.jes)
+        les_constraint = gauss_nll(les, config.CALIBRATED.les, config.CALIBRATED_ERROR.les)
+        total_nll = mu_nll + tes_constraint + jes_constraint + les_constraint
+        return total_nll
+
+
+# For backward compatibility
+class HiggsNLL(BaseHiggsNLL):
+    def __call__(self, tes, jes, les, mu):
+        """
+        $\sum_{i=0}^{n_{bin}} rate - n_i \log(rate) + constraints$
+         with $constraints = gaussian nll (\alpha | \alpha_{calibrated), \delta_\alpha )$
+         with $rate = \mu s + b$
+        """
+        self.valid_generator.reset()
+        X, y, w = self.valid_generator.generate(tes, jes, les, mu, n_samples=None, no_grad=True)
+        EPSILON = 1e-6  # avoid log(0)
+        rate_histogram = self.compute_summaries(X, w) + EPSILON
 
         # Compute NLL
         config = self.config
@@ -136,17 +256,6 @@ class FuturHiggsNLL():
         self.config = FuturHiggsConfig() if config is None else config
 
 
-    # DEPRECATED : no need to separate s and b. In the end it is summed again.
-    def get_s_b(self, tes, jes, les, nasty_bkg, sigma_soft, mu):
-        # Systematic effects
-        self.valid_generator.reset()
-        X, y, w = self.valid_generator.generate(tes, jes, les, nasty_bkg, sigma_soft, mu, n_samples=None)
-        s = X[y==1]
-        w_s = w[y==1]
-        b = X[y==0]
-        w_b = w[y==0]
-        return s, w_s, b, w_b
-
     def __call__(self, tes, jes, les, nasty_bkg, sigma_soft, mu):
         """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""
         self.valid_generator.reset()
@@ -168,3 +277,25 @@ class FuturHiggsNLL():
             sigma_soft_constraint = 0
         total_nll = mu_nll + tes_constraint + jes_constraint + les_constraint + sigma_soft_constraint + nasty_bkg_constraint
         return total_nll
+
+
+ALL_HIGGSNLL_DICT = {
+    'Tes' : HiggsNLLTes,
+    'Jes' : HiggsNLLJes,
+    'Les' : HiggsNLLLes,
+    'TesJes' : HiggsNLLTesJes,
+    'TesLes' : HiggsNLLTesLes,
+    'TesJesLes' : HiggsNLLTesJesLes,
+}
+
+
+def get_higgsnll_class(tes=True, jes=False, les=False):
+    key = ''
+    if tes : key += 'Tes'
+    if jes : key += 'Jes'
+    if les : key += 'Les'
+
+    if key in ALL_HIGGSNLL_DICT :
+        return ALL_HIGGSNLL_DICT[key]
+    else:
+        raise ValueError(f"Nuisance parameter combination not implemented yet tes={tes}, jes={jes}, les={les}")
