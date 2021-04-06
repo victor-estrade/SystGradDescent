@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line :
-# python -m benchmark.HIGGSTES.FREG-Calib
+# python -m benchmark.HIGGS.FREG-Calib
 
 import os
 import logging

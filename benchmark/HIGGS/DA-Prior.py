@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line :
-# python -m benchmark.HIGGSTES.DA-Prior
+# python -m benchmark.HIGGS.DA-Prior
 
 import os
 import logging
