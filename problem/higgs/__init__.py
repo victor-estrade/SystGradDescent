@@ -15,7 +15,6 @@ from .torch import get_generators_torch
 from .torch import get_balanced_generators_torch
 from .torch import get_easy_generators_torch
 from .parameter import Parameter
-from .parameter import MonoParameter
 from .parameter import FuturParameter
 from .nll import HiggsNLL
 from .nll import MonoHiggsNLL
@@ -26,4 +25,5 @@ from .calibration import param_generator
 from .calibration import mono_param_generator
 from .minimizer import get_mono_minimizer
 from .minimizer import get_minimizer
+from .minimizer import get_minimizer_new
 from .minimizer import get_minimizer_no_nuisance
