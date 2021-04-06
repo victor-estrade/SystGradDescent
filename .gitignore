@@ -110,3 +110,6 @@ OUTPUT/
 hessian/
 # Jupyter notebooks too !
 *.ipynb
+
+# Sim-link
+SystGradDescent
