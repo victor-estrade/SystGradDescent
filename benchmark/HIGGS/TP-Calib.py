@@ -190,7 +190,7 @@ def run_estimation(args, i_cv):
     logger.info('Set up data generator')
     config = Config()
     seed = SEED + i_cv * 5
-    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
+    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda, GeneratorClass=GeneratorClass)
     train_generator = TrainGenerator(train_generator, cuda=args.cuda)
     valid_generator = GeneratorCPU(valid_generator)
     test_generator = GeneratorCPU(test_generator)
@@ -287,7 +287,7 @@ def run_conditional_estimation(args, i_cv):
     logger.info('Set up data generator')
     config = Config()
     seed = SEED + i_cv * 5
-    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
+    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda, GeneratorClass=GeneratorClass)
     train_generator = GeneratorCPU(train_generator)
     valid_generator = GeneratorCPU(valid_generator)
     test_generator = GeneratorCPU(test_generator)

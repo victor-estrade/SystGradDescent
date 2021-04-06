@@ -102,7 +102,7 @@ def main():
     config_table = evaluate_config(config)
     config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
     seed = SEED + 99999
-    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
+    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda, GeneratorClass=GeneratorClass)
     train_generator = GeneratorCPU(train_generator)
     train_generator = TrainGenerator(param_generator, train_generator)
     valid_generator = GeneratorCPU(valid_generator)
