@@ -52,8 +52,10 @@ from .common import N_ITER
 from .common import Config
 from .common import get_minimizer
 from .common import NLLComputer
+from .common import GeneratorClass
 from .common import param_generator
 from .common import get_generators_torch
+from .common import Parameter
 
 BENCHMARK_NAME = f"{DATA_NAME}-prior-{Config.TOLERANCE}"
 N_AUGMENT = 5
@@ -221,7 +223,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
     result_row['n_test_samples'] = test_generator.n_samples
-    suffix = f'-mu={config.TRUE.mu:1.2f}_tes={config.TRUE.tes}_jes={config.TRUE.jes}_les={config.TRUE.les}'
+    suffix = config.get_suffix()
 
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES, no_grad=True)
