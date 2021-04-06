@@ -29,7 +29,6 @@ from utils.evaluation import evaluate_regressor
 
 from visual.misc import plot_params
 
-from problem.higgs import HiggsConfig as Config
 from problem.higgs import get_generators_torch
 from problem.higgs import param_generator
 from problem.higgs import Generator
@@ -41,12 +40,17 @@ from archi.reducer import A3ML3 as ARCHI
 
 from ..my_argparser import REG_parse_args
 
+from .common import DATA_NAME
+from .common import N_BINS
+from .common import N_ITER
+from .common import Config
+from .common import get_minimizer
+from .common import NLLComputer
+from .common import GeneratorClass
 
-DATA_NAME = 'HIGGS'
 BENCHMARK_NAME = DATA_NAME+'-calib'
 CALIB = "Calib_jes"
 CALIB_PARAM_NAME = "jes"
-N_ITER = 30
 NCALL = 1
 
 from .common import GeneratorCPU

@@ -7,7 +7,36 @@ from __future__ import unicode_literals
 from utils.model import get_model
 from utils.model import get_optimizer
 
+
+from problem.higgs import HiggsConfigTesOnly as Config
+from problem.higgs import get_minimizer_new as get_minimizer
+
+from problem.higgs.parameter import get_parameter_class
+from problem.higgs import get_higgsnll_class
+from problem.higgs import get_config_class
+from problem.higgs import get_generator_class
+from problem.higgs import get_higgsloss_class
+from problem.higgs import get_parameter_generator
+TES =  False
+JES =  False
+LES =  True
+Parameter = get_parameter_class(TES, JES, LES)
+NLLComputer = get_higgsnll_class(TES, JES, LES)
+Config = get_config_class(TES, JES, LES)
+GeneratorClass = get_generator_class(TES, JES, LES)
+HiggsLoss = get_higgsloss_class(TES, JES, LES)
+param_generator = get_parameter_generator(TES, JES, LES)
+
+
+DATA_NAME = 'HIGGS'
+if TES : DATA_NAME += "TES"
+if JES : DATA_NAME += "JES"
+if LES : DATA_NAME += "LES"
+
 N_BINS = 30
+N_ITER = 30
+
+
 
 class GeneratorCPU:
     def __init__(self, data_generator):
