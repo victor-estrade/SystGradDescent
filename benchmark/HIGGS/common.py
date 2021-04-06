@@ -9,9 +9,9 @@ from utils.model import get_optimizer
 
 
 from problem.higgs import HiggsConfigTesOnly as Config
-from problem.higgs import get_minimizer_new as get_minimizer
+from problem.higgs import get_minimizer
 
-from problem.higgs.parameter import get_parameter_class
+from problem.higgs import get_parameter_class
 from problem.higgs import get_higgsnll_class
 from problem.higgs import get_config_class
 from problem.higgs import get_generator_class

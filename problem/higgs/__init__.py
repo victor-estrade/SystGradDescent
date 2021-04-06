@@ -25,5 +25,4 @@ from .config import HiggsConfigTesOnly
 from .calibration import get_parameter_generator
 from .minimizer import get_mono_minimizer
 from .minimizer import get_minimizer
-from .minimizer import get_minimizer_new
 from .minimizer import get_minimizer_no_nuisance
