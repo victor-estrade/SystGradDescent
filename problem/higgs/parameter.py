@@ -119,12 +119,12 @@ class FuturParameter(BaseParameter):
 
 
 ALL_PARAMETER_DICT = {
-    'Tes' = ParameterTes,
-    'Jes' = ParameterJes,
-    'Les' = ParameterLes,
-    'TesJes' = ParameterTesJes,
-    'TesLes' = ParameterTesLes,
-    'TesJesLes' = ParameterTesJesLes,
+    'Tes' : ParameterTes,
+    'Jes' : ParameterJes,
+    'Les' : ParameterLes,
+    'TesJes' : ParameterTesJes,
+    'TesLes' : ParameterTesLes,
+    'TesJesLes' : ParameterTesJesLes,
 }
 
 
