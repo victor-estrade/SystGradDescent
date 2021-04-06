@@ -53,10 +53,16 @@ from archi.reducer import EA3ML3 as ARCHI
 
 from ..my_argparser import REG_parse_args
 
+from .common import DATA_NAME
+from .common import N_BINS
+from .common import N_ITER
+from .common import Config
+from .common import get_minimizer
+from .common import NLLComputer
+from .common import GeneratorClass
 
-DATA_NAME = 'HIGGSTES'
+
 BENCHMARK_NAME = DATA_NAME+'-prior'
-N_ITER = 30
 NCALL = 100
 
 from .common import GeneratorCPU

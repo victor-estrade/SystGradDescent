@@ -48,11 +48,15 @@ from visual.special.higgs import plot_nll_around_min
 from model.gradient_boost import GradientBoostingModel
 from ..my_argparser import GB_parse_args
 
+from .common import DATA_NAME
 from .common import N_BINS
+from .common import N_ITER
+from .common import Config
+from .common import get_minimizer
+from .common import NLLComputer
+from .common import GeneratorClass
 
-DATA_NAME = 'HIGGS'
 BENCHMARK_NAME = DATA_NAME+'-prior'
-N_ITER = 30
 
 from .common import GeneratorCPU
 

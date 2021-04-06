@@ -49,11 +49,15 @@ from visual.special.higgs import plot_nll_around_min
 from model.feature_filter import FeatureModel
 from ..my_argparser import FF_parse_args
 
+from .common import DATA_NAME
 from .common import N_BINS
+from .common import N_ITER
+from .common import Config
+from .common import get_minimizer
+from .common import NLLComputer
+from .common import GeneratorClass
 
-DATA_NAME = 'HIGGSTES'
 BENCHMARK_NAME = DATA_NAME+'-calib'
-N_ITER = 30
 
 from .common import GeneratorCPU
 from .common import load_calib_tes

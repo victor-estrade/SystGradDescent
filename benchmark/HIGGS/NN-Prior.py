@@ -52,11 +52,15 @@ from ..my_argparser import NET_parse_args
 
 from archi.classic import L4 as ARCHI
 
+from .common import DATA_NAME
 from .common import N_BINS
+from .common import N_ITER
+from .common import Config
+from .common import get_minimizer
+from .common import NLLComputer
+from .common import GeneratorClass
 
-DATA_NAME = 'HIGGSTES'
 BENCHMARK_NAME = DATA_NAME+'-prior'
-N_ITER = 30
 
 from .common import GeneratorCPU
 

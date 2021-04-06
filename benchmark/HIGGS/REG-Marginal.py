@@ -49,9 +49,15 @@ from archi.reducer import A3ML3 as ARCHI
 from ..my_argparser import REG_parse_args
 
 
-DATA_NAME = 'HIGGSTES'
+from .common import DATA_NAME
+from .common import N_BINS
+from .common import N_ITER
+from .common import Config
+from .common import get_minimizer
+from .common import NLLComputer
+from .common import GeneratorClass
+
 BENCHMARK_NAME = DATA_NAME+'-marginal'
-N_ITER = 30
 NCALL = 1
 
 from .common import GeneratorCPU
