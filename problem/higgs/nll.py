@@ -4,10 +4,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from .config import HiggsConfig
-from .config import MonoHiggsConfig
-from .config import FuturHiggsConfig
-
 import numpy as np
 
 
@@ -46,26 +42,14 @@ class LabelNLL():
 
 
 class MonoHiggsNLL():
-    def __init__(self, compute_summaries, valid_generator, X_test, w_test, config=None):
+    def __init__(self, compute_summaries, valid_generator, X_test, w_test, config):
         self.compute_summaries = compute_summaries
         self.valid_generator = valid_generator
         self.X_test = X_test
         self.w_test = w_test
         EPSILON = 1e-6  # avoid log(0)
         self.xp_histogram = self.compute_summaries(self.X_test, self.w_test) + EPSILON
-
-        self.config = MonoHiggsConfig() if config is None else config
-
-    # DEPRECATED : no need to separate s and b. In the end it is summed again.
-    def get_s_b(self, tes, mu):
-        # Systematic effects
-        self.valid_generator.reset()
-        X, y, w = self.valid_generator.generate(tes, mu, n_samples=None, no_grad=True)
-        s = X[y==1]
-        w_s = w[y==1]
-        b = X[y==0]
-        w_b = w[y==0]
-        return s, w_s, b, w_b
+        self.config = config
 
     def __call__(self, tes, mu):
         """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""
@@ -253,7 +237,7 @@ class FuturHiggsNLL():
         self.w_test = w_test
         EPSILON = 1e-6  # avoid log(0)
         self.xp_histogram = self.compute_summaries(self.X_test, self.w_test) + EPSILON
-        self.config = FuturHiggsConfig() if config is None else config
+        self.config = config
 
 
     def __call__(self, tes, jes, les, nasty_bkg, sigma_soft, mu):
