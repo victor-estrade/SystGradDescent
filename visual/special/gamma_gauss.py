@@ -14,6 +14,7 @@ import seaborn as sns
 from config import DEFAULT_DIR
 
 from ..likelihood import plot_param_around_min
+from ..misc import now_str
 
 def plot_RESCALE_around_min(compute_nll, true_params, directory, suffix):
     rescale_array = np.linspace(0.5, 3, 50)
@@ -45,7 +46,7 @@ def plot_distrib(data, generator, true_params, expect_rescale, expect_mix,
         sns.distplot(data, label="data hist")
         plt.plot(x_range, true_proba, label="true proba")
         plt.plot(x_range, infered_proba, '--', label="infered proba")
-        plt.title(title)
+        plt.title(now_str()+title)
         plt.xlabel("x")
         plt.ylabel("density")
         plt.legend()

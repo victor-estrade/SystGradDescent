@@ -10,10 +10,10 @@ import logging
 import matplotlib.pyplot as plt
 
 from config import DEFAULT_DIR
-
+from .misc import now_str
 
 def plot_infer(values, probas, expected_value=None, true_value=None, std=None,
-                title="posterior marginal proba", directory=DEFAULT_DIR, fname='marginal.png', 
+                title="posterior marginal proba", directory=DEFAULT_DIR, fname='marginal.png',
                 name=''):
     logger = logging.getLogger()
 
@@ -28,7 +28,7 @@ def plot_infer(values, probas, expected_value=None, true_value=None, std=None,
         plt.plot(values, probas, label="posterior")
         plt.xlabel(f"{name} values")
         plt.ylabel("proba density")
-        plt.title(title)
+        plt.title(now_str()+title)
         plt.legend()
         plt.savefig(os.path.join(directory, fname))
         plt.clf()

@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 
 import os
 import logging
+import datetime
 
 import pandas as pd
 
@@ -42,7 +43,8 @@ def plot_eval_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('$\\mu$')
     plt.ylabel("average MSE")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend()
     plt.savefig(os.path.join(directory, f'eval_mse.png'))
     plt.clf()
@@ -60,7 +62,8 @@ def plot_eval_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('$\\mu$')
     plt.ylabel("V_stat")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend()
     plt.savefig(os.path.join(directory, f'eval_v_stat.png'))
     plt.clf()
@@ -78,7 +81,8 @@ def plot_eval_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('$\\mu$')
     plt.ylabel("V_syst")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend()
     plt.savefig(os.path.join(directory, f'eval_v_syst.png'))
     plt.clf()
@@ -99,7 +103,8 @@ def plot_eval_mu(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average estimated $\\mu$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend()
     plt.savefig(os.path.join(directory, f'eval_mu.png'))
     plt.clf()
@@ -117,7 +122,8 @@ def plot_n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('#samples')
     plt.ylabel("V_stat")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend()
     plt.savefig(os.path.join(directory, f'n_samples_v_stat.png'))
     plt.clf()
@@ -136,7 +142,8 @@ def plot_n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('#samples')
     plt.ylabel("V_syst")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend()
     plt.savefig(os.path.join(directory, f'n_samples_v_syst.png'))
     plt.clf()
@@ -184,7 +191,8 @@ def main():
 
     plt.xlabel('#samples')
     plt.ylabel("V_stat")
-    plt.title("many GB")
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+"many GB")
     plt.legend([f"$\\alpha$={a}" for a in unique_alphas ])
     plt.savefig(os.path.join(DEFAULT_DIR, f'many_n_samples_v_stat.png'))
     plt.clf()
@@ -207,7 +215,8 @@ def main():
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average estimated $\\mu$")
-    plt.title("many GB")
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+"many GB")
     plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ])
     plt.savefig(os.path.join(DEFAULT_DIR, f'many_eval_mu.png'))
     plt.clf()

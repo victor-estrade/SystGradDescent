@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from config import DEFAULT_DIR
-
+from .misc import now_str
 
 def plot_summaries(b_histogram, s_histogram,
                     title='no title', directory=DEFAULT_DIR, fname='summaries.png',
@@ -26,7 +26,7 @@ def plot_summaries(b_histogram, s_histogram,
         plt.xlabel("bins")
         plt.ylabel("summary_value")
         plt.xticks(x_ticks)
-        plt.title(title)
+        plt.title(now_str()+title)
         plt.legend()
         plt.savefig(os.path.join(directory, fname), bbox_inches="tight")
         plt.clf()
@@ -45,7 +45,7 @@ def plot_param_around_min(param_array, nll_array, true_value, param_name, suffix
         plt.xlabel(param_name)
         plt.ylabel('nll')
         title = f'{param_name} ({suffix[1:]}) NLL around minimum' if title is None else title
-        plt.title(title)
+        plt.title(now_str()+title)
         plt.legend()
         plt.savefig(os.path.join(directory, f'NLL_{param_name}{suffix}.png'))
         plt.clf()
@@ -70,7 +70,7 @@ def plot_contour(x, y, minimizer, params_truth, directory, suffix=''):
         minimizer.draw_contour(interest_param.name, nuisance_param.name)
         plt.scatter(true_mu, true_nuisance, label="True value")
         fname = f"contour_{interest_param.name}_{nuisance_param.name}_{suffix}.png"
-        plt.title(f"NLL_contour {interest_param.name} - {nuisance_param.name}")
+        plt.title(f"{now_str()}NLL_contour {interest_param.name} - {nuisance_param.name}")
         plt.legend()
         plt.savefig(os.path.join(directory, fname), bbox_inches="tight")
         plt.clf()

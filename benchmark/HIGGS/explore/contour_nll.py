@@ -6,6 +6,8 @@ from __future__ import unicode_literals
 
 import os
 import logging
+import datetime
+
 import numpy as np
 import pandas as pd
 
@@ -125,6 +127,8 @@ def plot_contour(x, y, z, directory, xlabel="mu", ylabel="tes"):
     ax.clabel(CS, inline=1, fontsize=10)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    fig.title(now)
     fname = f"{xlabel}-{ylabel}_contour_plot.png"
     path = os.path.join(directory, fname)
     plt.savefig(path)
@@ -147,6 +151,8 @@ def focused_contour(x, y, x_err, y_err, nll_func, directory, xlabel="mu", ylabel
     ax.clabel(CS, inline=1, fontsize=10)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    fig.title(now)
     fname = f"{xlabel}-{ylabel}_focused_contour_plot.png"
     path = os.path.join(directory, fname)
     plt.savefig(path)

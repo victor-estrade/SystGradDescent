@@ -6,6 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import os
+import datetime
 
 from visual.misc import set_plot_config
 set_plot_config()
@@ -34,7 +35,8 @@ def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('# test samples')
     plt.ylabel("MSE $\\hat \\mu$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend([f"$\\alpha$={a}" for a in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'profusion_n_samples_mse.png'), bbox_inches='tight')
     plt.clf()
@@ -53,7 +55,8 @@ def nominal_n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_D
 
     plt.xlabel('# test samples')
     plt.ylabel("MSE $\\hat \\mu$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_mse.png'), bbox_inches='tight')
     plt.clf()
 
@@ -74,7 +77,8 @@ def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('# test samples')
     plt.ylabel("V_stat")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend([f"$\\alpha$={a}" for a in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'profusion_n_samples_v_stat.png'), bbox_inches='tight')
     plt.clf()
@@ -92,7 +96,8 @@ def nominal_n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAUL
 
     plt.xlabel('# test samples')
     plt.ylabel("V_stat")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_v_stat.png'), bbox_inches='tight')
     plt.clf()
 
@@ -114,7 +119,8 @@ def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('# test samples')
     plt.ylabel("V_syst")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend([f"$\\alpha$={a}" for a in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'profusion_n_samples_v_syst.png'), bbox_inches='tight')
     plt.clf()
@@ -132,7 +138,8 @@ def nominal_n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAUL
 
     plt.xlabel('# test samples')
     plt.ylabel("V_syst")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_v_syst.png'), bbox_inches='tight')
     plt.clf()
 
@@ -154,7 +161,8 @@ def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DI
 
     plt.xlabel('# test samples')
     plt.ylabel("average $\\hat \\sigma_{\\hat \\mu}$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend([f"$\\alpha$={a}" for a in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'profusion_n_samples_sigma_mean.png'), bbox_inches='tight')
     plt.clf()
@@ -172,7 +180,8 @@ def nominal_n_samples_sigma_mean(all_evaluations, title="No Title", directory=DE
 
     plt.xlabel('# test samples')
     plt.ylabel("average $\\hat \\sigma_{\\hat \\mu}$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.savefig(os.path.join(directory, f'profusion_nominal_n_samples_sigma_mean.png'), bbox_inches='tight')
     plt.clf()
 
@@ -198,7 +207,8 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'profusion_true_mu_estimator.png'), bbox_inches='tight')
     plt.clf()
@@ -224,7 +234,8 @@ def true_mu_target_mean_std(all_evaluations, title="No Title", directory=DEFAULT
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average $\\hat \\mu \\pm std(\\hat \\mu)$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(["true",] +[f"$\\alpha$={a}" for a in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'profusion_true_mu_target_mean_std.png'), bbox_inches='tight')
     plt.clf()
@@ -251,7 +262,8 @@ def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average $\\hat \\mu$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     legend_elements = [Line2D([0], [0], marker='+', color='red', label='true', markersize=15, markeredgewidth=5)]
     legend_elements += [Line2D([0], [0], marker='o', color=color_cycle[i%len(unique_alphas)], label=f"$\\alpha$={a}")
                         for i, a in enumerate(unique_alphas)]
@@ -281,7 +293,8 @@ def true_mu_target_bias(all_evaluations, title="No Title", directory=DEFAULT_DIR
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("bias $\\hat \\mu$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     # legend_elements = [Line2D([0], [0], marker='+', color='red', label='true', markersize=15, markeredgewidth=5)]
     legend_elements = [Line2D([0], [0], marker='o', color=color_cycle[i%len(unique_alphas)], label=f"$\\alpha$={a}")
                         for i, a in enumerate(unique_alphas)]
@@ -302,7 +315,8 @@ def mse_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
         plt.xlabel('hyper-parameter set')
         plt.ylabel("MSE $\\hat \\mu$")
         plot_title = f"{title}_N={n_test_samples}"
-        plt.title(plot_title)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now+plot_title)
         # plt.legend()
         plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_mse.png'), bbox_inches='tight')
         plt.clf()
@@ -319,7 +333,8 @@ def sigma_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
         plt.xlabel('hyper-parameter set')
         plt.ylabel("$\\hat \\sigma_{\\hat \\mu}$")
         plot_title = f"{title}_N={n_test_samples}"
-        plt.title(plot_title)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now+plot_title)
         # plt.legend()
         plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_sigma_mean.png'), bbox_inches='tight')
         plt.clf()
@@ -336,7 +351,8 @@ def v_stat_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
         plt.xlabel('hyper-parameter set')
         plt.ylabel("V_stat")
         plot_title = f"{title}_N={n_test_samples}"
-        plt.title(plot_title)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now+plot_title)
         # plt.legend()
         plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_stat.png'), bbox_inches='tight')
         plt.clf()
@@ -353,7 +369,8 @@ def v_syst_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
         plt.xlabel('hyper-parameter set')
         plt.ylabel("V_syst")
         plot_title = f"{title}_N={n_test_samples}"
-        plt.title(plot_title)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now+plot_title)
         # plt.legend()
         plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_syst.png'), bbox_inches='tight')
         plt.clf()

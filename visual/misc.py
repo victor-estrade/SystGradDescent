@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import os
 import logging
+import datetime
 
 import numpy as np
 
@@ -38,6 +39,10 @@ def set_plot_config():
     mpl.rcParams['lines.markersize'] = np.sqrt(30)
 
 
+def now_str():
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    return now
+
 
 def plot_params(param_name, result_table, title='no title', directory=DEFAULT_DIR):
     logger = logging.getLogger()
@@ -65,7 +70,7 @@ def plot_params(param_name, result_table, title='no title', directory=DEFAULT_DI
         # plt.xticks(xx, map(lambda x: round(x, 3), truths))
         plt.xlabel('#iter')
         plt.ylabel(param_name)
-        plt.title(title)
+        plt.title(now_str()+title)
         plt.legend()
         plt.savefig(os.path.join(directory, 'estimate_{}.png'.format(param_name)))
         plt.clf()

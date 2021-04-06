@@ -14,16 +14,17 @@ import seaborn as sns
 
 from config import DEFAULT_DIR
 
+from .misc import now_str
 
 
-def plot_test_distrib(y_proba, y_test, title="no title", 
+def plot_test_distrib(y_proba, y_test, title="no title",
                       directory=DEFAULT_DIR, fname='test_distrib.png', classes=('b', 's')):
     logger = logging.getLogger()
     # logger.info( 'Test accuracy = {} %'.format(100 * model.score(X_test, y_test)) )
     try:
         sns.distplot(y_proba[y_test==0, 1], label=classes[0], kde=False)
         sns.distplot(y_proba[y_test==1, 1], label=classes[1], kde=False)
-        plt.title(title)
+        plt.title(now_str()+title)
         plt.legend()
         plt.savefig(os.path.join(directory, fname))
         plt.clf()
@@ -38,7 +39,7 @@ def plot_ROC(fpr, tpr, title="no title", directory=DEFAULT_DIR, fname='roc.png')
     logger = logging.getLogger()
     try:
         plt.plot(fpr, tpr, label='AUC {}'.format(auc(fpr, tpr)))
-        plt.title(title)
+        plt.title(now_str()+title)
         plt.xlabel('false positive rate')
         plt.ylabel('true positive rate')
         plt.legend()
@@ -48,4 +49,3 @@ def plot_ROC(fpr, tpr, title="no title", directory=DEFAULT_DIR, fname='roc.png')
         plt.clf()
         logger.warning('Plot ROC failed')
         logger.warning(str(e))
-

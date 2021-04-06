@@ -6,6 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import os
+import datetime
 
 from visual.misc import set_plot_config
 set_plot_config()
@@ -30,7 +31,8 @@ def mse_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.xticks(rotation=90)
         plt.xlabel('method')
         plt.ylabel("MSE $\\hat \\mu$")
-        plt.title(plot_title)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now+plot_title)
         # plt.legend()
         plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_mse.png'), bbox_inches="tight")
         plt.clf()
@@ -52,7 +54,8 @@ def mse_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.xticks( ticks=x, labels=methods, rotation='vertical')
         plt.xlabel('method')
         plt.ylabel("Average MSE $\\hat \\mu \pm std $")
-        plt.title(plot_title)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now+plot_title)
         # plt.legend()
         plt.savefig(os.path.join(directory, f'{plot_title}-errplot_mse.png'), bbox_inches="tight")
         plt.clf()
@@ -71,7 +74,8 @@ def v_stat_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.xticks(rotation=90)
         plt.xlabel('method')
         plt.ylabel("V_stat")
-        plt.title(plot_title)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now+plot_title)
         # plt.legend()
         plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_stat.png'), bbox_inches="tight")
         plt.clf()
@@ -93,7 +97,8 @@ def v_stat_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.xticks( ticks=x, labels=methods, rotation='vertical')
         plt.xlabel('method')
         plt.ylabel("Average V_stat $\pm std$")
-        plt.title(plot_title)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now+plot_title)
         # plt.legend()
         plt.savefig(os.path.join(directory, f'{plot_title}-errplot_v_stat.png'), bbox_inches="tight")
         plt.clf()
@@ -112,7 +117,8 @@ def v_syst_box_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.xticks(rotation=90)
         plt.xlabel('method')
         plt.ylabel("V_syst")
-        plt.title(plot_title)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now+plot_title)
         # plt.legend()
         plt.savefig(os.path.join(directory, f'{plot_title}-boxplot_v_syst.png'), bbox_inches="tight")
         plt.clf()
@@ -135,7 +141,8 @@ def v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
         plt.xticks( ticks=x, labels=methods, rotation='vertical')
         plt.xlabel('method')
         plt.ylabel("Average V_syst $\pm std$")
-        plt.title(plot_title)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now+plot_title)
         # plt.legend()
         plt.savefig(os.path.join(directory, f'{plot_title}-errplot_v_syst.png'), bbox_inches="tight")
         plt.clf()
@@ -158,7 +165,8 @@ def true_mu_mse(data, title="No Title", directory=DEFAULT_DIR):
 
         plt.xlabel('true $\\mu$')
         plt.ylabel("average MSE $\\hat \\mu$")
-        plt.title(plot_title)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now+plot_title)
         plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
         plt.savefig(os.path.join(directory, f'{plot_title}-true_mu_mse.png'), bbox_inches='tight')
         plt.clf()
@@ -181,7 +189,8 @@ def true_mu_sigma_mean(data, title="No Title", directory=DEFAULT_DIR):
 
         plt.xlabel('true $\\mu$')
         plt.ylabel("average $\\hat \\sigma_{\\hat \\mu}$")
-        plt.title(plot_title)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now+plot_title)
         plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
         plt.savefig(os.path.join(directory, f'{plot_title}-true_mu_sigma_mean.png'), bbox_inches='tight')
         plt.clf()
@@ -204,7 +213,8 @@ def true_mu_target_std(data, title="No Title", directory=DEFAULT_DIR):
 
         plt.xlabel('true $\\mu$')
         plt.ylabel("average $std(\\hat \\mu)$")
-        plt.title(plot_title)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now+plot_title)
         plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
         plt.savefig(os.path.join(directory, f'{plot_title}-true_mu_target_std.png'), bbox_inches='tight')
         plt.clf()

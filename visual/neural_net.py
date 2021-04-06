@@ -13,14 +13,14 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from config import DEFAULT_DIR
-
+from .misc import now_str
 
 def plot_losses(losses, log=False, title='no title', directory=DEFAULT_DIR, fname='losses.png'):
     logger = logging.getLogger()
     try:
         for name, values in losses.items():
             plt.plot(values, label=name)
-        plt.title(title)
+        plt.title(now_str()+title)
         plt.xlabel('# iter')
         plt.ylabel('Loss/MSE')
         if log:
@@ -38,7 +38,7 @@ def plot_REG_log_mse(mse_losses, title='no title', directory=DEFAULT_DIR, fname=
     logger = logging.getLogger()
     try:
         plt.plot(mse_losses, label='mse')
-        plt.title(title)
+        plt.title(now_str()+title)
         plt.xlabel('# iter')
         plt.ylabel('Loss/MSE')
         plt.yscale('log')
@@ -49,4 +49,3 @@ def plot_REG_log_mse(mse_losses, title='no title', directory=DEFAULT_DIR, fname=
         plt.clf()
         logger.warning('Plot REG log losses failed')
         logger.warning(str(e))
-

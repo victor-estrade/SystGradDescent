@@ -6,6 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import os
+import datetime
 
 from visual.misc import set_plot_config
 set_plot_config()
@@ -29,7 +30,8 @@ def true_mu_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("MSE $\\hat \\mu$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'true_mu_mse.png'), bbox_inches='tight')
     plt.clf()
@@ -47,7 +49,8 @@ def true_mu_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("V_stat")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'true_mu_v_stat.png'), bbox_inches='tight')
     plt.clf()
@@ -65,7 +68,8 @@ def true_mu_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("V_syst")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'true_mu_v_syst.png'), bbox_inches='tight')
     plt.clf()
@@ -86,7 +90,8 @@ def true_mu_estimator(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average estimated $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'true_mu_estimator.png'), bbox_inches='tight')
     plt.clf()
@@ -107,7 +112,8 @@ def true_mu_target_mean_std(evaluation, title="No Title", directory=DEFAULT_DIR)
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average $\\hat \\mu \\pm std(\\hat \\mu)$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'true_mu_target_mean_std.png'), bbox_inches='tight')
     plt.clf()
@@ -127,7 +133,8 @@ def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('true $\\mu$')
     plt.ylabel("average estimated $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'true_mu_target_mean.png'), bbox_inches='tight')
     plt.clf()
@@ -145,7 +152,8 @@ def n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('# test samples')
     plt.ylabel("MSE $\\hat \\mu$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'n_samples_mse.png'), bbox_inches='tight')
     plt.clf()
@@ -161,7 +169,8 @@ def box_n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
     plt.boxplot(data, labels=x)
     plt.xlabel('# test samples')
     plt.ylabel("MSE $\\hat \\mu$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     # plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'box_n_samples_mse.png'), bbox_inches='tight')
     plt.clf()
@@ -179,7 +188,8 @@ def n_samples_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('# test samples')
     plt.ylabel("avegrage $\\hat \\sigma_{\\hat \mu}$")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'n_samples_sigma_mean.png'), bbox_inches='tight')
     plt.clf()
@@ -197,7 +207,8 @@ def n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('# test samples')
     plt.ylabel("V_stat")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'n_samples_v_stat.png'), bbox_inches='tight')
     plt.clf()
@@ -215,7 +226,8 @@ def n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
 
     plt.xlabel('# test samples')
     plt.ylabel("V_syst")
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'n_samples_v_syst.png'), bbox_inches='tight')
     plt.clf()
@@ -237,7 +249,8 @@ def nominal_fisher_n_bins(fisher_table, title="No Title", directory=DEFAULT_DIR)
     # plt.plot(x, y, label=label)
     plt.xlabel('# bins')
     plt.ylabel('mean( fisher info ) $\pm$ std( fisher info )')
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'nominal_fisher_n_bins.png'), bbox_inches='tight')
     plt.clf()
@@ -264,7 +277,8 @@ def fisher_n_bins(data, title="No Title", directory=DEFAULT_DIR):
         # ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
     plt.xlabel('# bins')
     plt.ylabel('mean( fisher info ) $\pm$ std( fisher info )')
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'fisher_n_bins.png'), bbox_inches='tight')
     plt.clf()
@@ -293,7 +307,8 @@ def threshold_s_sqrt_s_b(data, title="No Title", directory=DEFAULT_DIR):
         ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
     plt.xlabel('# bins')
     plt.ylabel('mean( $s / \sqrt{s+b} $ ) $\pm$ std( fisher info )')
-    plt.title(title)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    plt.title(now+title)
     plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'threshold_s_sqrt_s_b.png'), bbox_inches='tight')
     plt.clf()

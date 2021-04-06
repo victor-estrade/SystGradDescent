@@ -81,11 +81,15 @@ def features(generator, dirname=DIRECTORY):
     for i, column_name in enumerate(generator.feature_names):
         print(column_name)
         sns.distplot(df[column_name])
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now)
         plt.savefig(os.path.join(dirname, f'{i:00d}_{column_name}.png'))
         plt.clf()
 
         sns.distplot(df[ df['Label']==0 ][ column_name ], label="B", kde=False)
         sns.distplot(df[ df['Label']==1 ][ column_name ], label="S", kde=False)
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now)
         plt.legend()
         plt.savefig(os.path.join(dirname, f'c_{i:00d}_{column_name}.png'))
         plt.clf()
@@ -115,13 +119,16 @@ def tes_effect(generator, dirname=DIRECTORY):
         if (df_down[column_name] == df_up[column_name]).all():
             plt.title('No effect')
         else:
-            plt.title('Differential distribution')
+            now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+            plt.title(now+'Differential distribution')
             sns.distplot(df_up[column_name] - df_down[column_name])
             plt.savefig(os.path.join(dirname, f'diff_{i:00d}_{column_name}.png'))
             plt.clf()
         sns.distplot(df_down[column_name], label="-")
         sns.distplot(df[column_name], label="=")
         sns.distplot(df_up[column_name], label="+")
+        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+        plt.title(now)
         plt.legend()
         plt.savefig(os.path.join(dirname, f'{i:00d}_{column_name}.png'))
         plt.clf()
