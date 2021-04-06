@@ -11,6 +11,9 @@ from .parameter import Parameter
 from .parameter import FuturParameter
 
 
+# TODO : Changer pour CALIBRATED ERROR = 1/2 sigma !!!
+
+
 class MonoHiggsConfig():
     CALIBRATED = MonoParameter(tes=1.0, mu=1.0)
     CALIBRATED_ERROR = MonoParameter(tes=0.03, mu=1.0)
