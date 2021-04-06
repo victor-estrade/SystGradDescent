@@ -6,11 +6,11 @@ from __future__ import unicode_literals
 
 from .generator import Generator
 from .generator import GeneratorCPU
-from .torch import GeneratorTorch
-from .torch import MonoGeneratorTorch
 from .generator import get_generators
 from .generator import get_balanced_generators
 from .generator import get_easy_generators
+from .torch import get_generator_class
+from .torch import get_higgsloss_class
 from .torch import get_generators_torch
 from .torch import get_balanced_generators_torch
 from .torch import get_easy_generators_torch
