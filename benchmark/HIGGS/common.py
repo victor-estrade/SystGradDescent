@@ -24,9 +24,9 @@ from problem.higgs import get_config_class
 from problem.higgs import get_generator_class
 from problem.higgs import get_higgsloss_class
 from problem.higgs import get_parameter_generator
-TES =  False
+TES =  True
 JES =  False
-LES =  True
+LES =  False
 Parameter = get_parameter_class(TES, JES, LES)
 NLLComputer = get_higgsnll_class(TES, JES, LES)
 Config = get_config_class(TES, JES, LES)
