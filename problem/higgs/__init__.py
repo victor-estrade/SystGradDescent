@@ -22,8 +22,7 @@ from .nll import get_higgsnll_class
 from .config import get_config_class
 from .config import HiggsConfig
 from .config import HiggsConfigTesOnly
-from .calibration import param_generator
-from .calibration import mono_param_generator
+from .calibration import get_parameter_generator
 from .minimizer import get_mono_minimizer
 from .minimizer import get_minimizer
 from .minimizer import get_minimizer_new
