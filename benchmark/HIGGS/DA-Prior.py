@@ -39,10 +39,6 @@ from utils.images import gather_images
 
 from visual.misc import plot_params
 
-from problem.higgs import get_minimizer_no_nuisance
-from problem.higgs import get_generators_torch
-from problem.higgs import param_generator
-
 from visual.special.higgs import plot_nll_around_min
 
 from model.neural_network import NeuralNetClassifier
@@ -56,6 +52,8 @@ from .common import N_ITER
 from .common import Config
 from .common import get_minimizer
 from .common import NLLComputer
+from .common import param_generator
+from .common import get_generators_torch
 
 BENCHMARK_NAME = DATA_NAME+'-prior'
 N_AUGMENT = 5

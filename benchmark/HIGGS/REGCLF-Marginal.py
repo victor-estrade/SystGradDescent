@@ -34,11 +34,6 @@ from config import _TRUTH
 
 from visual.misc import plot_params
 
-from problem.higgs import HiggsConfig as Config
-from problem.higgs import get_generators
-from problem.higgs import Generator
-from problem.higgs import param_generator
-
 from model.regressor import ClfRegressor as Model
 
 # from archi.reducer import A3ML3 as ARCHI
@@ -54,6 +49,9 @@ from .common import Config
 from .common import get_minimizer
 from .common import NLLComputer
 from .common import GeneratorClass
+from .common import param_generator
+from .common import get_generators_torch
+from .common import Parameter
 
 BENCHMARK_NAME = DATA_NAME+'-marginal'
 NCALL = 1

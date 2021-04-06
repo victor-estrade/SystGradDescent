@@ -36,14 +36,6 @@ from utils.images import gather_images
 
 from visual.misc import plot_params
 
-from problem.higgs import HiggsConfigTesOnly as Config
-from problem.higgs import get_minimizer
-from problem.higgs import get_minimizer_no_nuisance
-from problem.higgs import get_generators_torch
-from problem.higgs import Generator
-from problem.higgs import Parameter
-from problem.higgs import HiggsNLL as NLLComputer
-
 from visual.special.higgs import plot_nll_around_min
 
 from model.gradient_boost import GradientBoostingModel
@@ -56,6 +48,9 @@ from .common import Config
 from .common import get_minimizer
 from .common import NLLComputer
 from .common import GeneratorClass
+from .common import param_generator
+from .common import get_generators_torch
+from .common import Parameter
 
 BENCHMARK_NAME = DATA_NAME+'-calib'
 

@@ -36,12 +36,7 @@ from utils.images import gather_images
 
 from visual.misc import plot_params
 
-from problem.higgs import HiggsConfigTesOnly as Config
-from problem.higgs import get_minimizer
 from problem.higgs import get_minimizer_no_nuisance
-from problem.higgs import get_generators_torch
-from problem.higgs import Generator
-from problem.higgs import HiggsNLL as NLLComputer
 
 from visual.special.higgs import plot_nll_around_min
 
@@ -55,6 +50,8 @@ from .common import Config
 from .common import get_minimizer
 from .common import NLLComputer
 from .common import GeneratorClass
+from .common import param_generator
+from .common import get_generators_torch
 
 BENCHMARK_NAME = DATA_NAME+'-prior'
 
@@ -154,7 +151,7 @@ def run_estimation(args, i_cv):
     logger.info('Set up data generator')
     config = Config()
     seed = SEED + i_cv * 5
-    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
+    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda, GeneratorClass=GeneratorClass)
     train_generator = GeneratorCPU(train_generator)
     valid_generator = GeneratorCPU(valid_generator)
     test_generator = GeneratorCPU(test_generator)
@@ -231,7 +228,7 @@ def run_conditional_estimation(args, i_cv):
     logger.info('Set up data generator')
     config = Config()
     seed = SEED + i_cv * 5
-    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
+    train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda, GeneratorClass=GeneratorClass)
     train_generator = GeneratorCPU(train_generator)
     valid_generator = GeneratorCPU(valid_generator)
     test_generator = GeneratorCPU(test_generator)

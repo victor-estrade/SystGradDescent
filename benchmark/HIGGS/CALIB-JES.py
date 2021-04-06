@@ -29,10 +29,6 @@ from utils.evaluation import evaluate_regressor
 
 from visual.misc import plot_params
 
-from problem.higgs import get_generators_torch
-from problem.higgs import param_generator
-from problem.higgs import Generator
-
 from model.regressor import Regressor
 
 from archi.reducer import A3ML3 as ARCHI
@@ -47,6 +43,9 @@ from .common import Config
 from .common import get_minimizer
 from .common import NLLComputer
 from .common import GeneratorClass
+from .common import param_generator
+from .common import get_generators_torch
+
 
 BENCHMARK_NAME = DATA_NAME+'-calib'
 CALIB = "Calib_jes"
