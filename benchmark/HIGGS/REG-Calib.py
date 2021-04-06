@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line :
-# python -m benchmark.HIGGS.GB-Prior
+# python -m benchmark.HIGGSTES.REG-Calib
 
 import os
 import logging
@@ -14,6 +14,7 @@ from config import SEED
 from config import _ERROR
 from config import _TRUTH
 
+import numpy as np
 import pandas as pd
 
 from visual.misc import set_plot_config
@@ -25,11 +26,11 @@ from utils.log import set_logger
 from utils.log import flush
 from utils.log import print_line
 from utils.model import get_model
-from utils.model import train_or_load_classifier
-from utils.evaluation import evaluate_classifier
+from utils.model import get_optimizer
+from utils.model import train_or_load_neural_net
+from utils.evaluation import evaluate_neural_net
 from utils.evaluation import evaluate_config
-from utils.evaluation import evaluate_summary_computer
-from utils.evaluation import evaluate_minuit
+from utils.evaluation import evaluate_regressor
 from utils.evaluation import evaluate_estimator
 from utils.evaluation import evaluate_conditional_estimation
 from utils.images import gather_images
@@ -37,29 +38,54 @@ from utils.images import gather_images
 from visual.misc import plot_params
 
 from problem.higgs import HiggsConfigTesOnly as Config
-from problem.higgs import get_minimizer
-from problem.higgs import get_minimizer_no_nuisance
 from problem.higgs import get_generators_torch
+from problem.higgs import param_generator
+from problem.higgs import Parameter
 from problem.higgs import Generator
-from problem.higgs import HiggsNLL as NLLComputer
 
-from visual.special.higgs import plot_nll_around_min
+from model.regressor import Regressor
+from model.monte_carlo import many_predict
+from model.monte_carlo import monte_carlo_data
+from model.monte_carlo import monte_carlo_infer
+from model.monte_carlo import save_monte_carlo
 
-from model.gradient_boost import GradientBoostingModel
-from ..my_argparser import GB_parse_args
+from archi.reducer import EA3ML3 as ARCHI
+# from archi.reducer import EA1AR8MR8L1 as ARCHI
 
-from .common import N_BINS
+from ..my_argparser import REG_parse_args
 
-DATA_NAME = 'HIGGS'
-BENCHMARK_NAME = DATA_NAME+'-prior'
+
+DATA_NAME = 'HIGGSTES'
+BENCHMARK_NAME = DATA_NAME+'-calib'
 N_ITER = 30
+NCALL = 100
 
 from .common import GeneratorCPU
+from .common import load_calib_tes
+from .common import load_calib_jes
+from .common import load_calib_les
 
+
+class TrainGenerator:
+    def __init__(self, param_generator, data_generator):
+        self.param_generator = param_generator
+        self.data_generator = data_generator
+
+    def generate(self, n_samples):
+        if n_samples is not None:
+            params = self.param_generator()
+            X, y, w = self.data_generator.generate(*params, n_samples=n_samples)
+            return X, params.interest_parameters, w, params.nuisance_parameters
+        else:
+            config = Config()
+            X, y, w = self.data_generator.generate(*config.CALIBRATED, n_samples=config.N_TRAINING_SAMPLES)
+            return X, y, w, 1
 
 
 def build_model(args, i_cv):
-    model = get_model(args, GradientBoostingModel)
+    args.net = ARCHI(n_in=29, n_out=2, n_extra=3, n_unit=args.n_unit)
+    args.optimizer = get_optimizer(args)
+    model = get_model(args, Regressor)
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     return model
 
@@ -70,7 +96,7 @@ def build_model(args, i_cv):
 def main():
     # BASIC SETUP
     logger = set_logger()
-    args = GB_parse_args(main_description="Training launcher for Gradient boosting on HIGGS benchmark")
+    args = REG_parse_args(main_description="Training launcher for Gradient boosting on HIGGS benchmark")
     logger.info(args)
     flush(logger)
     # INFO
@@ -152,6 +178,7 @@ def run_estimation(args, i_cv):
     seed = SEED + i_cv * 5
     train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
     train_generator = GeneratorCPU(train_generator)
+    train_generator = TrainGenerator(param_generator, train_generator)
     valid_generator = GeneratorCPU(valid_generator)
     test_generator = GeneratorCPU(test_generator)
 
@@ -162,17 +189,22 @@ def run_estimation(args, i_cv):
     flush(logger)
 
     # TRAINING / LOADING
-    train_or_load_classifier(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
+    train_or_load_neural_net(model, train_generator, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES, no_grad=True)
 
-    result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
+    result_row.update(evaluate_neural_net(model, prefix='valid'))
+    evaluate_regressor(model, prefix='valid')
 
     # MEASUREMENT
-    evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
-    iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=N_BINS)
+    calib_tes = load_calib_tes(DATA_NAME, BENCHMARK_NAME)
+    calib_jes = load_calib_jes(DATA_NAME, BENCHMARK_NAME)
+    calib_les = load_calib_les(DATA_NAME, BENCHMARK_NAME)
+    calibs = (calib_tes, calib_jes, calib_les)
+    result_row['nfcn'] = NCALL
+    iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, calibs)
                     for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(iter_results)
     result_table.to_csv(os.path.join(model.results_path, 'estimations.csv'))
@@ -185,7 +217,7 @@ def run_estimation(args, i_cv):
     return result_table
 
 
-def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=N_BINS):
+def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, calibs):
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
@@ -199,19 +231,45 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
 
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES, no_grad=True)
-    # PLOT SUMMARIES
-    evaluate_summary_computer(model, X_test, y_test, w_test, n_bins=n_bins, prefix='', suffix=suffix, directory=iter_directory)
 
-    logger.info('Set up NLL computer')
-    compute_summaries = model.summary_computer(n_bins=n_bins)
-    compute_nll = NLLComputer(compute_summaries, valid_generator, X_test, w_test, config=config)
-    # NLL PLOTS
-    plot_nll_around_min(compute_nll, config.TRUE, iter_directory, suffix)
+    # CHEATER :
+    cheat_target, cheat_sigma = model.predict(X_test, w_test, np.array(config.TRUE.nuisance_parameters))
+    result_row['cheat_mu'] = cheat_target
+    result_row['cheat_sigma_mu'] = cheat_sigma
 
-    # MINIMIZE NLL
-    logger.info('Prepare minuit minimizer')
-    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
-    result_row.update(evaluate_minuit(minimizer, config.TRUE, iter_directory, suffix=suffix))
+    # CALIBRATION
+    calib_tes, calib_jes, calib_les = calibs
+    tes_mean, tes_sigma = calib_tes.predict(X_test, w_test)
+    jes_mean, jes_sigma = calib_jes.predict(X_test, w_test)
+    les_mean, les_sigma = calib_les.predict(X_test, w_test)
+    logger.info('tes = {} =vs= {} +/- {}'.format(config.TRUE.tes, tes_mean, tes_sigma) )
+    logger.info('jes = {} =vs= {} +/- {}'.format(config.TRUE.jes, jes_mean, jes_sigma) )
+    logger.info('les = {} =vs= {} +/- {}'.format(config.TRUE.les, les_mean, les_sigma) )
+    config.CALIBRATED = Parameter(tes_mean, jes_mean, les_mean, config.CALIBRATED.interest_parameters)
+    config.CALIBRATED_ERROR = Parameter(tes_sigma, jes_sigma, les_sigma, config.CALIBRATED_ERROR.interest_parameters)
+    for name, value in config.CALIBRATED.items():
+        result_row[name+"_calib"] = value
+    for name, value in config.CALIBRATED_ERROR.items():
+        result_row[name+"_calib_error"] = value
+
+    param_sampler = lambda: param_generator(config)
+
+    # MONTE CARLO
+    logger.info('Making {} predictions'.format(NCALL))
+    all_pred, all_params = many_predict(model, X_test, w_test, param_sampler, ncall=NCALL)
+    logger.info('Gathering it all')
+    mc_data = monte_carlo_data(all_pred, all_params)
+    save_monte_carlo(mc_data, iter_directory, ext=suffix)
+    target, sigma = monte_carlo_infer(mc_data)
+
+    result_row.update(config.CALIBRATED.to_dict())
+    result_row.update(config.CALIBRATED_ERROR.to_dict( suffix=_ERROR) )
+    result_row.update(config.TRUE.to_dict(suffix=_TRUTH) )
+    name = config.INTEREST_PARAM_NAME
+    result_row[name] = target
+    result_row[name+_ERROR] = sigma
+    result_row[name+_TRUTH] = config.TRUE.interest_parameters
+    logger.info('mu  = {} =vs= {} +/- {}'.format(config.TRUE.interest_parameters, target, sigma) )
     return result_row.copy()
 
 
@@ -229,6 +287,7 @@ def run_conditional_estimation(args, i_cv):
     seed = SEED + i_cv * 5
     train_generator, valid_generator, test_generator = get_generators_torch(seed, cuda=args.cuda)
     train_generator = GeneratorCPU(train_generator)
+    train_generator = TrainGenerator(param_generator, train_generator)
     valid_generator = GeneratorCPU(valid_generator)
     test_generator = GeneratorCPU(test_generator)
 
@@ -239,17 +298,15 @@ def run_conditional_estimation(args, i_cv):
     flush(logger)
 
     # TRAINING / LOADING
-    train_or_load_classifier(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
+    train_or_load_neural_net(model, train_generator, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES, no_grad=True)
 
-    result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
-
     # MEASUREMENT
-    evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
-    iter_results = [run_conditional_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=N_BINS)
+    result_row['nfcn'] = NCALL
+    iter_results = [run_conditional_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator)
                     for i, test_config in enumerate(config.iter_test_config())]
 
     conditional_estimate = pd.concat(iter_results)
@@ -260,7 +317,7 @@ def run_conditional_estimation(args, i_cv):
     return conditional_estimate
 
 
-def run_conditional_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=N_BINS):
+def run_conditional_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator):
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
@@ -271,14 +328,10 @@ def run_conditional_estimation_iter(model, result_row, i_iter, config, valid_gen
 
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES, no_grad=True)
-    # SUMMARIES
-    logger.info('Set up NLL computer')
-    compute_summaries = model.summary_computer(n_bins=n_bins)
-    compute_nll = NLLComputer(compute_summaries, valid_generator, X_test, w_test, config=config)
 
     # MEASURE STAT/SYST VARIANCE
     logger.info('MEASURE STAT/SYST VARIANCE')
-    conditional_results = make_conditional_estimation(compute_nll, config)
+    conditional_results = make_conditional_estimation(model, X_test, w_test, config)
     fname = os.path.join(iter_directory, "no_nuisance.csv")
     conditional_estimate = pd.DataFrame(conditional_results)
     conditional_estimate['i'] = i_iter
@@ -287,19 +340,22 @@ def run_conditional_estimation_iter(model, result_row, i_iter, config, valid_gen
     return conditional_estimate
 
 
-def make_conditional_estimation(compute_nll, config):
+def make_conditional_estimation(model, X_test, w_test, config):
     results = []
+    interest_name = config.INTEREST_PARAM_NAME
     for j, nuisance_parameters in enumerate(config.iter_nuisance()):
-        compute_nll_no_nuisance = lambda mu : compute_nll(*nuisance_parameters, mu)
-        minimizer = get_minimizer_no_nuisance(compute_nll_no_nuisance, config.CALIBRATED, config.CALIBRATED_ERROR)
-        results_row = evaluate_minuit(minimizer, config.TRUE, do_hesse=False)
-        results_row['j'] = j
-        for name, value in zip(config.CALIBRATED.nuisance_parameters_names, nuisance_parameters):
-            results_row[name] = value
-            results_row[name+_TRUTH] = config.TRUE[name]
-        results.append(results_row)
-        print(f"ncalls = {results_row['ncalls']}", flush=True)
+        result_row = {}
+        target, sigma = model.predict(X_test, w_test, np.array(nuisance_parameters) )
+        result_row[interest_name] = target
+        result_row[interest_name+_ERROR] = sigma
+        result_row[interest_name+_TRUTH] = config.TRUE.interest_parameters
+        result_row['j'] = j
+        for nuisance_name, value in zip(config.CALIBRATED.nuisance_parameters_names, nuisance_parameters):
+            result_row[nuisance_name] = value
+            result_row[nuisance_name+_TRUTH] = config.TRUE[nuisance_name]
+        results.append(result_row)
     return results
+
 
 if __name__ == '__main__':
     main()

@@ -11,6 +11,13 @@ from utils.model import get_optimizer
 from problem.higgs import HiggsConfigTesOnly as Config
 from problem.higgs import get_minimizer
 
+from problem.higgs import get_generators_torch
+DATA_NAME = 'HIGGS'
+# from problem.higgs import get_easy_generators_torch as get_generators_torch
+# DATA_NAME = 'EASY_HIGGS'
+# from problem.higgs import get_balanced_generators_torch as get_generators_torch
+# DATA_NAME = 'BALANCED_HIGGS'
+
 from problem.higgs import get_parameter_class
 from problem.higgs import get_higgsnll_class
 from problem.higgs import get_config_class
@@ -27,8 +34,6 @@ GeneratorClass = get_generator_class(TES, JES, LES)
 HiggsLoss = get_higgsloss_class(TES, JES, LES)
 param_generator = get_parameter_generator(TES, JES, LES)
 
-
-DATA_NAME = 'HIGGS'
 if TES : DATA_NAME += "TES"
 if JES : DATA_NAME += "JES"
 if LES : DATA_NAME += "LES"
