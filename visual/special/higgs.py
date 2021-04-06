@@ -23,14 +23,12 @@ def plot_TES_around_min(compute_nll, true_params, directory, suffix):
 
 def plot_JES_around_min(compute_nll, true_params, directory, suffix):
     jes_array = np.linspace(0.8, 1.2, 20)  # TODO : choose good range
-    tes, jes, les, mu =  true_params
     nll_array = [compute_nll(*true_params.clone_with(jes=jes)) for jes in jes_array]
     name = 'jes'
     plot_param_around_min(jes_array, nll_array, true_params.jes, name, suffix, directory, 'jes NLL')
 
 def plot_LES_around_min(compute_nll, true_params, directory, suffix):
     les_array = np.linspace(0.9, 1.1, 20)  # TODO : choose good range
-    tes, jes, les, mu =  true_params
     nll_array = [compute_nll(*true_params.clone_with(les=les)) for les in les_array]
     name = 'les'
     plot_param_around_min(les_array, nll_array, true_params.les, name, suffix, directory, 'les NLL')
