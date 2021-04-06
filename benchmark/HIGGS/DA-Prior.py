@@ -55,7 +55,7 @@ from .common import NLLComputer
 from .common import param_generator
 from .common import get_generators_torch
 
-BENCHMARK_NAME = DATA_NAME+'-prior'
+BENCHMARK_NAME = f"{DATA_NAME}-prior-{Config.TOLERANCE}"
 N_AUGMENT = 5
 
 from .common import GeneratorCPU
@@ -236,7 +236,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
 
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
-    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
+    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR, tolerance=config.TOLERANCE)
     result_row.update(evaluate_minuit(minimizer, config.TRUE, iter_directory, suffix=suffix))
     return result_row.copy()
 

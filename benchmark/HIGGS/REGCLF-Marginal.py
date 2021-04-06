@@ -53,7 +53,7 @@ from .common import param_generator
 from .common import get_generators_torch
 from .common import Parameter
 
-BENCHMARK_NAME = DATA_NAME+'-marginal'
+BENCHMARK_NAME = f"{DATA_NAME}-marginal"
 NCALL = 1
 
 class TrainGenerator:

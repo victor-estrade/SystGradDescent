@@ -26,6 +26,8 @@ class BaseHiggsConfig():
     N_TESTING_SAMPLES = None
     RANGE_N_TEST = [None,]
 
+    TOLERANCE = 0.1
+    
     @property
     def PARAM_NAMES(self):
         return self.TRUE.parameter_names
@@ -60,6 +62,7 @@ class HiggsConfigTes(BaseHiggsConfig):
 
     FINE_RANGE = ParameterTes(tes=np.linspace(0.9, 1.1, 5),
                         mu=np.linspace(0.5, 2, 5))
+    TOLERANCE = 10
     def get_suffix(self):
         suffix = f'-mu={self.TRUE.mu:1.2f}_tes={self.TRUE.tes}'
         return suffix
@@ -76,6 +79,7 @@ class HiggsConfigJes(BaseHiggsConfig):
 
     FINE_RANGE = ParameterJes(jes=np.linspace(0.9, 1.1, 5),
                         mu=np.linspace(0.5, 2, 5))
+    TOLERANCE = 10
     def get_suffix(self):
         suffix = f'-mu={self.TRUE.mu:1.2f}_jes={self.TRUE.jes}'
         return suffix
@@ -93,6 +97,7 @@ class HiggsConfigLes(BaseHiggsConfig):
 
     FINE_RANGE = ParameterLes(les=np.linspace(0.9, 1.1, 5),
                         mu=np.linspace(0.5, 2, 5))
+    TOLERANCE = 10
     def get_suffix(self):
         suffix = f'-mu={self.TRUE.mu:1.2f}_les={self.TRUE.les}'
         return suffix
@@ -110,6 +115,7 @@ class HiggsConfigTesJes(BaseHiggsConfig):
     FINE_RANGE = ParameterTesJes(tes=np.linspace(0.9, 1.1, 5),
                         jes=np.linspace(0.9, 1.1, 5),
                         mu=np.linspace(0.5, 2, 5))
+    TOLERANCE = 10
     def get_suffix(self):
         suffix = f'-mu={self.TRUE.mu:1.2f}_tes={self.TRUE.tes}_jes={self.TRUE.jes}'
         return suffix
@@ -127,6 +133,7 @@ class HiggsConfigTesLes(BaseHiggsConfig):
     FINE_RANGE = ParameterTesLes(tes=np.linspace(0.9, 1.1, 5),
                         les=np.linspace(0.9, 1.1, 5),
                         mu=np.linspace(0.5, 2, 5))
+    TOLERANCE = 10
     def get_suffix(self):
         suffix = f'-mu={self.TRUE.mu:1.2f}_tes={self.TRUE.tes}_les={self.TRUE.les}'
         return suffix
@@ -147,6 +154,7 @@ class HiggsConfigTesJesLes(BaseHiggsConfig):
                         les=np.linspace(0.9, 1.1, 5),
                         mu=np.linspace(0.5, 2, 5))
 
+    TOLERANCE = 10
     def get_suffix(self):
         suffix = f'-mu={self.TRUE.mu:1.2f}_tes={self.TRUE.tes}_jes={self.TRUE.jes}_les={self.TRUE.les}'
         return suffix
@@ -167,6 +175,7 @@ class HiggsConfig(BaseHiggsConfig):
                         jes=np.linspace(0.9, 1.1, 5),
                         les=np.linspace(0.9, 1.1, 5),
                         mu=np.linspace(0.5, 2, 5))
+    TOLERANCE = 10
     def get_suffix(self):
         suffix = f'-mu={self.TRUE.mu:1.2f}_tes={self.TRUE.tes}_jes={self.TRUE.jes}_les={self.TRUE.les}'
         return suffix
@@ -191,6 +200,7 @@ class HiggsConfigTesOnly(BaseHiggsConfig):
     MIN = Parameter(tes=0.9, jes=0.95, les=0.98, mu=0.1)
     MAX = Parameter(tes=1.1, jes=1.05, les=1.02, mu=2.2)
 
+    TOLERANCE = 10
     def get_suffix(self):
         suffix = f'-mu={self.TRUE.mu:1.2f}_tes={self.TRUE.tes}_jes={self.TRUE.jes}_les={self.TRUE.les}'
         return suffix
@@ -207,6 +217,7 @@ class FuturHiggsConfig(BaseHiggsConfig):
                         nasty_bkg=[1.0],
                         sigma_soft=[3.0],
                         mu=[0.5,1,2])
+    TOLERANCE = 10
     def get_suffix(self):
         suffix = f'-mu={self.TRUE.mu:1.2f}_tes={self.TRUE.tes}_jes={self.TRUE.jes}_les={self.TRUE.les}_nasty_bkg={self.TRUE.nasty_bkg}_sigma_soft={self.TRUE.sigma_soft}'
         return suffix

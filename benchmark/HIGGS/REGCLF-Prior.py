@@ -57,7 +57,7 @@ from .common import param_generator
 from .common import get_generators_torch
 from .common import Parameter
 
-BENCHMARK_NAME = DATA_NAME+'-prior'
+BENCHMARK_NAME = f"{DATA_NAME}-prior"
 NCALL = 10
 
 class TrainGenerator:

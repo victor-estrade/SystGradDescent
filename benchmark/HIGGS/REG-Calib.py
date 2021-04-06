@@ -59,7 +59,7 @@ from .common import param_generator
 from .common import get_generators_torch
 from .common import Parameter
 
-BENCHMARK_NAME = DATA_NAME+'-calib'
+BENCHMARK_NAME = f"{DATA_NAME}-calib"
 NCALL = 100
 
 from .common import GeneratorCPU
