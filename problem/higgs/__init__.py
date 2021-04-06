@@ -14,6 +14,7 @@ from .torch import get_higgsloss_class
 from .torch import get_generators_torch
 from .torch import get_balanced_generators_torch
 from .torch import get_easy_generators_torch
+from .parameter import get_parameter_class
 from .parameter import Parameter
 from .parameter import FuturParameter
 from .nll import HiggsNLL
@@ -23,6 +24,5 @@ from .config import get_config_class
 from .config import HiggsConfig
 from .config import HiggsConfigTesOnly
 from .calibration import get_parameter_generator
-from .minimizer import get_mono_minimizer
 from .minimizer import get_minimizer
 from .minimizer import get_minimizer_no_nuisance
