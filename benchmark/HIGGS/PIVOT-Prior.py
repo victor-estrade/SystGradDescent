@@ -60,7 +60,7 @@ from .common import param_generator
 from .common import get_generators_torch
 from .common import Parameter
 
-BENCHMARK_NAME = f"{DATA_NAME}-prior-{Config.TOLERANCE}"
+BENCHMARK_NAME = f"{DATA_NAME}-prior-{parse_args_tolerance()}"
 BENCHMARK_NAME = DATA_NAME+'-prior'
 N_AUGMENT = 5
 
@@ -249,7 +249,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
 
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
-    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR, tolerance=config.TOLERANCE)
+    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR, tolerance=tolerance)
     result_row.update(evaluate_minuit(minimizer, config.TRUE, iter_directory, suffix=suffix))
     return result_row.copy()
 
