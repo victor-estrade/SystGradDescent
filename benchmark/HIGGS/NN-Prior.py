@@ -191,7 +191,7 @@ def run_estimation(args, i_cv):
     return result_table
 
 
-def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=N_BINS):
+def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=N_BINS, tolerance=10):
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
