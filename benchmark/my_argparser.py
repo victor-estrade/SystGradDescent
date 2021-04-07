@@ -17,6 +17,8 @@ def GB_parse_args(main_description="Training launcher"):
                         default=0, help="start of i_cv for range(start, end)")
     parser.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument("--tolerance", type=float,
+                        default=0.1, help="tolerance value for Minuit migrad and simplex minimization")
     parser.add_argument('--load-run', help='load saved runs. Do not run the models',
                         action='store_true')
     parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
@@ -56,6 +58,8 @@ def REG_parse_args(main_description="Training launcher"):
                         default=0, help="start of i_cv for range(start, end)")
     parser.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument("--tolerance", type=float,
+                        default=0.1, help="tolerance value for Minuit migrad and simplex minimization")
     parser.add_argument('--load-run', help='load saved runs. Do not run the models',
                         action='store_true')
     parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
@@ -110,6 +114,8 @@ def INFERNO_parse_args(main_description="Training launcher"):
                         default=0, help="start of i_cv for range(start, end)")
     parser.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument("--tolerance", type=float,
+                        default=0.1, help="tolerance value for Minuit migrad and simplex minimization")
     parser.add_argument('--load-run', help='load saved runs. Do not run the models',
                         action='store_true')
     parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
@@ -169,6 +175,8 @@ def NET_parse_args(main_description="Training launcher"):
                         default=0, help="start of i_cv for range(start, end)")
     parser.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument("--tolerance", type=float,
+                        default=0.1, help="tolerance value for Minuit migrad and simplex minimization")
     parser.add_argument('--load-run', help='load saved runs. Do not run the models',
                         action='store_true')
     parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
@@ -221,6 +229,8 @@ def TP_parse_args(main_description="Training launcher"):
                         default=0, help="start of i_cv for range(start, end)")
     parser.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument("--tolerance", type=float,
+                        default=0.1, help="tolerance value for Minuit migrad and simplex minimization")
     parser.add_argument('--load-run', help='load saved runs. Do not run the models',
                         action='store_true')
     parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
@@ -277,6 +287,8 @@ def PIVOT_parse_args(main_description="Training launcher"):
                         default=0, help="start of i_cv for range(start, end)")
     parser.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument("--tolerance", type=float,
+                        default=0.1, help="tolerance value for Minuit migrad and simplex minimization")
     parser.add_argument('--load-run', help='load saved runs. Do not run the models',
                         action='store_true')
     parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
@@ -338,6 +350,8 @@ def FF_parse_args(main_description="Training launcher"):
                         default=0, help="start of i_cv for range(start, end)")
     parser.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument("--tolerance", type=float,
+                        default=0.1, help="tolerance value for Minuit migrad and simplex minimization")
     parser.add_argument('--load-run', help='load saved runs. Do not run the models',
                         action='store_true')
     parser.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',

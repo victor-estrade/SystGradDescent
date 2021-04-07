@@ -46,6 +46,8 @@ def parse_args():
                         default=0, help="start of i_cv for range(start, end)")
     main_args.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
+    main_args.add_argument("--tolerance", type=float,
+                        default=0.1, help="tolerance value for Minuit migrad and simplex minimization")
     main_args.add_argument('--load-run', help='load saved runs. Do not run the models',
                         action='store_true')
     main_args.add_argument('--estimate-only', help='Turns off conditional estimation for V_stat and V_syst',
