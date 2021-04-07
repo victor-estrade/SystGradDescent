@@ -43,6 +43,7 @@ from visual.special.higgs import plot_nll_around_min
 
 from model.neural_network import NeuralNetClassifier
 from ..my_argparser import NET_parse_args
+from ..my_argparser import parse_args_tolerance
 
 from archi.classic import L4 as ARCHI
 
@@ -58,7 +59,7 @@ from .common import get_generators_torch
 from .common import Parameter
 
 DATA_NAME = 'HIGGSTES'
-BENCHMARK_NAME = f"{DATA_NAME}-calib-{Config.TOLERANCE}"
+BENCHMARK_NAME = f"{DATA_NAME}-calib-{parse_args_tolerance()}"
 N_AUGMENT = 5
 
 from .common import GeneratorCPU

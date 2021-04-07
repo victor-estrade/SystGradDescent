@@ -42,6 +42,7 @@ from visual.special.higgs import plot_nll_around_min
 
 from model.gradient_boost import GradientBoostingModel
 from ..my_argparser import GB_parse_args
+from ..my_argparser import parse_args_tolerance
 
 from .common import DATA_NAME
 from .common import N_BINS

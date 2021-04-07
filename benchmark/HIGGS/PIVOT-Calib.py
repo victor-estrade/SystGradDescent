@@ -45,6 +45,7 @@ from model.pivot import PivotClassifier
 from model.criterion.weighted_criterion import WeightedCrossEntropyLoss
 from model.criterion.weighted_criterion import WeightedGaussEntropyLoss
 from ..my_argparser import PIVOT_parse_args
+from ..my_argparser import parse_args_tolerance
 
 from archi.classic import L4 as ARCHI
 

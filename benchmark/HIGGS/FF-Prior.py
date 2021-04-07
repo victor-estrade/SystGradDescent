@@ -40,6 +40,7 @@ from visual.special.higgs import plot_nll_around_min
 
 from model.feature_filter import FeatureModel
 from ..my_argparser import FF_parse_args
+from ..my_argparser import parse_args_tolerance
 
 from .common import DATA_NAME
 from .common import N_BINS
@@ -51,7 +52,7 @@ from .common import GeneratorClass
 from .common import param_generator
 from .common import get_generators_torch
 
-BENCHMARK_NAME = f"{DATA_NAME}-prior-{Config.TOLERANCE}"
+BENCHMARK_NAME = f"{DATA_NAME}-prior-{parse_args_tolerance()}"
 
 from .common import GeneratorCPU
 

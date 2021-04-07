@@ -42,6 +42,7 @@ from visual.special.higgs import plot_nll_around_min
 
 from model.inferno import Inferno
 from ..my_argparser import INFERNO_parse_args
+from ..my_argparser import parse_args_tolerance
 from collections import OrderedDict
 
 from archi.classic import L4 as ARCHI

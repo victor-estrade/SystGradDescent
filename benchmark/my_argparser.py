@@ -7,6 +7,13 @@ from __future__ import unicode_literals
 import argparse
 
 
+def parse_args_tolerance():
+    parser = argparse.ArgumentParser(description='just for tolerance')
+    parser.add_argument("--tolerance", type=float,
+                        default=0.1, help="tolerance value for Minuit migrad and simplex minimization")
+    args, _ = parser.parse_known_args()
+    return args.tolerance
+
 def GB_parse_args(main_description="Training launcher"):
     parser = argparse.ArgumentParser(description=main_description)
 

@@ -40,6 +40,7 @@ from visual.special.higgs import plot_nll_around_min
 
 from model.feature_filter import FeatureModel
 from ..my_argparser import FF_parse_args
+from ..my_argparser import parse_args_tolerance
 
 from .common import DATA_NAME
 from .common import N_BINS

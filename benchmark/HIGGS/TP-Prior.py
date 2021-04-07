@@ -42,6 +42,7 @@ from visual.special.higgs import plot_nll_around_min
 
 from model.tangent_prop import TangentPropClassifier
 from ..my_argparser import TP_parse_args
+from ..my_argparser import parse_args_tolerance
 from collections import OrderedDict
 
 from archi.classic import L4 as ARCHI
