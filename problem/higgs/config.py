@@ -27,14 +27,16 @@ class BaseHiggsConfig():
     RANGE_N_TEST = [None,]
 
     TOLERANCE = 0.1
-    
+
+
     @property
     def PARAM_NAMES(self):
         return self.TRUE.parameter_names
 
-    @property
-    def INTEREST_PARAM_NAMES(self):
-        return self.TRUE.interest_parameter_names
+    INTEREST_PARAM_NAME = 'mu'
+    # @property
+    # def INTEREST_PARAM_NAME(self):
+    #     return self.TRUE.interest_parameter_names
 
     def iter_test_config(self):
         param_lists = [*self.RANGE ] + [ HiggsConfig.RANGE_N_TEST ]
