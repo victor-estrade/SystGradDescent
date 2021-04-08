@@ -55,21 +55,21 @@ REG_HP   = dict(
                 archi_name=["EA3ML3"]
                 , n_steps=[15000, 25000]
                 , n_units=[200, 500]
-                , sample_size=[10000]
+                , sample_size=[10000, 50000]
                 )
 
 FREG_HP  = dict(
                 archi_name=["EA3ML3"]
                 , n_steps=[15000, 25000]
                 , n_units=[200, 500]
-                , sample_size=[10000]
+                , sample_size=[10000, 50000]
                 )
 
 REG_M_HP = dict(
                 archi_name=["A3ML3"]
                 , n_steps=[15000, 25000]
                 , n_units=[100, 200, 500]
-                , sample_size=[10000]
+                , sample_size=[10000, 50000]
                 )
 
 TP_HP    = dict(
