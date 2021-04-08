@@ -18,7 +18,7 @@ N_CV = 6
 _ERROR = '_error'
 _TRUTH = '_truth'
 
-PLOT_CONTOUR = True
+PLOT_CONTOUR = False
 
 # FIT PARAMETERS
 #---------------
