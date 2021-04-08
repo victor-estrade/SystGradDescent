@@ -60,15 +60,14 @@ from .common import Parameter
 from .common import TES
 from .common import JES
 from .common import LES
-from .common import calibrates
 
 BENCHMARK_NAME = f"{DATA_NAME}-calib-{parse_args_tolerance()}"
-
 
 from .common import GeneratorCPU
 from .common import load_calib_tes
 from .common import load_calib_jes
 from .common import load_calib_les
+from .common import calibrates
 
 
 class TrainGenerator:
