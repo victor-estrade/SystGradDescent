@@ -61,7 +61,6 @@ from .common import get_generators_torch
 from .common import Parameter
 
 BENCHMARK_NAME = f"{DATA_NAME}-prior-{parse_args_tolerance()}"
-BENCHMARK_NAME = DATA_NAME+'-prior'
 N_AUGMENT = 5
 
 from .common import GeneratorCPU
