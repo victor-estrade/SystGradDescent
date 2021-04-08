@@ -11,19 +11,19 @@ DA_HP    = dict(
                 , n_steps=[15000, 25000]
                 , n_units=[500]
                 , batch_size=[10000]
-                , tolerance=[10]
+                , tolerance=[10.0]
                 )
 
 FF_HP    = dict(
                 feature_id=list(range(28))
-                , tolerance=[10]
+                , tolerance=[10.0]
                 )
 
 GB_HP    = dict(
                 max_depth=[3, 5, 10]
                 , n_estimators=[100, 300, 1000]
                 , learning_rate=[0.1, 0.05, 0.01]
-                , tolerance=[10]
+                , tolerance=[10.0]
                 )
 
 INF_HP   = dict(
@@ -31,7 +31,7 @@ INF_HP   = dict(
                 , n_steps=[15000, 25000]
                 , n_units=[500]
                 , sample_size=[10000]
-                , tolerance=[10]
+                , tolerance=[10.0]
                 )
 
 NN_HP    = dict(
@@ -39,7 +39,7 @@ NN_HP    = dict(
                 , n_steps=[15000, 25000]
                 , n_units=[200, 500]
                 , batch_size=[10000]
-                , tolerance=[10]
+                , tolerance=[10.0]
                 )
 
 PIVOT_HP = dict(
@@ -48,7 +48,7 @@ PIVOT_HP = dict(
                 , n_units=[100, 200, 500]
                 , trade_off=[1.0, 0.1, 1e-2, 1e-3]
                 , batch_size=[10000]
-                , tolerance=[10]
+                , tolerance=[10.0]
                 )
 
 REG_HP   = dict(
@@ -78,5 +78,5 @@ TP_HP    = dict(
                 , n_units=[100, 200, 500]
                 , trade_off=[1.0, 0.1, 1e-2, 1e-3]
                 , batch_size=[10000]
-                , tolerance=[10]
+                , tolerance=[10.0]
                 )
