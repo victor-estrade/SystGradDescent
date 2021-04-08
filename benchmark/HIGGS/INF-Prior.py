@@ -57,6 +57,10 @@ from .common import GeneratorClass
 from .common import param_generator
 from .common import get_generators_torch
 from .common import Parameter
+from .common import HiggsLoss
+from .common import TES
+from .common import JES
+from .common import LES
 
 BENCHMARK_NAME = f"{DATA_NAME}-prior-{parse_args_tolerance()}"
 
@@ -73,15 +77,22 @@ class TrainGenerator:
             self.data_generator.cpu()
 
         self.mu  = self.tensor(Config.CALIBRATED.mu, requires_grad=True)
-        self.tes = self.tensor(Config.CALIBRATED.tes, requires_grad=True)
-        self.jes = self.tensor(Config.CALIBRATED.jes, requires_grad=True)
-        self.les = self.tensor(Config.CALIBRATED.les, requires_grad=True)
-        self.params = (self.tes, self.jes, self.tes, self.mu)
-        self.nuisance_params = OrderedDict([
-                                ('tes', self.tes),
-                                ('jes', self.jes),
-                                ('les', self.les),
-                                ])
+        self.params = tuple()
+        nuisance_params_list = []
+        if TES:
+            self.tes = self.tensor(Config.CALIBRATED.tes, requires_grad=True)
+            self.params = self.params + (self.tes, )
+            nuisance_params_list.append( ('tes', self.tes) )
+        if JES:
+            self.jes = self.tensor(Config.CALIBRATED.jes, requires_grad=True)
+            self.params = self.params + (self.jes, )
+            nuisance_params_list.append( ('jes', self.jes) )
+        if LES:
+            self.les = self.tensor(Config.CALIBRATED.les, requires_grad=True)
+            self.params = self.params + (self.les, )
+            nuisance_params_list.append( ('les', self.les) )
+        self.params = self.params + (self.mu, )
+        self.nuisance_params = OrderedDict(nuisance_params_list)
 
     def generate(self, n_samples=None):
             X_s, w_s, X_b, w_b, y = self.data_generator.split_generate(*self.params, n_samples=n_samples)
