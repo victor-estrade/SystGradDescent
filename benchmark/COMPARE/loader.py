@@ -111,16 +111,18 @@ class Loader(object):
 
 class FFLoader(Loader):
     """docstring for FFLoader"""
-    def __init__(self, data_name, benchmark_name, feature_id=0):
+    def __init__(self, data_name, benchmark_name, feature_id=0, tolerance=None):
         base_name = "FeatureModel"
         model_full_name = f"{base_name}-{feature_id}"
+        if tolerance is not None:
+            benchmark_name = f"{benchmark_name}-{tolerance}"
         super().__init__(data_name, benchmark_name, base_name, model_full_name)
         self.args = dict(feature_id=feature_id)
 
 
 class GBLoader(Loader):
     """docstring for GBLoader"""
-    def __init__(self, data_name, benchmark_name, n_estimators=100, max_depth=3, learning_rate=0.1):
+    def __init__(self, data_name, benchmark_name, n_estimators=100, max_depth=3, learning_rate=0.1, tolerance=None):
         model = GradientBoostingModel(n_estimators=n_estimators, max_depth=max_depth, learning_rate=learning_rate)
         model.set_info(data_name, benchmark_name, 0)
         model_full_name = model.get_name()
@@ -132,7 +134,7 @@ class GBLoader(Loader):
 class NNLoader(Loader):
     """docstring for NNLoader"""
     def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
-                batch_size=20, learning_rate=1e-3, beta1=0.9, beta2=0.999, optimizer_name="Adam"):
+                batch_size=20, learning_rate=1e-3, beta1=0.9, beta2=0.999, optimizer_name="Adam", tolerance=None):
         if optimizer_name == "Adam":
             optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
         else:
@@ -149,7 +151,7 @@ class NNLoader(Loader):
 class DALoader(Loader):
     """docstring for DALoader"""
     def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
-                batch_size=20, learning_rate=1e-3, beta1=0.9, beta2=0.999, optimizer_name="Adam"):
+                batch_size=20, learning_rate=1e-3, beta1=0.9, beta2=0.999, optimizer_name="Adam", tolerance=None):
         if optimizer_name == "Adam":
             optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
         else:
@@ -165,7 +167,7 @@ class DALoader(Loader):
 class TPLoader(Loader):
     """docstring for TPLoader"""
     def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
-                batch_size=1000, learning_rate=1e-3, beta1=0.9, beta2=0.999, optimizer_name="Adam", trade_off=0):
+                batch_size=1000, learning_rate=1e-3, beta1=0.9, beta2=0.999, optimizer_name="Adam", trade_off=0, tolerance=None):
         if optimizer_name == "Adam":
             optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
         else:
@@ -181,7 +183,7 @@ class TPLoader(Loader):
 class PIVOTLoader(Loader):
     """docstring for PIVOTLoader"""
     def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
-                batch_size=1000, learning_rate=1e-3, beta1=0.9, beta2=0.999, optimizer_name="Adam", trade_off=0):
+                batch_size=1000, learning_rate=1e-3, beta1=0.9, beta2=0.999, optimizer_name="Adam", trade_off=0, tolerance=None):
         if optimizer_name == "Adam":
             optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
         else:
@@ -199,7 +201,7 @@ class INFLoader(Loader):
     """docstring for INFLoader"""
     def __init__(self, data_name, benchmark_name, archi_name, n_steps=2000, n_units=100,
                 sample_size=1000, learning_rate=1e-3, beta1=0.5, beta2=0.9, optimizer_name="Adam",
-                temperature=1.0):
+                temperature=1.0, tolerance=None):
         if optimizer_name == "Adam":
             optimizer_name = f"Adam-{learning_rate}-({beta1}-{beta2})"
         else:

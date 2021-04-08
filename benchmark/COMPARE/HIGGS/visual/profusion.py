@@ -20,30 +20,46 @@ from config import DEFAULT_DIR
 
 from collections import defaultdict
 
+from .nuisance_param import detect_nuisance_param
+from .nuisance_param import label_nuisance_param
+
+
+def exctract_alpha_combinations(some_evaluation):
+    nuisance_param_key = detect_nuisance_param(some_evaluation)
+    unique_alphas = itertools.product(*[some_evaluation[key].unique() for key in nuisance_param_key])
+    return list(unique_alphas)
+
+def extract_nominal(evaluation):
+    nuisance_param_key = detect_nuisance_param(evaluation)
+    nominal_true_mu = 1.0  # Nominal value of mu
+    evaluation = evaluation[(evaluation.true_mu == nominal_true_mu)]
+    nominal_nuisance = 1.0  # Nominal value of all nuisance params
+    for key in nuisance_param_key:
+        evaluation = evaluation[(evaluation[key] == nominal_nuisance)]
+    return evaluation
+
 
 def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     prop_cycle = plt.rcParams['axes.prop_cycle']
     color_cycle = prop_cycle.by_key()['color']
-    unique_tes = all_evaluations[0].true_tes.unique()
-    unique_jes = all_evaluations[0].true_jes.unique()
-    unique_les = all_evaluations[0].true_les.unique()
-    unique_alphas = itertools.product(unique_tes, unique_jes, unique_les)
-    n_alphas = len(unique_tes) * len(unique_jes) * len(unique_les)
+    unique_alphas = exctract_alpha_combinations(all_evaluations[0])
+    n_alphas = len(unique_alphas)
 
     for evaluation in all_evaluations:
         chosen_true_mu = 1.0  # Nominal value of mu
         data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        nuisance_param_key = detect_nuisance_param(data)
+        for i, ( nuisance_param, df) in enumerate(data.groupby(nuisance_param_key)):
             x = df.n_test_samples
             y = df.target_mse
-            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
+            label = label_nuisance_param(nuisance_param_key, nuisance_param)
             plt.plot(x, y, 'o-', label=label, color=color_cycle[i%n_alphas])
 
     plt.xlabel('# test samples')
     plt.ylabel("MSE $\\hat \\mu$")
     now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
     plt.title(now+title)
-    plt.legend([f"tes={tes}, jes={jes}, les={les}" for tes, jes, les in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.legend([label_nuisance_param(nuisance_param_key, nuisance_param) for nuisance_param in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'profusion_n_samples_mse.png'), bbox_inches='tight')
     plt.clf()
 
@@ -51,15 +67,10 @@ def n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 
 def nominal_n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
-        chosen_true_mu = 1.0  # Nominal value of mu
-        chosen_true_tes = 1.0  # Nominal value
-        chosen_true_jes = 1.0  # Nominal value
-        chosen_true_les = 1.0  # Nominal value
-        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_tes == chosen_true_tes)
-                         & (evaluation.true_jes == chosen_true_jes) & (evaluation.true_les == chosen_true_les)]
+        df = extract_nominal(evaluation)
         x = df.n_test_samples
         y = df.target_mse
-        label = f"tes={chosen_true_tes}, jes={chosen_true_jes}, les={chosen_true_les}"
+        label = f"nominal"
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('# test samples')
@@ -73,41 +84,34 @@ def nominal_n_samples_mse(all_evaluations, title="No Title", directory=DEFAULT_D
 def n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     prop_cycle = plt.rcParams['axes.prop_cycle']
     color_cycle = prop_cycle.by_key()['color']
-    unique_tes = all_evaluations[0].true_tes.unique()
-    unique_jes = all_evaluations[0].true_jes.unique()
-    unique_les = all_evaluations[0].true_les.unique()
-    unique_alphas = itertools.product(unique_tes, unique_jes, unique_les)
-    n_alphas = len(unique_tes) * len(unique_jes) * len(unique_les)
+    unique_alphas = exctract_alpha_combinations(all_evaluations[0])
+    n_alphas = len(unique_alphas)
 
     for evaluation in all_evaluations:
         chosen_true_mu = 1.0  # Nominal value of mu
         data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        nuisance_param_key = detect_nuisance_param(data)
+        for i, ( nuisance_param, df) in enumerate(data.groupby(nuisance_param_key)):
             x = df.n_test_samples
             y = df.var_stat
-            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
+            label = label_nuisance_param(nuisance_param_key, nuisance_param)
             plt.plot(x, y, 'o-', label=label, color=color_cycle[i%n_alphas])
 
     plt.xlabel('# test samples')
     plt.ylabel("V_stat")
     now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
     plt.title(now+title)
-    plt.legend([f"tes={tes}, jes={jes}, les={les}" for tes, jes, les in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.legend([label_nuisance_param(nuisance_param_key, nuisance_param) for nuisance_param in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'profusion_n_samples_v_stat.png'), bbox_inches='tight')
     plt.clf()
 
 
 def nominal_n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
-        chosen_true_mu = 1.0  # Nominal value of mu
-        chosen_true_tes = 1.0  # Nominal value
-        chosen_true_jes = 1.0  # Nominal value
-        chosen_true_les = 1.0  # Nominal value
-        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_tes == chosen_true_tes)
-                         & (evaluation.true_jes == chosen_true_jes) & (evaluation.true_les == chosen_true_les)]
+        df = extract_nominal(evaluation)
         x = df.n_test_samples
         y = df.var_stat
-        label = f"tes={chosen_true_tes}, jes={chosen_true_jes}, les={chosen_true_les}"
+        label = f"nominal"
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('# test samples')
@@ -122,41 +126,34 @@ def nominal_n_samples_v_stat(all_evaluations, title="No Title", directory=DEFAUL
 def n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     prop_cycle = plt.rcParams['axes.prop_cycle']
     color_cycle = prop_cycle.by_key()['color']
-    unique_tes = all_evaluations[0].true_tes.unique()
-    unique_jes = all_evaluations[0].true_jes.unique()
-    unique_les = all_evaluations[0].true_les.unique()
-    unique_alphas = itertools.product(unique_tes, unique_jes, unique_les)
-    n_alphas = len(unique_tes) * len(unique_jes) * len(unique_les)
+    unique_alphas = exctract_alpha_combinations(all_evaluations[0])
+    n_alphas = len(unique_alphas)
 
     for evaluation in all_evaluations:
         chosen_true_mu = 1.0  # Nominal value of mu
         data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        nuisance_param_key = detect_nuisance_param(data)
+        for i, ( nuisance_param, df) in enumerate(data.groupby(nuisance_param_key)):
             x = df.n_test_samples
             y = df.var_syst
-            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
+            label = label_nuisance_param(nuisance_param_key, nuisance_param)
             plt.plot(x, y, 'o-', label=label, color=color_cycle[i%n_alphas])
 
     plt.xlabel('# test samples')
     plt.ylabel("V_syst")
     now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
     plt.title(now+title)
-    plt.legend([f"tes={tes}, jes={jes}, les={les}" for tes, jes, les in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.legend([label_nuisance_param(nuisance_param_key, nuisance_param) for nuisance_param in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'profusion_n_samples_v_syst.png'), bbox_inches='tight')
     plt.clf()
 
 
 def nominal_n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
-        chosen_true_mu = 1.0  # Nominal value of mu
-        chosen_true_tes = 1.0  # Nominal value
-        chosen_true_jes = 1.0  # Nominal value
-        chosen_true_les = 1.0  # Nominal value
-        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_tes == chosen_true_tes)
-                         & (evaluation.true_jes == chosen_true_jes) & (evaluation.true_les == chosen_true_les)]
+        df = extract_nominal(evaluation)
         x = df.n_test_samples
         y = df.var_syst
-        label = f"tes={chosen_true_tes}, jes={chosen_true_jes}, les={chosen_true_les}"
+        label = f"nominal"
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('# test samples')
@@ -171,41 +168,34 @@ def nominal_n_samples_v_syst(all_evaluations, title="No Title", directory=DEFAUL
 def n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     prop_cycle = plt.rcParams['axes.prop_cycle']
     color_cycle = prop_cycle.by_key()['color']
-    unique_tes = all_evaluations[0].true_tes.unique()
-    unique_jes = all_evaluations[0].true_jes.unique()
-    unique_les = all_evaluations[0].true_les.unique()
-    unique_alphas = itertools.product(unique_tes, unique_jes, unique_les)
-    n_alphas = len(unique_tes) * len(unique_jes) * len(unique_les)
+    unique_alphas = exctract_alpha_combinations(all_evaluations[0])
+    n_alphas = len(unique_alphas)
 
     for evaluation in all_evaluations:
         chosen_true_mu = 1.0  # Nominal value of mu
         data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        nuisance_param_key = detect_nuisance_param(data)
+        for i, ( nuisance_param, df) in enumerate(data.groupby(nuisance_param_key)):
             x = df.n_test_samples
             y = df.sigma_mean
-            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
+            label = label_nuisance_param(nuisance_param_key, nuisance_param)
             plt.plot(x, y, 'o-', label=label, color=color_cycle[i%n_alphas])
 
     plt.xlabel('# test samples')
     plt.ylabel("average $\\hat \\sigma_{\\hat \\mu}$")
     now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
     plt.title(now+title)
-    plt.legend([f"tes={tes}, jes={jes}, les={les}" for tes, jes, les in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.legend([label_nuisance_param(nuisance_param_key, nuisance_param) for nuisance_param in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'profusion_n_samples_sigma_mean.png'), bbox_inches='tight')
     plt.clf()
 
 
 def nominal_n_samples_sigma_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     for evaluation in all_evaluations:
-        chosen_true_mu = 1.0  # Nominal value of mu
-        chosen_true_tes = 1.0  # Nominal value
-        chosen_true_jes = 1.0  # Nominal value
-        chosen_true_les = 1.0  # Nominal value
-        df = evaluation[ (evaluation.true_mu == chosen_true_mu) & (evaluation.true_tes == chosen_true_tes)
-                         & (evaluation.true_jes == chosen_true_jes) & (evaluation.true_les == chosen_true_les)]
+        df = extract_nominal(evaluation)
         x = df.n_test_samples
         y = df.sigma_mean
-        label = f"tes={chosen_true_tes}, jes={chosen_true_jes}, les={chosen_true_les}"
+        label = f"nominal"
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('# test samples')
@@ -220,21 +210,19 @@ def nominal_n_samples_sigma_mean(all_evaluations, title="No Title", directory=DE
 def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     prop_cycle = plt.rcParams['axes.prop_cycle']
     color_cycle = prop_cycle.by_key()['color']
-    unique_tes = all_evaluations[0].true_tes.unique()
-    unique_jes = all_evaluations[0].true_jes.unique()
-    unique_les = all_evaluations[0].true_les.unique()
-    unique_alphas = itertools.product(unique_tes, unique_jes, unique_les)
-    n_alphas = len(unique_tes) * len(unique_jes) * len(unique_les)
+    unique_alphas = exctract_alpha_combinations(all_evaluations[0])
+    n_alphas = len(unique_alphas)
 
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        nuisance_param_key = detect_nuisance_param(data)
+        for i, ( nuisance_param, df) in enumerate(data.groupby(nuisance_param_key)):
             x = df.true_mu
             y = df.target_mean
             y_err = df.sigma_mean
             true = df.true_mu
-            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
+            label = label_nuisance_param(nuisance_param_key, nuisance_param)
             plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label, color=color_cycle[i%n_alphas])
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
 
@@ -242,7 +230,7 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     plt.ylabel("average $\\hat \\mu \\pm \\sigma_{\\hat \\mu}$")
     now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
     plt.title(now+title)
-    plt.legend(["true",] +[f"tes={tes}, jes={jes}, les={les}" for tes, jes, les in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.legend(["true",] +[label_nuisance_param(nuisance_param_key, nuisance_param) for nuisance_param in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'profusion_true_mu_estimator.png'), bbox_inches='tight')
     plt.clf()
 
@@ -250,21 +238,19 @@ def true_mu_estimator(all_evaluations, title="No Title", directory=DEFAULT_DIR):
 def true_mu_target_mean_std(all_evaluations, title="No Title", directory=DEFAULT_DIR):
     prop_cycle = plt.rcParams['axes.prop_cycle']
     color_cycle = prop_cycle.by_key()['color']
-    unique_tes = all_evaluations[0].true_tes.unique()
-    unique_jes = all_evaluations[0].true_jes.unique()
-    unique_les = all_evaluations[0].true_les.unique()
-    unique_alphas = itertools.product(unique_tes, unique_jes, unique_les)
-    n_alphas = len(unique_tes) * len(unique_jes) * len(unique_les)
+    unique_alphas = exctract_alpha_combinations(all_evaluations[0])
+    n_alphas = len(unique_alphas)
 
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        nuisance_param_key = detect_nuisance_param(data)
+        for i, ( nuisance_param, df) in enumerate(data.groupby(nuisance_param_key)):
             x = df.true_mu
             y = df.target_mean
             y_err = df.target_std
             true = df.true_mu
-            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
+            label = label_nuisance_param(nuisance_param_key, nuisance_param)
             plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label, color=color_cycle[i%n_alphas])
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
 
@@ -272,7 +258,7 @@ def true_mu_target_mean_std(all_evaluations, title="No Title", directory=DEFAULT
     plt.ylabel("average $\\hat \\mu \\pm std(\\hat \\mu)$")
     now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
     plt.title(now+title)
-    plt.legend(["true",] +[f"tes={tes}, jes={jes}, les={les}" for tes, jes, les in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
+    plt.legend(["true",] +[label_nuisance_param(nuisance_param_key, nuisance_param) for nuisance_param in unique_alphas ], bbox_to_anchor=(1.01, 1), loc='upper left')
     plt.savefig(os.path.join(directory, f'profusion_true_mu_target_mean_std.png'), bbox_inches='tight')
     plt.clf()
 
@@ -282,20 +268,18 @@ def true_mu_target_mean(all_evaluations, title="No Title", directory=DEFAULT_DIR
     from matplotlib.lines import Line2D
     prop_cycle = plt.rcParams['axes.prop_cycle']
     color_cycle = prop_cycle.by_key()['color']
-    unique_tes = all_evaluations[0].true_tes.unique()
-    unique_jes = all_evaluations[0].true_jes.unique()
-    unique_les = all_evaluations[0].true_les.unique()
-    unique_alphas = itertools.product(unique_tes, unique_jes, unique_les)
-    n_alphas = len(unique_tes) * len(unique_jes) * len(unique_les)
+    unique_alphas = exctract_alpha_combinations(all_evaluations[0])
+    n_alphas = len(unique_alphas)
 
     for evaluation in all_evaluations:
         max_n_test_samples = evaluation.n_test_samples.max()
         data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-        for i, ( (true_tes, true_jes, true_les), df) in enumerate(data.groupby(["true_tes", "true_jes", "true_les"])):
+        nuisance_param_key = detect_nuisance_param(data)
+        for i, ( nuisance_param, df) in enumerate(data.groupby(nuisance_param_key)):
             x = df.true_mu
             y = df.target_mean
             true = df.true_mu
-            label = f"tes={true_tes}, jes={true_jes}, les={true_les}"
+            label = label_nuisance_param(nuisance_param_key, nuisance_param)
             plt.scatter(x, y, marker='o', label=label, color=color_cycle[i%n_alphas])
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500,  zorder=3)
 
@@ -340,6 +324,7 @@ def sigma_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
         plt.boxplot(data[n_test_samples])
         plt.xlabel('hyper-parameter set')
         plt.ylabel("average $\\hat \\sigma_{\\hat \\mu}$")
+        plot_title = f"{title}_N={n_test_samples}"
         now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
         plt.title(now+plot_title)
         # plt.legend(bbox_to_anchor=(1.01, 1), loc='upper left')
