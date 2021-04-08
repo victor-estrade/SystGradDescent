@@ -60,6 +60,7 @@ from .common import Parameter
 from .common import TES
 from .common import JES
 from .common import LES
+from .common import calibrates
 
 BENCHMARK_NAME = f"{DATA_NAME}-calib-{parse_args_tolerance()}"
 
@@ -223,10 +224,10 @@ def run_estimation(args, i_cv):
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
     # MEASUREMENT
-    calib_tes = load_calib_tes(DATA_NAME, BENCHMARK_NAME)
-    calib_jes = load_calib_jes(DATA_NAME, BENCHMARK_NAME)
-    calib_les = load_calib_les(DATA_NAME, BENCHMARK_NAME)
-    calibs = (calib_tes, calib_jes, calib_les)
+    calibs = {}
+    calibs['tes'] = load_calib_tes(DATA_NAME, BENCHMARK_NAME)
+    calibs['jes'] = load_calib_jes(DATA_NAME, BENCHMARK_NAME)
+    calibs['les'] = load_calib_les(DATA_NAME, BENCHMARK_NAME)
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
     iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, calibs, n_bins=N_BINS, tolerance=args.tolerance)
                     for i, test_config in enumerate(config.iter_test_config())]
@@ -259,15 +260,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     evaluate_summary_computer(model, X_test, y_test, w_test, n_bins=n_bins, prefix='', suffix=suffix, directory=iter_directory)
 
     # CALIBRATION
-    calib_tes, calib_jes, calib_les = calibs
-    tes_mean, tes_sigma = calib_tes.predict(X_test, w_test)
-    jes_mean, jes_sigma = calib_jes.predict(X_test, w_test)
-    les_mean, les_sigma = calib_les.predict(X_test, w_test)
-    logger.info('tes = {} =vs= {} +/- {}'.format(config.TRUE.tes, tes_mean, tes_sigma) )
-    logger.info('jes = {} =vs= {} +/- {}'.format(config.TRUE.jes, jes_mean, jes_sigma) )
-    logger.info('les = {} =vs= {} +/- {}'.format(config.TRUE.les, les_mean, les_sigma) )
-    config.CALIBRATED = Parameter(tes_mean, jes_mean, les_mean, config.CALIBRATED.interest_parameters)
-    config.CALIBRATED_ERROR = Parameter(tes_sigma, jes_sigma, les_sigma, config.CALIBRATED_ERROR.interest_parameters)
+    config = calibrates(calibs, config, X_test, w_test)
     for name, value in config.CALIBRATED.items():
         result_row[name+"_calib"] = value
     for name, value in config.CALIBRATED_ERROR.items():

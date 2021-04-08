@@ -4,6 +4,8 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import logging
+
 from utils.model import get_model
 from utils.model import get_optimizer
 
@@ -125,3 +127,23 @@ def load_calib_les(DATA_NAME, BENCHMARK_NAME):
     model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
     model.load(model.model_path)
     return model
+
+
+
+def calibrates(calibs, config, X_test, w_test):
+    logger = logging.getLogger()
+    if TES:
+        calib_tes = calibs['tes']
+        tes_mean, tes_sigma = calib_tes.predict(X_test, w_test)
+        logger.info('tes = {} =vs= {} +/- {}'.format(config.TRUE.tes, tes_mean, tes_sigma) )
+        config.CALIBRATED = config.CALIBRATED.clone_with(tes=tes_mean)
+        config.CALIBRATED_ERROR = config.CALIBRATED_ERROR.clone_with(tes=tes_sigma)
+    if JES:
+        calib_jes = calibs['jes']
+        jes_mean, jes_sigma = calib_jes.predict(X_test, w_test)
+        logger.info('jes = {} =vs= {} +/- {}'.format(config.TRUE.jes, jes_mean, jes_sigma) )
+    if LES:
+        calib_les = calibs['les']
+        les_mean, les_sigma = calib_les.predict(X_test, w_test)
+        logger.info('les = {} =vs= {} +/- {}'.format(config.TRUE.les, les_mean, les_sigma) )
+    return config

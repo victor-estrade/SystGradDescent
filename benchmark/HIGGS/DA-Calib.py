@@ -240,15 +240,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     evaluate_summary_computer(model, X_test, y_test, w_test, n_bins=n_bins, prefix='', suffix=suffix, directory=iter_directory)
 
     # CALIBRATION
-    calib_tes, calib_jes, calib_les = calibs
-    tes_mean, tes_sigma = calib_tes.predict(X_test, w_test)
-    jes_mean, jes_sigma = calib_jes.predict(X_test, w_test)
-    les_mean, les_sigma = calib_les.predict(X_test, w_test)
-    logger.info('tes = {} =vs= {} +/- {}'.format(config.TRUE.tes, tes_mean, tes_sigma) )
-    logger.info('jes = {} =vs= {} +/- {}'.format(config.TRUE.jes, jes_mean, jes_sigma) )
-    logger.info('les = {} =vs= {} +/- {}'.format(config.TRUE.les, les_mean, les_sigma) )
-    config.CALIBRATED = Parameter(tes_mean, jes_mean, les_mean, config.CALIBRATED.interest_parameters)
-    config.CALIBRATED_ERROR = Parameter(tes_sigma, jes_sigma, les_sigma, config.CALIBRATED_ERROR.interest_parameters)
+    config = calibrates(calibs, config, X_test, w_test)
     for name, value in config.CALIBRATED.items():
         result_row[name+"_calib"] = value
     for name, value in config.CALIBRATED_ERROR.items():
