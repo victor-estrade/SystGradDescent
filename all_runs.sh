@@ -300,7 +300,7 @@ python run_array.py benchmark.HIGGS.NN-Prior --gpu 1 --tolerance 100 --n-steps 1
 python run_array.py benchmark.HIGGS.DA-Prior --gpu 1 --tolerance 100 --n-steps 15000 25000 --n-unit 200 500 --batch-size 10000 --xp-name HIGGSTES-DA-Prior --partition besteffort --estimate-only
 
 python run_array.py benchmark.HIGGS.PIVOT-Prior --gpu 1 --tolerance 100 --n-steps 15000 25000 --n-unit 200 500 --trade-off 1 0.1 --xp-name HIGGSTES-PIVOT-Prior --partition besteffort --estimate-only
-python run_array.py benchmark.HIGGS.TP-Prior --gpu 1 --tolerance 100 --n-steps 15000 25000 --n-unit 200 500 --batch-size 200 --xp-name HIGGSTES-TP-Prior --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGS.TP-Prior --gpu 1 --tolerance 100 --n-steps 15000 25000 --n-unit 200 500 --trade-off 1 0.1 --batch-size 200 --xp-name HIGGSTES-TP-Prior --partition besteffort --estimate-only
 
 python run_array.py benchmark.HIGGS.INF-Prior --gpu 1 --tolerance 100 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-INF-Prior --partition besteffort --estimate-only
 

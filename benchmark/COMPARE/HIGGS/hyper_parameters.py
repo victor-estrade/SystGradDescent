@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 DA_HP    = dict(
                 archi_name=["L4"]
                 , n_steps=[15000, 25000]
-                , n_units=[500]
+                , n_units=[200, 500]
                 , batch_size=[10000]
                 , tolerance=[10.0]
                 )
@@ -20,16 +20,16 @@ FF_HP    = dict(
                 )
 
 GB_HP    = dict(
-                max_depth=[3, 5, 10]
-                , n_estimators=[100, 300, 1000]
-                , learning_rate=[0.1, 0.05, 0.01]
+                max_depth=[3, 6]
+                , n_estimators=[300, 800]
+                , learning_rate=[0.1, 0.01]
                 , tolerance=[10.0]
                 )
 
 INF_HP   = dict(
                 archi_name=["L4"]
-                , n_steps=[15000, 25000]
-                , n_units=[500]
+                , n_steps=[2000]
+                , n_units=[200, 500]
                 , sample_size=[10000]
                 , tolerance=[10.0]
                 )
@@ -45,8 +45,8 @@ NN_HP    = dict(
 PIVOT_HP = dict(
                 archi_name=["L4"]
                 , n_steps=[15000, 25000]
-                , n_units=[100, 200, 500]
-                , trade_off=[1.0, 0.1, 1e-2, 1e-3]
+                , n_units=[200, 500]
+                , trade_off=[1.0, 0.1]
                 , batch_size=[10000]
                 , tolerance=[10.0]
                 )
@@ -54,14 +54,14 @@ PIVOT_HP = dict(
 REG_HP   = dict(
                 archi_name=["EA3ML3"]
                 , n_steps=[15000, 25000]
-                , n_units=[100, 200, 500]
+                , n_units=[200, 500]
                 , sample_size=[10000]
                 )
 
 FREG_HP  = dict(
                 archi_name=["EA3ML3"]
                 , n_steps=[15000, 25000]
-                , n_units=[100, 200, 500]
+                , n_units=[200, 500]
                 , sample_size=[10000]
                 )
 
@@ -75,8 +75,8 @@ REG_M_HP = dict(
 TP_HP    = dict(
                 archi_name=["L4"]
                 , n_steps=[15000, 25000]
-                , n_units=[100, 200, 500]
-                , trade_off=[1.0, 0.1, 1e-2, 1e-3]
+                , n_units=[200, 500]
+                , trade_off=[1.0, 0.1]
                 , batch_size=[10000]
                 , tolerance=[10.0]
                 )
