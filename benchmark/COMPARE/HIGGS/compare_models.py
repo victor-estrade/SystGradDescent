@@ -220,20 +220,20 @@ def main():
     work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
 
     # EASYHIGGSTES CALIB PLOTS
-    benchmark_name = 'EASYHIGGSTES-calib'
-    work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
+    # benchmark_name = 'EASYHIGGSTES-calib'
+    # work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
 
     # EASYHIGGSTES PRIOR PLOTS
-    benchmark_name = 'EASYHIGGSTES-prior'
-    work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
+    # benchmark_name = 'EASYHIGGSTES-prior'
+    # work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
 
     # BALANCEDHIGGSTES CALIB PLOTS
-    benchmark_name = 'BALANCEDHIGGSTES-calib'
-    work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
+    # benchmark_name = 'BALANCEDHIGGSTES-calib'
+    # work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
 
     # BALANCEDHIGGSTES PRIOR PLOTS
-    benchmark_name = 'BALANCEDHIGGSTES-prior'
-    work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
+    # benchmark_name = 'BALANCEDHIGGSTES-prior'
+    # work(ALL_HP, ALL_LOADER, ALL_NAME, data_name, benchmark_name, marginal_eval)
 
 
 if __name__ == '__main__':
