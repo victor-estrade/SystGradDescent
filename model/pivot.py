@@ -89,6 +89,12 @@ class Pivot(BaseClassifierModel, BaseNeuralNet):
         self.comb_loss = []
         self.recov_loss = []
 
+    def _is_bad_training(self, i, total_count, loss):
+        loss_flag = torch.isnan(loss).byte().any()
+        output_flag = torch.isnan(total_count).byte().any()
+        flag = loss_flag or output_flag
+        return flag
+
     def fit(self, X, y, z, sample_weight=None):
         X, y, z, w = self._prepare(X, y, z, sample_weight=sample_weight)
         # Pre-training classifier
@@ -191,7 +197,14 @@ class Pivot(BaseClassifierModel, BaseNeuralNet):
             self.net_loss.append(net_loss.item())
             self.comb_loss.append(loss.item())
             loss.backward()  # compute gradients
-            self.net_optimizer.step()  # update params
+            is_all_finite_grad = True
+            for name, param in self.net.named_parameters():
+                if not torch.isfinite(param.grad).all():
+                    print("i = ", i, "found non finite gradients in", name)
+                    is_all_finite_grad = False
+                    break
+            if is_all_finite_grad :
+                self.net_optimizer.step()  # update params
             # Adversarial recovery
             self._fit_recovery(recovery_generator, self.n_recovery_steps)
         return self
