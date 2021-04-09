@@ -69,7 +69,7 @@ def build_model(args, i_cv):
     args.net = ARCHI(n_in=1, n_out=2, n_unit=args.n_unit)
     args.adv_net = ARCHI(n_in=2, n_out=2, n_unit=args.n_unit)
     args.net_optimizer = get_optimizer(args)
-    args.adv_optimizer = get_optimizer(args)
+    args.adv_optimizer = get_optimizer(args, args.adv_net)
     args.net_criterion = WeightedCrossEntropyLoss()
     args.adv_criterion = WeightedGaussEntropyLoss()
     model = get_model(args, PivotClassifier)

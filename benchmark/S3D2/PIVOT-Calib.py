@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
+# Command line :
 # python -m benchmark.S3D2.PIVOT-Calib
 
 import os
@@ -74,7 +74,7 @@ def build_model(args, i_cv):
     args.net = ARCHI(n_in=3, n_out=2, n_unit=args.n_unit)
     args.adv_net = ARCHI(n_in=2, n_out=2, n_unit=args.n_unit)
     args.net_optimizer = get_optimizer(args)
-    args.adv_optimizer = get_optimizer(args)
+    args.adv_optimizer = get_optimizer(args, args.adv_net)
     args.net_criterion = WeightedCrossEntropyLoss()
     args.adv_criterion = WeightedGaussEntropyLoss()
     model = get_model(args, PivotClassifier)
@@ -206,14 +206,14 @@ def run(args, i_cv):
     model = build_model(args, i_cv)
     os.makedirs(model.results_path, exist_ok=True)
     flush(logger)
-    
+
     # TRAINING / LOADING
     train_or_load_pivot(model, train_generator, config.N_TRAINING_SAMPLES*N_AUGMENT, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
-    
+
     result_row.update(evaluate_neural_net(model, prefix='valid'))
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
@@ -251,7 +251,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     result_row['i'] = i_iter
     result_row['n_test_samples'] = config.N_TESTING_SAMPLES
     suffix = f'-mu={config.TRUE.mu:1.2f}_r={config.TRUE.r}_lambda={config.TRUE.lam}'
-    
+
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     # PLOT SUMMARIES
@@ -260,7 +260,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     # CALIBRATION
     r_mean, r_sigma = calib_r.predict(X_test, w_test)
     lam_mean, lam_sigma = calib_lam.predict(X_test, w_test)
-    logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) ) 
+    logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) )
     logger.info('lam = {} =vs= {} +/- {}'.format(config.TRUE_LAMBDA, lam_mean, lam_sigma) )
     config.CALIBRATED = Parameter(r_mean, lam_mean, config.CALIBRATED.interest_parameters)
     config.CALIBRATED_ERROR = Parameter(r_sigma, lam_sigma, config.CALIBRATED_ERROR.interest_parameters)

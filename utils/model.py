@@ -38,7 +38,7 @@ def get_model_path(benchmark_name, model, i_cv=None):
 
 def save_model(model):
     if model.model_path is None:
-        raise ValueError("model's info should be initialized first." 
+        raise ValueError("model's info should be initialized first."
             "Use model.set_info(bench_name, i_cv)")
     logger = logging.getLogger()
     logger.info("Saving in {}".format(model.model_path))
@@ -61,7 +61,7 @@ def get_model(args, model_class, quiet=True):
     return model
 
 
-def get_optimizer(args):
+def get_optimizer(args, adv_net=None):
     import torch.optim as optim
     all_optims = dict(
         sgd  = optim.SGD,
@@ -76,8 +76,11 @@ def get_optimizer(args):
     args.lr = args.learning_rate
     args.betas = (args.beta1, args.beta2)
     kwargs = extract_class_args(args, optim_class)
-    
-    net = args.net
+
+    if adv_net is None:
+        net = args.net
+    else:
+        net = adv_net
     optimizer =  optim_class(net.parameters(), **kwargs)
     logger.info( '{} args :{}'.format(args.optimizer_name, kwargs) )
     return optimizer
