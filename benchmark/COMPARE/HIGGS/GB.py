@@ -17,10 +17,10 @@ from .hyper_parameters import GB_HP
 
 def main():
     print("hello")
-    data_name = 'HIGGS'
-    benchmark_name = 'HIGGS-prior'
-    make_hp_table(data_name, benchmark_name, GB_HP, GBLoader)
-    make_common_plots(data_name, benchmark_name, GB_HP, GBLoader)
+    # data_name = 'HIGGS'
+    # benchmark_name = 'HIGGS-prior'
+    # make_hp_table(data_name, benchmark_name, GB_HP, GBLoader)
+    # make_common_plots(data_name, benchmark_name, GB_HP, GBLoader)
 
     data_name = 'HIGGSTES'
     benchmark_name = 'HIGGSTES-prior'

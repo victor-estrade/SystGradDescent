@@ -28,18 +28,22 @@ from model.gradient_boost import GradientBoostingModel
 
 class Loader(object):
     """docstring for Loader"""
-    def __init__(self, data_name, benchmark_name, base_name, model_full_name):
+    def __init__(self, data_name, benchmark_name, base_name, model_full_name, tolerance=None):
         self.data_name = data_name
         self.benchmark_name = benchmark_name
         self.base_name = base_name
         self.model_full_name = model_full_name
+        self.tolerance = tolerance
 
     def _get_var_result_directory(self):
         benchmark_name = 'VAR-'+self.data_name
         return os.path.join(SAVING_DIR, benchmark_name, self.base_name, self.model_full_name)
 
     def _get_result_directory(self):
-        return os.path.join(SAVING_DIR, self.benchmark_name, self.base_name, self.model_full_name)
+        if self.tolerance is None:
+            return os.path.join(SAVING_DIR, self.benchmark_name, self.base_name, self.model_full_name)
+        else:
+            return os.path.join(SAVING_DIR, f"{self.benchmark_name}-{self.tolerance}", self.base_name, self.model_full_name)
 
     def _get_result_directory_cv(self, i_cv):
         return os.path.join(self._get_result_directory(), "cv_{:d}".format(i_cv))
@@ -108,15 +112,21 @@ class Loader(object):
         fisher.rename(columns={'true_mix': "true_mu"}, inplace=True)
         return fisher
 
+    def hyper_parameter_code(self):
+        try :
+            code = '-'.join([ f"{key}={value}" for key, value in self.args.items()])
+        except AttributeError as e:
+            raise e
+        return code
+
+
 
 class FFLoader(Loader):
     """docstring for FFLoader"""
     def __init__(self, data_name, benchmark_name, feature_id=0, tolerance=None):
         base_name = "FeatureModel"
         model_full_name = f"{base_name}-{feature_id}"
-        if tolerance is not None:
-            benchmark_name = f"{benchmark_name}-{tolerance}"
-        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        super().__init__(data_name, benchmark_name, base_name, model_full_name, tolerance=tolerance)
         self.args = dict(feature_id=feature_id)
 
 
@@ -127,9 +137,7 @@ class GBLoader(Loader):
         model.set_info(data_name, benchmark_name, 0)
         model_full_name = model.get_name()
         base_name = model.base_name
-        if tolerance is not None:
-            benchmark_name = f"{benchmark_name}-{tolerance}"
-        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        super().__init__(data_name, benchmark_name, base_name, model_full_name, tolerance=tolerance)
         self.args = dict(n_estimators=n_estimators, max_depth=max_depth, learning_rate=learning_rate)
 
 
@@ -144,9 +152,7 @@ class NNLoader(Loader):
         base_name = "NeuralNetClassifier"
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}"
-        if tolerance is not None:
-            benchmark_name = f"{benchmark_name}-{tolerance}"
-        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        super().__init__(data_name, benchmark_name, base_name, model_full_name, tolerance=tolerance)
         self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size,
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name)
 
@@ -163,9 +169,7 @@ class DALoader(Loader):
         base_name = "DataAugmentation"
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}"
-        if tolerance is not None:
-            benchmark_name = f"{benchmark_name}-{tolerance}"
-        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        super().__init__(data_name, benchmark_name, base_name, model_full_name, tolerance=tolerance)
         self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size,
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name)
 
@@ -181,9 +185,7 @@ class TPLoader(Loader):
         base_name = "TangentPropClassifier"
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{trade_off}"
-        if tolerance is not None:
-            benchmark_name = f"{benchmark_name}-{tolerance}"
-        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        super().__init__(data_name, benchmark_name, base_name, model_full_name, tolerance=tolerance)
         self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size,
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name, trade_off=trade_off)
 
@@ -199,9 +201,7 @@ class PIVOTLoader(Loader):
         base_name = "PivotClassifier"
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}_{archi_name}-{optimizer_name}-{n_steps}-{batch_size}-{trade_off}"
-        if tolerance is not None:
-            benchmark_name = f"{benchmark_name}-{tolerance}"
-        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        super().__init__(data_name, benchmark_name, base_name, model_full_name, tolerance=tolerance)
         self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, batch_size=batch_size,
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name, trade_off=trade_off)
 
@@ -219,9 +219,7 @@ class INFLoader(Loader):
         base_name = "Inferno"
         archi_name = archi_name+f"x{n_units:d}"
         model_full_name = f"{base_name}-{archi_name}-{optimizer_name}-{n_steps}-{sample_size}-{temperature}"
-        if tolerance is not None:
-            benchmark_name = f"{benchmark_name}-{tolerance}"
-        super().__init__(data_name, benchmark_name, base_name, model_full_name)
+        super().__init__(data_name, benchmark_name, base_name, model_full_name, tolerance=tolerance)
         self.args = dict(archi_name=archi_name, n_steps=n_steps, n_units=n_units, sample_size=sample_size,
                 learning_rate=learning_rate, beta1=beta1, beta2=beta2, optimizer_name=optimizer_name, temperature=temperature)
 

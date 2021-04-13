@@ -106,6 +106,7 @@ def make_common_plots(data_name, benchmark_name, args, TheLoader):
         make_evaluation_plots(data_name, benchmark_name, args, TheLoader)
     except Exception as e:
         print(e)
+        raise e
 
     print("Make fisher plots")
     print("="*25)
@@ -129,7 +130,7 @@ def make_evaluation_plots(data_name, benchmark_name, args, TheLoader):
     """
     all_evaluations = []
     all_loaders = []
-    for kwargs in hp_kwargs_generator(args):
+    for i, kwargs in enumerate(hp_kwargs_generator(args)):
         loader = TheLoader(data_name, benchmark_name, **kwargs)
         try:
             config_table = loader.load_config_table()
@@ -139,6 +140,8 @@ def make_evaluation_plots(data_name, benchmark_name, args, TheLoader):
         else:
             print(f"[SUCCESS] load for {loader.model_full_name}")
             evaluation = evaluation.join(config_table, rsuffix='_')
+            evaluation['hp_code'] = loader.hyper_parameter_code()
+            evaluation['i_hp'] = i
             all_evaluations.append(evaluation)
             all_loaders.append(loader)
             make_individual_estimation_plots(evaluation, loader)

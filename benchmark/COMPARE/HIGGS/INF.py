@@ -17,40 +17,40 @@ from .hyper_parameters import INF_HP
 
 def main():
     print("hello")
-    data_name = 'HIGGS'
-    benchmark_name = 'HIGGS-prior'
-    make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
-    make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
+    # data_name = 'HIGGS'
+    # benchmark_name = 'HIGGS-prior'
+    # make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
+    # make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
 
     data_name = 'HIGGSTES'
     benchmark_name = 'HIGGSTES-prior'
     make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
     make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
 
-    data_name = 'BALANCEDHIGGSTES'
-    benchmark_name = 'BALANCEDHIGGSTES-prior'
-    make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
-    make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
-
-    data_name = 'EASYHIGGSTES'
-    benchmark_name = 'EASYHIGGSTES-prior'
-    make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
-    make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
-
-    data_name = 'HIGGSTES'
-    benchmark_name = 'HIGGSTES-calib'
-    make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
-    make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
-
-    data_name = 'BALANCEDHIGGSTES'
-    benchmark_name = 'BALANCEDHIGGSTES-calib'
-    make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
-    make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
-
-    data_name = 'EASYHIGGSTES'
-    benchmark_name = 'EASYHIGGSTES-calib'
-    make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
-    make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
+    # data_name = 'BALANCEDHIGGSTES'
+    # benchmark_name = 'BALANCEDHIGGSTES-prior'
+    # make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
+    # make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
+    #
+    # data_name = 'EASYHIGGSTES'
+    # benchmark_name = 'EASYHIGGSTES-prior'
+    # make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
+    # make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
+    #
+    # data_name = 'HIGGSTES'
+    # benchmark_name = 'HIGGSTES-calib'
+    # make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
+    # make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
+    #
+    # data_name = 'BALANCEDHIGGSTES'
+    # benchmark_name = 'BALANCEDHIGGSTES-calib'
+    # make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
+    # make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
+    #
+    # data_name = 'EASYHIGGSTES'
+    # benchmark_name = 'EASYHIGGSTES-calib'
+    # make_hp_table(data_name, benchmark_name, INF_HP, INFLoader)
+    # make_common_plots(data_name, benchmark_name, INF_HP, INFLoader)
 
 
 
