@@ -176,10 +176,10 @@ def run_estimation(args, i_cv):
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
     # MEASUREMENT
-    calib_tes = load_calib_tes(DATA_NAME, BENCHMARK_NAME)
-    calib_jes = load_calib_jes(DATA_NAME, BENCHMARK_NAME)
-    calib_les = load_calib_les(DATA_NAME, BENCHMARK_NAME)
-    calibs = (calib_tes, calib_jes, calib_les)
+    calibs = {}
+    calibs['tes'] = load_calib_tes(DATA_NAME, BENCHMARK_NAME)
+    calibs['jes'] = load_calib_jes(DATA_NAME, BENCHMARK_NAME)
+    calibs['les'] = load_calib_les(DATA_NAME, BENCHMARK_NAME)
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
     iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, calibs, n_bins=N_BINS, tolerance=args.tolerance)
                     for i, test_config in enumerate(config.iter_test_config())]

@@ -209,10 +209,10 @@ def run_estimation(args, i_cv):
     evaluate_regressor(model, prefix='valid')
 
     # MEASUREMENT
-    calib_tes = load_calib_tes(DATA_NAME, BENCHMARK_NAME)
-    calib_jes = load_calib_jes(DATA_NAME, BENCHMARK_NAME)
-    calib_les = load_calib_les(DATA_NAME, BENCHMARK_NAME)
-    calibs = (calib_tes, calib_jes, calib_les)
+    calibs = {}
+    calibs['tes'] = load_calib_tes(DATA_NAME, BENCHMARK_NAME)
+    calibs['jes'] = load_calib_jes(DATA_NAME, BENCHMARK_NAME)
+    calibs['les'] = load_calib_les(DATA_NAME, BENCHMARK_NAME)
     result_row['nfcn'] = NCALL
     iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, calibs)
                     for i, test_config in enumerate(config.iter_test_config())]
