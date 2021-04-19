@@ -142,7 +142,7 @@ class GeneratorTorchTes(BaseGeneratorTorch):
         data = self.data_dict if (n_samples is None) else self.sample(n_samples)
         data = self._deep_copy_data(data)
 
-        tau_energy_scale(data, scale=tau_es, missing_value=missing_value)
+        data = tau_energy_scale(data, scale=tau_es, missing_value=missing_value)
         normalize_weight(data, background_luminosity=self.background_luminosity, signal_luminosity=self.signal_luminosity)
         mu_reweighting(data, mu)
         X, y, w = split_data_label_weights(data, self.feature_names)
@@ -184,7 +184,7 @@ class GeneratorTorchJes(BaseGeneratorTorch):
         data = self.data_dict if (n_samples is None) else self.sample(n_samples)
         data = self._deep_copy_data(data)
 
-        tau_energy_scale(data, scale=jet_es, missing_value=missing_value)
+        data = jet_energy_scale(data, scale=jet_es, missing_value=missing_value)
         normalize_weight(data, background_luminosity=self.background_luminosity, signal_luminosity=self.signal_luminosity)
         mu_reweighting(data, mu)
         X, y, w = split_data_label_weights(data, self.feature_names)
@@ -226,7 +226,7 @@ class GeneratorTorchLes(BaseGeneratorTorch):
         data = self.data_dict if (n_samples is None) else self.sample(n_samples)
         data = self._deep_copy_data(data)
 
-        jet_energy_scale(data, scale=lep_es, missing_value=missing_value)
+        data = lep_energy_scale(data, scale=lep_es, missing_value=missing_value)
         normalize_weight(data, background_luminosity=self.background_luminosity, signal_luminosity=self.signal_luminosity)
         mu_reweighting(data, mu)
         X, y, w = split_data_label_weights(data, self.feature_names)
