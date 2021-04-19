@@ -5,7 +5,7 @@ import numpy as np
 
 
 
-def normalize_weight(batch, background_luminosity=410999.84732187376, 
+def normalize_weight(batch, background_luminosity=410999.84732187376,
                               signal_luminosity=691.9886077135781):
     """Normalizes weight inplace"""
     w = batch['Weight']
@@ -13,8 +13,8 @@ def normalize_weight(batch, background_luminosity=410999.84732187376,
     batch['Weight'] = compute_normalized_weight(w, y, background_luminosity=background_luminosity, signal_luminosity=signal_luminosity)
 
 
-def compute_normalized_weight(w, y, 
-                              background_luminosity=410999.84732187376, 
+def compute_normalized_weight(w, y,
+                              background_luminosity=410999.84732187376,
                               signal_luminosity=691.9886077135781):
     """Normalize the given weight to assert that the luminosity is the same as the nominal.
     Returns the normalized weight vector/Series
@@ -67,37 +67,37 @@ class V4:
         new_v4.pz = self.pz.clone().detach()
         new_v4.e = self.e.clone().detach()
         return new_v4
-    
+
     def p2(self):
         return self.px**2 + self.py**2 + self.pz**2
-    
+
     def p(self):
         return torch.sqrt(self.p2())
-    
+
     def pt2(self):
         return self.px**2 + self.py**2
-    
+
     def pt(self):
         return torch.sqrt(self.pt2() + sys.float_info.epsilon)
-    
+
     def m(self):
         return torch.sqrt( torch.abs( self.e**2 - self.p2() ) + sys.float_info.epsilon ) # abs and epsilon are needed for protection
-    
+
     def eta(self):
         tmp = safe_division(self.pz, self.pt())
         return asinh( tmp )
-    
+
     def phi(self):
         return torch.atan2(self.py, self.px)
-    
+
     def deltaPhi(self, v):
         """delta phi with another v"""
         return (self.phi() - v.phi() + 3*np.pi) % (2*np.pi) - np.pi
-    
+
     def deltaEta(self, v):
         """delta eta with another v"""
         return self.eta() - v.eta()
-    
+
     def deltaR(self, v):
         """delta R with another v"""
         return torch.sqrt(self.deltaPhi(v)**2+self.deltaEta(v)**2 )
@@ -116,29 +116,29 @@ class V4:
         self.py = self.py * factor
         self.pz = self.pz * factor
         self.e = torch.abs( factor*self.e )
-    
-    def scaleFixedM(self, factor=1.): 
+
+    def scaleFixedM(self, factor=1.):
         """Scale (keeping mass unchanged)"""
         m = self.m()
         self.px = self.px * factor
         self.py = self.py * factor
         self.pz = self.pz * factor
         self.e = self.eWithM(m)
-    
+
     def setPtEtaPhiM(self, pt=0., eta=0., phi=0., m=0):
         """Re-initialize with : pt, eta, phi and m"""
         self.px = pt * torch.cos(phi)
         self.py = pt * torch.sin(phi)
         self.pz = pt * torch.sinh(eta)
         self.e = self.eWithM(m)
-    
+
     def sum(self, v):
         """Add another V4 into self"""
         self.px = self.px + v.px
         self.py = self.py + v.py
         self.pz = self.pz + v.pz
         self.e  = self.e + v.e
-    
+
     def __iadd__(self, other):
         """Add another V4 into self"""
         try:
@@ -146,11 +146,11 @@ class V4:
             self.py = self.py + other.py
             self.pz = self.pz + other.pz
             self.e  = self.e + other.e
-        except AttributeError: 
+        except AttributeError:
             # If 'other' is not V4 like object then return special NotImplemented error
             return NotImplemented
         return self
-    
+
     def __add__(self, other):
         """Add 2 V4 vectors : v3 = v1 + v2 = v1.__add__(v2)"""
         copy = V4()
@@ -159,7 +159,7 @@ class V4:
             copy.py = self.py + other.py
             copy.pz = self.pz + other.pz
             copy.e  = self.e + other.e
-        except AttributeError: 
+        except AttributeError:
             # If 'other' is not V4 like object then return special NotImplemented error
             return NotImplemented
         return copy
@@ -202,7 +202,7 @@ def safe_division(x, y):
 # magic variable
 # FIXME : does it really returns sqrt(2) if in dead center ?
 def METphi_centrality(aPhi, bPhi, cPhi):
-    x = torch.sin(bPhi - aPhi)    
+    x = torch.sin(bPhi - aPhi)
     caPhi = torch.sin(cPhi - aPhi)
     bcPhi = torch.sin(bPhi - cPhi)
     A = safe_division(caPhi, x)
@@ -229,21 +229,21 @@ def eta_centrality(eta, etaJ1, etaJ2):
 
 def V4_tau(batch):
     vtau = V4() # tau 4-vector
-    vtau.setPtEtaPhiM(batch["PRI_tau_pt"], batch["PRI_tau_eta"], 
+    vtau.setPtEtaPhiM(batch["PRI_tau_pt"], batch["PRI_tau_eta"],
                       batch["PRI_tau_phi"], torch.tensor(0.8, requires_grad=True))
     # tau mass 0.8 like in original
     return vtau
 
 def V4_lep(batch):
     vlep = V4() # lepton 4-vector
-    vlep.setPtEtaPhiM(batch["PRI_lep_pt"], batch["PRI_lep_eta"], 
+    vlep.setPtEtaPhiM(batch["PRI_lep_pt"], batch["PRI_lep_eta"],
                       batch["PRI_lep_phi"], torch.tensor(0., requires_grad=True))
     # lep mass 0 (either 0.106 or 0.0005 but info is lost)
     return vlep
 
 def V4_met(batch):
     vmet = V4() # met 4-vector
-    vmet.setPtEtaPhiM(batch["PRI_met"], 
+    vmet.setPtEtaPhiM(batch["PRI_met"],
                       torch.tensor(0., requires_grad=True),
                       batch["PRI_met_phi"],
                       torch.tensor(0., requires_grad=True)) # met mass zero
@@ -282,12 +282,12 @@ def update_jet(batch, vj1, vj2, missing_value_batch):
     batch["DER_prodeta_jet_jet"] = torch.where(batch["PRI_jet_num"] > 1, vj1.eta() * vj2.eta(), missing_value_batch )
 
 def update_eta_centrality(batch, missing_value_batch):
-    eta_centrality_tmp = eta_centrality(batch["PRI_lep_eta"],batch["PRI_jet_leading_eta"],batch["PRI_jet_subleading_eta"])                       
+    eta_centrality_tmp = eta_centrality(batch["PRI_lep_eta"],batch["PRI_jet_leading_eta"],batch["PRI_jet_subleading_eta"])
     batch["DER_lep_eta_centrality"] = torch.where(batch["PRI_jet_num"] > 1, eta_centrality_tmp, missing_value_batch )
 
 def update_transverse_met_lep(batch, vlep, vmet):
     vtransverse = V4()
-    vtransverse.setPtEtaPhiM(vlep.pt(), torch.tensor(0., requires_grad=True), 
+    vtransverse.setPtEtaPhiM(vlep.pt(), torch.tensor(0., requires_grad=True),
                             vlep.phi(), torch.tensor(0., requires_grad=True)) # just the transverse component of the lepton
     vtransverse += vmet
     batch["DER_mass_transverse_met_lep"] = vtransverse.m()
@@ -356,7 +356,7 @@ def tau_energy_scale(batch, scale=1.0, missing_value=0.0):
         batch: the dataset should be a OrderedDict like object.
             This function will modify the given data inplace.
         scale : the factor applied : PRI_tau_pt <-- PRI_tau_pt * scale
-        missing_value : (default=0.0) the value used to code missing value. 
+        missing_value : (default=0.0) the value used to code missing value.
             This is not used to find missing values but to write them in feature column that have some.
 
     Notes :
@@ -416,7 +416,7 @@ def jet_energy_scale(batch, scale=1.0, missing_value=0.0):
         batch: the dataset should be a OrderedDict like object.
             This function will modify the given data inplace.
         scale : the factor applied : PRI_jet_pt <-- PRI_jet_pt * scale
-        missing_value : (default=0.0) the value used to code missing value. 
+        missing_value : (default=0.0) the value used to code missing value.
             This is not used to find missing values but to write them in feature column that have some.
     """
     zeros_batch = torch.zeros_like(batch["PRI_tau_pt"])
@@ -460,7 +460,7 @@ def lep_energy_scale(batch, scale=1.0, missing_value=0.0):
         batch: the dataset should be a OrderedDict like object.
             This function will modify the given data inplace.
         scale : the factor applied : PRI_jet_pt <-- PRI_jet_pt * scale
-        missing_value : (default=0.0) the value used to code missing value. 
+        missing_value : (default=0.0) the value used to code missing value.
             This is not used to find missing values but to write them in feature column that have some.
     """
     zeros_batch = torch.zeros_like(batch["PRI_tau_pt"])
