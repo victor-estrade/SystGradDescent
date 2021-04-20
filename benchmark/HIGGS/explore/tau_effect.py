@@ -61,7 +61,7 @@ def main():
 def minibatchsize(generator, dirname=DIRECTORY):
     DELTA = 0.03
     config = Config()
-    nominal_param = config.CALIBRATED
+    nominal_param = config.CALIBRATED#.clone_with(mu=0.5)
     up_param = nominal_param.clone_with(tes=nominal_param.tes + DELTA)
     down_param = nominal_param.clone_with(tes=nominal_param.tes - DELTA)
     now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
@@ -82,7 +82,7 @@ def minibatchsize(generator, dirname=DIRECTORY):
 
 def get_mean_pri_tau_pt_means(generator, param):
     print(param, *param)
-    N_SAMPLES = 1
+    N_SAMPLES = 50
     SAMPLE_SIZE = np.arange(10_000, 100_000, 10_000)
     pri_tau_pt_idx = 12
     print(generator.feature_names[pri_tau_pt_idx])
@@ -93,7 +93,6 @@ def get_mean_pri_tau_pt_means(generator, param):
         for i in range(N_SAMPLES):
             X, y, w = generator.generate(*param, n_samples=sample_size, no_grad=True)
             pri_tau_pt = X[:, pri_tau_pt_idx]
-            print(pri_tau_pt)
             pri_tau_pt_mean = (pri_tau_pt * w).sum() / w.sum()
             mean_values[sample_size].append( pri_tau_pt_mean.detach().numpy() )
     return mean_values
