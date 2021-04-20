@@ -29,7 +29,6 @@ def get_minimizer_no_nuisance(compute_nll, calibrated_param, calibrated_param_er
                            mu=calibrated_param.mu,
                            # error_mu=calibrated_param_error.mu,
                            # limit_mu=(0, 1),
-                           print_level=0,
                           )
     minimizer.errordef = iminuit.Minuit.LIKELIHOOD
     minimizer.limits = [(0, 10)]
