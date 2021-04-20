@@ -92,11 +92,8 @@ def main():
     config_table = evaluate_config(config)
     config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
     # RUN
-    results = [run(args, i_cv) for i_cv in range(N_ITER)]
-    results = pd.concat(results, ignore_index=True)
-    results.to_csv(os.path.join(model.results_directory, 'estimations.csv'))
+    eval_table = get_eval_table(args, model.results_directory)
     # EVALUATION
-    eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, results)
     print_line()
     print_line()
     print(eval_table)
@@ -106,7 +103,29 @@ def main():
     gather_images(model.results_directory)
 
 
-def run(args, i_cv):
+
+def get_eval_table(args, results_directory):
+    logger = logging.getLogger()
+    if args.load_run:
+        logger.info(f'Loading previous runs [{args.start_cv},{args.end_cv}[')
+        estimations = load_estimations(results_directory, start_cv=args.start_cv, end_cv=args.end_cv)
+    else:
+        logger.info(f'Running runs [{args.start_cv},{args.end_cv}[')
+        estimations = [run_estimation(args, i_cv) for i_cv in range(args.start_cv, args.end_cv)]
+        estimations = pd.concat(estimations, ignore_index=True)
+    estimations.to_csv(os.path.join(results_directory, 'estimations.csv'))
+    # EVALUATION
+    eval_table = evaluate_estimator(Config.INTEREST_PARAM_NAME, estimations)
+    print_line()
+    print_line()
+    print(eval_table)
+    print_line()
+    print_line()
+    eval_table.to_csv(os.path.join(results_directory, 'estimation_evaluation.csv'))
+    return eval_table
+
+
+def run_estimation(args, i_cv):
     logger = logging.getLogger()
     print_line()
     logger.info('Running iter n°{}'.format(i_cv))
@@ -141,7 +160,7 @@ def run(args, i_cv):
 
     # MEASUREMENT
     result_row['nfcn'] = NCALL
-    result_table = [run_iter(model, result_row, i, test_config, valid_generator, test_generator)
+    iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator)
                     for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
     result_table.to_csv(os.path.join(model.results_path, 'results.csv'))
@@ -154,7 +173,7 @@ def run(args, i_cv):
     return result_table
 
 
-def run_iter(model, result_row, i_iter, config, valid_generator, test_generator):
+def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator):
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
@@ -168,9 +187,10 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
 
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
-    target, sigma = model.predict(X_test, w_test)
 
-    # logger.info(f"s = {w_test[y_test==1].sum()}   b = {w_test[y_test==0].sum()}   ")
+    # PREDICTION
+    logger.info('Making {} predictions'.format(NCALL))
+    target, sigma = model.predict(X_test, w_test)
 
     result_row.update(config.CALIBRATED.to_dict())
     result_row.update(config.CALIBRATED_ERROR.to_dict( suffix=_ERROR) )
@@ -179,7 +199,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     result_row[name] = target
     result_row[name+_ERROR] = sigma
     result_row[name+_TRUTH] = config.TRUE.interest_parameters
-    logger.info('mu  = {} =vs= {} +/- {}'.format(config.TRUE.interest_parameters, target, sigma) ) 
+    logger.info('mu  = {} =vs= {} +/- {}'.format(config.TRUE.interest_parameters, target, sigma) )
     return result_row.copy()
 
 

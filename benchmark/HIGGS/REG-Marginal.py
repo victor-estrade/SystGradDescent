@@ -214,7 +214,5 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     return result_row.copy()
 
 
-
-
 if __name__ == '__main__':
     main()
