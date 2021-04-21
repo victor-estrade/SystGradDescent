@@ -239,7 +239,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
     minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
-    result_row.update(evaluate_minuit(minimizer, config.TRUE))
+    result_row.update(evaluate_minuit(minimizer, config.TRUE, iter_directory, suffix=suffix))
     return result_row.copy()
 
 
@@ -275,7 +275,7 @@ def run_conditional_estimation(args, i_cv):
 
     result_row.update(evaluate_neural_net(model, prefix='valid'))
     evaluate_inferno(model, prefix='valid')
-    
+
     # MEASUREMENT
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
     iter_results = [run_conditional_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=N_BINS)
