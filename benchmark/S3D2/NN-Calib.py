@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
+# Command line :
 # python -m benchmark.S3D2.NN-Calib
 
 import os
@@ -58,11 +58,12 @@ from archi.classic import L4 as ARCHI
 # from archi.reducer import A3ML3 as CALIB_ARCHI
 from archi.reducer import A1AR8MR8L1 as CALIB_ARCHI
 
+from .common import N_BINS
+from .common import load_calib_r
+from .common import load_calib_lam
 
 DATA_NAME = 'S3D2'
 BENCHMARK_NAME = DATA_NAME+'-calib'
-CALIB_R = "Calib_r"
-CALIB_LAM = "Calib_lam"
 N_ITER = 30
 
 def build_model(args, i_cv):
@@ -72,45 +73,6 @@ def build_model(args, i_cv):
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     return model
 
-
-
-def load_calib_r():
-    args = lambda : None
-    args.n_unit     = 200
-    args.optimizer_name  = "adam"
-    args.beta1      = 0.5
-    args.beta2      = 0.9
-    args.learning_rate = 1e-4
-    args.n_samples  = 1000
-    args.n_steps    = 2000
-    args.batch_size = 20
-
-    args.net = CALIB_ARCHI(n_in=3, n_out=2, n_unit=args.n_unit)
-    args.optimizer = get_optimizer(args)
-    model = get_model(args, Regressor)
-    model.base_name = CALIB_R
-    model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
-    model.load(model.model_path)
-    return model
-
-def load_calib_lam():
-    args = lambda : None
-    args.n_unit     = 200
-    args.optimizer_name  = "adam"
-    args.beta1      = 0.5
-    args.beta2      = 0.9
-    args.learning_rate = 1e-4
-    args.n_samples  = 1000
-    args.n_steps    = 2000
-    args.batch_size = 20
-
-    args.net = CALIB_ARCHI(n_in=3, n_out=2, n_unit=args.n_unit)
-    args.optimizer = get_optimizer(args)
-    model = get_model(args, Regressor)
-    model.base_name = CALIB_LAM
-    model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
-    model.load(model.model_path)
-    return model
 
 
 
@@ -130,34 +92,65 @@ def main():
     config_table = evaluate_config(config)
     config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
     # RUN
+    if not args.conditional_only:
+        eval_table = get_eval_table(args, model.results_directory)
+    if not args.estimate_only:
+        eval_conditional = get_eval_conditional(args, model.results_directory)
+    if not args.estimate_only and not args.conditional_only:
+        eval_table = pd.concat([eval_table, eval_conditional], axis=1)
+        # EVALUATION
+        print_line()
+        print_line()
+        print(eval_table)
+        print_line()
+        print_line()
+        eval_table.to_csv(os.path.join(model.results_directory, 'evaluation.csv'))
+    gather_images(model.results_directory)
+
+
+def get_eval_table(args, results_directory):
+    logger = logging.getLogger()
     if args.load_run:
         logger.info(f'Loading previous runs [{args.start_cv},{args.end_cv}[')
-        directory = model.results_directory
-        estimations = load_estimations(directory, start_cv=args.start_cv, end_cv=args.end_cv)
-        conditional_estimations = load_conditional_estimations(directory, start_cv=args.start_cv, end_cv=args.end_cv)
+        estimations = load_estimations(results_directory, start_cv=args.start_cv, end_cv=args.end_cv)
     else:
         logger.info(f'Running runs [{args.start_cv},{args.end_cv}[')
-        results = [run(args, i_cv) for i_cv in range(args.start_cv, args.end_cv)]
-        estimations = [e0 for e0, e1 in results]
+        estimations = [run_estimation(args, i_cv) for i_cv in range(args.start_cv, args.end_cv)]
         estimations = pd.concat(estimations, ignore_index=True)
-        conditional_estimations = [e1 for e0, e1 in results]
-        conditional_estimations = pd.concat(conditional_estimations)
-    estimations.to_csv(os.path.join(model.results_directory, 'estimations.csv'))
-    conditional_estimations.to_csv(os.path.join(model.results_directory, 'conditional_estimations.csv'))
+    estimations.to_csv(os.path.join(results_directory, 'estimations.csv'))
     # EVALUATION
-    eval_table = evaluate_estimator(config.INTEREST_PARAM_NAME, estimations)
-    eval_conditional = evaluate_conditional_estimation(conditional_estimations, interest_param_name=config.INTEREST_PARAM_NAME)
-    eval_table = pd.concat([eval_table, eval_conditional], axis=1)
+    eval_table = evaluate_estimator(Config.INTEREST_PARAM_NAME, estimations)
     print_line()
     print_line()
     print(eval_table)
     print_line()
     print_line()
-    eval_table.to_csv(os.path.join(model.results_directory, 'evaluation.csv'))
-    gather_images(model.results_directory)
+    eval_table.to_csv(os.path.join(results_directory, 'estimation_evaluation.csv'))
+    return eval_table
 
 
-def run(args, i_cv):
+def get_eval_conditional(args, results_directory):
+    logger = logging.getLogger()
+    if args.load_run:
+        logger.info(f'Loading previous runs [{args.start_cv},{args.end_cv}[')
+        conditional_estimations = load_conditional_estimations(results_directory, start_cv=args.start_cv, end_cv=args.end_cv)
+    else:
+        logger.info(f'Running runs [{args.start_cv},{args.end_cv}[')
+        conditional_estimations = [run_conditional_estimation(args, i_cv) for i_cv in range(args.start_cv, args.end_cv)]
+        conditional_estimations = pd.concat(conditional_estimations, ignore_index=True)
+    conditional_estimations.to_csv(os.path.join(results_directory, 'conditional_estimations.csv'))
+    # EVALUATION
+    eval_conditional = evaluate_conditional_estimation(conditional_estimations, interest_param_name=Config.INTEREST_PARAM_NAME)
+    print_line()
+    print_line()
+    print(eval_conditional)
+    print_line()
+    print_line()
+    eval_conditional.to_csv(os.path.join(results_directory, 'conditional_evaluation.csv'))
+    return eval_conditional
+
+
+def run_estimation(args, i_cv):
     logger = logging.getLogger()
     print_line()
     logger.info('Running iter n°{}'.format(i_cv))
@@ -178,41 +171,35 @@ def run(args, i_cv):
     model = build_model(args, i_cv)
     os.makedirs(model.results_path, exist_ok=True)
     flush(logger)
-    
+
     # TRAINING / LOADING
     train_or_load_classifier(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
-    
+
     result_row.update(evaluate_neural_net(model, prefix='valid'))
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
     # MEASUREMENT
     calib_r = load_calib_r()
     calib_lam = load_calib_lam()
-    N_BINS = 10
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
-    iter_results = [run_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_r, calib_lam, n_bins=N_BINS)
+    iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_r, calib_lam, n_bins=N_BINS)
                     for i, test_config in enumerate(config.iter_test_config())]
-    result_table = [e0 for e0, e1 in iter_results]
-    result_table = pd.DataFrame(result_table)
+    result_table = pd.DataFrame(iter_results)
     result_table.to_csv(os.path.join(model.results_path, 'estimations.csv'))
     logger.info('Plot params')
     param_names = config.PARAM_NAMES
     for name in param_names:
         plot_params(name, result_table, title=model.full_name, directory=model.results_path)
 
-    conditional_estimate = pd.concat([e1 for e0, e1 in iter_results])
-    conditional_estimate['i_cv'] = i_cv
-    fname = os.path.join(model.results_path, "conditional_estimations.csv")
-    conditional_estimate.to_csv(fname)
     logger.info('DONE')
-    return result_table, conditional_estimate
+    return result_table
 
 
-def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,  calib_r, calib_lam, n_bins=10):
+def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator,  calib_r, calib_lam, n_bins=10):
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
@@ -223,7 +210,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     result_row['i'] = i_iter
     result_row['n_test_samples'] = config.N_TESTING_SAMPLES
     suffix = f'-mu={config.TRUE.mu:1.2f}_r={config.TRUE.r}_lambda={config.TRUE.lam}'
-    
+
     logger.info('Generate testing data')
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     # PLOT SUMMARIES
@@ -232,7 +219,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     # CALIBRATION
     r_mean, r_sigma = calib_r.predict(X_test, w_test)
     lam_mean, lam_sigma = calib_lam.predict(X_test, w_test)
-    logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) ) 
+    logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) )
     logger.info('lam = {} =vs= {} +/- {}'.format(config.TRUE_LAMBDA, lam_mean, lam_sigma) )
     config.CALIBRATED = Parameter(r_mean, lam_mean, config.CALIBRATED.interest_parameters)
     config.CALIBRATED_ERROR = Parameter(r_sigma, lam_sigma, config.CALIBRATED_ERROR.interest_parameters)
@@ -242,10 +229,78 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
         result_row[name+"_calib_error"] = value
 
     logger.info('Set up NLL computer')
-    compute_summaries = ClassifierSummaryComputer(model, n_bins=n_bins)
+    compute_summaries = model.summary_computer(n_bins=n_bins)
     compute_nll = NLLComputer(compute_summaries, valid_generator, X_test, w_test, config=config)
     # NLL PLOTS
     plot_nll_around_min(compute_nll, config.TRUE, iter_directory, suffix)
+
+    # MINIMIZE NLL
+    logger.info('Prepare minuit minimizer')
+    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
+    result_row.update(evaluate_minuit(minimizer, config.TRUE))
+    return result_row.copy()
+
+
+def run_estimation(args, i_cv):
+    logger = logging.getLogger()
+    print_line()
+    logger.info('Running iter n°{}'.format(i_cv))
+    print_line()
+
+    result_row = {'i_cv': i_cv}
+
+    # LOAD/GENERATE DATA
+    logger.info('Set up data generator')
+    config = Config()
+    seed = SEED + i_cv * 5
+    train_generator = Generator(seed)
+    valid_generator = Generator(seed+1)
+    test_generator  = Generator(seed+2)
+
+    # SET MODEL
+    logger.info('Set up classifier')
+    model = build_model(args, i_cv)
+    os.makedirs(model.results_path, exist_ok=True)
+    flush(logger)
+
+    # TRAINING / LOADING
+    train_or_load_classifier(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
+
+    # CHECK TRAINING
+    logger.info('Generate validation data')
+    X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
+
+    result_row.update(evaluate_neural_net(model, prefix='valid'))
+    result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
+
+    # MEASUREMENT
+    evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
+    iter_results = [run_conditional_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=N_BINS)
+                    for i, test_config in enumerate(config.iter_test_config())]
+
+    conditional_estimate = pd.concat(iter_results)
+    conditional_estimate['i_cv'] = i_cv
+    fname = os.path.join(model.results_path, "conditional_estimations.csv")
+    conditional_estimate.to_csv(fname)
+    logger.info('DONE')
+    return conditional_estimate
+
+
+def run_conditional_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=10):
+    logger = logging.getLogger()
+    logger.info('-'*45)
+    logger.info(f'iter : {i_iter}')
+    flush(logger)
+
+    iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
+    os.makedirs(iter_directory, exist_ok=True)
+
+    logger.info('Generate testing data')
+    X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
+    # SUMMARIES
+    logger.info('Set up NLL computer')
+    compute_summaries = model.summary_computer(n_bins=n_bins)
+    compute_nll = NLLComputer(compute_summaries, valid_generator, X_test, w_test, config=config)
 
     # MEASURE STAT/SYST VARIANCE
     logger.info('MEASURE STAT/SYST VARIANCE')
@@ -255,12 +310,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     conditional_estimate['i'] = i_iter
     conditional_estimate.to_csv(fname)
 
-    # MINIMIZE NLL
-    logger.info('Prepare minuit minimizer')
-    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
-    result_row.update(evaluate_minuit(minimizer, config.TRUE))
-    return result_row.copy(), conditional_estimate
-
+    return conditional_estimate
 
 
 def make_conditional_estimation(compute_nll, config):
