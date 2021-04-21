@@ -17,7 +17,7 @@ def get_minimizer(compute_nll, calibrated_param, calibrated_param_error):
                            # limit_mu=(0, 1),
                           )
     minimizer.errordef = iminuit.Minuit.LIKELIHOOD
-    minimizer.limits = [(0, 100), (0, 10)]
+    minimizer.limits = [(0.001, None), (0.001, None)]
     minimizer.errors = [calibrated_param_error.rescale
                         ,calibrated_param_error.mu
                         ]
@@ -31,6 +31,6 @@ def get_minimizer_no_nuisance(compute_nll, calibrated_param, calibrated_param_er
                            # limit_mu=(0, 1),
                           )
     minimizer.errordef = iminuit.Minuit.LIKELIHOOD
-    minimizer.limits = [(0, 10)]
+    minimizer.limits = [(0.001, None)]
     minimizer.errors = [calibrated_param_error.mu]
     return minimizer

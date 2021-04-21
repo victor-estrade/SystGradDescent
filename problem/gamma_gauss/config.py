@@ -10,12 +10,12 @@ from .parameter import Parameter
 class GGConfig():
     CALIBRATED = Parameter(rescale=1.0, mu=0.5)
     CALIBRATED_ERROR = Parameter(rescale=0.5, mu=0.5)
-    TRUE = Parameter(rescale=1.2, mu=0.2)
+    TRUE = Parameter(rescale=1.2, mu=0.8)
     RANGE = Parameter(rescale=np.linspace(0.8, 1.2, 3),
-                        mu=np.linspace(0.1, 0.9, 5))
+                        mu=np.linspace(0.5, 1.5, 5))
 
     FINE_RANGE = Parameter(rescale=np.linspace(0.5, 1.5, 31),
-                        mu=np.linspace(0.1, 0.9, 31))
+                        mu=np.linspace(0.5, 1.5, 31))
 
 
     PARAM_NAMES = TRUE.parameter_names
