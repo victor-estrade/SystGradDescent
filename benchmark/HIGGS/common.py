@@ -142,8 +142,12 @@ def calibrates(calibs, config, X_test, w_test):
         calib_jes = calibs['jes']
         jes_mean, jes_sigma = calib_jes.predict(X_test, w_test)
         logger.info('jes = {} =vs= {} +/- {}'.format(config.TRUE.jes, jes_mean, jes_sigma) )
+        config.CALIBRATED = config.CALIBRATED.clone_with(jes=jes_mean)
+        config.CALIBRATED_ERROR = config.CALIBRATED_ERROR.clone_with(jes=jes_sigma)
     if LES:
         calib_les = calibs['les']
         les_mean, les_sigma = calib_les.predict(X_test, w_test)
         logger.info('les = {} =vs= {} +/- {}'.format(config.TRUE.les, les_mean, les_sigma) )
+        config.CALIBRATED = config.CALIBRATED.clone_with(les=les_mean)
+        config.CALIBRATED_ERROR = config.CALIBRATED_ERROR.clone_with(les=les_sigma)
     return config
