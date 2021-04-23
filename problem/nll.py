@@ -45,9 +45,9 @@ class HiggsNLL():
         b = X_test.loc[y_test==0]
         w_b = W_test.loc[y_test==0]
         return s, w_s, b, w_b
-        
+
     def __call__(self, mu, tau_es, jet_es, lep_es, sigma_soft, nasty_bkg):
-        """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""        
+        """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""
         s, w_s, b, w_b = self.get_s_b(tau_es, jet_es, lep_es, sigma_soft, nasty_bkg)
         s_histogram = self.model.compute_summaries(s, w_s)
         b_histogram = self.model.compute_summaries(b, w_b)
@@ -64,6 +64,3 @@ class HiggsNLL():
         nasty_bkg_constraint = gauss_nll(nasty_bkg, config.CALIBRATED_NASTY_BKG, config.CALIBRATED_NASTY_BKG_ERROR)
         total_nll = mu_nll + tau_es_constraint + jet_es_constraint + lep_es_constraint + sigma_soft_constraint + nasty_bkg_constraint
         return total_nll
-
-
-
