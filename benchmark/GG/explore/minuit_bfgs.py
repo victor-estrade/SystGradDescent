@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 
 
 import os
+import datetime
 import argparse
 import logging
 import numpy as np
@@ -68,8 +69,12 @@ def main():
     args = parse_args()
 
     i_cv = 0
+    i_iter = 7
+    directory = os.path.join(directory, f"cv_{i_cv}")
+    os.makedirs(directory, exist_ok=True)
     train_generator, valid_generator, test_generator = get_generators(i_cv)
-    config = Config()
+    config = list(Config().iter_test_config())[i_iter]
+    logger.info(f"{config.TRUE}, {config.N_TESTING_SAMPLES}")
     model = load_some_NN(i_cv=i_cv, cuda=args.cuda)
     compute_nll = get_nll_computer(model, config, valid_generator, test_generator)
 
@@ -79,12 +84,63 @@ def main():
     logger.info(f"calib nll = {nll}")
 
     # run_grad(compute_nll, config)
-    # out = run_scipy_bfgs(compute_nll, config)
+    out = run_scipy_bfgs(compute_nll, config)
+    xopt, fopt, gopt, Bopt, func_calls, grad_calls, warnflag = out
     minimizer = run_minuit_migrad(compute_nll, config)
     # x, y = minimizer.parameters
     # minimizer.contour(x, y)
     # plt.show()
 
+    #  I want grad and feval at minimum and grad at true value
+    logger.info(f"Gradient !")
+    f = lambda xk : compute_nll(*xk)
+    EPSILON = 5e-6
+    epsilon = np.array([EPSILON]*2)
+
+    # @ true value
+    xk = np.array(list(config.TRUE))
+    grad = approx_fprime(xk, f, epsilon)
+    logger.info(f"@ true value grad={grad}")
+    nll = compute_nll(*config.TRUE)
+    logger.info(f"@ true value feval={nll}")
+
+    # @ BFGS minimum
+    xk = xopt
+    grad = approx_fprime(xk, f, epsilon)
+    logger.info(f"@ BFGS min grad={grad} ( =?= {gopt})")
+    logger.info(f"@ BFGS min feval={fopt}")
+
+    # @ Minuit minimum
+    xk = np.array(list(minimizer.values))
+    grad = approx_fprime(xk, f, epsilon)
+    logger.info(f"@ Minuit min grad={grad}")
+    cov = np.array(minimizer.covariance)
+    edm = grad.dot(cov.dot(grad.T))
+    logger.info(f"recomputed edm = {edm} ( =?= {minimizer.fmin.edm})")
+    logger.info(f"@ Minuit min feval={minimizer.fmin.fval}")
+
+    #  I want grad and feval at minimum and grad at true value
+    logger.info(f"Contour plots !")
+    ARRAY_SIZE = 10
+    DELTA_mu = 0.1
+    DELTA_alpha = 0.1
+    mu_array = np.linspace(xopt[0]-DELTA_mu, xopt[0]+DELTA_mu, ARRAY_SIZE)
+    alpha_array = np.linspace(xopt[0]-DELTA_alpha, xopt[0]-DELTA_alpha, ARRAY_SIZE)
+    mu_mesh, alpha_mesh = np.meshgrid(mu_array, alpha_array)
+    nll_mesh = np.array([compute_nll(mu, alpha) for mu, alpha in zip(mu_mesh.ravel(), alpha_mesh.ravel())]).reshape(mu_mesh.shape)
+    plot_contour(mu_mesh, alpha_mesh, nll_mesh, directory, xlabel="mu", ylabel="alpha")
+    print(nll_mesh)
+
+    logger.info(f"Contour plots for gradients !")
+    ARRAY_SIZE = 10
+    mu_array = np.linspace(xopt[0]-DELTA_mu, xopt[0]+DELTA_mu, ARRAY_SIZE)
+    alpha_array = np.linspace(xopt[0]-DELTA_alpha, xopt[0]-DELTA_alpha, ARRAY_SIZE)
+    mu_mesh, alpha_mesh = np.meshgrid(mu_array, alpha_array)
+    grad_mesh = np.array([np.linalg.norm(approx_fprime(np.array([mu, alpha]), f, epsilon))
+                        for mu, alpha in zip(mu_mesh.ravel(), alpha_mesh.ravel())]
+                        ).reshape(mu_mesh.shape)
+    plot_contour(mu_mesh, alpha_mesh, grad_mesh, directory, xlabel="GRAD_mu", ylabel="alpha")
+    print(grad_mesh)
 
 
 def get_generators(i_cv=0):
@@ -103,9 +159,9 @@ def get_nll_computer(model, config, valid_generator, test_generator):
     return compute_nll
 
 
-def run_grad(compute_nll, config):
+def run_grad(compute_nll, config, scale=SCALE):
     logger = logging.getLogger()
-    f = lambda xk : compute_nll(*xk) * SCALE
+    f = lambda xk : compute_nll(*xk) * scale
 
     xk = np.array(list(config.TRUE))
     logger.info(f"starting point = {xk}")
@@ -115,7 +171,7 @@ def run_grad(compute_nll, config):
     logger.info(f"grad = {grad}, grad norm = {grad.dot(grad.T)}")
 
 
-def run_scipy_bfgs(compute_nll, config):
+def run_scipy_bfgs(compute_nll, config, scale=SCALE):
     logger = logging.getLogger()
     f = lambda xk : compute_nll(*xk) * SCALE
 
@@ -139,16 +195,39 @@ def run_minuit_migrad(compute_nll, config):
     minimizer = get_minimizer(lambda rescale, mu : compute_nll(rescale, mu) * SCALE, config.CALIBRATED, config.CALIBRATED_ERROR)
     minimizer.migrad()
     logger.info(f"\n{minimizer}")
-    cov = np.array(minimizer.covariance)
-    print("last state", minimizer._last_state)
-    print(minimizer.grad, minimizer.values)
-    grad = minimizer.grad([1, 1])
-    logger.info(f"cov = {cov}")
-    logger.info(f"grad = {grad}")
-
-    edm = grad.dot(cov.dot(grad.T))
-    logger.info(f"edm = {edm}")
+    logger.info(f" values = {list(minimizer.values)} ")
+    # cov = np.array(minimizer.covariance)
+    # print("last state", minimizer._last_state)
+    # print(minimizer.grad, minimizer.values)
+    # grad = minimizer.grad([1, 1])
+    # logger.info(f"cov = {cov}")
+    # logger.info(f"grad = {grad}")
+    #
+    # edm = grad.dot(cov.dot(grad.T))
+    # logger.info(f"edm = {edm}")
     return minimizer
+
+
+def plot_contour(x, y, z, directory, xlabel="mu", ylabel="alpha"):
+    logger = logging.getLogger()
+    fig, ax = plt.subplots()
+    ax.grid(False)
+    im = ax.imshow(z, interpolation='bilinear', origin='lower')
+    levels = np.linspace(np.min(z), np.max(z), 10)
+    # print(np.min(z), np.max(z), levels)
+    CS = ax.contour(x, y, z, levels, origin='lower', cmap='flag', extend='both')
+    # CB = fig.colorbar(CS, shrink=0.8)
+    # ax.clabel(CS, inline=1, fontsize=10)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
+    ax.set_title(now)
+    fname = f"{xlabel}-{ylabel}_contour_plot.png"
+    path = os.path.join(directory, fname)
+    plt.savefig(path)
+    plt.clf()
+    plt.close(fig)
+    logger.info(f"saved at {path}")
 
 
 if __name__ == '__main__':
