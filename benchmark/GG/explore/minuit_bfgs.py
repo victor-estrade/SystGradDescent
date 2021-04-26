@@ -67,7 +67,7 @@ def main():
     os.makedirs(root_directory, exist_ok=True)
     args = parse_args()
 
-    N_CV = 2
+    N_CV = 5
     # FIXME : remove lili and STEP to use all iteration !
     STEP = 5
     lili = list(Config().iter_test_config())[::STEP]
@@ -134,8 +134,10 @@ def run_cv_iter(args, i_cv, i_iter, config, root_directory):
     # approx_gradient_at_minuit_minimum(f, minimizer, epsilon)
 
     #  I want grad and feval contour plot at minimum and grad at true value
-    # plot_feval_contour(xopt, compute_nll, epsilon, directory)
-    # plot_grad_contour(xopt, compute_nll, epsilon, directory)
+    # plot_feval_contour(xopt, compute_nll, epsilon, directory, title="feval_around_scipy_minimum")
+    # plot_grad_contour(xopt, f, epsilon, directory, title="grad_around_scipy_minimum")
+    # plot_feval_contour(minimizer.values, compute_nll, epsilon, directory, title="feval_around_minuit_minimum")
+    # plot_grad_contour(minimizer.values, f, epsilon, directory, title="grad_around_minuit_minimum")
 
     return values
 
@@ -235,7 +237,7 @@ def scipy_bfgs_to_values_dict(out):
 def run_minuit_migrad(compute_nll, config):
     logger = logging.getLogger()
     logger.info(f"Running MIGRAD on the NLL")
-    minimizer = get_minimizer(lambda rescale, mu : compute_nll(rescale, mu), config.CALIBRATED, config.CALIBRATED_ERROR)
+    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
     minimizer.migrad()
     logger.info(f"\n{minimizer}")
     logger.info(f" values = {list(minimizer.values)} ")
@@ -309,23 +311,23 @@ def approx_gradient_at_minuit_minimum(f, minimizer, epsilon):
 def plot_feval_contour(xopt, compute_nll, epsilon, directory, title="feval_around_minimum"):
     logger = logging.getLogger()
     logger.info(f"Contour plots !")
-    ARRAY_SIZE = 10
+    ARRAY_SIZE = 20
     DELTA_alpha = 0.1
     DELTA_mu = 0.1
-    alpha_array = np.linspace(xopt[0]-DELTA_alpha, xopt[0]-DELTA_alpha, ARRAY_SIZE)
+    alpha_array = np.linspace(xopt[0]-DELTA_alpha, xopt[0]+DELTA_alpha, ARRAY_SIZE)
     mu_array = np.linspace(xopt[1]-DELTA_mu, xopt[1]+DELTA_mu, ARRAY_SIZE)
     alpha_mesh, mu_mesh = np.meshgrid(alpha_array, mu_array)
     nll_mesh = np.array([compute_nll(alpha, mu) for alpha, mu in zip(alpha_mesh.ravel(), mu_mesh.ravel())]).reshape(mu_mesh.shape)
-    plot_contour(alpha_mesh, mu_mesh, nll_mesh, directory, xlabel="mu", ylabel="alpha", title=title)
+    plot_contour(alpha_mesh, mu_mesh, nll_mesh, directory, xlabel="alpha", ylabel="mu", title=title)
 
 
-def plot_grad_contour(xopt, compute_nll, epsilon, directory, title="gradient_around_minimum"):
+def plot_grad_contour(xopt, f, epsilon, directory, title="gradient_around_minimum"):
     logger = logging.getLogger()
     logger.info(f"Contour plots for gradients !")
-    ARRAY_SIZE = 10
+    ARRAY_SIZE = 20
     DELTA_alpha = 0.1
     DELTA_mu = 0.1
-    alpha_array = np.linspace(xopt[0]-DELTA_alpha, xopt[0]-DELTA_alpha, ARRAY_SIZE)
+    alpha_array = np.linspace(xopt[0]-DELTA_alpha, xopt[0]+DELTA_alpha, ARRAY_SIZE)
     mu_array = np.linspace(xopt[1]-DELTA_mu, xopt[1]+DELTA_mu, ARRAY_SIZE)
     alpha_mesh, mu_mesh = np.meshgrid(alpha_array, mu_array)
     grad_mesh = np.array([np.linalg.norm(approx_fprime(np.array([alpha, mu]), f, epsilon))
@@ -338,12 +340,12 @@ def plot_contour(x, y, z, directory, xlabel="alpha", ylabel="mu", title=""):
     logger = logging.getLogger()
     fig, ax = plt.subplots()
     ax.grid(False)
-    im = ax.imshow(z, interpolation='bilinear', origin='lower')
+    # im = ax.imshow(z, interpolation='bilinear', origin='lower')
     levels = np.linspace(np.min(z), np.max(z), 10)
     # print(np.min(z), np.max(z), levels)
-    CS = ax.contour(x, y, z, levels, origin='lower', cmap='flag', extend='both')
-    # CB = fig.colorbar(CS, shrink=0.8)
-    # ax.clabel(CS, inline=1, fontsize=10)
+    CS = ax.contour(x, y, z, origin='lower', extend='both')
+    CB = fig.colorbar(CS, shrink=0.8)
+    ax.clabel(CS, inline=1, fontsize=10)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
