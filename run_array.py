@@ -18,7 +18,7 @@ def parse_args():
     parser.add_argument('--xp-name', help='name of the experiment',
                         default='debug')
     parser.add_argument('--docker-image', help='the docker image',
-                        default='estradevictorantoine/systml:1.4', type=str)
+                        default='estradevictorantoine/systml:1.5', type=str)
 
     # max runtime days-hours:min:sec
     ressources = parser.add_argument_group('ressources', 'ressources taken by every job')
@@ -172,6 +172,7 @@ SBATCH_TEMPLATE = \
 
 # test --exclude=baltic-1,republic-[1-2],republic-[4-6],titanic-[1-5]
 # republic-3 is working  !
+## to choose specific node #SBATCH --nodelist={node_list}
 
 hostname
 
