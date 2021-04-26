@@ -99,6 +99,7 @@ def run_cv_iter(args, i_cv, i_iter, config, root_directory):
     values = {}
     values['i_cv'] = i_cv
     values['i_iter'] = i_iter
+    values['n_test_samples'] = config.N_TESTING_SAMPLES
     values['TRUE_rescale'] = config.TRUE.rescale
     values['TRUE_mu'] = config.TRUE.mu
 
