@@ -68,33 +68,39 @@ def main():
     args = parse_args()
 
     N_CV = 2
-    N_ITER = len(list(Config().iter_test_config()))
+    # FIXME : remove lili and STEP to use all iteration !
+    STEP = 5
+    lili = list(Config().iter_test_config())[::STEP]
+    N_ITER = len(lili)
     logger.info(f"{N_CV} cv and {N_ITER} iteractions ({N_ITER*N_CV} loops)")
     data = []
     for i_cv in range(N_CV):
-        for i_iter, config in enumerate(Config().iter_test_config()):
-            # i_cv = 0
-            # i_iter = 71
-            # i_iter = 12
+        for i_iter, config in enumerate(lili):
+            i_iter = i_iter * STEP
             values = run_cv_iter(args, i_cv, i_iter, config, root_directory)
             data.append(values)
     data = pd.DataFrame(data)
     fname = os.path.join(root_directory, "data.csv")
-    data.to_csv()
+    data.to_csv(fname)
 
 
 
 def run_cv_iter(args, i_cv, i_iter, config, root_directory):
     logger = logging.getLogger()
-    # Preparations :
+    # Settings
     directory = os.path.join(root_directory, f"cv_{i_cv}", f"iter_{i_iter}")
     os.makedirs(directory, exist_ok=True)
     train_generator, valid_generator, test_generator = get_generators(i_cv)
-    config = list(Config().iter_test_config())[i_iter]
     logger.info(f"{config.TRUE}, {config.N_TESTING_SAMPLES}")
     model = load_some_NN(i_cv=i_cv, cuda=args.cuda)
     compute_nll = get_nll_computer(model, config, valid_generator, test_generator)
+
+    # Results storage
     values = {}
+    values['i_cv'] = i_cv
+    values['i_iter'] = i_iter
+    values['TRUE_rescale'] = config.TRUE.rescale
+    values['TRUE_mu'] = config.TRUE.mu
 
     # compute Calibration NLL vs True value NLL
     nll = compute_nll(*config.CALIBRATED)
@@ -104,8 +110,8 @@ def run_cv_iter(args, i_cv, i_iter, config, root_directory):
     values['TRUE_feval'] = nll
 
     # run minimization with scipy BFGS
-    out = run_scipy_bfgs(compute_nll, config)
-    values.update(scipy_bfgs_to_values_dict(out))
+    # out = run_scipy_bfgs(compute_nll, config)
+    # values.update(scipy_bfgs_to_values_dict(out))
 
     # run minimization with Minuit.MIGRAD
     minimizer = run_minuit_migrad(compute_nll, config)
@@ -185,24 +191,25 @@ def softplus(x):
 def softplusinv(x):
     return np.log(np.expm1(x))
 
-
+_transform = lambda x : softplus(x)
+# _transform = lambda x : transform_p_int(x, 0, 10)
 
 def run_scipy_bfgs(compute_nll, config):
     logger = logging.getLogger()
-    f = lambda xk : compute_nll(*softplus(xk))
+    f = lambda xk : compute_nll(*_transform(xk))
 
     logger.info(f"Running BFGS on the NLL")
     x_0 = np.array(list(config.CALIBRATED))
     out = fmin_bfgs(f, x_0, full_output=True)
     xopt, fopt, gopt, Bopt, func_calls, grad_calls, warnflag = out
-    logger.info(f"xopt = {xopt} ({softplus(xopt)})")
+    logger.info(f"xopt = {xopt} ({_transform(xopt)})")
     logger.info(f"fopt = {fopt} ")
     logger.info(f"gopt = {gopt} ")
     logger.info(f"Bopt = \n {Bopt} ")
     logger.info(f"func_calls = {func_calls} ")
     logger.info(f"grad_calls = {grad_calls} ")
     logger.info(f"warnflag = {warnflag} ")
-    return softplus(xopt), fopt, gopt, Bopt, func_calls, grad_calls, warnflag
+    return _transform(xopt), fopt, gopt, Bopt, func_calls, grad_calls, warnflag
 
 
 def scipy_bfgs_to_values_dict(out):
@@ -299,35 +306,35 @@ def approx_gradient_at_minuit_minimum(f, minimizer, epsilon):
     return grad
 
 
-def plot_feval_contour(xopt, compute_nll, epsilon, directory):
+def plot_feval_contour(xopt, compute_nll, epsilon, directory, title="feval_around_minimum"):
     logger = logging.getLogger()
     logger.info(f"Contour plots !")
     ARRAY_SIZE = 10
-    DELTA_mu = 0.1
     DELTA_alpha = 0.1
-    mu_array = np.linspace(xopt[0]-DELTA_mu, xopt[0]+DELTA_mu, ARRAY_SIZE)
+    DELTA_mu = 0.1
     alpha_array = np.linspace(xopt[0]-DELTA_alpha, xopt[0]-DELTA_alpha, ARRAY_SIZE)
-    mu_mesh, alpha_mesh = np.meshgrid(mu_array, alpha_array)
-    nll_mesh = np.array([compute_nll(mu, alpha) for mu, alpha in zip(mu_mesh.ravel(), alpha_mesh.ravel())]).reshape(mu_mesh.shape)
-    plot_contour(mu_mesh, alpha_mesh, nll_mesh, directory, xlabel="mu", ylabel="alpha")
+    mu_array = np.linspace(xopt[1]-DELTA_mu, xopt[1]+DELTA_mu, ARRAY_SIZE)
+    alpha_mesh, mu_mesh = np.meshgrid(alpha_array, mu_array)
+    nll_mesh = np.array([compute_nll(alpha, mu) for alpha, mu in zip(alpha_mesh.ravel(), mu_mesh.ravel())]).reshape(mu_mesh.shape)
+    plot_contour(alpha_mesh, mu_mesh, nll_mesh, directory, xlabel="mu", ylabel="alpha", title=title)
 
 
-def plot_grad_contour(xopt, compute_nll, epsilon, directory):
+def plot_grad_contour(xopt, compute_nll, epsilon, directory, title="gradient_around_minimum"):
     logger = logging.getLogger()
     logger.info(f"Contour plots for gradients !")
     ARRAY_SIZE = 10
-    DELTA_mu = 0.1
     DELTA_alpha = 0.1
-    mu_array = np.linspace(xopt[0]-DELTA_mu, xopt[0]+DELTA_mu, ARRAY_SIZE)
+    DELTA_mu = 0.1
     alpha_array = np.linspace(xopt[0]-DELTA_alpha, xopt[0]-DELTA_alpha, ARRAY_SIZE)
-    mu_mesh, alpha_mesh = np.meshgrid(mu_array, alpha_array)
-    grad_mesh = np.array([np.linalg.norm(approx_fprime(np.array([mu, alpha]), f, epsilon))
-                        for mu, alpha in zip(mu_mesh.ravel(), alpha_mesh.ravel())]
+    mu_array = np.linspace(xopt[1]-DELTA_mu, xopt[1]+DELTA_mu, ARRAY_SIZE)
+    alpha_mesh, mu_mesh = np.meshgrid(alpha_array, mu_array)
+    grad_mesh = np.array([np.linalg.norm(approx_fprime(np.array([alpha, mu]), f, epsilon))
+                        for alpha, mu in zip(alpha_mesh.ravel(), mu_mesh.ravel())]
                         ).reshape(mu_mesh.shape)
-    plot_contour(mu_mesh, alpha_mesh, grad_mesh, directory, xlabel="GRAD_mu", ylabel="alpha")
+    plot_contour(alpha_mesh, mu_mesh, grad_mesh, directory, xlabel="alpha", ylabel="mu", title=title)
 
 
-def plot_contour(x, y, z, directory, xlabel="mu", ylabel="alpha"):
+def plot_contour(x, y, z, directory, xlabel="alpha", ylabel="mu", title=""):
     logger = logging.getLogger()
     fig, ax = plt.subplots()
     ax.grid(False)
@@ -341,7 +348,7 @@ def plot_contour(x, y, z, directory, xlabel="mu", ylabel="alpha"):
     ax.set_ylabel(ylabel)
     now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
     ax.set_title(now)
-    fname = f"{xlabel}-{ylabel}_contour_plot.png"
+    fname = f"{title}_contour_plot.png"
     path = os.path.join(directory, fname)
     plt.savefig(path)
     plt.clf()
