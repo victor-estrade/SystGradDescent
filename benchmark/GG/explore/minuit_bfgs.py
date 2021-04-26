@@ -67,9 +67,9 @@ def main():
     os.makedirs(root_directory, exist_ok=True)
     args = parse_args()
 
-    N_CV = 5
+    N_CV = 3
     # FIXME : remove lili and STEP to use all iteration !
-    STEP = 5
+    STEP = 1
     lili = list(Config().iter_test_config())[::STEP]
     N_ITER = len(lili)
     logger.info(f"{N_CV} cv and {N_ITER} iteractions ({N_ITER*N_CV} loops)")

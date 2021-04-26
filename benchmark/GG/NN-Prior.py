@@ -205,7 +205,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     evaluate_summary_computer(model, X_test, y_test, w_test, n_bins=n_bins, prefix='', suffix=suffix, directory=iter_directory)
 
     logger.info('Set up NLL computer')
-    compute_summaries = ClassifierSummaryComputer(model, n_bins=n_bins)
+    compute_summaries = model.summary_computer(n_bins=n_bins)
     compute_nll = NLLComputer(compute_summaries, valid_generator, X_test, w_test, config=config)
     # NLL PLOTS
     plot_nll_around_min(compute_nll, config.TRUE, iter_directory, suffix)
