@@ -254,6 +254,17 @@ def run_minuit_migrad(compute_nll, config):
     return minimizer
 
 
+def run_minuit_estimate(compute_nll, config, tolerance):
+    logger = logging.getLogger()
+    logger.info(f"Running MIGRAD on the NLL")
+    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR, tolerance=tolerance)
+    estimate(minimizer, do_hesse=True)
+    logger.info(f"\n{minimizer}")
+    logger.info(f" values = {list(minimizer.values)} ")
+    return minimizer
+
+
+
 def minuit_migrad_to_values_dict(minimizer):
     updates = dict(rescale = minimizer.values[0]
                     , mu = minimizer.values[1]
