@@ -75,12 +75,13 @@ def main():
 
     N_CV = 1
     # FIXME : remove lili and STEP to use all iteration !
-    STEP = 3
+    STEP = 1
     lili = list(Config().iter_test_config())[::STEP]
     N_ITER = len(lili)
     logger.info(f"{N_CV} cv and {N_ITER} iteractions ({N_ITER*N_CV} loops)")
     data = []
     for i_cv in range(N_CV):
+        i_cv=1
         for i_iter, config in enumerate(lili):
             i_iter = i_iter * STEP
             values = run_cv_iter(args, i_cv, i_iter, config, root_directory)
