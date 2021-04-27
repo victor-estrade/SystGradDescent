@@ -23,7 +23,7 @@ def load_some_NN(i_cv=0, cuda=False):
     n_unit = 200
     net = ARCHI(n_in=29, n_out=2, n_unit=n_unit)
     optimizer = optim.Adam(net.parameters(), lr=1e-3)
-    model = NeuralNetClassifier(net, optimizer, n_steps=5000, batch_size=10000, cuda=cuda)
+    model = NeuralNetClassifier(net, optimizer, n_steps=15000, batch_size=10000, cuda=cuda)
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     print(f"loading {model.model_path}")
     model.load(model.model_path)
