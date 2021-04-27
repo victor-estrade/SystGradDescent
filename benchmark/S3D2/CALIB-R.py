@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
+# Command line :
 # python -m benchmark.S3D2.CALIB-R
 
 import os
@@ -121,6 +121,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     os.makedirs(iter_directory, exist_ok=True)
     result_row['i'] = i_iter
 
+    test_generator.reset()
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     target, sigma = model.predict(X_test, w_test)
     logger.info('{} =vs= {} +/- {}'.format(config.TRUE.r, target, sigma))

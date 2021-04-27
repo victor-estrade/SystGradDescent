@@ -224,6 +224,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     suffix = f'-mu={config.TRUE.mu:1.2f}_rescale={config.TRUE.rescale}'
 
     logger.info('Generate testing data')
+    test_generator.reset()
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
 
     # CALIBRATION
@@ -313,6 +314,7 @@ def run_conditional_estimation_iter(model, result_row, i_iter, config, valid_gen
     os.makedirs(iter_directory, exist_ok=True)
 
     logger.info('Generate testing data')
+    test_generator.reset()
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     # MEASURE STAT/SYST VARIANCE
     logger.info('MEASURE STAT/SYST VARIANCE')

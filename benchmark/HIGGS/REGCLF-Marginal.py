@@ -165,6 +165,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
 
 
     logger.info('Generate testing data')
+    test_generator.reset()
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=None)
     target, sigma = model.predict(X_test, w_test)
 

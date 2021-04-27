@@ -179,6 +179,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator,
     suffix = f'-mu={config.TRUE.mu:1.2f}_rescale={config.TRUE.rescale}'
 
     logger.info('Generate testing data')
+    test_generator.reset()
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     # PLOT SUMMARIES
     evaluate_summary_computer(model, X_test, y_test, w_test, n_bins=n_bins, prefix='', suffix=suffix, directory=iter_directory)

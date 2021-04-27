@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
+# Command line :
 # python -m benchmark.S3D2.REG-Marginal
 
 import os
@@ -128,14 +128,14 @@ def run(args, i_cv):
     model = build_model(args, i_cv)
     os.makedirs(model.results_path, exist_ok=True)
     flush(logger)
-    
+
     # TRAINING / LOADING
     train_or_load_neural_net(model, train_generator, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
-    
+
     result_row.update(evaluate_neural_net(model, prefix='valid'))
     evaluate_regressor(model, prefix='valid')
 
@@ -167,6 +167,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     # suffix = f'-mix={config.TRUE.mix:1.2f}_rescale={config.TRUE.rescale}'
 
     logger.info('Generate testing data')
+    test_generator.reset()
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     target, sigma = model.predict(X_test, w_test)
 
@@ -175,11 +176,11 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     result_row.update(config.CALIBRATED.to_dict())
     result_row.update(config.CALIBRATED_ERROR.to_dict( suffix=_ERROR) )
     result_row.update(config.TRUE.to_dict(suffix=_TRUTH) )
-    name = config.INTEREST_PARAM_NAME 
+    name = config.INTEREST_PARAM_NAME
     result_row[name] = target
     result_row[name+_ERROR] = sigma
     result_row[name+_TRUTH] = config.TRUE.interest_parameters
-    logger.info('mix  = {} =vs= {} +/- {}'.format(config.TRUE.interest_parameters, target, sigma) ) 
+    logger.info('mix  = {} =vs= {} +/- {}'.format(config.TRUE.interest_parameters, target, sigma) )
     return result_row.copy()
 
 

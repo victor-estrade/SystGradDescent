@@ -166,6 +166,7 @@ def run_iter(model, result_row, i_iter, config, valid_generator, test_generator)
     suffix = config.get_suffix()
     # suffix += f'_nasty_bkg={config.TRUE.nasty_bkg}_sigma_soft={config.TRUE.sigma_soft}'
     logger.info('Generate testing data')
+    test_generator.reset()
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=None)
     # CALIBRATION
     # logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) )

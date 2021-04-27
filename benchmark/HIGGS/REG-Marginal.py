@@ -197,6 +197,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     suffix = config.get_suffix()
 
     logger.info('Generate testing data')
+    test_generator.reset()
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES, no_grad=True)
 
     # PREDICTION

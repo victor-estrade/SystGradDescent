@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-# Command line : 
+# Command line :
 # python -m benchmark.S3D2.REG
 
 import os
@@ -52,7 +52,7 @@ def param_generator():
     # lam = -1
     # while lam <= 0:
     #     lam = np.random.normal(pb_config.CALIBRATED_LAMBDA, pb_config.CALIBRATED_LAMBDA_ERROR)
-    
+
     r = pb_config.CALIBRATED_R
     lam = pb_config.CALIBRATED_LAMBDA
     mu_min = min(pb_config.TRUE_MU_RANGE)
@@ -146,6 +146,7 @@ def run(args, i_cv):
     for mu in pb_config.TRUE_MU_RANGE:
         pb_config.TRUE_MU = mu
         logger.info('Generate testing data')
+        test_generator.reset()
         X_test, y_test, w_test = test_generator.generate(
                                          # pb_config.TRUE_R,
                                          # pb_config.TRUE_LAMBDA,
@@ -153,20 +154,20 @@ def run(args, i_cv):
                                          pb_config.CALIBRATED_LAMBDA,
                                          pb_config.TRUE_MU,
                                          n_samples=pb_config.N_TESTING_SAMPLES)
-    
+
         p_test = np.array( (pb_config.CALIBRATED_R, pb_config.CALIBRATED_LAMBDA) )
 
         pred, sigma = model.predict(X_test, w_test, p_test)
-        name = pb_config.INTEREST_PARAM_NAME 
+        name = pb_config.INTEREST_PARAM_NAME
         result_row[name] = pred
         result_row[name+_ERROR] = sigma
         result_row[name+_TRUTH] = pb_config.TRUE_MU
-        logger.info('{} =vs= {} +/- {}'.format(pb_config.TRUE_MU, pred, sigma) ) 
+        logger.info('{} =vs= {} +/- {}'.format(pb_config.TRUE_MU, pred, sigma) )
         result_table.append(result_row.copy())
     result_table = pd.DataFrame(result_table)
 
     logger.info('Plot params')
-    name = pb_config.INTEREST_PARAM_NAME 
+    name = pb_config.INTEREST_PARAM_NAME
     plot_params(name, result_table, title=model.full_name, directory=model.results_path)
 
 
@@ -175,4 +176,3 @@ def run(args, i_cv):
 
 if __name__ == '__main__':
     main()
-	

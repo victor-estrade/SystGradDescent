@@ -206,6 +206,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     suffix = f'-mu={config.TRUE.mu:1.2f}_r={config.TRUE.r}_lambda={config.TRUE.lam}'
 
     logger.info('Generate testing data')
+    test_generator.reset()
     X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
     # PLOT SUMMARIES
     evaluate_summary_computer(model, X_test, y_test, w_test, n_bins=n_bins, prefix='', suffix=suffix, directory=iter_directory)
@@ -265,6 +266,34 @@ def run_conditional_estimation(args, i_cv):
     fname = os.path.join(model.results_path, "conditional_estimations.csv")
     conditional_estimate.to_csv(fname)
     logger.info('DONE')
+    return conditional_estimate
+
+
+def run_conditional_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=10):
+    logger = logging.getLogger()
+    logger.info('-'*45)
+    logger.info(f'iter : {i_iter}')
+    flush(logger)
+
+    iter_directory = os.path.join(model.results_path, f'iter_{i_iter}')
+    os.makedirs(iter_directory, exist_ok=True)
+
+    logger.info('Generate testing data')
+    test_generator.reset()
+    X_test, y_test, w_test = test_generator.generate(*config.TRUE, n_samples=config.N_TESTING_SAMPLES)
+    # SUMMARIES
+    logger.info('Set up NLL computer')
+    compute_summaries = model.summary_computer(n_bins=n_bins)
+    compute_nll = NLLComputer(compute_summaries, valid_generator, X_test, w_test, config=config)
+
+    # MEASURE STAT/SYST VARIANCE
+    logger.info('MEASURE STAT/SYST VARIANCE')
+    conditional_results = make_conditional_estimation(compute_nll, config)
+    fname = os.path.join(iter_directory, "no_nuisance.csv")
+    conditional_estimate = pd.DataFrame(conditional_results)
+    conditional_estimate['i'] = i_iter
+    conditional_estimate.to_csv(fname)
+
     return conditional_estimate
 
 
