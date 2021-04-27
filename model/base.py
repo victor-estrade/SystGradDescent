@@ -103,7 +103,10 @@ class BaseClassifierModel(BaseModel, ClassifierMixin):
 
     def compute_summaries(self, X, W, n_bins=DEFAULT_N_BINS):
         proba = self.predict_proba(X)
-        count, _ = np.histogram(proba[:, 1], range=(0., 1.), weights=W, bins=n_bins)
+        decision = proba[:, 1]
+        if np.isnan(decision).any():
+            print("[WARNING] : NaN detected in predicted decision/proba ")
+        count, _ = np.histogram(decision, range=(0., 1.), weights=W, bins=n_bins)
         return count
 
 
