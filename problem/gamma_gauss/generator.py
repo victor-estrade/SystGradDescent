@@ -57,6 +57,9 @@ class Generator():
         return X, y, w
 
     def _generate_vars(self, rescale, n_bkg, n_sig):
+        if rescale < 0.0:
+            print(f"[WARNING] : rescale < 0 (rescale={rescale})")
+            rescale = np.abs(rescale)
         gamma_k      = self.gamma_k
         gamma_loc    = self.gamma_loc
         gamma_scale  = rescale
