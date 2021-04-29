@@ -83,8 +83,8 @@ def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix='', d
 def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''):
     results = {}
     estimate(minimizer, do_hesse=do_hesse)
-    if not minimizer.valid :
-        estimate_param_by_param(minimizer, do_hesse=do_hesse)
+    # if not minimizer.valid :
+    #     estimate_param_by_param(minimizer, do_hesse=do_hesse)
     results['is_mingrad_valid'] = minimizer.valid
 
     if do_hesse :
@@ -108,14 +108,15 @@ def estimate(minimizer, do_hesse=True):
     _run_migrad(minimizer)
 
     if minimizer.valid:
-        logger.info('Mingrad is VALID !')
+        logger.info('Migrad is VALID !')
     else:
-        logger.warning('Mingrad IS NOT VALID !')
-        _run_simplex_migrad(minimizer)
+        logger.warning('Migrad IS NOT VALID !')
+        _run_simplex(minimizer)
+        _run_migrad(minimizer, comment='2nd')
         if minimizer.valid:
-            logger.info('Mingrad 2nd is  VALID !')
+            logger.info('Migrad 2nd is  VALID !')
         else:
-            logger.warning('Mingrad 2nd IS NOT VALID !')
+            logger.warning('Migrad 2nd IS NOT VALID !')
 
 
 def estimate_param_by_param(minimizer, do_hesse=True):
@@ -125,29 +126,30 @@ def estimate_param_by_param(minimizer, do_hesse=True):
     for i, param in enumerate(minimizer.params):
         logger.info(f"Unfixing {param.name}")
         minimizer.fixed[i] = False
-        _run_simplex_migrad(minimizer)
+        _run_simplex(minimizer)
+        _run_migrad(minimizer, comment='3rd')
         if minimizer.valid:
-            logger.info('Mingrad 2nd is  VALID !')
+            logger.info('Migrad is VALID !')
         else:
-            logger.warning('Mingrad 2nd IS NOT VALID !')
+            logger.warning('Migrad IS NOT VALID !')
     logger.info("Param by param minimization DONE")
 
 
-def _run_migrad(minimizer):
+def _run_migrad(minimizer, comment=''):
     logger = logging.getLogger()
-    logger.info('Mingrad()')
-    minimizer.migrad()
-    logger.info('Mingrad DONE')
+    logger.info(f'Migrad() {comment}')
+    try:
+        minimizer.migrad()
+        logger.info(f'Migrad {comment} DONE')
+    except Exception as e:
+        logger.error('Exception during MIGRAD computation : {}'.format(e))
 
 
-def _run_simplex_migrad(minimizer):
+def _run_simplex(minimizer):
     logger = logging.getLogger()
     logger.info('simplex()')
     minimizer.simplex()
     logger.info('simplex() DONE')
-    logger.info('Mingrad() 2nd')
-    minimizer.migrad()
-    logger.info('Mingrad() 2nd DONE')
 
 
 def _run_hesse(minimizer):
