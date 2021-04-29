@@ -32,6 +32,7 @@ from ..common import N_BINS
 from .load_model import load_some_GB
 from .load_model import load_some_NN
 
+from utils.evaluation import estimate
 
 from problem.gamma_gauss import Generator
 from problem.gamma_gauss import GGConfig as Config
@@ -56,6 +57,8 @@ def parse_args(main_description="Explore NLL shape"):
                         default=0, help="start of i_cv for range(start, end)")
     parser.add_argument("--end-cv", type=int,
                         default=30, help="end of i_cv for range(start, end)")
+    parser.add_argument("--tolerance", type=float,
+                        default=0.1, help="tolerance value for Minuit migrad and simplex minimization")
 
     args, _ = parser.parse_known_args()
     return args
@@ -115,7 +118,7 @@ def run_cv_iter(args, i_cv, i_iter, config, root_directory):
     # values.update(scipy_bfgs_to_values_dict(out))
 
     # run minimization with Minuit.MIGRAD
-    minimizer = run_minuit_migrad(compute_nll, config)
+    minimizer = run_minuit_estimate(compute_nll, config, args.tolerance)
     values.update(minuit_migrad_to_values_dict(minimizer))
 
     #  I want grad and feval at minimum and grad at true value
@@ -235,10 +238,10 @@ def scipy_bfgs_to_values_dict(out):
     return updates
 
 
-def run_minuit_migrad(compute_nll, config):
+def run_minuit_migrad(compute_nll, config, tolerance):
     logger = logging.getLogger()
     logger.info(f"Running MIGRAD on the NLL")
-    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
+    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR, tolerance=tolerance)
     minimizer.migrad()
     logger.info(f"\n{minimizer}")
     logger.info(f" values = {list(minimizer.values)} ")

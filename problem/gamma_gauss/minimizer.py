@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import iminuit
 ERRORDEF_NLL = 0.5
 
-def get_minimizer(compute_nll, calibrated_param, calibrated_param_error):
+def get_minimizer(compute_nll, calibrated_param, calibrated_param_error, tolerance=0.1):
     minimizer = iminuit.Minuit(compute_nll,
                            rescale=calibrated_param.rescale,
                            # error_rescale=calibrated_param_error.rescale,
@@ -21,6 +21,9 @@ def get_minimizer(compute_nll, calibrated_param, calibrated_param_error):
     minimizer.errors = [calibrated_param_error.rescale
                         ,calibrated_param_error.mu
                         ]
+    minimizer.tol = tolerance  # Should I increase tolerance to help ???? (default is 0.1 according to doc)
+    minimizer.throw_nan = True
+    minimizer.precision = 1e-12
     return minimizer
 
 
