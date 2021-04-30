@@ -57,10 +57,11 @@ from ..my_argparser import INFERNO_parse_args
 DATA_NAME = 'GG'
 BENCHMARK_NAME = DATA_NAME+'-prior'
 N_ITER = 30
+from .common import N_BINS
 
 
 def build_model(args, i_cv):
-    args.net = ARCHI(n_in=1, n_out=args.n_bins, n_unit=args.n_unit)
+    args.net = ARCHI(n_in=1, n_out=N_BINS, n_unit=args.n_unit)
     args.optimizer = get_optimizer(args)
     args.criterion = GGLoss()
     model = get_model(args, Inferno)
@@ -175,7 +176,6 @@ def run_estimation(args, i_cv):
     evaluate_inferno(model, prefix='valid')
 
     # MEASUREMENT
-    N_BINS = 10
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
     iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=N_BINS)
                     for i, test_config in enumerate(config.iter_test_config())]
@@ -254,7 +254,6 @@ def run_conditional_estimation(args, i_cv):
     evaluate_inferno(model, prefix='valid')
 
     # MEASUREMENT
-    N_BINS = 10
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
     iter_results = [run_conditional_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=N_BINS)
                     for i, test_config in enumerate(config.iter_test_config())]
