@@ -207,7 +207,7 @@ def run_estimation(args, i_cv):
         plot_params(name, result_table, title=model.full_name, directory=model.results_path)
 
     logger.info('DONE')
-    return result_table, conditional_estimate
+    return result_table
 
 
 def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=10):
