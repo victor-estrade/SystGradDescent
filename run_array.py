@@ -172,7 +172,7 @@ SBATCH_TEMPLATE = \
 
 # test --exclude=baltic-1,republic-[1-2],republic-[4-6],titanic-[1-5]
 # republic-3 is working  !
-## to choose specific node #SBATCH --nodelist={node_list}
+## to choose specific node #SBATCH --nodelist={{node_list}}
 
 hostname
 
