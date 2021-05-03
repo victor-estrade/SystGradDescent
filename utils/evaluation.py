@@ -81,16 +81,19 @@ def evaluate_summary_computer(model, X, y, w, n_bins=10, prefix='', suffix='', d
 
 
 def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''):
+    logger = logging.getLogger()
     results = {}
     estimate(minimizer, do_hesse=do_hesse)
     # if not minimizer.valid :
     #     estimate_param_by_param(minimizer, do_hesse=do_hesse)
     results['is_mingrad_valid'] = minimizer.valid
+    logger.info(f'edm before hesse = {minimizer.fmin.edm}')
 
     if do_hesse :
         _run_hesse(minimizer)
     params = minimizer.params
     fmin = minimizer.fmin
+    logger.info(f'edm after hesse = {minimizer.fmin.edm}')
 
     print_params(params, params_truth)
     register_params(params, params_truth, results)
