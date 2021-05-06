@@ -36,4 +36,5 @@ class GGNLL():
         data_nll = np.sum(poisson_nll(self.test_summaries, rate))
         rescale_constraint = gauss_nll(rescale, config.CALIBRATED.rescale, config.CALIBRATED_ERROR.rescale)
         total_nll = data_nll + rescale_constraint
+        print(f"{rescale}, {mu}, {total_nll}")
         return total_nll
