@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import sys
 import numpy as np
 
 from ..nll import gauss_nll
@@ -36,5 +37,5 @@ class GGNLL():
         data_nll = np.sum(poisson_nll(self.test_summaries, rate))
         rescale_constraint = gauss_nll(rescale, config.CALIBRATED.rescale, config.CALIBRATED_ERROR.rescale)
         total_nll = data_nll + rescale_constraint
-        print(f"{rescale}, {mu}, {total_nll}")
+        print(f"{rescale}, {mu}, {total_nll}", file=sys.stderr)
         return total_nll
