@@ -197,7 +197,17 @@ def softplus(x):
 def softplusinv(x):
     return np.log(np.expm1(x))
 
+def lower_transform_p_int(x, a=0):
+    value = a - 1 + np.sqrt(np.square(x) + 1)
+    return value
+
+def lower_transform_p_ext(x, a=0):
+    value = np.sqrt(np.square(x - a + 1) - 1)
+    return value
+
+
 _transform = lambda x : softplus(x)
+_transform = lambda x : lower_transform_p_int(x, a=0)
 # _transform = lambda x : transform_p_int(x, 0, 10)
 
 def run_scipy_bfgs(compute_nll, config):
@@ -206,6 +216,7 @@ def run_scipy_bfgs(compute_nll, config):
 
     logger.info(f"Running BFGS on the NLL")
     x_0 = np.array(list(config.CALIBRATED))
+    x_0 = lower_transform_p_ext(x_0, 0)
     out = fmin_bfgs(f, x_0, full_output=True)
     xopt, fopt, gopt, Bopt, func_calls, grad_calls, warnflag = out
     logger.info(f"xopt = {xopt} ({_transform(xopt)})")
