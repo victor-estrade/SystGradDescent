@@ -98,6 +98,13 @@ def run_cv_iter(args, i_cv, i_iter, config, root_directory):
     model = load_some_NN(i_cv=i_cv, cuda=args.cuda)
     compute_nll = get_nll_computer(model, config, valid_generator, test_generator)
 
+    for epsilon in [1e-6, 1e-7, 1e-8, 1e-9, 1e-10]:
+        rescale, mu = config.TRUE
+        v_00 = compute_nll(rescale, mu)
+        v_10 = compute_nll(rescale+epsilon, mu)
+        v_01 = compute_nll(rescale, mu+epsilon)
+        logger.info(f"e = {epsilon}  00 = {v_00}  10 = {v_10}   01 = {v_01}")
+
     # Results storage
     values = {}
     values['i_cv'] = i_cv
@@ -142,6 +149,8 @@ def run_cv_iter(args, i_cv, i_iter, config, root_directory):
     # plot_grad_contour(xopt, f, epsilon, directory, title="grad_around_scipy_minimum")
     # plot_feval_contour(minimizer.values, compute_nll, epsilon, directory, title="feval_around_minuit_minimum")
     # plot_grad_contour(minimizer.values, f, epsilon, directory, title="grad_around_minuit_minimum")
+
+    # plot_feval_contour([1.0, 0.17], compute_nll, epsilon, directory, title="feval_around_minuit_minimum")
 
     return values
 
@@ -337,14 +346,16 @@ def approx_gradient_at_minuit_minimum(f, minimizer, epsilon):
 def plot_feval_contour(xopt, compute_nll, epsilon, directory, title="feval_around_minimum"):
     logger = logging.getLogger()
     logger.info(f"Contour plots !")
-    ARRAY_SIZE = 20
-    DELTA_alpha = 0.1
-    DELTA_mu = 0.1
+    ARRAY_SIZE = 40
+    DELTA_alpha = 0.2
+    DELTA_mu = 0.2
     alpha_array = np.linspace(xopt[0]-DELTA_alpha, xopt[0]+DELTA_alpha, ARRAY_SIZE)
     mu_array = np.linspace(xopt[1]-DELTA_mu, xopt[1]+DELTA_mu, ARRAY_SIZE)
-    alpha_mesh, mu_mesh = np.meshgrid(alpha_array, mu_array)
+    # alpha_mesh, mu_mesh = np.meshgrid(alpha_array, mu_array)
+    mu_mesh, alpha_mesh = np.meshgrid(mu_array, alpha_array)
     nll_mesh = np.array([compute_nll(alpha, mu) for alpha, mu in zip(alpha_mesh.ravel(), mu_mesh.ravel())]).reshape(mu_mesh.shape)
-    plot_contour(alpha_mesh, mu_mesh, nll_mesh, directory, xlabel="alpha", ylabel="mu", title=title)
+    # plot_contour(alpha_mesh, mu_mesh, nll_mesh, directory, xlabel="alpha", ylabel="mu", title=title)
+    plot_contour(mu_mesh, alpha_mesh, nll_mesh, directory, xlabel="mu", ylabel="alpha", title=title)
 
 
 def plot_grad_contour(xopt, f, epsilon, directory, title="gradient_around_minimum"):
