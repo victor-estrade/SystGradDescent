@@ -13,6 +13,7 @@ from archi.reducer import A3ML3 as CALIB_ARCHI
 # from archi.reducer import EA1AR8MR8L1 as CALIB_ARCHI
 
 N_BINS = 10
+N_ITER = 30
 CALIB_RESCALE = "Calib_rescale"
 
 def load_calib_rescale(DATA_NAME, BENCHMARK_NAME):
