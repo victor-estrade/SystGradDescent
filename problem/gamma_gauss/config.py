@@ -22,9 +22,9 @@ class GGConfig():
     INTEREST_PARAM_NAME = 'mu'
 
     N_TRAINING_SAMPLES = 10000
-    N_VALIDATION_SAMPLES = 5000
-    N_TESTING_SAMPLES = 5000
-    RANGE_N_TEST = [50, 100, 300, 500, 2000]
+    N_VALIDATION_SAMPLES = 2000
+    N_TESTING_SAMPLES = 2000
+    RANGE_N_TEST = [50, 200, 500, 2000]
 
     def iter_test_config(self):
         param_lists = [*self.RANGE ] + [ self.RANGE_N_TEST ]
