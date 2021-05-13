@@ -108,6 +108,7 @@ def estimate(minimizer, do_hesse=True):
 
     if logger.getEffectiveLevel() <= logging.DEBUG:
         minimizer.print_param()
+    _run_scan(minimizer)
     _run_migrad(minimizer)
 
     if minimizer.valid:
@@ -153,6 +154,13 @@ def _run_simplex(minimizer):
     logger.info('simplex()')
     minimizer.simplex()
     logger.info('simplex() DONE')
+
+
+def _run_scan(minimizer):
+    logger = logging.getLogger()
+    logger.info('scan()')
+    minimizer.scan()
+    logger.info('scan() DONE')
 
 
 def _run_hesse(minimizer):
