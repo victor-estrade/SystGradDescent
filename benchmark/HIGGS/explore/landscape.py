@@ -127,12 +127,12 @@ def run_cv_iter(args, model, i_cv, i_iter, config, root_directory):
 
     logger.info(f"Contour plots !")
     ARRAY_SIZE = 50
-    DELTA_alpha = 0.3
-    DELTA_mu = 0.6
+    DELTA_alpha = 0.2
     ALPHA = 1.0
-    MU = 1.0
+    MU_START = 0.2
+    MU_END = 2.2
     alpha_array = np.linspace(ALPHA-DELTA_alpha, ALPHA+DELTA_alpha, ARRAY_SIZE)
-    mu_array = np.linspace(MU-DELTA_mu, MU+DELTA_mu, ARRAY_SIZE)
+    mu_array = np.linspace(MU_START, MU_END, ARRAY_SIZE)
     # alpha_mesh, mu_mesh = np.meshgrid(alpha_array, mu_array)
     mu_mesh, alpha_mesh = np.meshgrid(mu_array, alpha_array)
     nll_mesh = np.array([compute_nll(alpha, mu) for alpha, mu in zip(alpha_mesh.ravel(), mu_mesh.ravel())]).reshape(mu_mesh.shape)
