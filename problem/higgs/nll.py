@@ -98,7 +98,7 @@ class HiggsNLLTes(BaseHiggsNLL):
         mu_nll = np.sum(poisson_nll(self.xp_histogram, rate_histogram))
         tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
         total_nll = mu_nll + tes_constraint
-        print(f"{tes}, {mu}, {total_nll}", file=sys.stderr)
+        # print(f"{tes}, {mu}, {total_nll}", file=sys.stderr)
         return total_nll
 
 
