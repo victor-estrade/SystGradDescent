@@ -16,6 +16,8 @@ PRECISION = 1e-3
 N_CV = 6
 
 _ERROR = '_error'
+_MINOS_UP = '_minos_up'
+_MINOS_LOW = '_minos_low'
 _TRUTH = '_truth'
 
 PLOT_CONTOUR = False

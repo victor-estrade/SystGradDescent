@@ -23,6 +23,8 @@ from visual.neural_net import plot_losses
 from visual.neural_net import plot_REG_log_mse
 
 from config import _ERROR
+from config import _MINOS_UP
+from config import _MINOS_LOW
 from config import _TRUTH
 from config import PLOT_CONTOUR
 
@@ -99,6 +101,7 @@ def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''
     print_params(params, params_truth)
     register_params(params, params_truth, results)
     register_fmin(results, fmin)
+    register_merror(results, minimizer.merrors)
     if PLOT_CONTOUR:
         plot_all_contour(minimizer, params_truth, directory, suffix=suffix)
     return results
@@ -178,7 +181,7 @@ def _run_minos(minimizer):
     logger = logging.getLogger()
     logger.info('Minos()')
     try:
-        params = minimizer.minos()
+        params = minimizer.minos("mu")
         logger.info('Minos DONE')
     except Exception as e:
         logger.error('Exception during Minos computation : {}'.format(e))
@@ -201,6 +204,13 @@ def register_fmin(results, fmin):
     results["is_above_max_edm"] = fmin.is_above_max_edm
     results["has_reached_call_limit"] = fmin.has_reached_call_limit
     results["errordef"] = fmin.errordef
+
+def register_merror(results, merrors):
+    for param_name in merrors:
+        results[param_name+_MINOS_UP] = merrors[param_name].upper
+        results[param_name+_MINOS_LOW] = merrors[param_name].lower
+        results[param_name+"_lower_valid"] = merrors[param_name].lower_valid
+        results[param_name+"_upper_valid"] = merrors[param_name].upper_valid
 
 
 def register_params(param, params_truth, measure_dict):
