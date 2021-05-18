@@ -91,9 +91,10 @@ def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''
 
     if do_hesse :
         _run_hesse(minimizer)
+        _run_minos(minimizer)
     params = minimizer.params
     fmin = minimizer.fmin
-    logger.info(f'edm after hesse = {minimizer.fmin.edm}')
+    logger.info(f'edm after hesse/minos = {minimizer.fmin.edm}')
 
     print_params(params, params_truth)
     register_params(params, params_truth, results)
@@ -171,6 +172,16 @@ def _run_hesse(minimizer):
         logger.info('Hesse DONE')
     except Exception as e:
         logger.error('Exception during Hesse computation : {}'.format(e))
+
+
+def _run_minos(minimizer):
+    logger = logging.getLogger()
+    logger.info('Minos()')
+    try:
+        params = minimizer.minos()
+        logger.info('Minos DONE')
+    except Exception as e:
+        logger.error('Exception during Minos computation : {}'.format(e))
 
 
 def register_fmin(results, fmin):
