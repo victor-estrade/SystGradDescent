@@ -32,7 +32,7 @@ DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "explore")
 
 def main():
     print('hello')
-    generator = Generator(apple_center=3, pear_center=0, n_apple=100, n_pears=100)
+    generator = Generator(apple_center=7, pear_center=0, n_apple=100, n_pears=100)
 
     TRUE_RESCALE = 1.0
     TRUE_MU = 1.0
@@ -53,7 +53,7 @@ def main():
 
 
 def plot_rescale_around_min(compute_nll, true_rescale, true_mu, directory, suffix=''):
-    rescale_array = np.linspace(0.5, 3, 50)
+    rescale_array = np.linspace(0.5, 6, 50)
     nll_array = [compute_nll(rescale, true_mu) for rescale in rescale_array]
     name = 'rescale'
     plot_param_around_min(rescale_array, nll_array, true_rescale, name, suffix, directory)
