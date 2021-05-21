@@ -34,6 +34,13 @@ class GGConfig():
             new_config.N_TESTING_SAMPLES = n_test_samples
             yield new_config
 
+    def iter_test_config_param_only(self):
+        param_lists = [*self.RANGE ]
+        for true_rescale, true_mu in itertools.product(*param_lists):
+            new_config = GGConfig()
+            new_config.TRUE = Parameter(true_rescale, true_mu)
+            yield new_config
+
     def iter_nuisance(self):
         for nuisance in itertools.product(*self.FINE_RANGE.nuisance_parameters):
             yield nuisance
