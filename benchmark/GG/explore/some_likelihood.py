@@ -28,6 +28,7 @@ from problem.gamma_gauss import GGConfig as Config
 from problem.gamma_gauss import GGNLL as NLLComputer
 
 from .load_model import load_some_NN
+from .load_model import load_some_FF
 from ..common import N_BINS
 
 from visual.misc import now_str
@@ -43,7 +44,16 @@ def main():
     logger = logging.getLogger()
     TRUE_MU = 0.5
     TRUE_RESCALE = 0.8
+    run_true_likelihood(TRUE_RESCALE, TRUE_MU)
+    run_clf_likelihood(TRUE_RESCALE, TRUE_MU)
 
+    TRUE_MU = 1.0
+    TRUE_RESCALE = 1.0
+    run_true_likelihood(TRUE_RESCALE, TRUE_MU)
+    run_clf_likelihood(TRUE_RESCALE, TRUE_MU)
+
+    TRUE_MU = 1.5
+    TRUE_RESCALE = 1.2
     run_true_likelihood(TRUE_RESCALE, TRUE_MU)
     run_clf_likelihood(TRUE_RESCALE, TRUE_MU)
 
