@@ -214,6 +214,7 @@ def register_merror(results, merrors):
         results[param_name+_MINOS_LOW] = merrors[param_name].lower
         results[param_name+"_lower_valid"] = merrors[param_name].lower_valid
         results[param_name+"_upper_valid"] = merrors[param_name].upper_valid
+        results[param_name+"_ci_length"] = merrors[param_name].upper - merrors[param_name].lower
 
 
 def register_params(param, params_truth, measure_dict):
