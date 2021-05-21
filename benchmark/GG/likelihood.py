@@ -53,7 +53,7 @@ def main():
     config_table.to_csv(os.path.join(DIRECTORY, 'config_table.csv'))
     results = [run(args, i_cv) for i_cv in range(N_ITER)]
     results = pd.concat(results, ignore_index=True)
-    results.to_csv(os.path.join(DIRECTORY, 'results.csv'))
+    results.to_csv(os.path.join(DIRECTORY, 'estimations.csv'))
     # EVALUATION
     eval_table = evaluate_estimator(config.TRUE.interest_parameters_names, results)
     print_line()
@@ -79,7 +79,7 @@ def run(args, i_cv):
 
     result_table = [run_iter(i_cv, i, test_config, test_seed, directory) for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(result_table)
-    result_table.to_csv(os.path.join(directory, 'results.csv'))
+    result_table.to_csv(os.path.join(directory, 'estimations.csv'))
     logger.info('Plot params')
     param_names = config.PARAM_NAMES
     for name in param_names:
@@ -98,6 +98,7 @@ def run_iter(i_cv, i_iter, config, seed, directory):
     suffix = f'-mu={config.TRUE.mu:1.2f}_rescale={config.TRUE.rescale}'
     generator  = Generator(seed)  # test_generator
     data, label = generator.sample_event(*config.TRUE, size=config.N_TESTING_SAMPLES)
+    result_row['n_test_samples'] = config.N_TESTING_SAMPLES
     debug_label(label)
 
     compute_nll = lambda rescale, mu : generator.nll(data, rescale, mu)
