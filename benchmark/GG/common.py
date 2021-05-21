@@ -4,9 +4,12 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import logging
 
 from utils.model import get_model
 from utils.model import get_optimizer
+
+from problem.gamma_gauss import Parameter
 
 from model.regressor import Regressor
 from archi.reducer import A3ML3 as CALIB_ARCHI
@@ -34,3 +37,12 @@ def load_calib_rescale(DATA_NAME, BENCHMARK_NAME):
     model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
     model.load(model.model_path)
     return model
+
+
+def calibrates(calib_rescale, config, X_test, w_test):
+    logger = logging.getLogger()
+    rescale_mean, rescale_sigma = calib_rescale.predict(X_test, w_test)
+    logger.info('FITTED rescale = {} =vs= {} +/- {}'.format(config.TRUE.rescale, rescale_mean, rescale_sigma) )
+    config.FITTED = Parameter(rescale_mean, config.CALIBRATED.interest_parameters)
+    config.FITTED_ERROR = Parameter(rescale_sigma, config.CALIBRATED_ERROR.interest_parameters)
+    return config

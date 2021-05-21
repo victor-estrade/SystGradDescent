@@ -54,6 +54,7 @@ from archi.reducer import EA3ML3 as ARCHI
 # from archi.reducer import EA1AR8MR8L1 as ARCHI
 
 from .common import load_calib_rescale
+from .common import calibrates
 
 from ..my_argparser import REG_parse_args
 

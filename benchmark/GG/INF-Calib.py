@@ -56,6 +56,7 @@ from archi.classic import L4 as ARCHI
 from ..my_argparser import INFERNO_parse_args
 
 from .common import load_calib_rescale
+from .common import calibrates
 
 DATA_NAME = 'GG'
 BENCHMARK_NAME = DATA_NAME+'-calib'
@@ -213,14 +214,11 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     evaluate_summary_computer(model, X_test, y_test, w_test, n_bins=n_bins, prefix='', suffix=suffix, directory=iter_directory)
 
     # CALIBRATION
-    rescale_mean, rescale_sigma = calib_rescale.predict(X_test, w_test)
-    logger.info('rescale  = {} =vs= {} +/- {}'.format(config.TRUE.rescale, rescale_mean, rescale_sigma) )
-    config.CALIBRATED = Parameter(rescale_mean, config.CALIBRATED.interest_parameters)
-    config.CALIBRATED_ERROR = Parameter(rescale_sigma, config.CALIBRATED_ERROR.interest_parameters)
-    for name, value in config.CALIBRATED.items():
-        result_row[name+"_calib"] = value
-    for name, value in config.CALIBRATED_ERROR.items():
-        result_row[name+"_calib_error"] = value
+    config = calibrates(calib_rescale, config, X_test, w_test)
+    for name, value in config.FITTED.items():
+        result_row[name+"_fitted"] = value
+    for name, value in config.FITTED_ERROR.items():
+        result_row[name+"_fitted_error"] = value
 
     logger.info('Set up NLL computer')
     compute_summaries = lambda X, w : model.compute_summaries(X, w, n_bins=n_bins)
@@ -230,7 +228,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
 
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
-    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
+    minimizer = get_minimizer(compute_nll, config.FITTED, config.FITTED_ERROR)
     result_row.update(evaluate_minuit(minimizer, config.TRUE, iter_directory, suffix=suffix))
     return result_row.copy()
 
