@@ -92,11 +92,14 @@ def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''
     logger.info(f'edm before hesse = {minimizer.fmin.edm}')
 
     if do_hesse :
+        # minimizer.precision = None
+        # _run_migrad(minimizer)
         _run_hesse(minimizer)
         _run_minos(minimizer)
     params = minimizer.params
     fmin = minimizer.fmin
     logger.info(f'edm after hesse/minos = {minimizer.fmin.edm}')
+    logger.info(f"\n{minimizer}")
 
     print_params(params, params_truth)
     register_params(params, params_truth, results)
