@@ -137,7 +137,7 @@ def run_clf_likelihood(TRUE_RESCALE, TRUE_MU):
 
 
     # FIX RESCALE
-    suffix = f"_mu={TRUE_MU}"
+    suffix = f"_rescale={TRUE_RESCALE}"
     _make_mu_plot_clf(TRUE_RESCALE, 0.5)
     _make_mu_plot_clf(TRUE_RESCALE, 1.0)
     _make_mu_plot_clf(TRUE_RESCALE, 1.5)
