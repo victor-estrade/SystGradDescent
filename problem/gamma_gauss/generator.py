@@ -32,11 +32,11 @@ class Generator():
     def reset(self):
         self.random = np.random.RandomState(seed=self.seed)
 
-    def sample_event(self, rescale, mix, size=1):
-        assert_clean_rescale(rescale)
-        assert_clean_mix(mix)
-        n_sig = int(mix * size)
-        n_bkg = size - n_sig
+    def sample_event(self, rescale, mu, size=1):
+        # assert_clean_rescale(rescale)
+        # assert_clean_mix(mix)
+        n_sig = int(mu * self.signal_luminosity)
+        n_bkg = self.background_luminosity
         x = self._generate_vars(rescale, n_bkg, n_sig)
         labels = self._generate_labels(n_bkg, n_sig)
         return x, labels
@@ -101,19 +101,19 @@ class Generator():
         proba_density = signal_strength * proba_normal + background_strength * proba_gamma
         return proba_density
 
-    def log_proba_density(self, x, rescale, mix):
+    def log_proba_density(self, x, rescale, mu):
         """
-        Computes log p(x | rescale, mix)
+        Computes log p(x | rescale, mu)
         """
-        proba_density = self.proba_density(x, rescale, mix)
+        proba_density = self.proba_density(x, rescale, mu)
         logproba_density = np.log(proba_density)
         return logproba_density
 
-    def nll(self, data, rescale, mix):
+    def nll(self, data, rescale, mu):
         """
         Computes the negative log likelihood of the data given y and rescale.
         """
-        nll = - self.log_proba_density(data, rescale, mix).sum()
+        nll = - self.log_proba_density(data, rescale, mu).sum()
         return nll
 
 
