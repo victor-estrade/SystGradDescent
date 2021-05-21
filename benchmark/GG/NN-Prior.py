@@ -175,7 +175,7 @@ def run_estimation(args, i_cv):
 
     # MEASUREMENT
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
-    iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=N_BINS)
+    iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, n_bins=N_BINS, tolerance=args.tolerance)
                     for i, test_config in enumerate(config.iter_test_config())]
     result_table = pd.DataFrame(iter_results)
     result_table.to_csv(os.path.join(model.results_path, 'estimations.csv'))
@@ -188,7 +188,7 @@ def run_estimation(args, i_cv):
     return result_table
 
 
-def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=10):
+def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test_generator, n_bins=10, tolerance=0.1):
     logger = logging.getLogger()
     logger.info('-'*45)
     logger.info(f'iter : {i_iter}')
@@ -214,7 +214,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
 
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
-    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
+    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR, tolerance=tolerance)
     result_row.update(evaluate_minuit(minimizer, config.TRUE, iter_directory, suffix=suffix))
     return result_row.copy()
 
