@@ -28,3 +28,13 @@ def load_some_NN(i_cv=0, cuda=False):
     print(f"loading {model.model_path}")
     model.load(model.model_path)
     return model
+
+
+def load_some_FF(i_cv=0, cuda=False):
+    from model.feature_filter import FeatureModel
+    model = FeatureModel(0)
+    model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
+    print(f"loading {model.model_path}")
+    model.load(model.model_path)
+    return model
+    
