@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 # python -m benchmark.GG.explore.some_likelihood
 
 import os
+import logging
 import numpy as np
 
 
@@ -18,11 +19,14 @@ import seaborn as sns
 from visual import set_plot_config
 set_plot_config()
 
+from config import SEED
 from config import SAVING_DIR
+from config import DEFAULT_DIR
 
 from problem.gamma_gauss.generator import Generator
 
-from visual.likelihood import plot_param_around_min
+
+from visual.misc import now_str
 
 
 DATA_NAME = 'GG'
@@ -32,32 +36,74 @@ DIRECTORY = os.path.join(SAVING_DIR, BENCHMARK_NAME, "explore")
 
 def main():
     print('hello')
-    generator = Generator()
+    logger = logging.getLogger()
+
+
+    TRUE_MU = 1.0
+    directory = os.path.join(DIRECTORY, 'nll')
+    os.makedirs(directory, exist_ok=True)
+    suffix = f"_mu={TRUE_MU}"
+
+    _make_rescale_plot(1.0, TRUE_MU)
+    _make_rescale_plot(1.2, TRUE_MU)
+    _make_rescale_plot(0.8, TRUE_MU)
+
+
+    param_name = 'rescale'
+
+    plt.xlabel(param_name)
+    plt.ylabel('nll')
+    title = f'{param_name} ({suffix[1:]}) NLL around minimum'
+    plt.title(now_str()+title)
+    plt.legend()
+    plt.savefig(os.path.join(directory, f'NLL_{param_name}{suffix}.png'))
+    plt.clf()
+
+
 
     TRUE_RESCALE = 1.0
-    TRUE_MU = 1.0
-    X, y, w = generator.generate(TRUE_RESCALE, TRUE_MU)
+    directory = os.path.join(DIRECTORY, 'nll')
+    os.makedirs(directory, exist_ok=True)
+    suffix = f"_mu={TRUE_MU}"
 
+    _make_mu_plot(TRUE_RESCALE, 0.5)
+    _make_mu_plot(TRUE_RESCALE, 1.0)
+    _make_mu_plot(TRUE_RESCALE, 1.5)
+
+
+    param_name = 'mu'
+
+    plt.xlabel(param_name)
+    plt.ylabel('nll')
+    title = f'{param_name} ({suffix[1:]}) NLL around minimum'
+    plt.title(now_str()+title)
+    plt.legend()
+    plt.savefig(os.path.join(directory, f'NLL_{param_name}{suffix}.png'))
+    plt.clf()
+
+
+def _make_rescale_plot(true_rescale, true_mu):
+    generator = Generator(seed=SEED)
+    X, y, w = generator.generate(true_rescale, true_mu)
 
     compute_nll = lambda rescale, mu : generator.nll(X, rescale, mu)
-
-    directory = DIRECTORY
-    os.makedirs(directory, exist_ok=True)
-    suffix = f"_rescale={TRUE_RESCALE}_mu={TRUE_MU}"
-
-    plot_data_distrib(X, y, w, generator, TRUE_RESCALE, TRUE_MU, directory, suffix=suffix)
-    plot_rescale_around_min(compute_nll, TRUE_RESCALE, TRUE_MU, directory, suffix=suffix)
-
-
-
-
-
-def plot_rescale_around_min(compute_nll, true_rescale, true_mu, directory, suffix=''):
     rescale_array = np.linspace(0.5, 3, 50)
     nll_array = [compute_nll(rescale, true_mu) for rescale in rescale_array]
-    name = 'rescale'
-    plot_param_around_min(rescale_array, nll_array, true_rescale, name, suffix, directory)
+    param_name = 'rescale'
+    p = plt.plot(rescale_array, nll_array, label=f'NLL {param_name}={true_rescale}')
+    plt.axvline(x=true_rescale, linestyle='--', color=p[0].get_color(), label='true value')
 
+
+def _make_mu_plot(true_rescale, true_mu):
+    generator = Generator(seed=SEED)
+    X, y = generator.sample_event(true_rescale, true_mu)
+
+    compute_nll = lambda rescale, mu : generator.nll(X, rescale, mu)
+    mu_array = np.linspace(0.1, 2, 50)
+    nll_array = [compute_nll(true_rescale, mu) for mu in mu_array]
+    param_name = 'mu'
+    p = plt.plot(mu_array, nll_array, label=f'NLL {param_name}={true_mu}')
+    plt.axvline(x=true_mu, linestyle='--', color=p[0].get_color(), label='true value')
 
 
 def plot_data_distrib(X, y, w, generator, rescale, mu, directory, suffix=''):
@@ -80,6 +126,8 @@ def plot_data_distrib(X, y, w, generator, rescale, mu, directory, suffix=''):
     fname = os.path.join(directory, f'x_distrib{suffix}.png')
     plt.savefig(fname)
     plt.clf()
+
+
 
 
 if __name__ == '__main__':
