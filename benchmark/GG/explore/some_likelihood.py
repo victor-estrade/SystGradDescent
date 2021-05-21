@@ -121,9 +121,9 @@ def run_clf_likelihood(TRUE_RESCALE, TRUE_MU):
     os.makedirs(directory, exist_ok=True)
     # FIX MU
     suffix = f"_mu={TRUE_MU}"
-    _make_rescale_plot(1.0, TRUE_MU)
-    _make_rescale_plot(1.2, TRUE_MU)
-    _make_rescale_plot(0.8, TRUE_MU)
+    _make_rescale_plot_clf(1.0, TRUE_MU)
+    _make_rescale_plot_clf(1.2, TRUE_MU)
+    _make_rescale_plot_clf(0.8, TRUE_MU)
 
     param_name = 'rescale'
 
@@ -166,7 +166,6 @@ def _make_rescale_plot_clf(true_rescale, true_mu):
     valid_generator = Generator(seed=SEED-1)
     compute_nll = NLLComputer(compute_summaries, valid_generator, X_test, w_test, config=config)
 
-    compute_nll = lambda rescale, mu : generator.nll(X, rescale, mu)
     rescale_array = np.linspace(0.5, 3, 50)
     nll_array = [compute_nll(rescale, true_mu) for rescale in rescale_array]
     param_name = 'rescale'
