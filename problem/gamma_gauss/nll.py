@@ -36,6 +36,11 @@ class GGNLL():
         rate = valid_summaries + EPSILON
         data_nll = np.sum(poisson_nll(self.test_summaries, rate))
         rescale_constraint = gauss_nll(rescale, config.CALIBRATED.rescale, config.CALIBRATED_ERROR.rescale)
-        total_nll = data_nll + rescale_constraint
+        rescale_constraint_fitted = 0.0
+        try:
+            rescale_constraint_fitted = gauss_nll(rescale, config.FITTED.rescale, config.FITTED_ERROR.rescale)
+        except AttributeError:
+            pass
+        total_nll = data_nll + rescale_constraint + rescale_constraint_fitted
         # print(f"{rescale}, {mu}, {total_nll}", file=sys.stderr)
         return total_nll
