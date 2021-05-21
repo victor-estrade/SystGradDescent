@@ -106,6 +106,7 @@ def run_iter(i_cv, i_iter, config, seed, directory):
 
     logger.info('Prepare minuit minimizer')
     minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
+    minimizer.precision = None
     result_row.update(evaluate_minuit(minimizer, config.TRUE, iter_directory, suffix=suffix))
     return result_row
 
