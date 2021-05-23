@@ -6,6 +6,8 @@ from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+# Command line :
+# python -m benchmark.COMPARE.GG.GB
 
 from .visual.common import make_common_plots
 from .visual.common import make_hp_table
