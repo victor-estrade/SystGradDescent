@@ -24,30 +24,25 @@ def hp_kwargs_generator(args):
 
 
 
-def make_individual_plots(evaluation, loader):
+def make_individual_estimation_plots(evaluation, loader):
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name, loader.model_full_name)
     os.makedirs(directory, exist_ok=True)
 
     individual.true_mu_mse(evaluation, title=loader.model_full_name, directory=directory)
-    individual.true_mu_v_stat(evaluation, title=loader.model_full_name, directory=directory)
-    individual.true_mu_v_syst(evaluation, title=loader.model_full_name, directory=directory)
     individual.true_mu_estimator(evaluation, title=loader.model_full_name, directory=directory)
     individual.true_mu_target_mean(evaluation, title=loader.model_full_name, directory=directory)
     individual.true_mu_target_mean_std(evaluation, title=loader.model_full_name, directory=directory)
+    # individual.true_mu_sigma_mean(evaluation, title=loader.model_full_name, directory=directory)
+    # individual.true_mu_target_std(evaluation, title=loader.model_full_name, directory=directory)
     individual.n_samples_mse(evaluation, title=loader.model_full_name, directory=directory)
     individual.n_samples_sigma_mean(evaluation, title=loader.model_full_name, directory=directory)
-    individual.n_samples_v_stat(evaluation, title=loader.model_full_name, directory=directory)
-    individual.n_samples_v_syst(evaluation, title=loader.model_full_name, directory=directory)
     individual.box_n_samples_mse(evaluation, title=loader.model_full_name, directory=directory)
 
-
-def make_profusion_plots(all_evaluations, loader):
+def make_profusion_estimation_plots(all_evaluations, loader):
     directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name, "PROFUSION")
     os.makedirs(directory, exist_ok=True)
     title = f"{loader.benchmark_name}-{loader.base_name}"
 
-    profusion.n_samples_v_stat(all_evaluations, title=title, directory=directory)
-    profusion.n_samples_v_syst(all_evaluations, title=title, directory=directory)
     profusion.n_samples_mse(all_evaluations, title=title, directory=directory)
     profusion.n_samples_sigma_mean(all_evaluations, title=title, directory=directory)
     profusion.true_mu_estimator(all_evaluations, title=title, directory=directory)
@@ -55,11 +50,29 @@ def make_profusion_plots(all_evaluations, loader):
     profusion.true_mu_target_bias(all_evaluations, title=title, directory=directory)
     profusion.true_mu_target_mean_std(all_evaluations, title=title, directory=directory)
     profusion.nominal_n_samples_mse(all_evaluations, title=f"Nominal {title}", directory=directory)
-    profusion.nominal_n_samples_v_stat(all_evaluations, title=f"Nominal {title}", directory=directory)
-    profusion.nominal_n_samples_v_syst(all_evaluations, title=f"Nominal {title}", directory=directory)
     profusion.nominal_n_samples_sigma_mean(all_evaluations, title=f"Nominal {title}", directory=directory)
     profusion.mse_box_plot(all_evaluations, title=title, directory=directory)
     profusion.sigma_box_plot(all_evaluations, title=title, directory=directory)
+
+def make_individual_conditional_plots(evaluation, loader):
+    directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name, loader.model_full_name)
+    os.makedirs(directory, exist_ok=True)
+
+    individual.n_samples_v_stat(evaluation, title=loader.model_full_name, directory=directory)
+    individual.n_samples_v_syst(evaluation, title=loader.model_full_name, directory=directory)
+    individual.true_mu_v_stat(evaluation, title=loader.model_full_name, directory=directory)
+    individual.true_mu_v_syst(evaluation, title=loader.model_full_name, directory=directory)
+
+
+def make_profusion_conditional_plots(all_evaluations, loader):
+    directory = os.path.join(SAVING_DIR, BENCHMARK_NAME, loader.benchmark_name, loader.base_name, "PROFUSION")
+    os.makedirs(directory, exist_ok=True)
+    title = f"{loader.benchmark_name}-{loader.base_name}"
+
+    profusion.n_samples_v_stat(all_evaluations, title=title, directory=directory)
+    profusion.n_samples_v_syst(all_evaluations, title=title, directory=directory)
+    profusion.nominal_n_samples_v_stat(all_evaluations, title=f"Nominal {title}", directory=directory)
+    profusion.nominal_n_samples_v_syst(all_evaluations, title=f"Nominal {title}", directory=directory)
     profusion.v_stat_box_plot(all_evaluations, title=title, directory=directory)
     profusion.v_syst_box_plot(all_evaluations, title=title, directory=directory)
 
@@ -102,19 +115,41 @@ def make_evaluation_plots(data_name, benchmark_name, args, TheLoader):
     """
     all_evaluations = []
     all_loaders = []
+    for i, kwargs in enumerate(hp_kwargs_generator(args)):
+        loader = TheLoader(data_name, benchmark_name, **kwargs)
+        try:
+            config_table = loader.load_config_table()
+            evaluation = loader.load_estimation_evaluation()
+        except FileNotFoundError:
+            print(f"[MISSING] estimation results for {loader.model_full_name}")
+        else:
+            print(f"[SUCCESS] load for {loader.model_full_name}")
+            evaluation = evaluation.join(config_table, rsuffix='_')
+            evaluation['hp_code'] = loader.hyper_parameter_code()
+            evaluation['i_hp'] = i
+            all_evaluations.append(evaluation)
+            all_loaders.append(loader)
+            make_individual_estimation_plots(evaluation, loader)
+    if all_evaluations:
+        make_profusion_estimation_plots(all_evaluations, loader)
+
+    all_evaluations = []
+    all_loaders = []
     for kwargs in hp_kwargs_generator(args):
         loader = TheLoader(data_name, benchmark_name, **kwargs)
         try:
-            evaluation = loader.load_evaluation_config()
+            config_table = loader.load_config_table()
+            evaluation = loader.load_conditional_evaluation()
         except FileNotFoundError:
-            print(f"[MISSING] results for {loader.model_full_name}")
+            print(f"[MISSING] conditional estimation results for {loader.model_full_name}")
         else:
             print(f"[SUCCESS] load for {loader.model_full_name}")
+            evaluation = evaluation.join(config_table, rsuffix='_')
             all_evaluations.append(evaluation)
             all_loaders.append(loader)
-            make_individual_plots(evaluation, loader)
+            make_individual_conditional_plots(evaluation, loader)
     if all_evaluations:
-        make_profusion_plots(all_evaluations, loader)
+        make_profusion_conditional_plots(all_evaluations, loader)
 
 
 def make_hp_table(data_name, benchmark_name, args, TheLoader):
