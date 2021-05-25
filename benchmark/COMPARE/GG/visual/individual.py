@@ -301,10 +301,10 @@ def threshold_s_sqrt_s_b(data, title="No Title", directory=DEFAULT_DIR):
         label = f"$\\mu = {true_mu}$, $\\alpha={true_rescale}$"
         x = df_mean.index
         y = df_mean.s_sqrt_n
-        # ax.plot(x, y, label=label)
-        df_std = df.groupby('n_bins').std()
-        y_err = df_std.s_sqrt_n
-        ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
+        ax.plot(x, y, label=label)
+        # df_std = df.groupby('n_bins').std()
+        # y_err = df_std.s_sqrt_n
+        # ax.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
     plt.xlabel('# bins')
     plt.ylabel('mean( $s / \sqrt{s+b} $ ) $\pm$ std( fisher info )')
     now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")

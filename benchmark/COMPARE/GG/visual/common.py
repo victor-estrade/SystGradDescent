@@ -99,12 +99,12 @@ def make_common_plots(data_name, benchmark_name, args, TheLoader):
     print("Make evaluation plots")
     print("="*25)
     make_evaluation_plots(data_name, benchmark_name, args, TheLoader)
-    print("Make fisher plots")
-    print("="*25)
-    make_fisher_plots(data_name, benchmark_name, args, TheLoader)
-    print("Make threshold plots")
-    print("="*25)
-    make_threshold_plots(data_name, benchmark_name, args, TheLoader)
+    # print("Make fisher plots")
+    # print("="*25)
+    # make_fisher_plots(data_name, benchmark_name, args, TheLoader)
+    # print("Make threshold plots")
+    # print("="*25)
+    # make_threshold_plots(data_name, benchmark_name, args, TheLoader)
 
 
 
