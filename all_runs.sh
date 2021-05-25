@@ -37,6 +37,7 @@ python run_array.py benchmark.GG.REG-Prior --gpu 1 --n-steps 2000 --n-unit 200 -
 
 
 # CALIB RUN
+python run_array.py benchmark.GG.FF-Calib --gpu 1 --feature-id 0 --xp-name GG-FF-Calib --partition besteffort --estimate-only
 python run_array.py benchmark.GG.GB-Calib --gpu 1 --n-estimators 100 300 1000  --max-depth 3 5 10 --learning-rate 0.1 0.05 0.01 --xp-name GG-GB-Calib --partition besteffort --estimate-only
 python run_array.py benchmark.GG.NN-Calib --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --batch-size 20 --xp-name GG-NN-Calib --partition besteffort --estimate-only
 python run_array.py benchmark.GG.DA-Calib --gpu 1 --n-steps 2000 5000 --n-unit 50 100 200 500 --xp-name GG-DA-Calib --partition besteffort --estimate-only
