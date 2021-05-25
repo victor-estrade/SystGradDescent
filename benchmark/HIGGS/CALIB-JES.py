@@ -45,6 +45,7 @@ from problem.higgs import get_config_class
 from problem.higgs import get_generator_class
 from problem.higgs import get_higgsloss_class
 from problem.higgs import get_parameter_generator
+from problem.higgs import get_generators_torch
 TES =  False
 JES =  True
 LES =  False
