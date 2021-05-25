@@ -100,6 +100,12 @@ def main():
     logger.info(args)
     flush(logger)
     # INFO
+    model = build_model(args, -1)
+    os.makedirs(model.results_directory, exist_ok=True)
+    config = Config()
+    config_table = evaluate_config(config)
+    config_table.to_csv(os.path.join(model.results_directory, 'config_table.csv'))
+    # RUN
     if not args.conditional_only:
         eval_table = get_eval_table(args, model.results_directory)
     if not args.estimate_only:
