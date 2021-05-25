@@ -39,12 +39,21 @@ from ..my_argparser import REG_parse_args
 from .common import DATA_NAME
 from .common import N_BINS
 from .common import N_ITER
-from .common import Config
-from .common import get_minimizer
-from .common import NLLComputer
-from .common import GeneratorClass
-from .common import param_generator
-from .common import get_generators_torch
+from problem.higgs import get_parameter_class
+from problem.higgs import get_higgsnll_class
+from problem.higgs import get_config_class
+from problem.higgs import get_generator_class
+from problem.higgs import get_higgsloss_class
+from problem.higgs import get_parameter_generator
+TES =  False
+JES =  True
+LES =  False
+Parameter = get_parameter_class(TES, JES, LES)
+NLLComputer = get_higgsnll_class(TES, JES, LES)
+Config = get_config_class(TES, JES, LES)
+GeneratorClass = get_generator_class(TES, JES, LES)
+HiggsLoss = get_higgsloss_class(TES, JES, LES)
+param_generator = get_parameter_generator(TES, JES, LES)
 
 
 BENCHMARK_NAME = DATA_NAME+'-calib'
