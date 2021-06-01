@@ -81,7 +81,7 @@ def param_generatorJes(config=HiggsConfigJes()):
 
 
 def param_generatorLes(config=HiggsConfigLes()):
-    les = lenerate_tes(config.CALIBRATED, config.CALIBRATED_ERROR)
+    les = generate_tes(config.CALIBRATED, config.CALIBRATED_ERROR)
     mu = generate_mu()
     return ParameterLes(les, mu)
 
