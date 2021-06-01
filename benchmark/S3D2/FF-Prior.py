@@ -26,8 +26,7 @@ from utils.log import set_logger
 from utils.log import flush
 from utils.log import print_line
 from utils.model import get_model
-from utils.model import get_optimizer
-from utils.model import train_or_load_data_augmentation
+from utils.model import train_or_load_classifier
 from utils.evaluation import evaluate_classifier
 from utils.evaluation import evaluate_neural_net
 from utils.evaluation import evaluate_config
