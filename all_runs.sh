@@ -179,6 +179,7 @@ python run_array.py benchmark.S3D2.REG-Prior --retrain --gpu 1 --n-steps 2000 --
 
 
 # CALIB RUN
+python run_array.py benchmark.S3D2.FF-Calib --gpu 1 --feature-id 0 1 2 --xp-name S3D2-FF-Calib --partition besteffort --estimate-only
 python run_array.py benchmark.S3D2.GB-Calib --retrain --gpu 1 --n-estimators 300 1000  --max-depth 3 5 --learning-rate 0.1 0.05 0.01 --xp-name S3D2-GB-Calib --partition besteffort --estimate-only
 python run_array.py benchmark.S3D2.NN-Calib --retrain --gpu 1 --n-steps 5000 --n-unit 200 500 --batch-size 1000 --xp-name S3D2-NN-Calib --partition besteffort --estimate-only
 python run_array.py benchmark.S3D2.DA-Calib --retrain --gpu 1 --n-steps 5000 --n-unit 200 500 --xp-name S3D2-DA-Calib --partition besteffort --estimate-only
