@@ -109,7 +109,10 @@ class S3D2():
         p_sig =  sts.multivariate_normal.pdf(x_1_2, sig_mean, sig_cov)
         p_bkg = p_bkg * sts.expon.pdf(x_3, loc=0., scale=1./lam)
         p_sig = p_sig * sts.expon.pdf(x_3, loc=0., scale=1./self.sig_rate)
-        proba_density = mu * p_sig + (1-mu) * p_bkg
+        total_luminosity = mu * self.signal_luminosity + self.background_luminosity
+        signal_strength = mu * self.signal_luminosity / total_luminosity
+        background_strength = self.background_luminosity / total_luminosity
+        proba_density = signal_strength * p_sig + background_strength * p_bkg
         return proba_density
 
     def log_proba_density(self, x, r, lam, mu):
