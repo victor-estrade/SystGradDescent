@@ -17,7 +17,7 @@ class S3D2NLL():
         self.w_test = w_test
         self.test_summaries = self.compute_summaries(self.X_test, self.w_test)
         self.config = S3D2Config() if config is None else config
-        
+
     def __call__(self, r, lam, mu):
         """$\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$"""
         config = self.config
@@ -32,6 +32,15 @@ class S3D2NLL():
         data_nll = np.sum(poisson_nll(self.test_summaries, rate))
         r_constraint = gauss_nll(r, config.CALIBRATED.r, config.CALIBRATED_ERROR.r)
         lam_constraint = gauss_nll(lam, config.CALIBRATED.lam, config.CALIBRATED_ERROR.lam)
-        total_nll = data_nll + r_constraint + lam_constraint
+        r_constraint_fitted = 0.0
+        try:
+            r_constraint_fitted = gauss_nll(rescale, config.FITTED.r, config.FITTED_ERROR.r)
+        except AttributeError:
+            pass
+        lam_constraint_fitted = 0.0
+        try:
+            lam_constraint_fitted = gauss_nll(rescale, config.FITTED.lam, config.FITTED_ERROR.lam)
+        except AttributeError:
+            pass
+        total_nll = data_nll + r_constraint + lam_constraint + r_constraint_fitted + lam_constraint_fitted
         return total_nll
-
