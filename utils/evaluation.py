@@ -89,6 +89,7 @@ def evaluate_minuit(minimizer, params_truth, directory, do_hesse=True, suffix=''
     # if not minimizer.valid :
     #     estimate_param_by_param(minimizer, do_hesse=do_hesse)
     results['is_mingrad_valid'] = minimizer.valid
+    results['edm_estimate'] = minimizer.fmin.edm
     logger.info(f'edm before hesse = {minimizer.fmin.edm}')
 
     if do_hesse :
