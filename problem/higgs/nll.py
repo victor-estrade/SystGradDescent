@@ -99,7 +99,7 @@ class HiggsNLLTes(BaseHiggsNLL):
         tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
         tes_constraint_fitted = 0.0
         try:
-            tes_constraint_fitted = gauss_nll(rescale, config.FITTED.tes, config.FITTED_ERROR.tes)
+            tes_constraint_fitted = gauss_nll(tes, config.FITTED.tes, config.FITTED_ERROR.tes)
         except AttributeError:
             pass
         total_nll = mu_nll + tes_constraint + tes_constraint_fitted
@@ -125,7 +125,7 @@ class HiggsNLLJes(BaseHiggsNLL):
         jes_constraint = gauss_nll(jes, config.CALIBRATED.jes, config.CALIBRATED_ERROR.jes)
         jes_constraint_fitted = 0.0
         try:
-            jes_constraint_fitted = gauss_nll(rescale, config.FITTED.jes, config.FITTED_ERROR.jes)
+            jes_constraint_fitted = gauss_nll(jes, config.FITTED.jes, config.FITTED_ERROR.jes)
         except AttributeError:
             pass
         total_nll = mu_nll + jes_constraint + jes_constraint_fitted
@@ -150,7 +150,7 @@ class HiggsNLLLes(BaseHiggsNLL):
         les_constraint = gauss_nll(les, config.CALIBRATED.les, config.CALIBRATED_ERROR.les)
         les_constraint_fitted = 0.0
         try:
-            les_constraint_fitted = gauss_nll(rescale, config.FITTED.les, config.FITTED_ERROR.les)
+            les_constraint_fitted = gauss_nll(les, config.FITTED.les, config.FITTED_ERROR.les)
         except AttributeError:
             pass
         total_nll = mu_nll + les_constraint + les_constraint_fitted
@@ -175,13 +175,13 @@ class HiggsNLLTesJes(BaseHiggsNLL):
         tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
         tes_constraint_fitted = 0.0
         try:
-            tes_constraint_fitted = gauss_nll(rescale, config.FITTED.tes, config.FITTED_ERROR.tes)
+            tes_constraint_fitted = gauss_nll(tes, config.FITTED.tes, config.FITTED_ERROR.tes)
         except AttributeError:
             pass
         jes_constraint = gauss_nll(jes, config.CALIBRATED.jes, config.CALIBRATED_ERROR.jes)
         jes_constraint_fitted = 0.0
         try:
-            jes_constraint_fitted = gauss_nll(rescale, config.FITTED.jes, config.FITTED_ERROR.jes)
+            jes_constraint_fitted = gauss_nll(jes, config.FITTED.jes, config.FITTED_ERROR.jes)
         except AttributeError:
             pass
         total_nll = mu_nll + tes_constraint + jes_constraint + tes_constraint_fitted + jes_constraint_fitted
@@ -207,13 +207,13 @@ class HiggsNLLTesLes(BaseHiggsNLL):
         tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
         tes_constraint_fitted = 0.0
         try:
-            tes_constraint_fitted = gauss_nll(rescale, config.FITTED.tes, config.FITTED_ERROR.tes)
+            tes_constraint_fitted = gauss_nll(tes, config.FITTED.tes, config.FITTED_ERROR.tes)
         except AttributeError:
             pass
         les_constraint = gauss_nll(les, config.CALIBRATED.les, config.CALIBRATED_ERROR.les)
         les_constraint_fitted = 0.0
         try:
-            les_constraint_fitted = gauss_nll(rescale, config.FITTED.les, config.FITTED_ERROR.les)
+            les_constraint_fitted = gauss_nll(les, config.FITTED.les, config.FITTED_ERROR.les)
         except AttributeError:
             pass
         total_nll = mu_nll + tes_constraint + les_constraint + tes_constraint_fitted + les_constraint_fitted
@@ -238,19 +238,19 @@ class HiggsNLLTesJesLes(BaseHiggsNLL):
         tes_constraint = gauss_nll(tes, config.CALIBRATED.tes, config.CALIBRATED_ERROR.tes)
         tes_constraint_fitted = 0.0
         try:
-            tes_constraint_fitted = gauss_nll(rescale, config.FITTED.tes, config.FITTED_ERROR.tes)
+            tes_constraint_fitted = gauss_nll(tes, config.FITTED.tes, config.FITTED_ERROR.tes)
         except AttributeError:
             pass
         jes_constraint = gauss_nll(jes, config.CALIBRATED.jes, config.CALIBRATED_ERROR.jes)
         jes_constraint_fitted = 0.0
         try:
-            jes_constraint_fitted = gauss_nll(rescale, config.FITTED.jes, config.FITTED_ERROR.jes)
+            jes_constraint_fitted = gauss_nll(jes, config.FITTED.jes, config.FITTED_ERROR.jes)
         except AttributeError:
             pass
         les_constraint = gauss_nll(les, config.CALIBRATED.les, config.CALIBRATED_ERROR.les)
         les_constraint_fitted = 0.0
         try:
-            les_constraint_fitted = gauss_nll(rescale, config.FITTED.les, config.FITTED_ERROR.les)
+            les_constraint_fitted = gauss_nll(les, config.FITTED.les, config.FITTED_ERROR.les)
         except AttributeError:
             pass
         total_nll = mu_nll + tes_constraint + jes_constraint + les_constraint + tes_constraint_fitted + jes_constraint_fitted + les_constraint_fitted

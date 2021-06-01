@@ -34,12 +34,12 @@ class S3D2NLL():
         lam_constraint = gauss_nll(lam, config.CALIBRATED.lam, config.CALIBRATED_ERROR.lam)
         r_constraint_fitted = 0.0
         try:
-            r_constraint_fitted = gauss_nll(rescale, config.FITTED.r, config.FITTED_ERROR.r)
+            r_constraint_fitted = gauss_nll(r, config.FITTED.r, config.FITTED_ERROR.r)
         except AttributeError:
             pass
         lam_constraint_fitted = 0.0
         try:
-            lam_constraint_fitted = gauss_nll(rescale, config.FITTED.lam, config.FITTED_ERROR.lam)
+            lam_constraint_fitted = gauss_nll(lam, config.FITTED.lam, config.FITTED_ERROR.lam)
         except AttributeError:
             pass
         total_nll = data_nll + r_constraint + lam_constraint + r_constraint_fitted + lam_constraint_fitted
