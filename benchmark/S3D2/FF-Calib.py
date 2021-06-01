@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 # Command line :
-# python -m benchmark.S3D2.TP-Calib
+# python -m benchmark.S3D2.FF-Calib
 
 import os
 import logging
@@ -26,10 +26,9 @@ from utils.log import set_logger
 from utils.log import flush
 from utils.log import print_line
 from utils.model import get_model
-from utils.model import get_optimizer
-from utils.model import train_or_load_neural_net
-from utils.evaluation import evaluate_neural_net
+from utils.model import train_or_load_classifier
 from utils.evaluation import evaluate_classifier
+from utils.evaluation import evaluate_neural_net
 from utils.evaluation import evaluate_config
 from utils.evaluation import evaluate_summary_computer
 from utils.evaluation import evaluate_minuit
@@ -39,21 +38,21 @@ from utils.images import gather_images
 
 from visual.misc import plot_params
 
-from problem.synthetic3D.torch import GeneratorTorch
 from problem.synthetic3D import S3D2Config as Config
 from problem.synthetic3D import get_minimizer
 from problem.synthetic3D import get_minimizer_no_nuisance
 from problem.synthetic3D import Generator
 from problem.synthetic3D import Parameter
+from problem.synthetic3D import param_generator
 from problem.synthetic3D import S3D2NLL as NLLComputer
 
 from visual.special.synthetic3D import plot_nll_around_min
 
-from model.tangent_prop import TangentPropClassifier
+from model.neural_network import NeuralNetClassifier
 from model.regressor import Regressor
-from archi.classic import L4 as ARCHI
+from ..my_argparser import FF_parse_args
 
-from ..my_argparser import TP_parse_args
+from archi.classic import L4 as ARCHI
 
 # from archi.reducer import A3ML3 as CALIB_ARCHI
 from archi.reducer import A1AR8MR8L1 as CALIB_ARCHI
@@ -68,31 +67,9 @@ BENCHMARK_NAME = DATA_NAME+'-calib'
 N_ITER = 30
 
 
-class TrainGenerator:
-    def __init__(self, data_generator, cuda=False):
-        self.data_generator = data_generator
-        if cuda:
-            self.data_generator.cuda()
-        else:
-            self.data_generator.cpu()
-        self.nuisance_params = self.data_generator.nuisance_params
-
-
-    def generate(self, n_samples=None):
-            X, y, w = self.data_generator.diff_generate(n_samples=n_samples)
-            return X, y, w
-
-    def reset(self):
-        self.data_generator.reset()
-
-    def tensor(self, data, requires_grad=False, dtype=None):
-        return self.data_generator.tensor(data, requires_grad=requires_grad, dtype=dtype)
-
 
 def build_model(args, i_cv):
-    args.net = ARCHI(n_in=3, n_out=2, n_unit=args.n_unit)
-    args.optimizer = get_optimizer(args)
-    model = get_model(args, TangentPropClassifier)
+    model = get_model(args, FeatureModel)
     model.set_info(DATA_NAME, BENCHMARK_NAME, i_cv)
     return model
 
@@ -104,7 +81,7 @@ def build_model(args, i_cv):
 def main():
     # BASIC SETUP
     logger = set_logger()
-    args = TP_parse_args(main_description="Training launcher for Gradient boosting on S3D2 benchmark")
+    args = FF_parse_args(main_description="Training launcher for Feature Filter on GG benchmark")
     logger.info(args)
     flush(logger)
     # INFO
@@ -184,8 +161,7 @@ def run_estimation(args, i_cv):
     logger.info('Set up data generator')
     config = Config()
     seed = SEED + i_cv * 5
-    train_generator = GeneratorTorch(seed, cuda=args.cuda)
-    train_generator = TrainGenerator(train_generator, cuda=args.cuda)
+    train_generator = Generator(seed)
     valid_generator = Generator(seed+1)
     test_generator  = Generator(seed+2)
 
@@ -196,18 +172,17 @@ def run_estimation(args, i_cv):
     flush(logger)
 
     # TRAINING / LOADING
-    train_or_load_neural_net(model, train_generator, retrain=args.retrain)
+    train_or_load_classifier(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
 
-    result_row.update(evaluate_neural_net(model, prefix='valid'))
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
     # MEASUREMENT
-    calib_r = load_calib_r()
-    calib_lam = load_calib_lam()
+    calib_r = load_calib_r(DATA_NAME, BENCHMARK_NAME)
+    calib_lam = load_calib_lam(DATA_NAME, BENCHMARK_NAME)
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
     iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_r, calib_lam, n_bins=N_BINS)
                     for i, test_config in enumerate(config.iter_test_config())]
@@ -248,7 +223,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
         result_row[name+"_fitted_error"] = value
 
     logger.info('Set up NLL computer')
-    compute_summaries = lambda X, w : model.compute_summaries(X, w, n_bins=n_bins)
+    compute_summaries = model.summary_computer(n_bins=n_bins)
     compute_nll = NLLComputer(compute_summaries, valid_generator, X_test, w_test, config=config)
     # NLL PLOTS
     plot_nll_around_min(compute_nll, config.TRUE, iter_directory, suffix)
@@ -260,7 +235,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     return result_row.copy()
 
 
-def run_estimation(args, i_cv):
+def run_conditional_estimation(args, i_cv):
     logger = logging.getLogger()
     print_line()
     logger.info('Running iter n°{}'.format(i_cv))
@@ -272,8 +247,7 @@ def run_estimation(args, i_cv):
     logger.info('Set up data generator')
     config = Config()
     seed = SEED + i_cv * 5
-    train_generator = GeneratorTorch(seed, cuda=args.cuda)
-    train_generator = TrainGenerator(train_generator, cuda=args.cuda)
+    train_generator = Generator(seed)
     valid_generator = Generator(seed+1)
     test_generator  = Generator(seed+2)
 
@@ -284,13 +258,12 @@ def run_estimation(args, i_cv):
     flush(logger)
 
     # TRAINING / LOADING
-    train_or_load_neural_net(model, train_generator, retrain=args.retrain)
+    train_or_load_classifier(model, train_generator, config.CALIBRATED, config.N_TRAINING_SAMPLES, retrain=args.retrain)
 
     # CHECK TRAINING
     logger.info('Generate validation data')
     X_valid, y_valid, w_valid = valid_generator.generate(*config.CALIBRATED, n_samples=config.N_VALIDATION_SAMPLES)
 
-    result_row.update(evaluate_neural_net(model, prefix='valid'))
     result_row.update(evaluate_classifier(model, X_valid, y_valid, w_valid, prefix='valid'))
 
     # MEASUREMENT

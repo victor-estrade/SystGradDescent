@@ -64,6 +64,7 @@ from archi.reducer import A1AR8MR8L1 as CALIB_ARCHI
 from .common import N_BINS
 from .common import load_calib_r
 from .common import load_calib_lam
+from .common import calibrates
 
 DATA_NAME = 'S3D2'
 BENCHMARK_NAME = DATA_NAME+'-calib'
@@ -245,16 +246,11 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     evaluate_summary_computer(model, X_test, y_test, w_test, n_bins=n_bins, prefix='', suffix=suffix, directory=iter_directory)
 
     # CALIBRATION
-    r_mean, r_sigma = calib_r.predict(X_test, w_test)
-    lam_mean, lam_sigma = calib_lam.predict(X_test, w_test)
-    logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) )
-    logger.info('lam = {} =vs= {} +/- {}'.format(config.TRUE_LAMBDA, lam_mean, lam_sigma) )
-    config.CALIBRATED = Parameter(r_mean, lam_mean, config.CALIBRATED.interest_parameters)
-    config.CALIBRATED_ERROR = Parameter(r_sigma, lam_sigma, config.CALIBRATED_ERROR.interest_parameters)
-    for name, value in config.CALIBRATED.items():
-        result_row[name+"_calib"] = value
-    for name, value in config.CALIBRATED_ERROR.items():
-        result_row[name+"_calib_error"] = value
+    config = calibrates(calib_r, calib_lam, config, X_test, w_test)
+    for name, value in config.FITTED.items():
+        result_row[name+"_fitted"] = value
+    for name, value in config.FITTED_ERROR.items():
+        result_row[name+"_fitted_error"] = value
 
     logger.info('Set up NLL computer')
     compute_summaries = ClassifierSummaryComputer(model, n_bins=n_bins)
@@ -264,7 +260,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
 
     # MINIMIZE NLL
     logger.info('Prepare minuit minimizer')
-    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR)
+    minimizer = get_minimizer(compute_nll, config.FITTED, config.FITTED_ERROR)
     result_row.update(evaluate_minuit(minimizer, config.TRUE, iter_directory, suffix=suffix))
     return result_row.copy()
 

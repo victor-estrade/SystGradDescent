@@ -12,7 +12,7 @@ from utils.model import get_optimizer
 N_BINS = 10
 
 
-def load_calib_r():
+def load_calib_r(DATA_NAME, BENCHMARK_NAME):
     from model.regressor import Regressor
     from archi.reducer import A3ML3 as CALIB_ARCHI
     args = lambda : None
@@ -33,7 +33,7 @@ def load_calib_r():
     model.load(model.model_path)
     return model
 
-def load_calib_lam():
+def load_calib_lam(DATA_NAME, BENCHMARK_NAME):
     from model.regressor import Regressor
     from archi.reducer import A3ML3 as CALIB_ARCHI
     args = lambda : None
@@ -53,3 +53,17 @@ def load_calib_lam():
     model.set_info(DATA_NAME, BENCHMARK_NAME, 0)
     model.load(model.model_path)
     return model
+
+
+def calibrates(calib_r, calib_lam, config, X_test, w_test):
+    logger = logging.getLogger()
+
+    r_mean, r_sigma = calib_r.predict(X_test, w_test)
+    logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) )
+
+    lam_mean, lam_sigma = calib_lam.predict(X_test, w_test)
+    logger.info('lam = {} =vs= {} +/- {}'.format(config.TRUE_LAMBDA, lam_mean, lam_sigma) )
+
+    config.FITTED = Parameter(r_mean, lam_mean, config.CALIBRATED.interest_parameters)
+    config.FITTED_ERROR = Parameter(r_sigma, lam_sigma, config.CALIBRATED_ERROR.interest_parameters)
+    return config
