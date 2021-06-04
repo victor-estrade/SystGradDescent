@@ -97,7 +97,6 @@ def run_iter(i_cv, i_iter, config, seed, directory):
     os.makedirs(iter_directory, exist_ok=True)
 
     logger.info(f"True Parameters   = {config.TRUE}")
-    logger.info(f"N_TESTING_SAMPLES = {config.N_TESTING_SAMPLES}")
     suffix = f'-mu={config.TRUE.mu:1.2f}_r={config.TRUE.r}_lambda={config.TRUE.lam}'
     generator  = Generator(seed)  # test_generator
     data, label = generator.sample_event(*config.TRUE, size=config.N_TESTING_SAMPLES)

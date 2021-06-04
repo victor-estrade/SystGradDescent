@@ -91,8 +91,8 @@ class S3D2():
 
     def sample_event(self, r, lam, mu, size=1):
         assert mu > 0, 'mu should be in ]0, +inf[ : {} found'.format(mu)
-        n_sig = int(mu * size)
-        n_bkg = size - n_sig
+        n_sig = int(mu * self.signal_luminosity)
+        n_bkg = self.background_luminosity
         X = self._generate_vars(r, lam, mu, n_bkg, n_sig)
         y = self._generate_labels(n_bkg, n_sig)
         return X, y
