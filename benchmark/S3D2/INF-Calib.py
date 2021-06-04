@@ -186,8 +186,8 @@ def run_estimation(args, i_cv):
     evaluate_inferno(model, prefix='valid')
 
     # MEASUREMENT
-    calib_r = load_calib_r()
-    calib_lam = load_calib_lam()
+    calib_r = load_calib_r(DATA_NAME, BENCHMARK_NAME)
+    calib_lam = load_calib_lam(DATA_NAME, BENCHMARK_NAME)
     evaluate_summary_computer(model, X_valid, y_valid, w_valid, n_bins=N_BINS, prefix='valid_', suffix='')
     iter_results = [run_estimation_iter(model, result_row, i, test_config, valid_generator, test_generator, calib_r, calib_lam, n_bins=N_BINS)
                     for i, test_config in enumerate(config.iter_test_config())]
