@@ -90,6 +90,8 @@ def run(args, i_cv):
 
 def run_iter(i_cv, i_iter, config, seed, directory):
     logger = logging.getLogger()
+    logger.info('-'*45)
+    logger.info(f'iter : {i_iter}')
     result_row = dict(i_cv=i_cv, i=i_iter)
     iter_directory = os.path.join(directory, f'iter_{i_iter}')
     os.makedirs(iter_directory, exist_ok=True)
