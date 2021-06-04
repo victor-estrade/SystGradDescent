@@ -212,7 +212,7 @@ def NET_parse_args(main_description="Training launcher"):
                         default=1000, type=int)
 
     parser.add_argument('--batch-size', help='mini-batch size',
-                        default=20, type=int)
+                        default=1000, type=int)
 
     parser.add_argument('--n-steps', help='number of update steps',
                         default=1000, type=int)
