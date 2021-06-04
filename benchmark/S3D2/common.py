@@ -9,6 +9,7 @@ from utils.model import get_model
 from utils.model import get_optimizer
 
 
+N_ITER = 30
 N_BINS = 10
 
 
