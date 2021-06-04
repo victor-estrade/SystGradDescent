@@ -37,6 +37,7 @@ def load_calib_r(DATA_NAME, BENCHMARK_NAME):
     model.load(model.model_path)
     return model
 
+
 def load_calib_lam(DATA_NAME, BENCHMARK_NAME):
     from model.regressor import Regressor
     from archi.reducer import A1AR8MR8L1 as CALIB_ARCHI
