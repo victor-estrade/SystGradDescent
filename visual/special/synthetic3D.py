@@ -24,7 +24,7 @@ def plot_LAMBDA_around_min(compute_nll, true_params, directory, suffix):
 
 
 def plot_MU_around_min(compute_nll, true_params, directory, suffix):
-    mu_array = np.linspace(0.0, 1.0, 50)
+    mu_array = np.linspace(0.2, 2.5, 50)
     nll_array = [compute_nll(true_params.r, true_params.lam, mu) for mu in mu_array]
     name = 'mu'
     plot_param_around_min(mu_array, nll_array, true_params.mu, name, suffix, directory)
