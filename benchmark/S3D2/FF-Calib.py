@@ -48,8 +48,7 @@ from problem.synthetic3D import S3D2NLL as NLLComputer
 
 from visual.special.synthetic3D import plot_nll_around_min
 
-from model.neural_network import NeuralNetClassifier
-from model.regressor import Regressor
+from model.feature_filter import FeatureModel
 from ..my_argparser import FF_parse_args
 
 from archi.classic import L4 as ARCHI
