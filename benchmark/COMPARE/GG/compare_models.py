@@ -18,6 +18,7 @@ from .hyper_parameters import PIVOT_HP
 from .hyper_parameters import REG_HP
 from .hyper_parameters import REG_M_HP
 from .hyper_parameters import TP_HP
+from .hyper_parameters import Likelihood_HP
 
 from ..loader import DALoader
 from ..loader import GBLoader
@@ -27,6 +28,7 @@ from ..loader import NNLoader
 from ..loader import PIVOTLoader
 from ..loader import REGLoader
 from ..loader import TPLoader
+from ..loader import LikelihoodLoader
 
 from .visual.common import hp_kwargs_generator
 
@@ -209,6 +211,7 @@ def main():
                 , PIVOT_HP
                 , REG_HP
                 , TP_HP
+                , Likelihood_HP
                 ]
     ALL_LOADER = [
                 DALoader
@@ -219,6 +222,7 @@ def main():
                 , PIVOTLoader
                 , REGLoader
                 , TPLoader
+                , LikelihoodLoader
                 ]
     ALL_NAME = [
                 "DA"
@@ -229,6 +233,7 @@ def main():
                 , "PIVOT"
                 , "Param-REG"
                 , "TP"
+                , "Likelihood"
                 ]
 
     data_name = 'GG'

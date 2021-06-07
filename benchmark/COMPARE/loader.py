@@ -120,6 +120,21 @@ class Loader(object):
         return code
 
 
+class LikelihoodLoader(Loader):
+    """docstring for LikelihoodLoader"""
+    def __init__(self, data_name, benchmark_name, dummy=None, tolerance=None):
+        base_name = "Likelihood"
+        model_full_name = f"{base_name}"
+        super().__init__(data_name, data_name, base_name, model_full_name, tolerance=tolerance)
+        self.args = dict(dummy=dummy)
+
+    def _get_result_directory(self):
+        if self.tolerance is None:
+            return os.path.join(SAVING_DIR, self.benchmark_name, self.base_name)
+        else:
+            return os.path.join(SAVING_DIR, f"{self.benchmark_name}-{self.tolerance}", self.base_name)
+
+
 
 class FFLoader(Loader):
     """docstring for FFLoader"""
