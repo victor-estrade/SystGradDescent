@@ -355,12 +355,15 @@ def mse_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
 
 def sigma_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
     data = defaultdict(list)
+    labels = defaultdict(list)
     for evaluation in all_evaluation:
         for i, (n_test_samples, df) in enumerate(evaluation.groupby("n_test_samples")):
             sigma = df.sigma_mean
             data[n_test_samples].append(sigma)
+            hp_set = df.i_hp.iloc[0]
+            labels[n_test_samples].append( hp_set )
     for n_test_samples in data.keys():
-        plt.boxplot(data[n_test_samples])
+        plt.boxplot(data[n_test_samples], labels=labels[n_test_samples])
         plt.xlabel('hyper-parameter set')
         plt.ylabel("$\\hat \\sigma_{\\hat \\mu}$")
         plot_title = f"{title}_N={n_test_samples}"
@@ -373,12 +376,15 @@ def sigma_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
 
 def v_stat_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
     data = defaultdict(list)
+    labels = defaultdict(list)
     for evaluation in all_evaluation:
         for i, (n_test_samples, df) in enumerate(evaluation.groupby("n_test_samples")):
             v_stat = df.var_stat
             data[n_test_samples].append(v_stat)
+            hp_set = df.i_hp.iloc[0]
+            labels[n_test_samples].append( hp_set )
     for n_test_samples in data.keys():
-        plt.boxplot(data[n_test_samples])
+        plt.boxplot(data[n_test_samples], labels=labels[n_test_samples])
         plt.xlabel('hyper-parameter set')
         plt.ylabel("V_stat")
         plot_title = f"{title}_N={n_test_samples}"
@@ -391,12 +397,15 @@ def v_stat_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
 
 def v_syst_box_plot(all_evaluation, title="No Title", directory=DEFAULT_DIR):
     data = defaultdict(list)
+    labels = defaultdict(list)
     for evaluation in all_evaluation:
         for i, (n_test_samples, df) in enumerate(evaluation.groupby("n_test_samples")):
             v_syst = df.var_syst
             data[n_test_samples].append(v_syst)
+            hp_set = df.i_hp.iloc[0]
+            labels[n_test_samples].append( hp_set )
     for n_test_samples in data.keys():
-        plt.boxplot(data[n_test_samples])
+        plt.boxplot(data[n_test_samples], labels=labels[n_test_samples])
         plt.xlabel('hyper-parameter set')
         plt.ylabel("V_syst")
         plot_title = f"{title}_N={n_test_samples}"
