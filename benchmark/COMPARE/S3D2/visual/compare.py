@@ -83,7 +83,7 @@ def min_avg_mse_sigma_mean_box_plot(data, title="No Title", directory=DEFAULT_DI
         plt.xticks(rotation=90)
         plt.xlabel('method')
         plt.ylabel("average $\\hat \\sigma_{\\hat \\mu}$")
-        plt.ylim(top=0.15, bottom=0.0)
+        # plt.ylim(top=0.15, bottom=0.0)
         now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S\n")
         plt.title(now+plot_title)
         # plt.legend()
