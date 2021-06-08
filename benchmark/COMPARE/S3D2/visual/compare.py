@@ -1,5 +1,5 @@
-# coding: utf-8
 
+# coding: utf-8
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
@@ -11,6 +11,10 @@ import datetime
 import matplotlib.pyplot as plt
 from config import DEFAULT_DIR
 from config import SAVING_DIR
+
+from .nuisance_param import detect_nuisance_param
+from .nuisance_param import label_nuisance_param
+
 
 def min_target_mse_mean(all_evaluation):
     full_name, best_evaluation = min(all_evaluation.groupby('model_full_name'), key=lambda t : t[1].target_mse.mean())
@@ -156,8 +160,9 @@ def min_avg_mse_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR):
 def min_avg_mse_true_mu_mse(data, title="No Title", directory=DEFAULT_DIR):
     # max_n_test_samples = evaluation.n_test_samples.max()
     # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for (true_rescale), df in data.groupby(["true_rescale"]):
-        label = f"rescale={true_rescale}"
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plot_title = f"{title}_min_avg_mse_{label}"
         for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = min_target_mse_mean(all_evaluation)
@@ -178,8 +183,9 @@ def min_avg_mse_true_mu_mse(data, title="No Title", directory=DEFAULT_DIR):
 def min_avg_mse_true_mu_sigma_mean(data, title="No Title", directory=DEFAULT_DIR):
     # max_n_test_samples = evaluation.n_test_samples.max()
     # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for (true_rescale), df in data.groupby(["true_rescale"]):
-        label = f"rescale={true_rescale}"
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plot_title = f"{title}_min_avg_mse_{label}"
         for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = min_target_mse_mean(all_evaluation)
@@ -200,8 +206,9 @@ def min_avg_mse_true_mu_sigma_mean(data, title="No Title", directory=DEFAULT_DIR
 def min_avg_mse_true_mu_target_std(data, title="No Title", directory=DEFAULT_DIR):
     # max_n_test_samples = evaluation.n_test_samples.max()
     # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for (true_rescale), df in data.groupby(["true_rescale"]):
-        label = f"rescale={true_rescale}"
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plot_title = f"{title}_min_avg_mse_{label}"
         v_syst = []
         methods = []
@@ -343,8 +350,9 @@ def min_median_mse_v_syst_err_plot(data, title="No Title", directory=DEFAULT_DIR
 def min_median_mse_true_mu_mse(data, title="No Title", directory=DEFAULT_DIR):
     # max_n_test_samples = evaluation.n_test_samples.max()
     # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for (true_rescale), df in data.groupby(["true_rescale"]):
-        label = f"rescale={true_rescale}"
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plot_title = f"{title}_min_median_mse_{label}"
         for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = min_target_mse_median(all_evaluation)
@@ -365,8 +373,9 @@ def min_median_mse_true_mu_mse(data, title="No Title", directory=DEFAULT_DIR):
 def min_median_mse_true_mu_sigma_mean(data, title="No Title", directory=DEFAULT_DIR):
     # max_n_test_samples = evaluation.n_test_samples.max()
     # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for (true_rescale), df in data.groupby(["true_rescale"]):
-        label = f"rescale={true_rescale}"
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plot_title = f"{title}_min_median_mse_{label}"
         for code_name, all_evaluation in df.groupby("code_name"):
             full_name, best_mse_evaluation = min_target_mse_median(all_evaluation)
@@ -387,8 +396,9 @@ def min_median_mse_true_mu_sigma_mean(data, title="No Title", directory=DEFAULT_
 def min_median_mse_true_mu_target_std(data, title="No Title", directory=DEFAULT_DIR):
     # max_n_test_samples = evaluation.n_test_samples.max()
     # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for (true_rescale), df in data.groupby(["true_rescale"]):
-        label = f"rescale={true_rescale}"
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plot_title = f"{title}_min_median_mse_{label}"
         v_syst = []
         methods = []
