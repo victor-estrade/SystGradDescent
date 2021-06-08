@@ -11,21 +11,25 @@ import datetime
 from visual.misc import set_plot_config
 set_plot_config()
 
-# import matplotlib as mpl
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 from config import DEFAULT_DIR
 
+from .nuisance_param import detect_nuisance_param
+from .nuisance_param import label_nuisance_param
+
 
 def true_mu_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
-    max_n_test_samples = evaluation.n_test_samples.max()
-
-    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for true_rescale, df in data.groupby("true_rescale"):
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    data = evaluation
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
         x = df.true_mu
         y = df.target_mse
-        label = f"$\\alpha$ = {true_rescale}"
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('true $\\mu$')
@@ -38,13 +42,14 @@ def true_mu_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def true_mu_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
-    max_n_test_samples = evaluation.n_test_samples.max()
-
-    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for true_rescale, df in data.groupby("true_rescale"):
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    data = evaluation
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
         x = df.true_mu
         y = df.var_stat
-        label = f"$\\alpha$ = {true_rescale}"
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('true $\\mu$')
@@ -57,13 +62,14 @@ def true_mu_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def true_mu_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
-    max_n_test_samples = evaluation.n_test_samples.max()
-
-    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for true_rescale, df in data.groupby("true_rescale"):
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    data = evaluation
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
         x = df.true_mu
         y = df.var_syst
-        label = f"$\\alpha$ = {true_rescale}"
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('true $\\mu$')
@@ -76,15 +82,16 @@ def true_mu_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def true_mu_estimator(evaluation, title="No Title", directory=DEFAULT_DIR):
-    max_n_test_samples = evaluation.n_test_samples.max()
-
-    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for true_rescale, df in data.groupby("true_rescale"):
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    data = evaluation
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
         x = df.true_mu
         y = df.target_mean
         y_err = df.sigma_mean
         true = df.true_mu
-        label = f"$\\alpha$ = {true_rescale}"
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
 
@@ -98,15 +105,16 @@ def true_mu_estimator(evaluation, title="No Title", directory=DEFAULT_DIR):
 
 
 def true_mu_target_mean_std(evaluation, title="No Title", directory=DEFAULT_DIR):
-    max_n_test_samples = evaluation.n_test_samples.max()
-
-    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for true_rescale, df in data.groupby("true_rescale"):
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    data = evaluation
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
         x = df.true_mu
         y = df.target_mean
         y_err = df.target_std
         true = df.true_mu
-        label = f"$\\alpha$ = {true_rescale}"
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plt.errorbar(x, y, yerr=y_err, fmt='o', capsize=15, capthick=2, label=label)
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
 
@@ -120,14 +128,15 @@ def true_mu_target_mean_std(evaluation, title="No Title", directory=DEFAULT_DIR)
 
 
 def true_mu_target_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
-    max_n_test_samples = evaluation.n_test_samples.max()
-
-    data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
-    for true_rescale, df in data.groupby("true_rescale"):
+    # max_n_test_samples = evaluation.n_test_samples.max()
+    # data = evaluation[ (evaluation.n_test_samples == max_n_test_samples)]
+    data = evaluation
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
         x = df.true_mu
         y = df.target_mean
         true = df.true_mu
-        label = f"$\\alpha$ = {true_rescale}"
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plt.scatter(x, y, marker='o', label=label)
     plt.scatter(x, true, marker='+', c='red', label='truth', s=500, zorder=3)
 
@@ -144,10 +153,11 @@ def n_samples_mse(evaluation, title="No Title", directory=DEFAULT_DIR):
     chosen_true_mu = evaluation.true_mu.median()
 
     data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-    for true_rescale, df in data.groupby("true_rescale"):
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
         x = df.n_test_samples
         y = df.target_mse
-        label = f"$\\alpha$ = {true_rescale}"
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('# test samples')
@@ -180,10 +190,11 @@ def n_samples_sigma_mean(evaluation, title="No Title", directory=DEFAULT_DIR):
     chosen_true_mu = evaluation.true_mu.median()
 
     data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-    for true_rescale, df in data.groupby("true_rescale"):
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
         x = df.n_test_samples
         y = df.sigma_mean
-        label = f"$\\alpha$ = {true_rescale}"
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('# test samples')
@@ -199,10 +210,11 @@ def n_samples_v_stat(evaluation, title="No Title", directory=DEFAULT_DIR):
     chosen_true_mu = evaluation.true_mu.median()
 
     data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-    for true_rescale, df in data.groupby("true_rescale"):
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
         x = df.n_test_samples
         y = df.var_stat
-        label = f"$\\alpha$ = {true_rescale}"
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('# test samples')
@@ -218,10 +230,11 @@ def n_samples_v_syst(evaluation, title="No Title", directory=DEFAULT_DIR):
     chosen_true_mu = evaluation.true_mu.median()
 
     data = evaluation[ (evaluation.true_mu == chosen_true_mu)]
-    for true_rescale, df in data.groupby("true_rescale"):
+    nuisance_param_key = detect_nuisance_param(data)
+    for nuisance_param, df in data.groupby(nuisance_param_key):
         x = df.n_test_samples
         y = df.var_syst
-        label = f"$\\alpha$ = {true_rescale}"
+        label = label_nuisance_param(nuisance_param_key, nuisance_param)
         plt.plot(x, y, 'o-', label=label)
 
     plt.xlabel('# test samples')
