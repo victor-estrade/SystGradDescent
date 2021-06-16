@@ -233,8 +233,8 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     # CALIBRATION
     r_mean, r_sigma = calib_r.predict(X_test, w_test)
     lam_mean, lam_sigma = calib_lam.predict(X_test, w_test)
-    logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE_R, r_mean, r_sigma) )
-    logger.info('lam = {} =vs= {} +/- {}'.format(config.TRUE_LAMBDA, lam_mean, lam_sigma) )
+    logger.info('r   = {} =vs= {} +/- {}'.format(config.TRUE.r, r_mean, r_sigma) )
+    logger.info('lam = {} =vs= {} +/- {}'.format(config.TRUE.lam, lam_mean, lam_sigma) )
     config.CALIBRATED = Parameter(r_mean, lam_mean, config.CALIBRATED.interest_parameters)
     config.CALIBRATED_ERROR = Parameter(r_sigma, lam_sigma, config.CALIBRATED_ERROR.interest_parameters)
 
