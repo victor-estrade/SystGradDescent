@@ -260,7 +260,7 @@ def run_estimation_iter(model, result_row, i_iter, config, valid_generator, test
     return result_row.copy()
 
 
-def run_estimation(args, i_cv):
+def run_conditional_estimation(args, i_cv):
     logger = logging.getLogger()
     print_line()
     logger.info('Running iter n°{}'.format(i_cv))
