@@ -306,18 +306,18 @@ python run_array.py benchmark.HIGGS.REG-Prior --retrain --gpu 1 --n-steps 15000 
 python run_array.py benchmark.HIGGS.FREG-Prior --retrain --gpu 1 --n-steps 15000 25000 --n-unit 200 500 --sample-size 10000 50000 --xp-name HIGGSTES-FREG-Prior --partition besteffort --estimate-only
 
 # CALIB RUN
-python run_array.py benchmark.HIGGS.FF-Calib --retrain --gpu 1 --tolerance 100 --feature-id 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 --xp-name HIGGSTES-FF-Calib --partition besteffort --estimate-only
-python run_array.py benchmark.HIGGS.GB-Calib --retrain --gpu 1 --tolerance 100 --n-estimators 300 800  --max-depth 3 6 --learning-rate 0.1 0.01 --xp-name HIGGSTES-GB-Calib --partition besteffort --estimate-only
-python run_array.py benchmark.HIGGS.NN-Calib --retrain --gpu 1 --tolerance 100 --n-steps 15000 25000 --n-unit 200 500 --batch-size 10000 --xp-name HIGGSTES-NN-Calib --partition besteffort --estimate-only
-python run_array.py benchmark.HIGGS.DA-Calib --retrain --gpu 1 --tolerance 100 --n-steps 15000 25000 --n-unit 200 500 --batch-size 10000 --xp-name HIGGSTES-DA-Calib --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGS.FF-Calib  --gpu 1 --tolerance 100 --feature-id 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 --xp-name HIGGSTES-FF-Calib --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGS.GB-Calib  --gpu 1 --tolerance 100 --n-estimators 300 800  --max-depth 3 6 --learning-rate 0.1 0.01 --xp-name HIGGSTES-GB-Calib --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGS.NN-Calib  --gpu 1 --tolerance 100 --n-steps 15000 25000 --n-unit 200 500 --batch-size 10000 --xp-name HIGGSTES-NN-Calib --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGS.DA-Calib  --gpu 1 --tolerance 100 --n-steps 15000 25000 --n-unit 200 500 --batch-size 10000 --xp-name HIGGSTES-DA-Calib --partition besteffort --estimate-only
 
-python run_array.py benchmark.HIGGS.PIVOT-Calib --retrain --gpu 1 --tolerance 100 --n-steps 15000 25000 --n-unit 200 500 --trade-off 1 0.1 --xp-name HIGGSTES-PIVOT-Calib --partition besteffort --estimate-only
-python run_array.py benchmark.HIGGS.TP-Calib --retrain --gpu 1 --tolerance 100 --n-steps 15000 25000 --n-unit 200 500 --batch-size 200 --xp-name HIGGSTES-TP-Calib --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGS.PIVOT-Calib  --gpu 1 --tolerance 100 --n-steps 15000 25000 --n-unit 200 500 --trade-off 1 0.1 --xp-name HIGGSTES-PIVOT-Calib --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGS.TP-Calib  --gpu 1 --tolerance 100 --n-steps 15000 25000 --n-unit 200 500 --batch-size 200 --xp-name HIGGSTES-TP-Calib --partition besteffort --estimate-only
 
-python run_array.py benchmark.HIGGS.INF-Calib --retrain --gpu 1 --tolerance 100 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-INF-Calib --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGS.INF-Calib  --gpu 1 --tolerance 100 --n-steps 2000 --n-unit 200 500 --sample-size 10000 --xp-name HIGGSTES-INF-Calib --partition besteffort --estimate-only
 
-python run_array.py benchmark.HIGGS.REG-Calib --retrain --gpu 1 --n-steps 15000 25000 --n-unit 200 500 --sample-size 10000 50000 --xp-name HIGGSTES-REG-Calib --partition besteffort --estimate-only
-python run_array.py benchmark.HIGGS.FREG-Calib --retrain --gpu 1 --n-steps 15000 25000 --n-unit 200 500 --sample-size 10000 50000 --xp-name HIGGSTES-FREG-Calib --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGS.REG-Calib  --gpu 1 --n-steps 15000 25000 --n-unit 200 500 --sample-size 10000 50000 --xp-name HIGGSTES-REG-Calib --partition besteffort --estimate-only
+python run_array.py benchmark.HIGGS.FREG-Calib  --gpu 1 --n-steps 15000 25000 --n-unit 200 500 --sample-size 10000 50000 --xp-name HIGGSTES-FREG-Calib --partition besteffort --estimate-only
 
 
 # VAR RUN
