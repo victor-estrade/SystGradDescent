@@ -47,7 +47,7 @@ PIVOT_HP = dict(
                 , n_steps=[15000, 25000]
                 , n_units=[200, 500]
                 , trade_off=[1.0, 0.1]
-                , batch_size=[10000]
+                , batch_size=[1000, 10000]
                 , tolerance=[100.0]
                 )
 
@@ -77,6 +77,6 @@ TP_HP    = dict(
                 , n_steps=[15000, 25000]
                 , n_units=[200, 500]
                 , trade_off=[1.0, 0.1]
-                , batch_size=[10000]
+                , batch_size=[200]
                 , tolerance=[100.0]
                 )
