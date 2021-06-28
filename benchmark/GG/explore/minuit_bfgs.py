@@ -90,6 +90,7 @@ def main():
 
 def run_cv_iter(args, i_cv, i_iter, config, root_directory):
     logger = logging.getLogger()
+    logger.info('-'*15)
     # Settings
     directory = os.path.join(root_directory, f"cv_{i_cv}", f"iter_{i_iter}")
     os.makedirs(directory, exist_ok=True)
