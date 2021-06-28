@@ -117,8 +117,8 @@ def run_cv_iter(args, model, i_cv, i_iter, config, root_directory):
 
 
     logger.info(f"Contour plots !")
-    ARRAY_SIZE = 50
-    DELTA_alpha = 0.3
+    ARRAY_SIZE = 150
+    DELTA_alpha = 0.4
     DELTA_mu = 0.6
     ALPHA = 1.0
     MU = 1.0
