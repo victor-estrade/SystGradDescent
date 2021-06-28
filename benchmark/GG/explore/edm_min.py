@@ -89,6 +89,8 @@ def main():
 
 def run_cv_iter(args, i_cv, i_iter, config, model, root_directory):
     logger = logging.getLogger()
+    logger.info('='*135)
+    logger.info(f'i_cv = {i_cv}, i_iter = {i_iter}, ')
     # Settings
     directory = os.path.join(root_directory, f"cv_{i_cv}", f"iter_{i_iter}")
     os.makedirs(directory, exist_ok=True)
@@ -116,7 +118,9 @@ def run_cv_iter(args, i_cv, i_iter, config, model, root_directory):
     # minimizer.hesse()
     # print(minimizer.covariance)
     minimizer.migrad()
+    logger.info(f"\n{minimizer}")
     # print(minimizer)
+    logger.info(f"n grad calls = {minimizer.fmin.ngrad}")
     edm = minimizer.fmin.edm
     logger.info(f"edm before HESSE = {edm}")
 
@@ -134,6 +138,7 @@ def run_cv_iter(args, i_cv, i_iter, config, model, root_directory):
 
     minimizer.hesse()
     # print(minimizer)
+    logger.info(f"\n{minimizer}")
 
     # print(minimizer.values[0], minimizer.values[1])
     EPSILON = 1e-6
@@ -144,6 +149,7 @@ def run_cv_iter(args, i_cv, i_iter, config, model, root_directory):
     g_1 = minimizer.fcn(x + np.array([EPSILON, 0])) - minimizer.fcn(x - np.array([0, EPSILON]))
     g_1 = g_1 / (EPSILON * 2)
     logger.info(f"grad = {g_0}, {g_1}")
+    # logger.info(f"grad = {minimizer.grad(x)} (minuit.grad)")
     grad = np.array([g_0, g_1])
     cov = np.array(minimizer.covariance)
 
@@ -151,6 +157,22 @@ def run_cv_iter(args, i_cv, i_iter, config, model, root_directory):
     logger.info(f"edm after HESSE = {edm}")
     edm_bis = grad.T.dot(cov.dot(grad))
     logger.info(f"edm RECOMPUTED  = {edm_bis}")
+
+    minimizer.minos()
+    # print(minimizer)
+    logger.info(f"\n{minimizer}")
+
+
+    # EDM at TRUE value of mu and alpha
+    # x = np.array([config.TRUE.rescale, config.TRUE.mu])
+    # g = minimizer.grad(x)
+    # minimizer.values = x
+    # minimizer.hesse()
+    # edm = minimizer.fmin.edm
+    # logger.info(f"TRUE edm after HESSE = {edm}")
+    # logger.info(f"TRUE grad = {g} (minuit.grad)")
+    # edm_bis = g.T.dot(cov.dot(g))
+    # logger.info(f"TRUE edm RECOMPUTED  = {edm_bis}")
 
 
     return values
