@@ -7,14 +7,28 @@ from __future__ import unicode_literals
 import iminuit
 ERRORDEF_NLL = 0.5
 
+def grad_factory(compute_nll, epsilon=1e-6):
+    def grad_function(rescale, mu):
+        print('my grad fun being used !')
+        lower = compute_nll(rescale-epsilon, mu)
+        upper = compute_nll(rescale+epsilon, mu)
+        grad_rescale = (upper - lower) / (2*epsilon)
+
+        lower = compute_nll(rescale, mu-epsilon)
+        upper = compute_nll(rescale, mu+epsilon)
+        grad_mu = (upper - lower) / (2*epsilon)
+
+        return (grad_rescale, grad_mu)
+    return grad_function
+
+
+
 def get_minimizer(compute_nll, calibrated_param, calibrated_param_error, tolerance=0.1):
+    grad_fun = grad_factory(compute_nll)
     minimizer = iminuit.Minuit(compute_nll,
                            rescale=calibrated_param.rescale,
-                           # error_rescale=calibrated_param_error.rescale,
-                           # limit_rescale=(0, 100),
                            mu=calibrated_param.mu,
-                           # error_mu=calibrated_param_error.mu,
-                           # limit_mu=(0, 1),
+                           # grad=grad_fun
                           )
     minimizer.errordef = iminuit.Minuit.LIKELIHOOD
     minimizer.limits = [(0.001, None), (0.001, None)]

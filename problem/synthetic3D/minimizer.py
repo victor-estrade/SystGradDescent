@@ -6,13 +6,35 @@ from __future__ import absolute_import
 import iminuit
 ERRORDEF_NLL = 0.5
 
+
+def grad_factory(compute_nll, epsilon=1e-6):
+    def grad_function(r, lam, mu):
+        lower = compute_nll(r-epsilon, lam, mu)
+        upper = compute_nll(r+epsilon, lam, mu)
+        grad_r = (upper - lower) / (2*epsilon)
+
+        lower = compute_nll(r, lam-epsilon, mu)
+        upper = compute_nll(r, lam+epsilon, mu)
+        grad_lam = (upper - lower) / (2*epsilon)
+
+        lower = compute_nll(r, lam, mu-epsilon)
+        upper = compute_nll(r, lam, mu+epsilon)
+        grad_mu = (upper - lower) / (2*epsilon)
+
+        return (grad_r, grad_lam, grad_mu)
+    return grad_function
+
+
+
 def get_minimizer(compute_nll, calibrated_param, calibrated_param_error, tolerance=0.1):
     MIN_VALUE = 0.0001
     MAX_VALUE = None
+    grad_fun = grad_factory(compute_nll)
     minimizer = iminuit.Minuit(compute_nll,
                            r=calibrated_param.r,
                            lam=calibrated_param.lam,
                            mu=calibrated_param.mu,
+                           # grad=grad_fun,
                           )
     minimizer.errordef = iminuit.Minuit.LIKELIHOOD
     minimizer.limits = [(None, None), (MIN_VALUE, None), (MIN_VALUE, MAX_VALUE)]
