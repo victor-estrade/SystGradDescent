@@ -27,8 +27,8 @@ class GGNLL():
         """
         $\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$
         """
-        rescale = rescale  # * RESCALE_NORMALIZATION
-        mu = mu  # * MU_NORMALIZATION
+        # rescale = rescale * RESCALE_NORMALIZATION
+        # mu = mu * MU_NORMALIZATION
         config = self.config
         self.valid_generator.reset()
         X, y, w = self.valid_generator.generate(rescale, mu, n_samples=config.N_VALIDATION_SAMPLES)
