@@ -31,7 +31,7 @@ from .config import HiggsConfigTesJesLes
 
 
 class BaseGeneratorTorch():
-    def __init__(self, data, seed=None, cuda=False,
+    def __init__(self, data, seed=None, cuda=False, float32=False,
                 background_luminosity=410999.84732187376, signal_luminosity=691.9886077135781):
 
         self.background_luminosity = background_luminosity
@@ -41,12 +41,14 @@ class BaseGeneratorTorch():
             self.cuda()
         else:
             self.cpu()
+        self.float32 = float32
 
         self.feature_names = data.columns[:-2] if len(data.columns) == 31 else data.columns[:-3]
-        dtypes = {name : "float32" for name in self.feature_names}
-        dtypes["Label"] = "int64"
-        dtypes["Weight"] = "float32"
-        data = data.astype(dtypes)
+        if float32 :
+            dtypes = {name : "float32" for name in self.feature_names}
+            dtypes["Label"] = "int64"
+            dtypes["Weight"] = "float32"
+            data = data.astype(dtypes)
         self.data_dict = {col: self.tensor(data[col].values) for col in data.columns}
 
         self.size = data.shape[0]
@@ -431,7 +433,7 @@ def get_generators_torch(seed, train_size=0.5, test_size=0.5, cuda=False, Genera
     cv_train_other = ShuffleSplit(n_splits=1, train_size=train_size, random_state=seed)
     idx_train, idx_other = next(cv_train_other.split(data, data['Label']))
     train_data = data.iloc[idx_train]
-    train_generator = GeneratorClass(train_data, seed=seed, cuda=cuda)
+    train_generator = GeneratorClass(train_data, seed=seed, cuda=cuda, float32=True)
     other_data = data.iloc[idx_other]
 
     cv_valid_test = ShuffleSplit(n_splits=1, test_size=test_size, random_state=seed+1)
