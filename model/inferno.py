@@ -109,7 +109,7 @@ class Inferno(BaseClassifierModel, BaseNeuralNet):
         return y_pred
 
     def predict_proba(self, X):
-        X = X.astype(np.float32)
+        # X = X.astype(np.float32)
         with torch.no_grad():
             X_torch = to_torch(X, cuda=self.cuda_flag)
             logits = self.net(X_torch)

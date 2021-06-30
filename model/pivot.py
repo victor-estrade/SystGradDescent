@@ -288,7 +288,7 @@ class PivotBinaryClassifier(Pivot):
         y_proba = []
         self.net.eval()  # evaluation mode
         for X_batch in OneEpoch(X, batch_size=self.batch_size):
-            X_batch = X_batch.astype(np.float32)
+            # X_batch = X_batch.astype(np.float32)
             with torch.no_grad():
                 X_batch = to_torch(X_batch, cuda=self.cuda_flag)
                 proba_batch = torch.sigmoid(self.net.forward(X_batch)).cpu().data.numpy()
@@ -315,7 +315,7 @@ class PivotClassifier(Pivot):
         y_proba = []
         self.net.eval()  # evaluation mode
         for X_batch in OneEpoch(X, batch_size=self.batch_size):
-            X_batch = X_batch.astype(np.float32)
+            # X_batch = X_batch.astype(np.float32)
             with torch.no_grad():
                 X_batch = to_torch(X_batch, cuda=self.cuda_flag)
                 proba_batch = F.softmax(self.net.forward(X_batch), dim=1).cpu().data.numpy()
