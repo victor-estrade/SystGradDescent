@@ -7,6 +7,9 @@ from __future__ import unicode_literals
 import iminuit
 ERRORDEF_NLL = 0.5
 
+from .nll import RESCALE_NORMALIZATION
+from .nll import MU_NORMALIZATION
+
 def grad_factory(compute_nll, epsilon=1e-6):
     def grad_function(rescale, mu):
         print('my grad fun being used !')
@@ -26,18 +29,19 @@ def grad_factory(compute_nll, epsilon=1e-6):
 def get_minimizer(compute_nll, calibrated_param, calibrated_param_error, tolerance=0.1):
     grad_fun = grad_factory(compute_nll)
     minimizer = iminuit.Minuit(compute_nll,
-                           rescale=calibrated_param.rescale,
-                           mu=calibrated_param.mu,
+                           rescale=calibrated_param.rescale / RESCALE_NORMALIZATION,
+                           mu=calibrated_param.mu / RESCALE_NORMALIZATION,
                            # grad=grad_fun
                           )
     minimizer.errordef = iminuit.Minuit.LIKELIHOOD
     minimizer.limits = [(0.001, None), (0.001, None)]
-    minimizer.errors = [calibrated_param_error.rescale
-                        ,calibrated_param_error.mu
+    minimizer.errors = [calibrated_param_error.rescale / RESCALE_NORMALIZATION
+                        ,calibrated_param_error.mu / RESCALE_NORMALIZATION
                         ]
     minimizer.tol = tolerance  # Should I increase tolerance to help ???? (default is 0.1 according to doc)
     minimizer.throw_nan = True
-    minimizer.precision = 1e-6
+    # minimizer.precision = 1.2e-7
+    minimizer.print_level = 2
     return minimizer
 
 

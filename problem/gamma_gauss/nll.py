@@ -11,6 +11,8 @@ from ..nll import gauss_nll
 from ..nll import poisson_nll
 from .config import GGConfig
 
+RESCALE_NORMALIZATION = 1.0
+MU_NORMALIZATION = 1.0
 
 class GGNLL():
     def __init__(self, compute_summaries, valid_generator, X_test, w_test, config=None):
@@ -25,6 +27,8 @@ class GGNLL():
         """
         $\sum_{i=0}^{n_{bin}} rate - n_i \log(rate)$ with $rate = \mu s + b$
         """
+        rescale = rescale  # * RESCALE_NORMALIZATION
+        mu = mu  # * MU_NORMALIZATION
         config = self.config
         self.valid_generator.reset()
         X, y, w = self.valid_generator.generate(rescale, mu, n_samples=config.N_VALIDATION_SAMPLES)
@@ -32,9 +36,9 @@ class GGNLL():
         # test_summaries = self.compute_summaries(self.X_test, self.w_test)
 
         # Compute NLL
-        EPSILON = 1e-5  # avoid log(0)
+        EPSILON = 1e-9  # avoid log(0)
         rate = valid_summaries + EPSILON
-        data_nll = np.sum(poisson_nll(self.test_summaries, rate))
+        data_nll = np.sum(poisson_nll(self.test_summaries + EPSILON, rate))
         rescale_constraint = gauss_nll(rescale, config.CALIBRATED.rescale, config.CALIBRATED_ERROR.rescale)
         rescale_constraint_fitted = 0.0
         try:
