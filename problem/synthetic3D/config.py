@@ -24,7 +24,7 @@ class S3D2Config():
 
     RANGE = Parameter(r=np.linspace(-0.5, 0.5, 3),
                     lam=np.linspace(2, 4, 3),
-                    mu=np.linspace(0.5, 2, 3),)
+                    mu=np.linspace(0.5, 1.5, 3),)
 
     FINE_RANGE = Parameter(r=np.linspace(-1, 1, 7),
                     lam=np.linspace(1, 5, 7),
