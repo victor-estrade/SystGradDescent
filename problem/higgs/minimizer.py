@@ -15,7 +15,8 @@ def get_minimizer(compute_nll, calibrated_param, calibrated_param_error, toleran
     minimizer.errors = list(calibrated_param_error)
     minimizer.tol = tolerance  # Should I increase tolerance to help ???? (default is 0.1 according to doc)
     minimizer.throw_nan = True
-    minimizer.precision = 1e-6
+    # minimizer.precision = 1e-6
+    # minimizer.print_level = 2
     return minimizer
 
 
