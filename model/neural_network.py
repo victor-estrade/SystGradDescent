@@ -122,7 +122,7 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
         # X = X.astype(np.float32)
         with torch.no_grad():
             X_torch = to_torch(X, cuda=self.cuda_flag)
-            y_proba = F.softmax(self.net.forward(X_batch), dim=1).cpu().data.numpy()
+            y_proba = F.softmax(self.net.forward(X_torch), dim=1).cpu().data.numpy()
         return y_proba
 
     def save(self, save_directory):
