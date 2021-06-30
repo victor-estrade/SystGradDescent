@@ -104,6 +104,10 @@ def train_or_load_classifier(model, train_generator, parameters, n_samples, retr
 
         # SAVE MODEL
         save_model(model)
+    try:
+        model.to_double()
+    except AttributeError:
+        pass
 
 
 
@@ -125,6 +129,7 @@ def train_or_load_data_augmentation(model, train_generator, n_samples, retrain=T
 
         # SAVE MODEL
         save_model(model)
+    model.to_double()
 
 
 def train_or_load_pivot(model, train_generator, n_samples, retrain=True):
@@ -145,6 +150,7 @@ def train_or_load_pivot(model, train_generator, n_samples, retrain=True):
 
         # SAVE MODEL
         save_model(model)
+    model.to_double()
 
 
 def train_or_load_neural_net(model, train_generator, retrain=True):
@@ -163,7 +169,7 @@ def train_or_load_neural_net(model, train_generator, retrain=True):
 
         # SAVE MODEL
         save_model(model)
-
+    model.to_double()
 
 def train_or_load_clf_regressor(model, train_generator, retrain=True):
     logger = logging.getLogger()
@@ -183,6 +189,7 @@ def train_or_load_clf_regressor(model, train_generator, retrain=True):
 
         # SAVE MODEL
         save_model(model)
+    model.to_double()
 
 
 def train_or_load_inferno(model, train_generator, retrain=True):
@@ -201,3 +208,4 @@ def train_or_load_inferno(model, train_generator, retrain=True):
 
         # SAVE MODEL
         save_model(model)
+    model.to_double()
