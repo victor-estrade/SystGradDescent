@@ -15,6 +15,9 @@ from config import DEFAULT_DIR
 
 from ..likelihood import plot_param_around_min
 
+SKIP_NLL_PLOT = True
+
+
 def plot_TES_around_min(compute_nll, true_params, directory, suffix):
     tes_array = np.linspace(0.8, 1.2, 20)  # TODO : choose good range
     nll_array = [compute_nll(*true_params.clone_with(tes=tes)) for tes in tes_array]
@@ -57,12 +60,15 @@ def plot_MU_around_min(compute_nll, true_params, directory, suffix):
 
 def plot_nll_around_min(compute_nll, true_params, directory, suffix):
     logger = logging.getLogger()
-    logger.info('Plot NLL around minimum')
-    param_names = true_params.parameter_names
-    if 'tes' in param_names : plot_TES_around_min(compute_nll, true_params, directory, suffix)
-    if 'jes' in param_names : plot_JES_around_min(compute_nll, true_params, directory, suffix)
-    if 'les' in param_names : plot_LES_around_min(compute_nll, true_params, directory, suffix)
-    # TODO : FUTURE Reactivate
-    # plot_NASTY_BKG_around_min(compute_nll, true_params, directory, suffix)
-    # plot_SIGMA_SOFT_around_min(compute_nll, true_params, directory, suffix)
-    plot_MU_around_min(compute_nll, true_params, directory, suffix)
+    if SKIP_NLL_PLOT:
+        logger.info('SKIPED Plot NLL around minimum')
+    else:
+        logger.info('Plot NLL around minimum')
+        param_names = true_params.parameter_names
+        if 'tes' in param_names : plot_TES_around_min(compute_nll, true_params, directory, suffix)
+        if 'jes' in param_names : plot_JES_around_min(compute_nll, true_params, directory, suffix)
+        if 'les' in param_names : plot_LES_around_min(compute_nll, true_params, directory, suffix)
+        # TODO : FUTURE Reactivate
+        # plot_NASTY_BKG_around_min(compute_nll, true_params, directory, suffix)
+        # plot_SIGMA_SOFT_around_min(compute_nll, true_params, directory, suffix)
+        plot_MU_around_min(compute_nll, true_params, directory, suffix)

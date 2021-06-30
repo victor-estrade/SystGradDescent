@@ -9,6 +9,9 @@ import numpy as np
 
 from ..likelihood import plot_param_around_min
 
+SKIP_NLL_PLOT =  True
+
+
 def plot_R_around_min(compute_nll, true_params, directory, suffix):
     r_array = np.linspace(-1, 1, 50)
     nll_array = [compute_nll(r, true_params.lam, true_params.mu) for r in r_array]
@@ -31,7 +34,10 @@ def plot_MU_around_min(compute_nll, true_params, directory, suffix):
 
 def plot_nll_around_min(compute_nll, true_params, directory, suffix):
     logger = logging.getLogger()
-    logger.info('Plot NLL around minimum')
-    plot_R_around_min(compute_nll, true_params, directory, suffix)
-    plot_LAMBDA_around_min(compute_nll, true_params, directory, suffix)
-    plot_MU_around_min(compute_nll, true_params, directory, suffix)
+    if SKIP_NLL_PLOT:
+        logger.info('SKIPED Plot NLL around minimum')
+    else:
+        logger.info('Plot NLL around minimum')
+        plot_R_around_min(compute_nll, true_params, directory, suffix)
+        plot_LAMBDA_around_min(compute_nll, true_params, directory, suffix)
+        plot_MU_around_min(compute_nll, true_params, directory, suffix)

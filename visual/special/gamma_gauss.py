@@ -16,6 +16,8 @@ from config import DEFAULT_DIR
 from ..likelihood import plot_param_around_min
 from ..misc import now_str
 
+SKIP_NLL_PLOT = True
+
 def plot_RESCALE_around_min(compute_nll, true_params, directory, suffix):
     rescale_array = np.linspace(0.5, 3, 50)
     nll_array = [compute_nll(rescale, true_params.mix) for rescale in rescale_array]
@@ -30,9 +32,12 @@ def plot_MIX_around_min(compute_nll, true_params, directory, suffix):
 
 def plot_nll_around_min(compute_nll, true_params, directory, suffix):
     logger = logging.getLogger()
-    logger.info('Plot NLL around minimum')
-    plot_RESCALE_around_min(compute_nll, true_params, directory, suffix)
-    plot_MIX_around_min(compute_nll, true_params, directory, suffix)
+    if SKIP_NLL_PLOT:
+        logger.info('SKIPED Plot NLL around minimum')
+    else:
+        logger.info('Plot NLL around minimum')
+        plot_RESCALE_around_min(compute_nll, true_params, directory, suffix)
+        plot_MIX_around_min(compute_nll, true_params, directory, suffix)
 
 
 def plot_distrib(data, generator, true_params, expect_rescale, expect_mix,
