@@ -78,6 +78,8 @@ def main():
     data = []
     for i_cv in range(N_CV):
         model = load_some_NN(i_cv=i_cv, cuda=args.cuda)
+        model.to_double()
+        # model = load_some_GB(i_cv=i_cv)
         for i_iter, config in enumerate(lili):
             i_iter = i_iter * STEP
             values = run_cv_iter(args, i_cv, i_iter, config, model, root_directory)
@@ -113,10 +115,11 @@ def run_cv_iter(args, i_cv, i_iter, config, model, root_directory):
     logger.info(f"true  nll = {nll}")
     values['TRUE_feval'] = nll
 
-    minimizer = get_minimizer(compute_nll, config.TRUE, config.CALIBRATED_ERROR, tolerance=args.tolerance)
+    minimizer = get_minimizer(compute_nll, config.CALIBRATED, config.CALIBRATED_ERROR, tolerance=args.tolerance)
 
     # minimizer.hesse()
     # print(minimizer.covariance)
+    minimizer.scan()
     minimizer.migrad()
     logger.info(f"\n{minimizer}")
     # print(minimizer)
@@ -158,10 +161,11 @@ def run_cv_iter(args, i_cv, i_iter, config, model, root_directory):
     edm_bis = grad.T.dot(cov.dot(grad))
     logger.info(f"edm RECOMPUTED  = {edm_bis}")
 
-    minimizer.minos()
+    minimizer.minos("mu")
     # print(minimizer)
     logger.info(f"\n{minimizer}")
 
+    # raise 1
 
     # EDM at TRUE value of mu and alpha
     # x = np.array([config.TRUE.rescale, config.TRUE.mu])
