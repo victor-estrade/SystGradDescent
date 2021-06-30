@@ -135,3 +135,6 @@ class BaseNeuralNet():
 
     def set_optimizer_name(self):
         self.optimizer_name = self.get_optimizer_name()
+
+    def to_double(self):
+        self.net = self.net.double()

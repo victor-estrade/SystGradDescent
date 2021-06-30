@@ -118,11 +118,12 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
         return proba
 
     def _predict_proba(self, X):
+        batch_size = np.max([1000, self.batch_size])
         batch_gen = OneEpoch(X, batch_size=self.batch_size)
         y_proba = []
         self.net.eval()  # evaluation mode
         for X_batch in batch_gen:
-            X_batch = X_batch.astype(np.float32)
+            # X_batch = X_batch.astype(np.float32)
             with torch.no_grad():
                 X_batch = to_torch(X_batch, cuda=self.cuda_flag)
                 proba_batch = F.softmax(self.net.forward(X_batch), dim=1).cpu().data.numpy()
@@ -200,7 +201,7 @@ class BlindNeuralNetModel(NeuralNetClassifier):
 
     def fit(self, X, y, sample_weight=None):
         X = to_numpy(X)
-        X = np.delete(X, self.skewed_idx, axis=1)        
+        X = np.delete(X, self.skewed_idx, axis=1)
         super().fit(X, y, sample_weight)
         return self
 
@@ -211,7 +212,7 @@ class BlindNeuralNetModel(NeuralNetClassifier):
 
     def predict_proba(self, X):
         X = to_numpy(X)
-        X = np.delete(X, self.skewed_idx, axis=1)        
+        X = np.delete(X, self.skewed_idx, axis=1)
         X = self.scaler.transform(X)
         proba = self._predict_proba(X)
         return proba
