@@ -118,17 +118,11 @@ class NeuralNetClassifier(BaseClassifierModel, BaseNeuralNet):
         return proba
 
     def _predict_proba(self, X):
-        batch_size = np.max([1000, self.batch_size])
-        batch_gen = OneEpoch(X, batch_size=self.batch_size)
-        y_proba = []
         self.net.eval()  # evaluation mode
-        for X_batch in batch_gen:
-            # X_batch = X_batch.astype(np.float32)
-            with torch.no_grad():
-                X_batch = to_torch(X_batch, cuda=self.cuda_flag)
-                proba_batch = F.softmax(self.net.forward(X_batch), dim=1).cpu().data.numpy()
-            y_proba.extend(proba_batch)
-        y_proba = np.array(y_proba)
+        # X = X.astype(np.float32)
+        with torch.no_grad():
+            X_torch = to_torch(X, cuda=self.cuda_flag)
+            y_proba = F.softmax(self.net.forward(X_batch), dim=1).cpu().data.numpy()
         return y_proba
 
     def save(self, save_directory):

@@ -285,15 +285,11 @@ class PivotBinaryClassifier(Pivot):
         return proba
 
     def _predict_proba(self, X):
-        y_proba = []
         self.net.eval()  # evaluation mode
-        for X_batch in OneEpoch(X, batch_size=self.batch_size):
-            # X_batch = X_batch.astype(np.float32)
-            with torch.no_grad():
-                X_batch = to_torch(X_batch, cuda=self.cuda_flag)
-                proba_batch = torch.sigmoid(self.net.forward(X_batch)).cpu().data.numpy()
-            y_proba.extend(proba_batch)
-        y_proba = np.array(y_proba)
+        # X = X.astype(np.float32)
+        with torch.no_grad():
+            X_torch = to_torch(X, cuda=self.cuda_flag)
+            y_proba = torch.sigmoid(self.net.forward(X_torch)).cpu().data.numpy()
         return y_proba
 
 
