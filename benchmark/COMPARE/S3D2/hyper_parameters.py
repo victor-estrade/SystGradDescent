@@ -14,7 +14,7 @@ DA_HP    = dict(
                 )
 
 FF_HP    = dict(
-                feature_id=list(range(1))
+                feature_id=list(range(3))
                 )
 
 GB_HP    = dict(
